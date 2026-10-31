@@ -108,6 +108,13 @@ lists common settings for `--env-file`. The FalkorDB service always runs, while
 Graphiti memory is enabled by the image's default feature configuration; memory
 extraction also needs a configured chat model and embedding provider.
 
+Users can also bring their own subscription: **Settings → Integrations → AI
+subscriptions** offers OpenCode, where a user pastes the API key from their
+OpenCode Console and runs chats on that plan instead of AutoGPT credits. The
+server operator can point that connection at another OpenCode plan or model
+with `OPENCODE_BASE_URL`, `OPENCODE_STANDARD_MODEL` and
+`OPENCODE_ADVANCED_MODEL`; the defaults serve the Go plan.
+
 The image supports `linux/amd64` and `linux/arm64`. Test installations used
 about 5–6 GiB of memory during startup and steady-state health checks, though
 actual usage depends on enabled services and workloads. On Docker Desktop, give
