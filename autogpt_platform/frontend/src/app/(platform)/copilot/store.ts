@@ -97,7 +97,8 @@ export type CopilotLlmModel = "standard" | "advanced";
 export type CopilotLlmAuthSelection =
   | { authProvider: "platform"; credentialId: null }
   | { authProvider: "codex"; credentialId: string }
-  | { authProvider: "microsoft_365_copilot"; credentialId: string };
+  | { authProvider: "microsoft_365_copilot"; credentialId: string }
+  | { authProvider: "opencode"; credentialId: string };
 
 /** Context panel tab, each docked on the right: the chat's files, the
  *  artifacts library, or the chat's expert's integrations. */

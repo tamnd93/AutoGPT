@@ -17,6 +17,7 @@ import { IntegrationLogo } from "@/components/molecules/IntegrationLogo/Integrat
 import { UpcomingProviderBoxes } from "./UpcomingProviderBoxes";
 import { ProviderBox } from "./ProviderBox";
 import { MicrosoftCopilotProviderBox } from "./MicrosoftCopilotProviderBox";
+import { OpenCodeProviderBox } from "./OpenCodeProviderBox";
 import { ManageConnectionDialog } from "./ManageConnectionDialog";
 import { isSelectable, tierSummary } from "./helpers";
 import { useAIConnectionsSection } from "./useAIConnectionsSection";
@@ -27,6 +28,7 @@ export function AIConnectionsSection() {
     isConnectingChatGPT,
     isChatGPTLinked,
     isMicrosoftLinked,
+    isOpenCodeLinked,
     connections,
     accountFor,
     credentialFor,
@@ -90,7 +92,8 @@ export function AIConnectionsSection() {
               onManage={
                 connection.credential_id &&
                 (connection.auth_provider === "codex" ||
-                  connection.auth_provider === "microsoft_365_copilot")
+                  connection.auth_provider === "microsoft_365_copilot" ||
+                  connection.auth_provider === "opencode")
                   ? () => setManaging(connection)
                   : undefined
               }
@@ -116,6 +119,9 @@ export function AIConnectionsSection() {
           )}
           {!isMicrosoftLinked && (
             <MicrosoftCopilotProviderBox isLinked={false} onSuccess={refetch} />
+          )}
+          {!isOpenCodeLinked && (
+            <OpenCodeProviderBox isLinked={false} onSuccess={refetch} />
           )}
           <UpcomingProviderBoxes />
         </div>

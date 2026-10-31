@@ -66,6 +66,9 @@ export function toConnectableProviders(
   const seen = new Set<string>();
   const byService = new Map<string, ConnectableProvider>();
   for (const item of metadata) {
+    // Chats can run on it, but no block does: OpenCode is an AI subscription,
+    // offered by the section above this tool list, not a service to connect.
+    if (item.name === "opencode") continue;
     if (seen.has(item.name)) continue;
     seen.add(item.name);
 

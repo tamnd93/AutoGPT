@@ -1,5 +1,7 @@
 "use client";
 
+import { type ReactNode } from "react";
+
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { Text } from "@/components/atoms/Text/Text";
 import { cn } from "@/lib/utils";
@@ -11,7 +13,10 @@ import Image from "next/image";
 
 interface Props {
   name: string;
-  logoSrc: string;
+  /** A bundled provider logo. Omit when `icon` is set instead. */
+  logoSrc?: string;
+  /** Drawn in place of a logo for providers with no image asset. */
+  icon?: ReactNode;
   state: "available" | "connected" | "coming-soon";
   isBusy?: boolean;
   onClick?: () => void;
@@ -25,6 +30,7 @@ const FRAME =
 export function ProviderBox({
   name,
   logoSrc,
+  icon,
   state,
   isBusy = false,
   onClick,
@@ -32,16 +38,27 @@ export function ProviderBox({
   const body = (
     <>
       <span className="relative flex h-12 w-12 shrink-0 items-center justify-center">
-        <Image
-          src={logoSrc}
-          alt=""
-          width={48}
-          height={48}
-          className={cn(
-            "h-12 w-12 rounded-xl object-contain",
-            state === "coming-soon" && "opacity-50",
-          )}
-        />
+        {logoSrc ? (
+          <Image
+            src={logoSrc}
+            alt=""
+            width={48}
+            height={48}
+            className={cn(
+              "h-12 w-12 rounded-xl object-contain",
+              state === "coming-soon" && "opacity-50",
+            )}
+          />
+        ) : (
+          <span
+            className={cn(
+              "flex h-12 w-12 items-center justify-center rounded-xl bg-surface-hover text-foreground-body",
+              state === "coming-soon" && "opacity-50",
+            )}
+          >
+            {icon}
+          </span>
+        )}
         {isBusy && (
           <Icon
             icon={Loading03Icon}

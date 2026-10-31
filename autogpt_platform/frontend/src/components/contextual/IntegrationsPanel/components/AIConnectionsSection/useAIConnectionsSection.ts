@@ -112,6 +112,7 @@ export function useAIConnectionsSection() {
     isConnectingChatGPT,
     isChatGPTLinked: isProviderLinked(offers, "codex"),
     isMicrosoftLinked: isProviderLinked(offers, "microsoft_365_copilot"),
+    isOpenCodeLinked: isProviderLinked(offers, "opencode"),
     connections: offers,
     accountFor,
     credentialFor,

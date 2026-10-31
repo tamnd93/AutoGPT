@@ -18,6 +18,7 @@ import {
   within,
 } from "@/tests/integrations/test-utils";
 import userEvent from "@testing-library/user-event";
+import { HttpResponse, http } from "msw";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const connectChatGPT = vi.hoisted(() =>
@@ -121,6 +122,38 @@ function lockedChatgpt(): AIConnectionOffer {
     selectable: false,
     lock_reason: "Connect ChatGPT to use this subscription",
   };
+}
+
+function opencode(isDefault: boolean, id = "cred-open"): AIConnectionOffer {
+  return {
+    offer_id: `opencode:${id}`,
+    auth_provider: "opencode",
+    provider_family: "opencode",
+    display_name: "OpenCode",
+    auth_method: "api_key",
+    credential_id: id,
+    backed_by_label: "Your OpenCode plan",
+    description:
+      "New chats are backed by your OpenCode subscription, and spend no AutoGPT credits.",
+    state: "ready",
+    selectable: true,
+    is_default: isDefault,
+    tiers: [
+      {
+        tier: "standard",
+        label: "Balanced",
+        selectable: true,
+        display_model: "claude-haiku-5-5",
+      },
+      {
+        tier: "advanced",
+        label: "Advanced",
+        selectable: true,
+        display_model: "claude-haiku-5-5",
+      },
+    ],
+    limitations: [],
+  } as AIConnectionOffer;
 }
 
 function microsoft(isDefault: boolean, id = "cred-msft"): AIConnectionOffer {
@@ -248,6 +281,7 @@ describe("AIConnectionsSection", () => {
     expect(buttons.map((button) => button.textContent)).toEqual([
       "ChatGPT",
       "Microsoft 365 Copilot",
+      "OpenCode",
     ]);
     expect(buttons[0].querySelector("img")?.getAttribute("src")).toBe(
       "/integrations/openai.png",
@@ -592,4 +626,50 @@ describe("AIConnectionsSection", () => {
     expect(screen.queryByRole("radiogroup")).toBeNull();
     expect(screen.queryByRole("radio")).toBeNull();
   });
+});
+it("connects OpenCode from a pasted API key", async () => {
+  mockTransports([platform(true)]);
+  let body: unknown = null;
+  server.use(
+    http.post(
+      "*/api/integrations/opencode/credentials",
+      async ({ request }) => {
+        body = await request.json();
+        return HttpResponse.json(
+          {
+            id: "cred-open",
+            provider: "opencode",
+            type: "api_key",
+            title: "OpenCode",
+            scopes: null,
+            username: null,
+            host: null,
+          },
+          { status: 201 },
+        );
+      },
+    ),
+  );
+
+  render(<AIConnectionsSection />);
+  await userEvent.click(
+    await screen.findByRole("button", { name: "OpenCode" }),
+  );
+  const dialog = await screen.findByRole("dialog");
+  await userEvent.type(within(dialog).getByLabelText("API key"), "oc_sk_test");
+
+  mockTransports([platform(true), opencode(false)]);
+  await userEvent.click(
+    within(dialog).getByRole("button", { name: "Connect" }),
+  );
+
+  await waitFor(() =>
+    expect(body).toMatchObject({
+      provider: "opencode",
+      type: "api_key",
+      api_key: "oc_sk_test",
+    }),
+  );
+  expect(await screen.findByText("Connected")).toBeDefined();
+  expect(screen.queryByRole("button", { name: "OpenCode" })).toBeNull();
 });

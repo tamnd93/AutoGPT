@@ -105,6 +105,24 @@ const microsoft = (over: Partial<AIConnectionOffer> = {}) =>
     ...over,
   });
 
+const opencode = (over: Partial<AIConnectionOffer> = {}) =>
+  offer({
+    offer_id: "opencode:cred-open",
+    auth_provider: "opencode",
+    provider_family: "opencode",
+    display_name: "OpenCode",
+    auth_method: "api_key",
+    credential_id: "cred-open",
+    backed_by_label: "Your OpenCode plan",
+    is_default: false,
+    tiers: [
+      tier("standard", "Balanced", "claude-haiku-5-5"),
+      tier("advanced", "Advanced", "claude-haiku-5-5"),
+    ],
+    limitations: ["The workflow builder's chat panel always runs on AutoGPT."],
+    ...over,
+  });
+
 function mockOffers(offers: AIConnectionOffer[]) {
   server.use(getGetV2ListChatConnectionsMockHandler200({ offers }));
 }
@@ -165,6 +183,18 @@ describe("ConnectionPicker", () => {
 
     expect(await screen.findByText("Your AutoGPT plan")).toBeDefined();
     expect(screen.getByText("Your ChatGPT plan")).toBeDefined();
+  });
+
+  it("offers an OpenCode connection and says what backs it", async () => {
+    mockOffers([offer({ is_default: false }), opencode({ is_default: true })]);
+
+    render(<ConnectionPicker />);
+    expect(
+      await screen.findByRole("button", { name: /Runs on OpenCode/ }),
+    ).toBeDefined();
+
+    await userEvent.click(await openPicker());
+    expect(await screen.findByText("Your OpenCode plan")).toBeDefined();
   });
 
   it("falls in behind the connection the server marks default", async () => {

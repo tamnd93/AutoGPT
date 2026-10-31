@@ -40,6 +40,15 @@ export function ManageConnectionDialog({
     );
   }
 
+  if (connection?.auth_provider === "opencode") {
+    return (
+      <OpenCodeConnectionDialog
+        connection={connection}
+        onOpenChange={onOpenChange}
+      />
+    );
+  }
+
   return (
     <ChatGPTConnectionDialog
       connection={connection}
@@ -233,6 +242,52 @@ function ChatGPTConnectionDialog({
         notice={forceMessage ?? undefined}
       />
     </>
+  );
+}
+
+interface OpenCodeProps {
+  connection: AIConnectionOffer;
+  onOpenChange: (open: boolean) => void;
+}
+
+function OpenCodeConnectionDialog({ connection, onOpenChange }: OpenCodeProps) {
+  const { remove, isPending: isDisconnecting } = useDeleteIntegration();
+  const credentialId = connection.credential_id;
+
+  async function disconnect() {
+    if (!credentialId) return;
+    const result = await remove([
+      { id: credentialId, provider: "opencode", name: "OpenCode" },
+    ]);
+    if (result.succeeded.length === 0) return;
+    onOpenChange(false);
+  }
+
+  return (
+    <Dialog
+      title="OpenCode"
+      variant="compact"
+      styling={{ maxWidth: "28rem" }}
+      controlled={{ isOpen: connection !== null, set: onOpenChange }}
+    >
+      <Dialog.Content>
+        <div className="flex flex-col gap-4">
+          <Text variant="small" as="p" tone="muted">
+            Chats on this connection run on your OpenCode plan and spend no
+            AutoGPT credits.
+          </Text>
+          <Button
+            variant="destructive"
+            size="small"
+            onClick={() => void disconnect()}
+            loading={isDisconnecting}
+            className="self-end"
+          >
+            Disconnect
+          </Button>
+        </div>
+      </Dialog.Content>
+    </Dialog>
   );
 }
 
