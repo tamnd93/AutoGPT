@@ -62,10 +62,11 @@ from backend.copilot.turn_tracing import (
     turn_origin,
     turn_transaction,
 )
-from backend.data.model import OAuth2Credentials
+from backend.data.model import APIKeyCredentials, OAuth2Credentials
 from backend.data.user import is_user_banned
 from backend.executor.cluster_lock import ClusterLock
 from backend.integrations.codex.transport import CodexCredentialIntegrityError
+from backend.integrations.credential_lease import CredentialLease
 from backend.integrations.creds_manager import IntegrationCredentialsManager
 from backend.integrations.microsoft_365_copilot.service import (
     stream_chat_completion_microsoft_365,
@@ -373,6 +374,50 @@ def cleanup_worker():
     processor: CoPilotProcessor | None = getattr(_tls, "processor", None)
     if processor is not None:
         processor.cleanup()
+
+
+async def _acquire_opencode_credential_lease(
+    entry: CoPilotExecutionEntry,
+) -> CredentialLease:
+    """The user's OpenCode key, leased for the duration of the turn.
+
+    A failure releases whatever the acquire got and maps to the codes the
+    session route returns, so a deleted connection reads as missing rather
+    than as a store outage.
+    """
+    if entry.user_id is None:
+        raise RuntimeError("opencode_user_required")
+    if entry.llm_credential_id is None:
+        raise RuntimeError("opencode_credential_required")
+    lease: CredentialLease | None = None
+    try:
+        lease = await IntegrationCredentialsManager().acquire_lease(
+            entry.user_id,
+            entry.llm_credential_id,
+        )
+        credentials = lease.credentials
+        if (
+            not isinstance(credentials, APIKeyCredentials)
+            or credentials.provider != "opencode"
+        ):
+            raise ValueError("invalid OpenCode credential")
+    except asyncio.CancelledError:
+        if lease is not None:
+            await lease.release()
+        raise
+    except Exception as error:
+        if lease is not None:
+            await lease.release()
+        # Only a missing or wrong-shaped credential is "not found"; a store
+        # outage keeps its own cause so it is not reported as a deleted
+        # connection.
+        code = (
+            "opencode_credential_not_found"
+            if isinstance(error, ValueError)
+            else "opencode_credential_unavailable"
+        )
+        raise RuntimeError(code) from error
+    return lease
 
 
 # ============ Processor Class ============ #
@@ -803,6 +848,11 @@ class CoPilotProcessor:
                 stream_fn = cast(Callable, stream_chat_completion_microsoft_365)
                 engine = "microsoft_365_copilot"
                 log.info("Using Microsoft 365 Copilot Chat API transport")
+            elif entry.llm_auth_provider == "opencode":
+                credential_lease = await _acquire_opencode_credential_lease(entry)
+                stream_fn = sdk_service.stream_chat_completion_sdk
+                engine = "sdk"
+                log.info("Using Claude SDK with OpenCode subscription transport")
             else:
                 if entry.llm_credential_id is not None:
                     raise RuntimeError("codex_session_route_mismatch")

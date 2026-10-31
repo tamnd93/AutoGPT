@@ -33,6 +33,7 @@ _STATIC_PROVIDER_CONFIGS: dict[str, tuple[str, tuple[CredentialsType, ...]]] = {
     "ollama": ("Run open-source LLMs locally", ("api_key",)),
     "open_router": ("One API for every LLM", ("api_key",)),
     "openai": ("GPT models and embeddings", ("api_key",)),
+    "opencode": ("OpenCode coding models", ("api_key",)),
     "v0": ("AI-generated UI components", ("api_key",)),
     # Single-file providers (one provider per standalone blocks/*.py file)
     "d_id": ("AI avatar and video generation", ("api_key",)),

@@ -56,7 +56,9 @@ _DEFAULT_SIMULATION_MODEL = "google/gemini-2.5-flash-lite"
 _DEFAULT_FAST_ADVANCED_MODEL = "anthropic/claude-opus-5-5"
 
 TransportName = Literal["subscription", "openrouter", "direct_anthropic", "local"]
-CopilotLlmAuthProvider = Literal["platform", "codex", "microsoft_365_copilot"]
+CopilotLlmAuthProvider = Literal[
+    "platform", "codex", "microsoft_365_copilot", "opencode"
+]
 
 
 class TransportProfile(BaseModel):
@@ -755,6 +757,31 @@ class ChatConfig(BaseSettings):
         "resolve. ``CHAT_BASE_URL`` and ``CHAT_API_KEY`` must still be set "
         "(api_key can be any non-empty string for Ollama). Override via "
         "``CHAT_USE_LOCAL``.",
+    )
+    # OpenCode's Anthropic-compatible gateway, used by turns a user routes
+    # over their own OpenCode subscription (API-key credential). The base URL
+    # differs by plan: Go serves under /inference/go/anthropic, pay-as-you-go
+    # under /inference/anthropic. Model slugs are sent verbatim to the
+    # gateway, so any model OpenCode serves may be named here.
+    opencode_base_url: str = Field(
+        default="https://opencode.ai/inference/go/anthropic",
+        validation_alias=AliasChoices("OPENCODE_BASE_URL"),
+        description="OpenCode gateway base URL (Anthropic Messages API). "
+        "Defaults to the Go plan endpoint; set "
+        "https://opencode.ai/inference/anthropic for pay-as-you-go.",
+    )
+    opencode_standard_model: str = Field(
+        default="claude-haiku-5-5",
+        validation_alias=AliasChoices("OPENCODE_STANDARD_MODEL"),
+        description="Model slug for the Balanced tier on an OpenCode "
+        "connection. Sent to OpenCode verbatim, not resolved through the "
+        "model catalog.",
+    )
+    opencode_advanced_model: str = Field(
+        default="claude-haiku-5-5",
+        validation_alias=AliasChoices("OPENCODE_ADVANCED_MODEL"),
+        description="Model slug for the Advanced tier on an OpenCode "
+        "connection. Same passthrough as the standard tier.",
     )
     test_mode: bool = Field(
         default=False,

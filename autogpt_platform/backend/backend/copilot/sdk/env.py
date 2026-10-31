@@ -102,6 +102,8 @@ def build_sdk_env(
     model: str | None = None,
     codex_gateway_url: str | None = None,
     codex_gateway_token: str | None = None,
+    byok_base_url: str | None = None,
+    byok_api_key: str | None = None,
 ) -> dict[str, str]:
     """Build env vars for the SDK CLI subprocess.
 
@@ -135,6 +137,10 @@ def build_sdk_env(
         raise ValueError(
             "codex_gateway_url and codex_gateway_token must be provided together"
         )
+    if (byok_base_url is None) != (byok_api_key is None):
+        raise ValueError("byok_base_url and byok_api_key must be provided together")
+    if byok_api_key is not None and not byok_api_key:
+        raise ValueError("BYOK API key must not be empty")
     if codex_gateway_token is not None and not codex_gateway_token:
         raise ValueError("Codex gateway token must not be empty")
     if codex_gateway_url is not None:
@@ -161,6 +167,28 @@ def build_sdk_env(
             "NO_PROXY": no_proxy,
             "no_proxy": no_proxy,
         }
+
+    # --- Mode 2: user-owned BYOK gateway (OpenCode) ---
+    # The CLI speaks Anthropic's wire protocol, and the user's own gateway
+    # does too, so the turn points the CLI straight at it with the user's
+    # key. No proxy hop and no deployment credential is involved: this is the
+    # one place a per-user credential reaches the CLI's environment.
+    elif byok_base_url is not None and byok_api_key is not None:
+        env = {
+            "ANTHROPIC_BASE_URL": byok_base_url.rstrip("/"),
+            "ANTHROPIC_AUTH_TOKEN": byok_api_key,
+            "ANTHROPIC_API_KEY": "",
+            "CLAUDE_CODE_OAUTH_TOKEN": "",
+            "CLAUDE_CODE_REFRESH_TOKEN": "",
+        }
+        if session_id:
+            # OpenCode routes sessions by this header; its own clients send it
+            # and Console prefers it over the native headers.
+            header = _HEADER_SAFE_RE.sub(
+                "", f"x-opencode-session: ses_{session_id}"
+            ).strip()[:_MAX_HEADER_VALUE_LEN]
+            if header:
+                env["ANTHROPIC_CUSTOM_HEADERS"] = header
 
     # Transports that don't run the SDK at all (currently: ``local`` —
     # Ollama et al. don't implement Anthropic's wire protocol) must not

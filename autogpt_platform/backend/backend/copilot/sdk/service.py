@@ -87,6 +87,7 @@ from backend.copilot.credit_billing import credit_billed_turn, wait_for_cost
 from backend.copilot.turn_budget import resolve_turn_budget
 from backend.copilot.turn_pause import TurnPause, append_pause_marker
 from backend.data.db_accessors import chat_db
+from backend.data.model import APIKeyCredentials
 from backend.data.redis_client import get_redis_async
 from backend.executor.cluster_lock import AsyncClusterLock
 from backend.integrations.codex.models import CodexReasoningEffort, CodexTokenUsage
@@ -108,7 +109,7 @@ from backend.util.prompt import (
 )
 from backend.util.settings import Settings
 
-from ..config import ChatConfig, CopilotLLMModel
+from ..config import ChatConfig, CopilotLLMModel, CopilotLlmAuthProvider
 from ..constants import (
     COPILOT_ERROR_PREFIX,
     COPILOT_RETRYABLE_ERROR_PREFIX,
@@ -2515,6 +2516,21 @@ async def _resolve_sdk_model_for_request(
         sdk_model,
     )
     return sdk_model, resolved.source
+
+
+def opencode_sdk_model(model: str | None, cfg: ChatConfig | None = None) -> str:
+    """The slug this tier sends to OpenCode.
+
+    No catalog lookup and no per-request override: OpenCode receives the slug
+    the deployment configured, and a tier silently left on a catalog slug
+    would address a model the user's plan may not serve.
+    """
+    config = cfg if cfg is not None else ChatConfig()
+    return (
+        config.opencode_advanced_model
+        if model == "advanced"
+        else config.opencode_standard_model
+    )
 
 
 def _codex_gateway_usage(
@@ -5303,7 +5319,24 @@ async def stream_chat_completion_sdk(  # pyright: ignore[reportGeneralTypeIssues
     codex_gateway: CodexAnthropicGateway | None = None
     tool_display_bridge = SDKToolDisplayBridge()
     deferred_codex_cleanup_error: BaseException | None = None
-    is_codex_transport = credential_lease is not None
+    # A credential lease means the user, not the deployment, pays for the
+    # turn. Codex is one such route (through the Codex gateway); OpenCode is
+    # the other (the CLI talks to OpenCode's own Anthropic-compatible
+    # gateway). Everything below that only cares about "is this BYOK" rather
+    # than which BYOK provider must key off is_byok_transport.
+    byok_credentials = (
+        credential_lease.credentials if credential_lease is not None else None
+    )
+    is_opencode_transport = (
+        byok_credentials is not None and byok_credentials.provider == "opencode"
+    )
+    is_codex_transport = byok_credentials is not None and not is_opencode_transport
+    is_byok_transport = byok_credentials is not None
+    opencode_api_key = (
+        byok_credentials.api_key.get_secret_value()
+        if isinstance(byok_credentials, APIKeyCredentials)
+        else None
+    )
     turn_segment = _sdk_serving_segment(credential_lease)
     # Wall-clock timestamp captured before the CLI runs so the
     # OpenRouter reconcile can filter subagent JSONLs by mtime — only
@@ -5504,7 +5537,7 @@ async def stream_chat_completion_sdk(  # pyright: ignore[reportGeneralTypeIssues
         )
 
         if (
-            not is_codex_transport
+            not is_byok_transport
             and not config.api_key
             and not config.use_claude_code_subscription
         ):
@@ -5576,7 +5609,11 @@ async def stream_chat_completion_sdk(  # pyright: ignore[reportGeneralTypeIssues
         # Resolve model (request tier → LD per-user override → config default).
         # Done BEFORE build_sdk_env so model-aware env vars (e.g. the
         # Moonshot autocompact gate) can branch on the resolved slug.
-        if credential_lease is not None:
+        if is_opencode_transport:
+            sdk_model = opencode_sdk_model(model, config)
+            routing_source = "env"
+            fallback_model = None
+        elif is_codex_transport:
             tier_name: "CopilotLLMModel" = (
                 "advanced" if model == "advanced" else "standard"
             )
@@ -5606,6 +5643,8 @@ async def stream_chat_completion_sdk(  # pyright: ignore[reportGeneralTypeIssues
             model=_resolve_env_model(sdk_model, fallback_model),
             codex_gateway_url=(codex_gateway.base_url if codex_gateway else None),
             codex_gateway_token=(codex_gateway.auth_token if codex_gateway else None),
+            byok_base_url=(config.opencode_base_url if is_opencode_transport else None),
+            byok_api_key=(opencode_api_key if is_opencode_transport else None),
         )
 
         # Track SDK-internal compaction (PreCompact hook → start, next msg → end)
@@ -5618,7 +5657,7 @@ async def stream_chat_completion_sdk(  # pyright: ignore[reportGeneralTypeIssues
         governor = TurnGovernor(
             budget=(
                 None
-                if is_codex_transport
+                if is_byok_transport
                 else (
                     credit_turn.budget
                     if credit_turn is not None
@@ -5661,8 +5700,11 @@ async def stream_chat_completion_sdk(  # pyright: ignore[reportGeneralTypeIssues
             """Log a stderr line emitted by the Claude CLI subprocess."""
             nonlocal fallback_model_activated_per_attempt
             sid = session_id[:12] if session_id else "?"
-            capability = codex_gateway.auth_token if codex_gateway is not None else ""
-            safe_line = _redact_cli_stderr(line, secrets=(capability,))
+            capability = (
+                codex_gateway.auth_token if codex_gateway is not None else "",
+                opencode_api_key or "",
+            )
+            safe_line = _redact_cli_stderr(line, secrets=capability)
             logger.info("[SDK] [%s] CLI stderr: %s", sid, safe_line.rstrip())
             # Detect SDK fallback-model activation via the module-level pure
             # helper so the detection logic can be unit-tested independently.
@@ -5717,11 +5759,12 @@ async def stream_chat_completion_sdk(  # pyright: ignore[reportGeneralTypeIssues
             # extension (#12871).
             effort=config.claude_agent_thinking_effort or "high",
         )
-        if not is_codex_transport:
-            # The Claude/OpenRouter paths use provider-USD controls. A Codex
-            # subscription consumes the connected account's allowance, so
-            # presenting a fabricated USD ceiling or provider fallback to the
-            # CLI would produce incorrect policy and accounting behavior.
+        if not is_byok_transport:
+            # The Claude/OpenRouter paths use provider-USD controls. A
+            # user-owned subscription (Codex or OpenCode) consumes the
+            # connected account's allowance, so presenting a fabricated USD
+            # ceiling or provider fallback to the CLI would produce incorrect
+            # policy and accounting behavior.
             sdk_options.fallback_model = fallback_model
             # A backstop above the turn's budget, in the CLI's price units:
             # the governor lands the turn before it fires.
@@ -6213,7 +6256,7 @@ async def stream_chat_completion_sdk(  # pyright: ignore[reportGeneralTypeIssues
             generations=TurnGenerations(
                 (
                     _cli_project_dir(sdk_cwd)
-                    if _reconciles_openrouter_cost(is_codex_transport)
+                    if _reconciles_openrouter_cost(is_byok_transport)
                     else None
                 ),
                 session_id,
@@ -6596,7 +6639,7 @@ async def stream_chat_completion_sdk(  # pyright: ignore[reportGeneralTypeIssues
                 attempts_exhausted,
                 transient_exhausted,
                 stream_err,
-                platform_route=stream_ctx.codex_gateway is None,
+                platform_route=not is_byok_transport,
             )
             if (
                 failure is not None
@@ -6844,10 +6887,10 @@ async def stream_chat_completion_sdk(  # pyright: ignore[reportGeneralTypeIssues
             state.generations.absorbed if state is not None else set()
         )
         _use_openrouter_reconcile = bool(
-            _reconciles_openrouter_cost(is_codex_transport) and collected_gen_ids
+            _reconciles_openrouter_cost(is_byok_transport) and collected_gen_ids
         )
 
-        if is_codex_transport:
+        if is_byok_transport:
             await persist_and_record_usage(
                 session=session,
                 user_id=user_id,
@@ -6858,12 +6901,16 @@ async def stream_chat_completion_sdk(  # pyright: ignore[reportGeneralTypeIssues
                 log_prefix=log_prefix,
                 cost_usd=None,
                 model=effective_model,
-                provider="codex",
+                provider=("opencode" if is_opencode_transport else "codex"),
                 credential_id_override=(
                     credential_lease.credentials.id if credential_lease else None
                 ),
                 extra_metadata={"billing_mode": "user_subscription"},
-                execution_path="codex_claude_sdk",
+                execution_path=(
+                    "opencode_claude_sdk"
+                    if is_opencode_transport
+                    else "codex_claude_sdk"
+                ),
             )
         elif _use_openrouter_reconcile:
             # Defer the single cost-and-rate-limit write to a background
@@ -7208,7 +7255,7 @@ async def stream_chat_completion_sdk(  # pyright: ignore[reportGeneralTypeIssues
     # -------------------------------------------------------------------------
     if not ended_with_stream_error and not (governor is not None and governor.landed):
         auto_continue = await gate_auto_continue(
-            session, user_id, platform_billed=not is_codex_transport
+            session, user_id, platform_billed=not is_byok_transport
         )
         if auto_continue.pause is not None:
             yield StreamTurnPaused(pause=auto_continue.pause.as_part())
@@ -7380,8 +7427,11 @@ def _sdk_serving_segment(
     """The immutable route that actually serves this SDK turn."""
     if credential_lease is None:
         return Segment("platform", None, is_segment_zero=False)
+    auth_provider: CopilotLlmAuthProvider = (
+        "opencode" if credential_lease.credentials.provider == "opencode" else "codex"
+    )
     return Segment(
-        "codex",
+        auth_provider,
         credential_lease.credentials.id,
         is_segment_zero=False,
     )

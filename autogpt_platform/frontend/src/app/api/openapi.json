@@ -19343,7 +19343,7 @@
           "offer_id": { "type": "string", "title": "Offer Id" },
           "auth_provider": {
             "type": "string",
-            "enum": ["platform", "codex", "microsoft_365_copilot"],
+            "enum": ["platform", "codex", "microsoft_365_copilot", "opencode"],
             "title": "Auth Provider"
           },
           "provider_family": { "type": "string", "title": "Provider Family" },
@@ -21767,7 +21767,7 @@
         "properties": {
           "llm_auth_provider": {
             "type": "string",
-            "enum": ["platform", "codex", "microsoft_365_copilot"],
+            "enum": ["platform", "codex", "microsoft_365_copilot", "opencode"],
             "title": "Llm Auth Provider"
           },
           "llm_credential_id": {
@@ -21825,7 +21825,7 @@
           },
           "llm_auth_provider": {
             "type": "string",
-            "enum": ["platform", "codex", "microsoft_365_copilot"],
+            "enum": ["platform", "codex", "microsoft_365_copilot", "opencode"],
             "title": "Llm Auth Provider",
             "default": "platform"
           },
@@ -21944,7 +21944,7 @@
         "properties": {
           "auth_provider": {
             "type": "string",
-            "enum": ["platform", "codex", "microsoft_365_copilot"],
+            "enum": ["platform", "codex", "microsoft_365_copilot", "opencode"],
             "title": "Auth Provider"
           },
           "credential_id": {
@@ -23077,7 +23077,7 @@
           },
           "llm_auth_provider": {
             "type": "string",
-            "enum": ["platform", "codex", "microsoft_365_copilot"],
+            "enum": ["platform", "codex", "microsoft_365_copilot", "opencode"],
             "title": "Llm Auth Provider",
             "default": "platform"
           },
@@ -34112,7 +34112,12 @@
             "anyOf": [
               {
                 "type": "string",
-                "enum": ["platform", "codex", "microsoft_365_copilot"]
+                "enum": [
+                  "platform",
+                  "codex",
+                  "microsoft_365_copilot",
+                  "opencode"
+                ]
               },
               { "type": "null" }
             ],

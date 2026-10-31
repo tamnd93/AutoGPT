@@ -600,3 +600,32 @@ class TestAdvancedTierEntitlement:
             new=AsyncMock(side_effect=RuntimeError("billing down")),
         )
         assert await advanced_tier_allowed(USER_ID) is True
+
+
+@pytest.mark.asyncio
+async def test_an_opencode_connection_says_what_backs_it(
+    mocker: pytest_mock.MockerFixture,
+) -> None:
+    _mock_transports(
+        mocker,
+        [
+            _transport(default=True),
+            _transport("codex", "cred-1", "ChatGPT"),
+            _transport("opencode", "cred-open", "OpenCode"),
+        ],
+    )
+
+    *_, opencode = await get_connection_offers(USER_ID)
+
+    assert opencode.provider_family == "opencode"
+    assert opencode.auth_method == "api_key"
+    assert opencode.backed_by_label == "Your OpenCode plan"
+    assert "OpenCode subscription" in opencode.description
+    assert "spend no AutoGPT credits" in opencode.description
+    assert "The workflow builder's chat panel always runs on AutoGPT." in (
+        opencode.limitations
+    )
+    assert [tier.display_model for tier in opencode.tiers] == [
+        "claude-haiku-5-5",
+        "claude-haiku-5-5",
+    ]

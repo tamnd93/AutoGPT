@@ -84,6 +84,11 @@ async def describe_provider_tiers(user_id: str) -> list[ProviderTiers]:
             display_name="ChatGPT",
             tiers=_as_tiers(codex),
         ),
+        ProviderTiers(
+            provider_family="opencode",
+            display_name="OpenCode",
+            tiers=_as_tiers(opencode_tier_models(config)),
+        ),
     ]
 
 
@@ -139,6 +144,18 @@ def codex_tier_models(mode: ModelMode) -> dict[CopilotLLMModel, str | None]:
     return {
         tier: display_name(llm_registry.get_route(ROUTE_SURFACE_CODEX, mode, tier))
         for tier in TIER_LABELS
+    }
+
+
+def opencode_tier_models(config: ChatConfig) -> dict[CopilotLLMModel, str | None]:
+    """The model slugs an OpenCode connection sends, straight from config.
+
+    Not a catalog read: OpenCode resolves the slug itself and the operator
+    set it explicitly, so the registry would only be guessing.
+    """
+    return {
+        "standard": config.opencode_standard_model,
+        "advanced": config.opencode_advanced_model,
     }
 
 

@@ -40,6 +40,7 @@ class ProviderName(str, Enum):
     NVIDIA = "nvidia"
     OLLAMA = "ollama"
     OPENAI = "openai"
+    OPENCODE = "opencode"
     OPENWEATHERMAP = "openweathermap"
     OPEN_ROUTER = "open_router"
     PINECONE = "pinecone"

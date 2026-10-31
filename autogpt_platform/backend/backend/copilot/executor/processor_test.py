@@ -13,7 +13,7 @@ import logging
 import threading
 import time
 from collections.abc import Iterator
-from contextlib import asynccontextmanager, contextmanager
+from contextlib import ExitStack, asynccontextmanager, contextmanager
 from types import SimpleNamespace
 from unittest.mock import AsyncMock, MagicMock, patch
 
@@ -25,6 +25,7 @@ from backend.copilot.ai_spans import current_span_id
 from backend.copilot.engine import resolve_use_sdk
 from backend.copilot.executor.processor import (
     _CODEX_CREDENTIAL_ACQUIRE_TIMEOUT_SECONDS,
+    _acquire_opencode_credential_lease,
     CoPilotProcessor,
     _closing_at_model_output,
     _normalize_private_expert_session_tenancy,
@@ -62,7 +63,7 @@ from backend.copilot.tree import TurnEnvelope
 from backend.copilot.trial_cost_context import get_trial_cost_context
 from backend.copilot.trial_reads import SharedTrialReads, trial_reads_shared
 from backend.copilot.usage_activation import get_ready_usage_state
-from backend.data.model import OAuth2Credentials
+from backend.data.model import APIKeyCredentials, OAuth2Credentials
 from backend.data.pro_activation import UsageActivationState
 from backend.integrations.codex.transport import (
     CodexCredentialBusyError,
@@ -2103,3 +2104,100 @@ def test_a_chat_platform_session_promotes_its_envelope_to_tainted():
 
     # No envelope (a legacy queue entry) stays None rather than inventing one.
     assert taint_for_source_platform(None, slack) is None
+
+
+def _opencode_entry(**overrides) -> CoPilotExecutionEntry:
+    values = {
+        "session_id": "sess-opencode",
+        "turn_id": "turn-opencode",
+        "user_id": "user-1",
+        "message": "hi",
+        "llm_auth_provider": "opencode",
+        "llm_credential_id": "cred-open",
+    }
+    values.update(overrides)
+    return CoPilotExecutionEntry(**values)
+
+
+def _opencode_lease(credentials: object) -> MagicMock:
+    lease = MagicMock()
+    lease.credentials = credentials
+    lease.release = AsyncMock()
+    return lease
+
+
+def _opencode_api_key(credential_id: str = "cred-open") -> APIKeyCredentials:
+    return APIKeyCredentials(
+        provider="opencode", id=credential_id, api_key=SecretStr("oc_sk_test")
+    )
+
+
+@pytest.mark.asyncio
+async def test_opencode_lease_returns_the_users_key():
+    lease = _opencode_lease(_opencode_api_key())
+    manager = MagicMock()
+    manager.acquire_lease = AsyncMock(return_value=lease)
+
+    with patch(
+        "backend.copilot.executor.processor.IntegrationCredentialsManager",
+        return_value=manager,
+    ):
+        acquired = await _acquire_opencode_credential_lease(_opencode_entry())
+
+    assert acquired is lease
+    manager.acquire_lease.assert_awaited_once_with("user-1", "cred-open")
+    lease.release.assert_not_awaited()
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    ("entry", "code"),
+    [
+        (_opencode_entry(user_id=None), "opencode_user_required"),
+        (_opencode_entry(llm_credential_id=None), "opencode_credential_required"),
+    ],
+)
+async def test_opencode_lease_refuses_an_incomplete_route(entry, code):
+    with pytest.raises(RuntimeError, match=code):
+        await _acquire_opencode_credential_lease(entry)
+
+
+@pytest.mark.asyncio
+async def test_opencode_lease_refuses_a_credential_of_another_shape():
+    lease = _opencode_lease(
+        OAuth2Credentials(
+            provider="opencode",
+            id="cred-open",
+            access_token=SecretStr("not-an-api-key"),
+            refresh_token=SecretStr("refresh"),
+            scopes=[],
+        )
+    )
+    manager = MagicMock()
+    manager.acquire_lease = AsyncMock(return_value=lease)
+
+    with (
+        patch(
+            "backend.copilot.executor.processor.IntegrationCredentialsManager",
+            return_value=manager,
+        ),
+        pytest.raises(RuntimeError, match="opencode_credential_not_found"),
+    ):
+        await _acquire_opencode_credential_lease(_opencode_entry())
+
+    lease.release.assert_awaited_once()
+
+
+@pytest.mark.asyncio
+async def test_opencode_lease_maps_a_store_failure_to_unavailable():
+    manager = MagicMock()
+    manager.acquire_lease = AsyncMock(side_effect=RuntimeError("store down"))
+
+    with (
+        patch(
+            "backend.copilot.executor.processor.IntegrationCredentialsManager",
+            return_value=manager,
+        ),
+        pytest.raises(RuntimeError, match="opencode_credential_unavailable"),
+    ):
+        await _acquire_opencode_credential_lease(_opencode_entry())

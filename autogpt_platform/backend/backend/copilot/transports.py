@@ -19,7 +19,7 @@ from pydantic import BaseModel
 
 from backend.copilot.config import ChatConfig, CopilotLlmAuthProvider
 from backend.data.db_accessors import user_db
-from backend.data.model import Credentials, OAuth2Credentials
+from backend.data.model import APIKeyCredentials, Credentials, OAuth2Credentials
 from backend.data.user import set_user_default_chat_route
 from backend.integrations.codex.access import has_codex_access_for_discovery
 from backend.integrations.codex.auth_bundle import CodexAuthBundleError
@@ -112,6 +112,16 @@ async def get_chat_transports(user_id: str) -> list[ChatTransportResponse]:
             default=False,
         )
         for credentials in await _valid_microsoft_365_copilot_credentials(user_id)
+    )
+    transports.extend(
+        ChatTransportResponse(
+            auth_provider="opencode",
+            credential_id=credentials.id,
+            label="OpenCode",
+            available=True,
+            default=False,
+        )
+        for credentials in await _valid_opencode_credentials(user_id)
     )
 
     saved_provider, saved_credential_id = await user_db().get_user_default_chat_route(
@@ -283,6 +293,32 @@ def _is_valid_codex_credentials(credentials: Credentials | None) -> bool:
     except CodexAuthBundleError:
         return False
     return True
+
+
+async def _valid_opencode_credentials(user_id: str) -> list[Credentials]:
+    credentials = await credentials_manager.store.get_creds_by_provider(
+        user_id, "opencode"
+    )
+    return [
+        credential
+        for credential in credentials
+        if _is_valid_opencode_credentials(credential)
+    ]
+
+
+def _is_valid_opencode_credentials(credentials: Credentials | None) -> bool:
+    """An API key is only useful while it has not expired.
+
+    OpenCode keys carry no account identity to check, so validity is shape
+    plus the optional ``expires_at`` the credential itself records.
+    """
+    return (
+        isinstance(credentials, APIKeyCredentials)
+        and credentials.provider == "opencode"
+        and (
+            credentials.expires_at is None or credentials.expires_at > int(time.time())
+        )
+    )
 
 
 async def _valid_microsoft_365_copilot_credentials(

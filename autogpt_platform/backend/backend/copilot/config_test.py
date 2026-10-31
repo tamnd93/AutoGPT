@@ -43,6 +43,9 @@ _ENV_VARS_TO_CLEAR = (
     "CHAT_TITLE_MODEL",
     "CHAT_SIMULATION_MODEL",
     "CHAT_STREAM_REPLAY_COUNT",
+    "OPENCODE_BASE_URL",
+    "OPENCODE_STANDARD_MODEL",
+    "OPENCODE_ADVANCED_MODEL",
 )
 
 
@@ -1208,3 +1211,31 @@ class TestPosthogBuiltinToolSpans:
     def test_env_turns_it_off(self, monkeypatch: pytest.MonkeyPatch) -> None:
         monkeypatch.setenv("CHAT_POSTHOG_BUILTIN_TOOL_SPANS", "false")
         assert ChatConfig().posthog_builtin_tool_spans is False
+
+
+class TestOpenCodeTransport:
+    """The per-user OpenCode connection's defaults and env overrides."""
+
+    def test_go_gateway_and_models_are_the_defaults(self):
+        cfg = ChatConfig()
+        assert cfg.opencode_base_url == "https://opencode.ai/inference/go/anthropic"
+        assert cfg.opencode_standard_model == "claude-haiku-5-5"
+        assert cfg.opencode_advanced_model == "claude-haiku-5-5"
+
+    def test_env_overrides_reach_the_fields(self, monkeypatch: pytest.MonkeyPatch):
+        monkeypatch.setenv(
+            "OPENCODE_BASE_URL", "https://opencode.ai/inference/anthropic"
+        )
+        monkeypatch.setenv("OPENCODE_STANDARD_MODEL", "glm-5.3")
+        monkeypatch.setenv("OPENCODE_ADVANCED_MODEL", "gpt-6-luna")
+        cfg = ChatConfig()
+        assert cfg.opencode_base_url == "https://opencode.ai/inference/anthropic"
+        assert cfg.opencode_standard_model == "glm-5.3"
+        assert cfg.opencode_advanced_model == "gpt-6-luna"
+
+    def test_the_provider_is_a_chat_auth_provider(self):
+        from typing import get_args
+
+        from .config import CopilotLlmAuthProvider
+
+        assert "opencode" in get_args(CopilotLlmAuthProvider)

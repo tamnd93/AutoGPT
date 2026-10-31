@@ -108,3 +108,19 @@ def test_falls_back_to_the_slug_tail_for_an_unlisted_model(real_catalog) -> None
 
 def test_has_no_name_for_no_model(real_catalog) -> None:
     assert display_name(None) is None
+
+
+@pytest.mark.asyncio
+async def test_describes_opencode_from_transport_configuration(
+    real_catalog, monkeypatch
+) -> None:
+    monkeypatch.setenv("OPENCODE_STANDARD_MODEL", "glm-5.3")
+
+    providers = await describe_provider_tiers(USER_ID)
+
+    opencode = next(p for p in providers if p.provider_family == "opencode")
+    assert opencode.display_name == "OpenCode"
+    assert [(tier.tier, tier.display_model) for tier in opencode.tiers] == [
+        ("standard", "glm-5.3"),
+        ("advanced", "claude-haiku-5-5"),
+    ]

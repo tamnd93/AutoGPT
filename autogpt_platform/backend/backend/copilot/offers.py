@@ -18,6 +18,7 @@ from backend.copilot.config import ChatConfig, CopilotLlmAuthProvider, CopilotLL
 from backend.copilot.provider_tiers import (
     TIER_LABELS,
     codex_tier_models,
+    opencode_tier_models,
     platform_tier_models,
     resolve_engine_mode,
 )
@@ -93,9 +94,10 @@ async def get_connection_offers(user_id: str) -> list[AIConnectionOffer]:
     mode = await resolve_engine_mode(user_id, config)
     models = await platform_tier_models(mode, user_id, config)
     codex_models = codex_tier_models(mode)
+    opencode_models = opencode_tier_models(config)
     advanced_allowed = await advanced_tier_allowed(user_id)
     offers = [
-        _offer(transport, models, codex_models, advanced_allowed)
+        _offer(transport, models, codex_models, opencode_models, advanced_allowed)
         for transport in await get_chat_transports(user_id)
     ]
     locked = await _locked_codex_offer(user_id, offers, codex_models)
@@ -234,6 +236,7 @@ def _offer(
     transport: ChatTransportResponse,
     platform_models: dict[CopilotLLMModel, str | None],
     codex_models: dict[CopilotLLMModel, str | None],
+    opencode_models: dict[CopilotLLMModel, str | None],
     advanced_allowed: bool,
 ) -> AIConnectionOffer:
     return AIConnectionOffer(
@@ -252,6 +255,7 @@ def _offer(
             transport,
             platform_models,
             codex_models,
+            opencode_models,
             advanced_allowed,
         ),
         limitations=_limitations(transport),
@@ -262,11 +266,17 @@ def _tiers_for(
     transport: ChatTransportResponse,
     platform_models: dict[CopilotLLMModel, str | None],
     codex_models: dict[CopilotLLMModel, str | None],
+    opencode_models: dict[CopilotLLMModel, str | None],
     advanced_allowed: bool,
 ) -> list[ConnectionTier]:
     if transport.auth_provider == "microsoft_365_copilot":
         return []
-    models = platform_models if transport.auth_provider == "platform" else codex_models
+    if transport.auth_provider == "opencode":
+        models = opencode_models
+    elif transport.auth_provider == "platform":
+        models = platform_models
+    else:
+        models = codex_models
     return [
         ConnectionTier(
             tier=tier,
@@ -292,6 +302,8 @@ def _provider_family(auth_provider: CopilotLlmAuthProvider) -> str:
         return "openai"
     if auth_provider == "microsoft_365_copilot":
         return "microsoft"
+    if auth_provider == "opencode":
+        return "opencode"
     return "autogpt"
 
 
@@ -300,6 +312,8 @@ def _auth_method(auth_provider: CopilotLlmAuthProvider) -> str:
         return "chatgpt_oauth"
     if auth_provider == "microsoft_365_copilot":
         return "device_code"
+    if auth_provider == "opencode":
+        return "api_key"
     return "deployment"
 
 
@@ -312,6 +326,8 @@ def _backed_by_label(transport: ChatTransportResponse) -> str:
         return "Your ChatGPT plan"
     if transport.auth_provider == "microsoft_365_copilot":
         return "Your Microsoft 365 Copilot plan"
+    if transport.auth_provider == "opencode":
+        return "Your OpenCode plan"
     return "Your AutoGPT plan" if _is_hosted() else "This server's chat provider"
 
 
@@ -331,6 +347,11 @@ def _description(transport: ChatTransportResponse) -> str:
             "New chats are backed by your work or school Microsoft 365 "
             "Copilot plan, and spend no AutoGPT credits."
         )
+    if transport.auth_provider == "opencode":
+        return (
+            "New chats are backed by your OpenCode subscription, and spend no "
+            "AutoGPT credits."
+        )
     if _is_hosted():
         return "New chats are backed by your AutoGPT plan, and spend AutoGPT credits."
     return "New chats are backed by the chat provider configured on this server."
@@ -338,9 +359,9 @@ def _description(transport: ChatTransportResponse) -> str:
 
 def _limitations(transport: ChatTransportResponse) -> list[str]:
     limitations: list[str] = []
-    if transport.auth_provider in {"codex", "microsoft_365_copilot"}:
+    if transport.auth_provider in {"codex", "microsoft_365_copilot", "opencode"}:
         # Stated because it is a real edge a user can hit, not a policy note:
-        # the builder panel rejects a codex route outright.
+        # the builder panel rejects a Codex or OpenCode route outright.
         limitations.append("The workflow builder's chat panel always runs on AutoGPT.")
     if transport.auth_provider == "microsoft_365_copilot":
         limitations.extend(

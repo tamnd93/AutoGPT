@@ -832,3 +832,61 @@ class TestCliUserMessage:
             "session_id": "s1",
             "client_composed": True,
         }
+
+
+class TestBuildSdkEnvByok:
+    """A user-owned BYOK gateway (OpenCode) overrides the deployment route."""
+
+    def test_points_the_cli_at_the_users_gateway(self):
+        cfg = _make_config()
+        with patch("backend.copilot.sdk.env.config", cfg):
+            from backend.copilot.sdk.env import build_sdk_env
+
+            result = build_sdk_env(
+                session_id="sess-123",
+                byok_base_url="https://opencode.ai/inference/go/anthropic/",
+                byok_api_key="oc_sk_test",
+            )
+
+        assert result["ANTHROPIC_BASE_URL"] == (
+            "https://opencode.ai/inference/go/anthropic"
+        )
+        assert result["ANTHROPIC_AUTH_TOKEN"] == "oc_sk_test"
+        assert result["ANTHROPIC_API_KEY"] == ""
+        assert result["CLAUDE_CODE_OAUTH_TOKEN"] == ""
+        assert "x-opencode-session: ses_sess-123" in result["ANTHROPIC_CUSTOM_HEADERS"]
+
+    def test_the_session_header_is_omitted_without_a_session(self):
+        cfg = _make_config()
+        with patch("backend.copilot.sdk.env.config", cfg):
+            from backend.copilot.sdk.env import build_sdk_env
+
+            result = build_sdk_env(
+                byok_base_url="https://opencode.ai/inference/go/anthropic",
+                byok_api_key="oc_sk_test",
+            )
+
+        assert "x-opencode-session" not in result["ANTHROPIC_CUSTOM_HEADERS"]
+
+    def test_one_half_of_the_pair_is_a_configuration_error(self):
+        cfg = _make_config()
+        with patch("backend.copilot.sdk.env.config", cfg):
+            from backend.copilot.sdk.env import build_sdk_env
+
+            with pytest.raises(ValueError, match="byok_base_url"):
+                build_sdk_env(
+                    byok_base_url="https://opencode.ai/inference/go/anthropic"
+                )
+            with pytest.raises(ValueError, match="byok_base_url"):
+                build_sdk_env(byok_api_key="oc_sk_test")
+
+    def test_an_empty_key_is_refused(self):
+        cfg = _make_config()
+        with patch("backend.copilot.sdk.env.config", cfg):
+            from backend.copilot.sdk.env import build_sdk_env
+
+            with pytest.raises(ValueError, match="must not be empty"):
+                build_sdk_env(
+                    byok_base_url="https://opencode.ai/inference/go/anthropic",
+                    byok_api_key="",
+                )

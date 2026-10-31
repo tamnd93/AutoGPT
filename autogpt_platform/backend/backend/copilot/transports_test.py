@@ -14,7 +14,7 @@ from backend.copilot.transports import (
     resolve_default_chat_route,
     save_default_chat_route,
 )
-from backend.data.model import OAuth2Credentials
+from backend.data.model import APIKeyCredentials, OAuth2Credentials
 from backend.integrations.codex.auth_bundle import (
     CodexAuthBundleV1,
     CodexAuthTokensV1,
@@ -450,3 +450,66 @@ async def test_expired_microsoft_token_without_refresh_is_not_listed() -> None:
         for transport in await get_chat_transports(USER_ID)
         if transport.auth_provider == "microsoft_365_copilot"
     ]
+
+
+def _opencode_credentials(
+    credential_id: str = "cred-opencode", expires_at: int | None = None
+) -> APIKeyCredentials:
+    return APIKeyCredentials(
+        id=credential_id,
+        provider="opencode",
+        api_key=SecretStr("oc_sk_test"),
+        expires_at=expires_at,
+    )
+
+
+@pytest.mark.asyncio
+async def test_an_opencode_key_is_a_transport() -> None:
+    transports.credentials_manager.store.get_creds_by_provider.side_effect = (
+        lambda _user_id, provider: (
+            [_opencode_credentials()] if provider == "opencode" else []
+        )
+    )
+
+    opencode = [
+        transport
+        for transport in await get_chat_transports(USER_ID)
+        if transport.auth_provider == "opencode"
+    ]
+
+    (transport,) = opencode
+    assert transport.credential_id == "cred-opencode"
+    assert transport.label == "OpenCode"
+    assert transport.available is True
+
+
+@pytest.mark.asyncio
+async def test_an_expired_opencode_key_is_not_listed() -> None:
+    transports.credentials_manager.store.get_creds_by_provider.side_effect = (
+        lambda _user_id, provider: (
+            [_opencode_credentials(expires_at=1)] if provider == "opencode" else []
+        )
+    )
+
+    assert not [
+        transport
+        for transport in await get_chat_transports(USER_ID)
+        if transport.auth_provider == "opencode"
+    ]
+
+
+@pytest.mark.asyncio
+async def test_an_opencode_key_alone_becomes_the_default(
+    mocker: pytest_mock.MockerFixture,
+) -> None:
+    _self_hosted_without_deployment(mocker)
+    transports.credentials_manager.store.get_creds_by_provider.side_effect = (
+        lambda _user_id, provider: (
+            [_opencode_credentials()] if provider == "opencode" else []
+        )
+    )
+
+    assert _default_of(await get_chat_transports(USER_ID)) == (
+        "opencode",
+        "cred-opencode",
+    )
