@@ -25,8 +25,8 @@ from backend.copilot.ai_spans import current_span_id
 from backend.copilot.engine import resolve_use_sdk
 from backend.copilot.executor.processor import (
     _CODEX_CREDENTIAL_ACQUIRE_TIMEOUT_SECONDS,
-    _acquire_opencode_credential_lease,
     CoPilotProcessor,
+    _acquire_opencode_credential_lease,
     _closing_at_model_output,
     _normalize_private_expert_session_tenancy,
     _wait_for_expert_setup,
