@@ -1,6 +1,7 @@
 import Script from "next/script";
 import { isValidElement, type ReactElement, type ReactNode } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { LocaleProvider } from "@/lib/i18n";
 import RootLayout from "../layout";
 
 vi.mock("@/components/styles/fonts", () => ({
@@ -29,6 +30,9 @@ vi.mock("@/services/analytics/VercelSpeedInsights", () => ({
 vi.mock("@tanstack/react-query-devtools", () => ({
   ReactQueryDevtools: () => null,
 }));
+vi.mock("@/lib/i18n/server", () => ({
+  readLocale: async () => "vi",
+}));
 
 interface ScriptProps {
   id?: string;
@@ -51,9 +55,36 @@ function findScripts(node: ReactNode): ScriptProps[] {
   return findScripts(element.props.children);
 }
 
+function findElement<Props>(
+  node: ReactNode,
+  type: unknown,
+): ReactElement<Props> | undefined {
+  if (Array.isArray(node)) {
+    return node.reduce<ReactElement<Props> | undefined>(
+      (found, child) => found ?? findElement<Props>(child, type),
+      undefined,
+    );
+  }
+  if (!isValidElement(node)) return undefined;
+  const element = node as ReactElement<{ children?: ReactNode }>;
+  if (element.type === type) return element as ReactElement<Props>;
+  return findElement<Props>(element.props.children, type);
+}
+
 async function renderedScripts() {
   return findScripts(await RootLayout({ children: null }));
 }
+
+describe("RootLayout locale", () => {
+  it("puts the server locale on the document and hands it to the page", async () => {
+    const tree = await RootLayout({ children: null });
+
+    expect(findElement<{ lang: string }>(tree, "html")?.props.lang).toBe("vi");
+    expect(
+      findElement<{ locale: string }>(tree, LocaleProvider)?.props.locale,
+    ).toBe("vi");
+  });
+});
 
 describe("RootLayout consent scripts", () => {
   afterEach(() => {
