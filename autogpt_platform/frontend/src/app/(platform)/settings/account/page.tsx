@@ -8,6 +8,7 @@ import { Flag, useGetFlag } from "@/services/feature-flags/use-get-flag";
 
 import { AccountCard } from "./components/AccountCard/AccountCard";
 import { BrowserNotificationsCard } from "./components/BrowserNotificationsCard/BrowserNotificationsCard";
+import { LanguageCard } from "./components/LanguageCard/LanguageCard";
 import { NotificationsCard } from "./components/NotificationsCard/NotificationsCard";
 import { PreferencesHeader } from "./components/PreferencesHeader/PreferencesHeader";
 import { CookieSettingsCard } from "./components/CookieSettingsCard/CookieSettingsCard";
@@ -39,7 +40,7 @@ export default function SettingsPreferencesPage() {
   } = usePreferencesPage();
 
   const showNotifications = useGetFlag(Flag.SETTINGS_NOTIFICATIONS);
-  const browserCardIndex = showNotifications ? 3 : 2;
+  const browserCardIndex = showNotifications ? 4 : 3;
 
   if (isError) {
     return (
@@ -65,10 +66,12 @@ export default function SettingsPreferencesPage() {
 
       <AccountCard user={user} index={0} />
 
+      <LanguageCard index={1} />
+
       <TimezoneCard
         value={formState.timezone}
         onChange={setTimezone}
-        index={1}
+        index={2}
       />
 
       {showNotifications ? (
@@ -77,7 +80,7 @@ export default function SettingsPreferencesPage() {
           onBriefingFrequencyChange={setBriefingFrequency}
           onAlertsChange={setAlertsEnabled}
           onStoreVerdictsChange={setStoreVerdictsEnabled}
-          index={2}
+          index={3}
         />
       ) : null}
 
