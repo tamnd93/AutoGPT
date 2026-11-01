@@ -192,6 +192,18 @@ export function groupCredentialsByProvider(
   return groups;
 }
 
+// OpenCode pays for chats without giving any block a key, so its credential
+// belongs in the AI subscriptions section above the tool list, not in it.
+const AI_SUBSCRIPTION_PROVIDERS: ReadonlySet<string> = new Set(["opencode"]);
+
+export function withoutAiSubscriptionCredentials<
+  T extends { provider: string },
+>(credentials: T[]): T[] {
+  return credentials.filter(
+    (credential) => !AI_SUBSCRIPTION_PROVIDERS.has(credential.provider),
+  );
+}
+
 function normalizeSearchText(value: string): string {
   return value.normalize("NFKD").replace(/[̀-ͯ]/g, "").toLowerCase();
 }

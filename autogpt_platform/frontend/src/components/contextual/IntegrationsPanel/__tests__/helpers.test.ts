@@ -7,6 +7,7 @@ import {
   formatMaskedValue,
   formatProviderName,
   groupCredentialsByProvider,
+  withoutAiSubscriptionCredentials,
   type CredentialView,
   type ProviderGroupView,
 } from "../helpers";
@@ -195,6 +196,19 @@ describe("groupCredentialsByProvider", () => {
     expect(github?.credentials.find((c) => c.id === "3")?.title).toBe(
       "Personal",
     );
+  });
+});
+
+describe("withoutAiSubscriptionCredentials", () => {
+  test("keeps the subscription that pays for chats out of the tool list", () => {
+    const credentials = [
+      makeCred({ id: "tool", provider: "github" }),
+      makeCred({ id: "subscription", provider: "opencode", title: "OpenCode" }),
+    ];
+
+    expect(
+      withoutAiSubscriptionCredentials(credentials).map((c) => c.id),
+    ).toEqual(["tool"]);
   });
 });
 

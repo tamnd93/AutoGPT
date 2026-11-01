@@ -10,6 +10,7 @@ import {
   blockServiceKeys,
   filterProviders,
   groupCredentialsByProvider,
+  withoutAiSubscriptionCredentials,
   type ProviderGroupView,
 } from "../../helpers";
 import {
@@ -25,7 +26,11 @@ export function useIntegrationsList(query: string) {
   const credentialsQuery = useGetV1ListCredentials({
     query: {
       select: (response) =>
-        response.status === 200 ? filterSystemCredentials(response.data) : [],
+        response.status === 200
+          ? withoutAiSubscriptionCredentials(
+              filterSystemCredentials(response.data),
+            )
+          : [],
     },
   });
 
