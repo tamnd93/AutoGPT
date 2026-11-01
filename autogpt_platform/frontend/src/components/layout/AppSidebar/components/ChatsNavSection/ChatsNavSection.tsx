@@ -1,5 +1,6 @@
 "use client";
 
+import { useT } from "@/lib/i18n";
 import { tourTarget } from "@/lib/tour-targets";
 import { motion, type Variants } from "framer-motion";
 import { Suspense } from "react";
@@ -19,6 +20,7 @@ export function ChatsNavSection({ itemVariants }: Props) {
     recentChatsRef,
     jumpToRecentChats,
   } = useJumpToRecentChats();
+  const t = useT();
 
   // One stagger slot: only one of the two is ever displayed.
   return (
@@ -32,7 +34,7 @@ export function ChatsNavSection({ itemVariants }: Props) {
         className="group-data-[collapsible=icon]:hidden"
       >
         <CollapsibleNavGroup
-          label="Recent chats"
+          label={t("nav.recentChats")}
           open={isRecentChatsOpen}
           onOpenChange={setIsRecentChatsOpen}
         >

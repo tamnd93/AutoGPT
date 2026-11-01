@@ -6,6 +6,7 @@ import {
   SidebarMenuItem,
 } from "@/components/molecules/Sidebar/Sidebar";
 import { BubbleChatIcon } from "@hugeicons/core-free-icons";
+import { useT } from "@/lib/i18n";
 import { useNavItemClassName } from "../../useNavItemClassName";
 
 interface Props {
@@ -13,6 +14,7 @@ interface Props {
 }
 
 export function ChatsRailItem({ onClick }: Props) {
+  const t = useT();
   const navItemClassName = useNavItemClassName();
 
   return (
@@ -20,7 +22,7 @@ export function ChatsRailItem({ onClick }: Props) {
       <SidebarMenu className="group-data-[collapsible=icon]:gap-1">
         <SidebarMenuItem>
           <SidebarMenuButton
-            tooltip="Chats"
+            tooltip={t("nav.chats")}
             onClick={onClick}
             className={navItemClassName}
           >
@@ -28,7 +30,7 @@ export function ChatsRailItem({ onClick }: Props) {
               icon={BubbleChatIcon}
               className="size-4 text-sidebar-foreground/90 group-data-[collapsible=icon]:size-4.5"
             />
-            <span className="truncate">Chats</span>
+            <span className="truncate">{t("nav.chats")}</span>
           </SidebarMenuButton>
         </SidebarMenuItem>
       </SidebarMenu>

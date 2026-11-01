@@ -8,6 +8,7 @@ import type { HomeDashboardResponse } from "@/app/api/__generated__/models/homeD
 import { server } from "@/mocks/mock-server";
 import { render, screen, waitFor } from "@/tests/integrations/test-utils";
 import { SidebarProvider } from "@/components/molecules/Sidebar/Sidebar";
+import { LocaleProvider } from "@/lib/i18n";
 import type { ReactNode } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -203,5 +204,25 @@ describe("AppSidebar", () => {
     await waitFor(() =>
       expect(screen.queryByRole("link", { name: /Maria/i })).toBeNull(),
     );
+  });
+
+  it("reads the navigation labels in Vietnamese when the app is set to Vietnamese", () => {
+    render(
+      <LocaleProvider locale="vi">
+        <SidebarProvider>
+          <AppSidebar />
+        </SidebarProvider>
+      </LocaleProvider>,
+    );
+
+    expect(screen.getByText("Trang chủ")).toBeDefined();
+    expect(screen.getByText("Marketplace")).toBeDefined();
+    expect(screen.getByText("Tạo workflow")).toBeDefined();
+    expect(screen.getByText("Đội của bạn")).toBeDefined();
+    expect(screen.getByText("Tệp")).toBeDefined();
+    expect(screen.getByText("Không gian làm việc")).toBeDefined();
+    expect(screen.getByText("Đoạn chat gần đây")).toBeDefined();
+    expect(screen.getByText("Đoạn chat")).toBeDefined();
+    expect(screen.queryByText("Home")).toBeNull();
   });
 });

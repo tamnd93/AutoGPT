@@ -14,6 +14,7 @@ import {
   useSidebar,
 } from "@/components/molecules/Sidebar/Sidebar";
 import { useAuth } from "@/lib/auth/hooks/useAuth";
+import { useT, type MessageKey } from "@/lib/i18n";
 import { isEditableElement } from "@/lib/platform";
 import {
   AddTeamIcon,
@@ -38,7 +39,9 @@ import { SidebarUserActions } from "./components/SidebarUserActions/SidebarUserA
 import { useNavItemClassName } from "./useNavItemClassName";
 
 type NavLink = {
-  name: string;
+  /** English fallback for a link that is not shown in the translated UI. */
+  name?: string;
+  labelKey?: MessageKey;
   href: string;
   icon: IconSvgElement;
   /** Pointed at by the first-run walkthrough. */
@@ -47,13 +50,13 @@ type NavLink = {
 
 const MAIN_LINKS: NavLink[] = [
   { name: "Workflows", href: "/library", icon: GridViewIcon },
-  { name: "Marketplace", href: "/marketplace", icon: Store01Icon },
-  { name: "Build", href: "/build", icon: FlowIcon },
+  { labelKey: "nav.marketplace", href: "/marketplace", icon: Store01Icon },
+  { labelKey: "nav.build", href: "/build", icon: FlowIcon },
 ];
 
 const WORKSPACE_LINKS: NavLink[] = [
   {
-    name: "Files",
+    labelKey: "nav.files",
     href: "/artifacts",
     icon: Folder01Icon,
     tourTarget: "files",
@@ -101,6 +104,7 @@ function HomeIcon() {
 }
 
 function HomeItem() {
+  const t = useT();
   const pathname = usePathname();
   const navItemClassName = useNavItemClassName();
 
@@ -108,13 +112,13 @@ function HomeItem() {
     <SidebarMenuItem>
       <SidebarMenuButton
         asChild
-        tooltip="Home"
+        tooltip={t("nav.home")}
         isActive={isLinkActive(pathname, "/home")}
         className={navItemClassName}
       >
         <Link href="/home">
           <HomeIcon />
-          <span className="truncate">Home</span>
+          <span className="truncate">{t("nav.home")}</span>
           <ShortcutHint letter="O" />
         </Link>
       </SidebarMenuButton>
@@ -127,14 +131,16 @@ interface NavItemProps {
 }
 
 function NavItem({ link }: NavItemProps) {
+  const t = useT();
   const pathname = usePathname();
   const navItemClassName = useNavItemClassName();
+  const label = link.labelKey ? t(link.labelKey) : link.name;
 
   return (
     <SidebarMenuItem {...(link.tourTarget && tourTarget(link.tourTarget))}>
       <SidebarMenuButton
         asChild
-        tooltip={link.name}
+        tooltip={label}
         isActive={isLinkActive(pathname, link.href)}
         className={navItemClassName}
       >
@@ -143,7 +149,7 @@ function NavItem({ link }: NavItemProps) {
             icon={link.icon}
             className="size-4 text-sidebar-foreground/90 group-data-[collapsible=icon]:size-4.5"
           />
-          <span className="truncate">{link.name}</span>
+          <span className="truncate">{label}</span>
           <NavLinkLoader />
         </Link>
       </SidebarMenuButton>
@@ -172,6 +178,7 @@ type Props = ComponentProps<typeof Sidebar>;
 
 export function AppSidebar(props: Props) {
   const { isLoggedIn } = useAuth();
+  const t = useT();
   const reduceMotion = useReducedMotion();
   const { isMobile } = useSidebar();
   const itemVariants = getSidebarItemVariants(!!reduceMotion);
@@ -181,7 +188,7 @@ export function AppSidebar(props: Props) {
 
   const workspaceLinks = [
     {
-      name: "Team",
+      labelKey: "nav.team" as const,
       href: "/team",
       icon: AddTeamIcon,
       tourTarget: "team" as const,
@@ -227,7 +234,7 @@ export function AppSidebar(props: Props) {
 
           {workspaceLinks.length > 0 ? (
             <motion.div variants={itemVariants} {...tourTarget("workspace")}>
-              <CollapsibleNavGroup label="Workspace">
+              <CollapsibleNavGroup label={t("nav.workspace")}>
                 <NavMenu links={workspaceLinks} />
               </CollapsibleNavGroup>
             </motion.div>
