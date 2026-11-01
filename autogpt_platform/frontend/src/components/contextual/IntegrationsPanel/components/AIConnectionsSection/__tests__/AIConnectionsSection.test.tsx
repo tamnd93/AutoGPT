@@ -9,6 +9,7 @@ import {
   getGetV1ListCredentialsMockHandler200,
 } from "@/app/api/__generated__/endpoints/integrations/integrations.msw";
 import type { AIConnectionOffer } from "@/app/api/__generated__/models/aIConnectionOffer";
+import { LocaleProvider } from "@/lib/i18n";
 import { server } from "@/mocks/mock-server";
 import {
   act,
@@ -672,4 +673,67 @@ it("connects OpenCode from a pasted API key", async () => {
   );
   expect(await screen.findByText("Connected")).toBeDefined();
   expect(screen.queryByRole("button", { name: "OpenCode" })).toBeNull();
+});
+
+describe("AIConnectionsSection in Vietnamese", () => {
+  it("reads the subscriptions heading, its badges and manage action in Vietnamese", async () => {
+    mockTransports([platform(false), chatgpt(true)]);
+
+    render(
+      <LocaleProvider locale="vi">
+        <AIConnectionsSection />
+      </LocaleProvider>,
+    );
+
+    expect(
+      screen.getByRole("heading", { name: "Gói AI (đã đăng ký)" }),
+    ).toBeDefined();
+    expect(
+      screen.getByText(/Đây là nguồn chạy Otto và các expert của bạn/),
+    ).toBeDefined();
+    expect(
+      await screen.findByRole("radiogroup", {
+        name: "Kết nối mà chat mới sẽ dùng",
+      }),
+    ).toBeDefined();
+    expect(await screen.findByText("Đã kết nối")).toBeDefined();
+    expect(screen.getByText("Dùng cho chat mới")).toBeDefined();
+    expect(screen.getByRole("button", { name: "Quản lý" })).toBeDefined();
+  });
+
+  it("opens the OpenCode connect dialog in Vietnamese", async () => {
+    mockTransports([platform(true)]);
+
+    render(
+      <LocaleProvider locale="vi">
+        <AIConnectionsSection />
+      </LocaleProvider>,
+    );
+    await userEvent.click(
+      await screen.findByRole("button", { name: "OpenCode" }),
+    );
+
+    const dialog = await screen.findByRole("dialog");
+    expect(
+      within(dialog).getByRole("heading", { name: "Kết nối OpenCode" }),
+    ).toBeDefined();
+    expect(
+      within(dialog).getByText(/Dán khoá API từ OpenCode Console/),
+    ).toBeDefined();
+    expect(within(dialog).getByLabelText("Khoá API")).toBeDefined();
+    expect(
+      within(dialog).getByRole("button", { name: "Kết nối" }),
+    ).toBeDefined();
+  });
+
+  it("keeps today's English when no locale is set", async () => {
+    mockTransports([platform(true)]);
+
+    render(<AIConnectionsSection />);
+
+    expect(
+      await screen.findByRole("heading", { name: "AI subscriptions" }),
+    ).toBeDefined();
+    expect(screen.queryByText("Gói AI (đã đăng ký)")).toBeNull();
+  });
 });

@@ -11,6 +11,7 @@ import { Button } from "@/components/atoms/Button/Button";
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { Skeleton } from "@/components/atoms/Skeleton/Skeleton";
 import { Text } from "@/components/atoms/Text/Text";
+import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
 import { IntegrationLogo } from "@/components/molecules/IntegrationLogo/IntegrationLogo";
@@ -40,6 +41,7 @@ export function AIConnectionsSection() {
     refetch,
   } = useAIConnectionsSection();
   const [managing, setManaging] = useState<AIConnectionOffer | null>(null);
+  const t = useT();
 
   // A failure here must not take the tool integrations below it down with it.
   if (isError) return null;
@@ -61,12 +63,12 @@ export function AIConnectionsSection() {
         id="ai-connections-heading"
         className="uppercase tracking-eyebrow text-foreground-body"
       >
-        AI subscriptions
+        {t("integrations.ai.title")}
       </Text>
       <Text variant="body" className="mt-2 max-w-[600px] text-foreground-body">
         {hasChoice
-          ? "These power Otto and your experts. Pick the one new chats should start on — you can still change it per conversation, and nothing switches on its own."
-          : "These power Otto and your experts. Link a subscription and you can choose which one new chats start on."}
+          ? t("integrations.ai.descriptionWithChoice")
+          : t("integrations.ai.descriptionSingle")}
       </Text>
 
       {isLoading ? (
@@ -77,7 +79,7 @@ export function AIConnectionsSection() {
       ) : (
         <div
           role={hasChoice ? "radiogroup" : undefined}
-          aria-label={hasChoice ? "Connection new chats start on" : undefined}
+          aria-label={hasChoice ? t("integrations.ai.startLabel") : undefined}
           className="mt-4 flex flex-col gap-3"
         >
           {connections.map((connection) => (
@@ -105,7 +107,7 @@ export function AIConnectionsSection() {
       {!isLoading && (
         <div
           role="group"
-          aria-label="Available AI subscriptions"
+          aria-label={t("integrations.ai.availableLabel")}
           className="mt-4 grid w-full grid-cols-2 gap-3 sm:grid-cols-4"
         >
           {!isChatGPTLinked && (
@@ -157,6 +159,7 @@ function ConnectionRow({
   onSelect,
   onManage,
 }: RowProps) {
+  const t = useT();
   const body = (
     <>
       {selectable && (
@@ -208,7 +211,7 @@ function ConnectionRow({
                 className="inline-flex items-center gap-1 rounded-[10px] bg-[#E8F8F0] px-2 py-[2px] text-body-sm font-medium leading-5 text-[#157E58]"
               >
                 <Icon icon={CheckmarkCircle02Icon} size={13} />
-                Connected
+                {t("integrations.connected")}
               </span>
             )}
           {account && (
@@ -225,7 +228,7 @@ function ConnectionRow({
               className="inline-flex items-center gap-1 rounded-[10px] bg-[#F1EBFF] px-2 py-[2px] text-body-sm font-medium leading-5 text-[#4A25AD]"
             >
               <Icon icon={SparklesIcon} size={13} />
-              Used for new chats
+              {t("integrations.usedForNewChats")}
             </span>
           )}
         </span>
@@ -263,7 +266,7 @@ function ConnectionRow({
       className="ml-auto flex-none self-center"
       onClick={onManage}
     >
-      Manage
+      {t("integrations.manage")}
     </Button>
   ) : null;
 

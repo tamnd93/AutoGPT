@@ -1,5 +1,6 @@
 import { describe, expect, test, vi } from "vitest";
 
+import { LocaleProvider } from "@/lib/i18n";
 import { fireEvent, render, screen } from "@/tests/integrations/test-utils";
 
 import { IntegrationsHeader } from "../IntegrationsHeader";
@@ -29,5 +30,18 @@ describe("IntegrationsHeader", () => {
     expect(buttons.length).toBeGreaterThan(0);
     fireEvent.click(buttons[0]);
     expect(onConnect).toHaveBeenCalledTimes(1);
+  });
+
+  test("reads Vietnamese when the app is set to Vietnamese", () => {
+    render(
+      <LocaleProvider locale="vi">
+        <IntegrationsHeader onConnect={() => {}} />
+      </LocaleProvider>,
+    );
+    expect(screen.getByRole("heading", { name: /^tích hợp$/i })).toBeDefined();
+    expect(screen.getByText(/Kết nối gói AI/)).toBeDefined();
+    expect(
+      screen.getAllByRole("button", { name: /kết nối dịch vụ/i }),
+    ).toHaveLength(2);
   });
 });

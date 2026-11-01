@@ -11,6 +11,7 @@ import { Input } from "@/components/atoms/Input/Input";
 import { Text } from "@/components/atoms/Text/Text";
 import { Dialog } from "@/components/molecules/Dialog/Dialog";
 import { toast } from "@/components/molecules/Toast/use-toast";
+import { useT } from "@/lib/i18n";
 import { invalidateConnectionQueries } from "@/lib/react-query/invalidateConnections";
 
 import { ProviderBox } from "./ProviderBox";
@@ -29,6 +30,7 @@ export function OpenCodeProviderBox({ isLinked, onSuccess }: Props) {
   const [isOpen, setIsOpen] = useState(false);
   const [apiKey, setApiKey] = useState("");
   const [isPending, setIsPending] = useState(false);
+  const t = useT();
 
   async function connect() {
     const key = apiKey.trim();
@@ -70,7 +72,7 @@ export function OpenCodeProviderBox({ isLinked, onSuccess }: Props) {
 
   return (
     <Dialog
-      title="Connect OpenCode"
+      title={t("integrations.opencode.dialogTitle")}
       variant="compact"
       controlled={{ isOpen, set: setIsOpen }}
     >
@@ -78,29 +80,28 @@ export function OpenCodeProviderBox({ isLinked, onSuccess }: Props) {
       <Dialog.Content>
         <div className="flex flex-col gap-4">
           <Text variant="small" as="p" tone="muted">
-            Paste the API key from your OpenCode Console. Chats on this
-            connection run on your OpenCode plan and spend no AutoGPT credits.
+            {t("integrations.opencode.description")}
           </Text>
           <Input
             id="opencode-api-key"
             type="password"
             autoComplete="new-password"
             spellCheck={false}
-            label="API key"
+            label={t("integrations.opencode.apiKeyLabel")}
             placeholder="oc_sk_..."
             value={apiKey}
             onChange={(event) => setApiKey(event.target.value)}
             wrapperClassName="!mb-0"
           />
           <Text variant="small" as="p" tone="muted">
-            Find the key in the OpenCode Console —{" "}
+            {t("integrations.opencode.docsHint")}{" "}
             <a
               href={OPENCODE_KEY_DOCS_URL}
               target="_blank"
               rel="noopener noreferrer"
               className="underline underline-offset-2"
             >
-              OpenCode docs
+              {t("integrations.opencode.docsLink")}
             </a>
             .
           </Text>
@@ -112,7 +113,7 @@ export function OpenCodeProviderBox({ isLinked, onSuccess }: Props) {
               void connect();
             }}
           >
-            Connect
+            {t("integrations.opencode.connect")}
           </Button>
         </div>
       </Dialog.Content>

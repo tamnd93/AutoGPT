@@ -4,6 +4,7 @@ import { type ReactNode } from "react";
 
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { Text } from "@/components/atoms/Text/Text";
+import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import {
   CheckmarkCircle02Icon,
@@ -35,6 +36,7 @@ export function ProviderBox({
   isBusy = false,
   onClick,
 }: Props) {
+  const t = useT();
   const body = (
     <>
       <span className="relative flex h-12 w-12 shrink-0 items-center justify-center">
@@ -86,12 +88,12 @@ export function ProviderBox({
             className="inline-flex items-center gap-1 rounded-[10px] bg-emerald-50 px-2 py-[2px] text-body-sm font-medium leading-5 text-emerald-700"
           >
             <Icon icon={CheckmarkCircle02Icon} size={13} />
-            Connected
+            {t("integrations.connected")}
           </span>
         )}
         {state === "coming-soon" && (
           <span className="inline-flex items-center rounded-[10px] bg-surface-hover px-2 py-[2px] text-body-sm font-medium leading-5 text-foreground-tertiary">
-            Coming soon
+            {t("integrations.comingSoon")}
           </span>
         )}
       </span>

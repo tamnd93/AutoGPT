@@ -3,6 +3,7 @@ import { Button } from "@/components/atoms/Button/Button";
 import { Text } from "@/components/atoms/Text/Text";
 import { PlusSignIcon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   onConnect: () => void;
@@ -10,6 +11,8 @@ interface Props {
 }
 
 export function IntegrationsHeader({ onConnect, withTitle = true }: Props) {
+  const t = useT();
+
   return (
     <div className="flex flex-col items-start gap-4 pb-6 pl-4 sm:flex-row sm:items-start sm:justify-between">
       <div className="flex min-w-0 flex-col">
@@ -20,15 +23,14 @@ export function IntegrationsHeader({ onConnect, withTitle = true }: Props) {
             as="h1"
             className="leading-7 text-[#1F1F20]"
           >
-            Integrations
+            {t("integrations.title")}
           </Text>
         )}
         <Text
           variant="body"
           className="mt-4 max-w-[600px] text-foreground-body"
         >
-          Connect AI subscriptions to power your experts, and third-party tools
-          for them to use.
+          {t("integrations.description")}
         </Text>
       </div>
 
@@ -39,7 +41,7 @@ export function IntegrationsHeader({ onConnect, withTitle = true }: Props) {
         onClick={onConnect}
         className="sm:hidden"
       >
-        Connect Service
+        {t("integrations.connectService")}
       </Button>
       <Button
         variant="primary"
@@ -48,7 +50,7 @@ export function IntegrationsHeader({ onConnect, withTitle = true }: Props) {
         onClick={onConnect}
         className="hidden sm:inline-flex"
       >
-        Connect Service
+        {t("integrations.connectService")}
       </Button>
     </div>
   );

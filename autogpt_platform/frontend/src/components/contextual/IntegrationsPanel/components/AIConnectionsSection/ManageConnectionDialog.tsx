@@ -7,6 +7,7 @@ import type { CredentialsMetaResponse } from "@/app/api/__generated__/models/cre
 import { Button } from "@/components/atoms/Button/Button";
 import { Text } from "@/components/atoms/Text/Text";
 import { Dialog } from "@/components/molecules/Dialog/Dialog";
+import { useT } from "@/lib/i18n";
 
 import { useOAuthConnect } from "../ConnectServiceDialog/components/DetailView/useOAuthConnect";
 import { DeleteConfirmDialog } from "../DeleteConfirmDialog/DeleteConfirmDialog";
@@ -66,6 +67,7 @@ function ChatGPTConnectionDialog({
   const credentialId = connection?.credential_id ?? null;
   const [forceMessage, setForceMessage] = useState<string | null>(null);
   const account = credential?.username ?? undefined;
+  const t = useT();
 
   // Asked for only while this dialog is open. Reading it leases a runtime
   // against the provider, so it must never run on the list behind — and it
@@ -143,10 +145,12 @@ function ChatGPTConnectionDialog({
                 variant="small"
                 className="text-[#8A8A90]"
               >
-                Connected account
+                {t("integrations.manage.connectedAccount")}
               </Text>
               <Text variant="body-medium" className="text-foreground-base">
-                {snapshot?.email ?? account ?? "Your ChatGPT account"}
+                {snapshot?.email ??
+                  account ??
+                  t("integrations.manage.chatgptAccount")}
               </Text>
               {accountQuery.isLoading ? (
                 <Text
@@ -154,7 +158,7 @@ function ChatGPTConnectionDialog({
                   variant="small"
                   className="text-[#8A8A90]"
                 >
-                  Checking with ChatGPT…
+                  {t("integrations.manage.checkingChatGPT")}
                 </Text>
               ) : accountQuery.isError ? (
                 <Text
@@ -162,11 +166,11 @@ function ChatGPTConnectionDialog({
                   variant="small"
                   className="text-[#8A8A90]"
                 >
-                  Could not reach ChatGPT to confirm the plan on this account.
+                  {t("integrations.manage.chatgptUnreachable")}
                 </Text>
               ) : requiresReconnect ? (
                 <Text variant="small" className="text-warning-foreground">
-                  ChatGPT says this connection needs to be reconnected.
+                  {t("integrations.manage.chatgptNeedsReconnect")}
                 </Text>
               ) : (
                 snapshot?.plan_type && (
@@ -187,14 +191,13 @@ function ChatGPTConnectionDialog({
               variant="small"
               className="text-[#8A8A90]"
             >
-              ChatGPT identifies the workspace behind this connection only by an
-              internal id, so it cannot be named here yet.
+              {t("integrations.manage.chatgptWorkspaceNote")}
             </Text>
 
             <Text variant="small" className="text-foreground-body">
               {connection?.is_default
-                ? "New chats start on this connection and run on your ChatGPT plan."
-                : "Chats you route here run on your ChatGPT plan instead of AutoGPT credits."}
+                ? t("integrations.manage.chatgptDefaultNote")
+                : t("integrations.manage.chatgptRoutedNote")}
             </Text>
 
             <div className="flex flex-col gap-2 pt-2 sm:flex-row sm:justify-end">
@@ -205,7 +208,7 @@ function ChatGPTConnectionDialog({
                 loading={isReconnecting}
                 disabled={isDisconnecting}
               >
-                Reconnect
+                {t("integrations.manage.reconnect")}
               </Button>
               <Button
                 variant="destructive"
@@ -214,7 +217,7 @@ function ChatGPTConnectionDialog({
                 loading={isDisconnecting}
                 disabled={isReconnecting}
               >
-                Disconnect
+                {t("integrations.manage.disconnect")}
               </Button>
             </div>
 
@@ -223,8 +226,7 @@ function ChatGPTConnectionDialog({
               variant="small"
               className="text-[#8A8A90]"
             >
-              Disconnecting stops new chats running on your ChatGPT plan. Your
-              chat history is kept, and your other integrations are unaffected.
+              {t("integrations.manage.chatgptDisconnectNote")}
             </Text>
           </div>
         </Dialog.Content>
@@ -253,6 +255,7 @@ interface OpenCodeProps {
 function OpenCodeConnectionDialog({ connection, onOpenChange }: OpenCodeProps) {
   const { remove, isPending: isDisconnecting } = useDeleteIntegration();
   const credentialId = connection.credential_id;
+  const t = useT();
 
   async function disconnect() {
     if (!credentialId) return;
@@ -273,8 +276,7 @@ function OpenCodeConnectionDialog({ connection, onOpenChange }: OpenCodeProps) {
       <Dialog.Content>
         <div className="flex flex-col gap-4">
           <Text variant="small" as="p" tone="muted">
-            Chats on this connection run on your OpenCode plan and spend no
-            AutoGPT credits.
+            {t("integrations.manage.opencodeNote")}
           </Text>
           <Button
             variant="destructive"
@@ -283,7 +285,7 @@ function OpenCodeConnectionDialog({ connection, onOpenChange }: OpenCodeProps) {
             loading={isDisconnecting}
             className="self-end"
           >
-            Disconnect
+            {t("integrations.manage.disconnect")}
           </Button>
         </div>
       </Dialog.Content>
@@ -312,6 +314,7 @@ function Microsoft365CopilotConnectionDialog({
       : undefined;
 
   const accountName = credential?.username ?? "Microsoft 365 Copilot";
+  const t = useT();
 
   function setManageOpen(open: boolean) {
     if (!open) setForceMessage(null);
@@ -358,12 +361,12 @@ function Microsoft365CopilotConnectionDialog({
                 variant="small"
                 className="text-[#8A8A90]"
               >
-                Connected work account
+                {t("integrations.manage.connectedWorkAccount")}
               </Text>
               <Text variant="body-medium" className="text-foreground-base">
                 {displayName ??
                   credential?.username ??
-                  "Microsoft 365 Copilot account"}
+                  t("integrations.manage.microsoftAccount")}
               </Text>
               {displayName && credential?.username && (
                 <Text variant="small" className="text-foreground-body">
@@ -376,14 +379,14 @@ function Microsoft365CopilotConnectionDialog({
                   variant="small"
                   className="text-[#8A8A90]"
                 >
-                  Reconnect once to show the signed-in account here.
+                  {t("integrations.manage.microsoftReconnectToShow")}
                 </Text>
               )}
             </div>
 
             <div className="flex flex-col gap-2">
               <Text variant="small-medium" className="text-foreground-body">
-                Access granted
+                {t("integrations.manage.accessGranted")}
               </Text>
               {accessLabels.length > 0 ? (
                 <div className="flex flex-wrap gap-2">
@@ -403,14 +406,13 @@ function Microsoft365CopilotConnectionDialog({
                   variant="small"
                   className="text-[#8A8A90]"
                 >
-                  Reconnect once to refresh the access shown here.
+                  {t("integrations.manage.microsoftReconnectToRefresh")}
                 </Text>
               )}
             </div>
 
             <Text variant="small" className="text-foreground-body">
-              Microsoft still limits every answer to content this work account
-              can already access in Microsoft 365.
+              {t("integrations.manage.microsoftLimitNote")}
             </Text>
 
             <div className="flex justify-end pt-1">
@@ -420,7 +422,7 @@ function Microsoft365CopilotConnectionDialog({
                 onClick={() => void disconnect()}
                 loading={isDisconnecting}
               >
-                Disconnect
+                {t("integrations.manage.disconnect")}
               </Button>
             </div>
 
@@ -429,9 +431,7 @@ function Microsoft365CopilotConnectionDialog({
               variant="small"
               className="text-[#8A8A90]"
             >
-              Disconnecting stops new chats using this Copilot subscription.
-              Your chat history is kept, and your other integrations are
-              unaffected.
+              {t("integrations.manage.microsoftDisconnectNote")}
             </Text>
           </div>
         </Dialog.Content>
