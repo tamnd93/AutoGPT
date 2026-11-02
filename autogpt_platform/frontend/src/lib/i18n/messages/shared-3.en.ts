@@ -61,6 +61,6 @@ export const Shared3En = {
   "shared3.errorCard.report": "Report Error",
   "shared3.errorCard.getHelp": "Get Help",
   "shared3.errorCard.retrieveFrame": "We had the following error when retrieving {context}:",
-  "shared3.errorCard.dataFallback": "your data",
+  "shared3.errorCard.dataFallback": "data",
 
 } as const;

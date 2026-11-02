@@ -97,9 +97,8 @@ describe("Airtable base picker in the setup card", () => {
 
     const proceed = await screen.findByRole("button", { name: "Tiếp tục" });
     expect(proceed.hasAttribute("disabled")).toBe(true);
-    // The base picker itself belongs to the renderers' own task: its copy stays.
     expect(
-      await screen.findByRole("combobox", { name: "Choose an Airtable base" }),
+      await screen.findByRole("combobox", { name: "Chọn một base Airtable" }),
     ).toBeDefined();
   });
 

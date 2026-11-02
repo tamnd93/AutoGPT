@@ -28,7 +28,7 @@ export const Shared7En = {
   "shared7.airtable.truncated": "Showing the first {count} of your bases.",
   "shared7.airtable.wantNew": "Want a new, empty one?",
   "shared7.airtable.loadingAria": "Loading your Airtable bases",
-  "shared7.airtable.noMatch": 'No base matches "{search}".',
+  "shared7.airtable.noMatch": 'No base matches “{search}”.',
   "shared7.airtable.tryAgain": "Try again",
   "shared7.airtable.noBases":
     "Your Airtable has no bases yet. Create an empty one in Airtable, then come back and refresh this list.",

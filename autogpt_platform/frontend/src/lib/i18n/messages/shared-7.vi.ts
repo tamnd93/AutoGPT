@@ -32,7 +32,7 @@ export const Shared7Vi: Partial<Record<keyof typeof Shared7En, string>> = {
   "shared7.airtable.truncated": "Đang hiện {count} base đầu tiên của bạn.",
   "shared7.airtable.wantNew": "Muốn tạo một base mới, trống?",
   "shared7.airtable.loadingAria": "Đang tải các base Airtable của bạn",
-  "shared7.airtable.noMatch": 'Không có base nào khớp "{search}".',
+  "shared7.airtable.noMatch": 'Không có base nào khớp “{search}”.',
   "shared7.airtable.tryAgain": "Thử lại",
   "shared7.airtable.noBases":
     "Airtable của bạn chưa có base nào. Hãy tạo một base trống trong Airtable, rồi quay lại làm mới danh sách.",
