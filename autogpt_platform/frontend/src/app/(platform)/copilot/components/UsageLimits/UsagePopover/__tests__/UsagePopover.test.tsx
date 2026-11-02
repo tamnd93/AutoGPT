@@ -2,6 +2,11 @@ import { http, HttpResponse, type JsonBodyType } from "msw";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { server } from "@/mocks/mock-server";
 import { render, screen, waitFor } from "@/tests/integrations/test-utils";
+import { LocaleProvider } from "@/lib/i18n";
+import {
+  setTrialUser,
+  trialResponse,
+} from "@/tests/integrations/trial-fixtures";
 import { UsagePopover } from "../UsagePopover";
 
 const mockUseGetFlag = vi.fn();
@@ -74,6 +79,70 @@ function mockUsageResponse(body: JsonBodyType) {
     http.get("*/api/chat/usage", () => HttpResponse.json(body)),
   );
 }
+
+describe("UsagePopover in Vietnamese", () => {
+  afterEach(() => setTrialUser(null));
+
+  it("reads the limits, windows and billing link in Vietnamese", async () => {
+    mockUsageResponse(makeUsage({ dailyPercent: 50 }));
+    render(
+      <LocaleProvider locale="vi">
+        <UsagePopover />
+      </LocaleProvider>,
+    );
+
+    expect(
+      await screen.findByRole("button", { name: "Giới hạn sử dụng" }),
+    ).toBeDefined();
+    expect(screen.getByText("Giới hạn sử dụng")).toBeDefined();
+    expect(screen.getByText("Hôm nay")).toBeDefined();
+    expect(screen.getByText("Tuần này")).toBeDefined();
+    expect(
+      screen.getByRole("link", { name: "Quản lý thanh toán" }),
+    ).toBeDefined();
+  });
+
+  it("reads the trial allowance row in Vietnamese", async () => {
+    setTrialUser();
+    mockUsageResponse(
+      makeUsage({ dailyPercent: null, weeklyPercent: null, tier: "TRIAL" }),
+    );
+    server.use(
+      http.get("*/api/credits/trial", () =>
+        HttpResponse.json(trialResponse({ allowance_used_percent: 42.4 })),
+      ),
+    );
+    render(
+      <LocaleProvider locale="vi">
+        <UsagePopover />
+      </LocaleProvider>,
+    );
+
+    expect(await screen.findByText("Hạn mức dùng thử")).toBeDefined();
+    expect(screen.getByText(/^Bản dùng thử kết thúc /)).toBeDefined();
+  });
+
+  it("reads the error state in Vietnamese", async () => {
+    server.use(
+      http.get(
+        "*/api/chat/usage",
+        () => new HttpResponse(null, { status: 503 }),
+      ),
+    );
+    render(
+      <LocaleProvider locale="vi">
+        <UsagePopover />
+      </LocaleProvider>,
+    );
+
+    expect(
+      await screen.findByText(
+        "Chúng tôi không kiểm tra được mức dùng của bạn.",
+      ),
+    ).toBeDefined();
+    expect(screen.getByRole("button", { name: "Thử lại" })).toBeDefined();
+  });
+});
 
 describe("UsagePopover", () => {
   it("renders nothing on the first paint while data is loading", () => {

@@ -8,6 +8,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/molecules/Popover/Popover";
+import { useT } from "@/lib/i18n";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { formatTierLabel, TIER_BADGE_CLASS_NAME } from "../../usageHelpers";
@@ -25,6 +26,7 @@ interface Props {
 }
 
 export function UsagePopover({ trigger, align = "start" }: Props) {
+  const t = useT();
   const { usage, experience, isLoading, isError, retry, isBillingEnabled } =
     useUsagePopover();
 
@@ -38,7 +40,11 @@ export function UsagePopover({ trigger, align = "start" }: Props) {
     <Popover>
       <PopoverTrigger asChild>
         {trigger ?? (
-          <Button variant="ghost" size="icon" aria-label="Usage limits">
+          <Button
+            variant="ghost"
+            size="icon"
+            aria-label={t("chatInput3.popover.title")}
+          >
             <Icon icon={GaugeIcon} className="!size-5" />
           </Button>
         )}
@@ -53,7 +59,7 @@ export function UsagePopover({ trigger, align = "start" }: Props) {
               variant="body-medium"
               className="text-neutral-800"
             >
-              Usage limits
+              {t("chatInput3.popover.title")}
             </Text>
             {tierLabel && (
               <Badge
@@ -67,9 +73,11 @@ export function UsagePopover({ trigger, align = "start" }: Props) {
           </div>
           {isError && (
             <div>
-              <Text variant="small">We couldn’t check your usage.</Text>
+              <Text variant="small">
+                {t("chatInput3.card.unavailableTitle")}
+              </Text>
               <Button size="small" variant="ghost" onClick={() => void retry()}>
-                Try again
+                {t("chatInput3.card.tryAgain")}
               </Button>
             </div>
           )}
@@ -77,25 +85,27 @@ export function UsagePopover({ trigger, align = "start" }: Props) {
             experience.isActiveTrial &&
             experience.trialPercent !== null && (
               <UsageMeter
-                label="Trial allowance"
+                label={t("chatInput3.window.trial")}
                 percent={experience.trialPercent}
                 detail={
                   experience.trialEndsAt
-                    ? `Trial ends ${formatUsageDate(experience.trialEndsAt)}`
-                    : "Your allowance for this trial"
+                    ? t("chatInput3.popover.trialEnds", {
+                        date: formatUsageDate(experience.trialEndsAt),
+                      })
+                    : t("chatInput3.popover.trialNoEnd")
                 }
               />
             )}
           {!isError && !experience.isLifetimeTrial && usage?.daily && (
             <UsageBar
-              label="Today"
+              label={t("chatInput3.window.today")}
               percentUsed={usage.daily.percent_used}
               resetsAt={usage.daily.resets_at}
             />
           )}
           {!isError && !experience.isLifetimeTrial && usage?.weekly && (
             <UsageBar
-              label="This week"
+              label={t("chatInput3.window.week")}
               percentUsed={usage.weekly.percent_used}
               resetsAt={usage.weekly.resets_at}
             />
@@ -106,7 +116,7 @@ export function UsagePopover({ trigger, align = "start" }: Props) {
               href="/settings/billing"
               className="text-sm text-info-foreground hover:underline"
             >
-              Manage billing
+              {t("chatInput3.popover.manageBilling")}
             </Link>
           )}
         </div>

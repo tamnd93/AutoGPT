@@ -8,6 +8,7 @@ import {
   fireEvent,
   waitFor,
 } from "@/tests/integrations/test-utils";
+import { LocaleProvider } from "@/lib/i18n";
 import { UsageLimitReachedCard } from "../UsageLimitReachedCard";
 import {
   setTrialUser,
@@ -57,6 +58,82 @@ function setup(tier = "PRO", daily = 100, weekly = 40) {
     ),
   );
 }
+describe("Usage notice in Vietnamese", () => {
+  it("reads the failed-refresh state in Vietnamese", async () => {
+    setup();
+    server.use(
+      http.get(
+        "*/api/chat/usage",
+        () => new HttpResponse(null, { status: 503 }),
+      ),
+    );
+    const refresh = vi.fn().mockResolvedValue(undefined);
+
+    render(
+      <LocaleProvider locale="vi">
+        <UsageLimitReachedCard
+          refresh={{ checking: false, failed: true, refresh }}
+        />
+      </LocaleProvider>,
+    );
+
+    expect(
+      await screen.findByText(
+        "Chúng tôi không kiểm tra được mức dùng của bạn.",
+        {},
+        { timeout: 5000 },
+      ),
+    ).toBeDefined();
+    expect(
+      screen.getByText(
+        "Công việc của bạn đã được lưu. Hãy thử lại để kiểm tra hạn mức.",
+      ),
+    ).toBeDefined();
+    expect(screen.getByRole("button", { name: "Thử lại" })).toBeDefined();
+    expect(screen.getByText("Bạn vẫn có thể sửa bản nháp.")).toBeDefined();
+  });
+
+  it("reads the refreshing state in Vietnamese", async () => {
+    setup();
+    const refresh = vi.fn().mockResolvedValue(undefined);
+
+    render(
+      <LocaleProvider locale="vi">
+        <UsageLimitReachedCard
+          refresh={{ checking: true, failed: false, refresh }}
+        />
+      </LocaleProvider>,
+    );
+
+    expect(
+      await screen.findByText("Đang làm mới gói và mức dùng…"),
+    ).toBeDefined();
+    expect(screen.getByText("Đang kiểm tra hạn mức")).toBeDefined();
+    expect(screen.getByText("Đang kiểm tra mức dùng")).toBeDefined();
+    expect(
+      screen.getByRole("button", { name: "Đang kiểm tra…" }),
+    ).toBeDefined();
+  });
+
+  it("reads the blocked notice chrome in Vietnamese", async () => {
+    setup("PRO", 100, 100);
+
+    render(
+      <LocaleProvider locale="vi">
+        <UsageLimitReachedCard />
+      </LocaleProvider>,
+    );
+
+    expect(
+      await screen.findByRole("link", { name: "Xem mức dùng" }),
+    ).toBeDefined();
+    expect(screen.getByText("Bạn vẫn có thể sửa bản nháp.")).toBeDefined();
+    expect(
+      screen.getByRole("status", { name: "Thông báo mức dùng" }),
+    ).toBeDefined();
+  });
+});
+
 describe("Usage notice", () => {
   it("shows the accepted trial price and its automatic Pro start date", async () => {
     setTrialUser();

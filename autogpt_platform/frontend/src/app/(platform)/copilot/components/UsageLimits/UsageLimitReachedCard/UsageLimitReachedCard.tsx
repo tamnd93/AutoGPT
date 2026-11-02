@@ -5,6 +5,7 @@ import { ArrowRight02Icon } from "@hugeicons/core-free-icons";
 import { Button } from "@/components/atoms/Button/Button";
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { Text } from "@/components/atoms/Text/Text";
+import { useT } from "@/lib/i18n";
 import { getUsageOfferAction } from "@/services/usageExperience/helpers";
 import { formatPaymentDue } from "@/services/usageExperience/payment";
 import { usagePresentation } from "@/services/usageExperience/presentation";
@@ -19,6 +20,7 @@ import type { UsageNoticeContext } from "./useUsageLimitReachedCard";
 import { useUsageLimitReachedCard } from "./useUsageLimitReachedCard";
 
 export function UsageLimitReachedCard(props: UsageNoticeContext = {}) {
+  const t = useT();
   const state = useUsageLimitReachedCard(props);
   // Relative to the clock, so read on every render rather than cached.
   const resetSentence = useReadEveryRender(() =>
@@ -34,15 +36,15 @@ export function UsageLimitReachedCard(props: UsageNoticeContext = {}) {
   return (
     <section
       role="status"
-      aria-label="Usage notice"
+      aria-label={t("chatInput3.card.aria")}
       className="mx-auto w-full rounded-2xl border border-border-base bg-surface p-5 shadow-sm"
     >
       <div className="mb-2 flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
         <Text variant="small" className="!text-xs !text-foreground-tertiary">
           {state.isRefreshing
-            ? "Checking your allowance"
+            ? t("chatInput3.card.checkingEyebrow")
             : state.isError
-              ? "Usage temporarily unavailable"
+              ? t("chatInput3.card.unavailableEyebrow")
               : copy.eyebrow}
         </Text>
         {!state.isError && (
@@ -54,16 +56,16 @@ export function UsageLimitReachedCard(props: UsageNoticeContext = {}) {
             className="!h-auto !p-0 !text-xs !text-foreground-tertiary"
           >
             {state.experience.inactiveTrialStatus === "payment_failed"
-              ? "Review billing"
-              : "View usage"}
+              ? t("chatInput3.card.reviewBilling")
+              : t("chatInput3.card.viewUsage")}
           </Button>
         )}
       </div>
       <Text variant="h4" className="!text-lg !leading-6">
         {state.isRefreshing
-          ? "Checking your usage"
+          ? t("chatInput3.card.checkingTitle")
           : state.isError
-            ? "We couldn’t check your usage."
+            ? t("chatInput3.card.unavailableTitle")
             : state.wait
               ? budgetOutTitle(state.wait.window)
               : copy.noticeTitle}
@@ -73,9 +75,9 @@ export function UsageLimitReachedCard(props: UsageNoticeContext = {}) {
         className="mt-2 !leading-5 !text-foreground-tertiary"
       >
         {state.isRefreshing
-          ? "Refreshing your plan and usage…"
+          ? t("chatInput3.card.refreshing")
           : state.isError
-            ? "Your work is saved. Try again to check your allowance."
+            ? t("chatInput3.card.unavailableBody")
             : state.wait
               ? resetSentence
               : copy.description}
@@ -102,7 +104,7 @@ export function UsageLimitReachedCard(props: UsageNoticeContext = {}) {
               variant="small"
               className="!text-xs !text-foreground-tertiary"
             >
-              + tax. Review before you pay.
+              {t("chatInput3.card.taxNote")}
             </Text>
           )}
         </div>
@@ -126,7 +128,7 @@ export function UsageLimitReachedCard(props: UsageNoticeContext = {}) {
       )}
       <div className="mt-4 flex flex-wrap items-center justify-between gap-2">
         <Text variant="small" className="!text-xs !text-foreground-subtle">
-          You can keep editing your draft.
+          {t("chatInput3.card.draftEditable")}
         </Text>
         {state.isError ? (
           <Button
@@ -135,7 +137,9 @@ export function UsageLimitReachedCard(props: UsageNoticeContext = {}) {
             onClick={() => void state.retry()}
             disabled={state.isRefreshing}
           >
-            {state.isRefreshing ? "Checking…" : "Try again"}
+            {state.isRefreshing
+              ? t("chatInput3.card.checkingButton")
+              : t("chatInput3.card.tryAgain")}
           </Button>
         ) : state.experience.isTopTier && state.isBillingEnabled ? (
           <Button

@@ -1,3 +1,4 @@
+import { useT } from "@/lib/i18n";
 import { getResetWait } from "@/services/usageExperience/budget";
 import { useUsageActions } from "@/services/usageExperience/useUsageActions";
 import type { ProviderFailure } from "../../../providerFailure";
@@ -20,12 +21,13 @@ export function useUsageLimitReachedCard({
   onDismiss = dismissNothing,
   refresh,
 }: UsageNoticeContext = {}) {
+  const t = useT();
   const state = useUsageActions();
   const platformCap: ProviderFailure | null =
     sessionID && state.experience.blocked && !state.isError
       ? {
           kind: "usage_limit",
-          message: "Usage limit reached",
+          message: t("chatInput3.card.usageLimitMessage"),
           authProvider: "platform",
           credentialId: null,
           resetsAt: null,

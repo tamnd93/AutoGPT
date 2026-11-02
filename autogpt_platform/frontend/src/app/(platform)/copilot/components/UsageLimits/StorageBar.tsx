@@ -1,10 +1,12 @@
 "use client";
 
 import { Text } from "@/components/atoms/Text/Text";
+import { useT } from "@/lib/i18n";
 import { formatBytes } from "../usageHelpers";
 import { useWorkspaceStorage } from "./useWorkspaceStorage";
 
 export function StorageBar() {
+  const t = useT();
   const { data: storage } = useWorkspaceStorage();
   if (!storage || storage.limit_bytes <= 0) return null;
 
@@ -12,7 +14,9 @@ export function StorageBar() {
   const percent = Math.min(100, Math.round((used_bytes / limit_bytes) * 100));
   const isHigh = percent >= 80;
   const percentLabel =
-    used_bytes > 0 && percent === 0 ? "<1% used" : `${percent}% used`;
+    used_bytes > 0 && percent === 0
+      ? t("chatInput3.storage.underOne")
+      : t("chatInput3.storage.percentUsed", { percent });
 
   return (
     <div className="flex flex-col gap-2">
@@ -22,7 +26,7 @@ export function StorageBar() {
           variant="body-medium"
           className="text-neutral-700"
         >
-          File storage
+          {t("chatInput3.storage.title")}
         </Text>
         <Text
           // TODO(tokens): no exact role for text-neutral-500
@@ -38,7 +42,7 @@ export function StorageBar() {
       >
         <div
           role="progressbar"
-          aria-label="File storage usage"
+          aria-label={t("chatInput3.storage.aria")}
           aria-valuemin={0}
           aria-valuemax={100}
           aria-valuenow={percent}
@@ -54,8 +58,14 @@ export function StorageBar() {
         variant="small"
         className="text-neutral-400"
       >
-        {formatBytes(used_bytes)} of {formatBytes(limit_bytes)} &middot;{" "}
-        {file_count} {file_count === 1 ? "file" : "files"}
+        {t("chatInput3.storage.summary", {
+          used: formatBytes(used_bytes),
+          limit: formatBytes(limit_bytes),
+          files:
+            file_count === 1
+              ? t("chatInput3.storage.fileOne")
+              : t("chatInput3.storage.fileMany", { count: file_count }),
+        })}
       </Text>
     </div>
   );
