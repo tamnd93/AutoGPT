@@ -1,4 +1,6 @@
 import { SubmissionStatus } from "@/app/api/__generated__/models/submissionStatus";
+import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/locale";
+import { getMessage } from "@/lib/i18n/translate";
 
 export const emptyModalState = {
   agent_id: "",
@@ -39,32 +41,42 @@ const DAY_MS = 86_400_000;
 
 export function formatRelativeDate(
   value: string | Date | null | undefined,
+  locale: Locale = DEFAULT_LOCALE,
 ): string | null {
   if (!value) return null;
   const date = value instanceof Date ? value : new Date(value);
   if (Number.isNaN(date.getTime())) return null;
 
+  const say = (key: string, values?: Record<string, string | number>) =>
+    getMessage(locale, key, values);
   const days = Math.floor((Date.now() - date.getTime()) / DAY_MS);
-  if (days <= 0) return "today";
-  if (days === 1) return "yesterday";
-  if (days < 7) return `${days} days ago`;
+  if (days <= 0) return say("marketplace4.meta.today");
+  if (days === 1) return say("marketplace4.meta.yesterday");
+  if (days < 7) return say("marketplace4.meta.daysAgo", { count: days });
   if (days < 30) {
     const weeks = Math.floor(days / 7);
-    return `${weeks} week${weeks > 1 ? "s" : ""} ago`;
+    return weeks === 1
+      ? say("marketplace4.meta.weekAgo")
+      : say("marketplace4.meta.weeksAgo", { count: weeks });
   }
   if (days < 365) {
     const months = Math.floor(days / 30);
-    return `${months} month${months > 1 ? "s" : ""} ago`;
+    return months === 1
+      ? say("marketplace4.meta.monthAgo")
+      : say("marketplace4.meta.monthsAgo", { count: months });
   }
   const years = Math.floor(days / 365);
-  return `${years} year${years > 1 ? "s" : ""} ago`;
+  return years === 1
+    ? say("marketplace4.meta.yearAgo")
+    : say("marketplace4.meta.yearsAgo", { count: years });
 }
 
 function dateItem(
   label: string,
   value: string | Date | null | undefined,
+  locale: Locale = DEFAULT_LOCALE,
 ): SubmissionMetaItem | null {
-  const relative = formatRelativeDate(value);
+  const relative = formatRelativeDate(value, locale);
   if (!relative) return null;
   return {
     label,
@@ -82,36 +94,61 @@ interface SubmissionMetaArgs {
   runCount: number | undefined;
 }
 
-export function getSubmissionMeta({
-  status,
-  version,
-  category,
-  submittedAt,
-  reviewedAt,
-  runCount,
-}: SubmissionMetaArgs): SubmissionMetaItem[] {
+export function getSubmissionMeta(
+  {
+    status,
+    version,
+    category,
+    submittedAt,
+    reviewedAt,
+    runCount,
+  }: SubmissionMetaArgs,
+  locale: Locale = DEFAULT_LOCALE,
+): SubmissionMetaItem[] {
+  const say = (key: string) => getMessage(locale, key);
   const items: SubmissionMetaItem[] = [];
 
   if (typeof version === "number") {
-    items.push({ label: "Version", value: `v${version}` });
+    items.push({
+      label: say("marketplace4.meta.version"),
+      value: `v${version}`,
+    });
   }
   if (category) {
-    items.push({ label: "Category", value: category });
+    items.push({ label: say("marketplace4.meta.category"), value: category });
   }
 
   if (status === SubmissionStatus.APPROVED) {
-    const liveSince = dateItem("Live since", reviewedAt);
+    const liveSince = dateItem(
+      say("marketplace4.meta.liveSince"),
+      reviewedAt,
+      locale,
+    );
     if (liveSince) items.push(liveSince);
     if (typeof runCount === "number") {
-      items.push({ label: "Runs", value: runCount.toLocaleString() });
+      items.push({
+        label: say("marketplace4.meta.runs"),
+        value: runCount.toLocaleString(),
+      });
     }
   } else if (status === SubmissionStatus.REJECTED) {
-    const reviewed = dateItem("Reviewed", reviewedAt);
+    const reviewed = dateItem(
+      say("marketplace4.meta.reviewed"),
+      reviewedAt,
+      locale,
+    );
     if (reviewed) items.push(reviewed);
   } else if (status === SubmissionStatus.DRAFT) {
-    items.push({ label: "Status", value: "Not submitted yet" });
+    items.push({
+      label: say("marketplace4.meta.status"),
+      value: say("marketplace4.meta.notSubmitted"),
+    });
   } else {
-    const submitted = dateItem("Submitted", submittedAt);
+    const submitted = dateItem(
+      say("marketplace4.meta.submitted"),
+      submittedAt,
+      locale,
+    );
     if (submitted) items.push(submitted);
   }
 

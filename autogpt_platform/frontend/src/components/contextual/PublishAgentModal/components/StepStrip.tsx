@@ -4,22 +4,28 @@ import { Text } from "@/components/atoms/Text/Text";
 import { cn } from "@/lib/utils";
 import { Tick02Icon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 
 type Props = {
   currentStep: "select" | "info" | "review";
 };
 
-const steps = [
-  { key: "select", label: "Workflow" },
-  { key: "info", label: "Listing" },
-  { key: "review", label: "Review" },
+const STEP_KEYS = [
+  { key: "select", labelKey: "marketplace4.strip.workflow" },
+  { key: "info", labelKey: "marketplace4.strip.listing" },
+  { key: "review", labelKey: "marketplace4.strip.review" },
 ] as const;
 
 function getStepIndex(currentStep: Props["currentStep"]) {
-  return steps.findIndex((step) => step.key === currentStep);
+  return STEP_KEYS.findIndex((step) => step.key === currentStep);
 }
 
 export function StepStrip({ currentStep }: Props) {
+  const t = useT();
+  const steps = STEP_KEYS.map((step) => ({
+    ...step,
+    label: t(step.labelKey),
+  }));
   const currentIndex = getStepIndex(currentStep);
   const shouldReduceMotion = useReducedMotion();
 
@@ -27,12 +33,12 @@ export function StepStrip({ currentStep }: Props) {
     <div className="flex flex-col gap-6 px-1 pb-6 sm:px-2">
       <div className="flex items-center gap-2 pr-12">
         <Text variant="lead-medium" as="span" className="text-textBlack">
-          Publish workflow
+          {t("marketplace4.strip.heading")}
         </Text>
       </div>
 
       <ol
-        aria-label="Publish progress"
+        aria-label={t("marketplace4.strip.progressAria")}
         className="flex w-full items-center gap-3"
       >
         {steps.map((step, index) => {

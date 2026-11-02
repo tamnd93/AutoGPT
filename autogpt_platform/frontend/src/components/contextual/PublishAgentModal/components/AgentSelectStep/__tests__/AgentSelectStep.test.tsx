@@ -8,6 +8,7 @@ vi.mock("@/lib/auth/hooks/useAuth", () => ({
   useAuth: () => ({ isLoggedIn: true }),
 }));
 
+import { LocaleProvider } from "@/lib/i18n";
 import { AgentSelectStep } from "../AgentSelectStep";
 
 function fakeAgents(total: number, page: number, pageSize: number) {
@@ -105,6 +106,26 @@ describe("AgentSelectStep", () => {
     onCancel.mockReset();
     onNext.mockReset();
     onOpenBuilder.mockReset();
+  });
+
+  it("reads the picker chrome in Vietnamese", async () => {
+    installHandler(4, 10);
+    render(
+      <LocaleProvider locale="vi">
+        <AgentSelectStep
+          onSelect={onSelect}
+          onCancel={onCancel}
+          onNext={onNext}
+          onOpenBuilder={onOpenBuilder}
+        />
+      </LocaleProvider>,
+    );
+
+    expect(await screen.findByText("Chọn một workflow")).toBeDefined();
+    expect(screen.getByPlaceholderText("Tìm workflow của bạn")).toBeDefined();
+    expect(screen.getByLabelText("Sắp xếp workflow")).toBeDefined();
+    expect(screen.getByRole("button", { name: "Tiếp tục" })).toBeDefined();
+    expect(screen.getByRole("button", { name: "Huỷ" })).toBeDefined();
   });
 
   it("renders the loaded agents and a pagination bar when totalPages > 1", async () => {

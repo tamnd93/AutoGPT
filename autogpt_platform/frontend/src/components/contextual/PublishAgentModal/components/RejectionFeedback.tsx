@@ -2,12 +2,15 @@
 import { Text } from "@/components/atoms/Text/Text";
 import { AlertCircleIcon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   comments: string;
 }
 
 export function RejectionFeedback({ comments }: Props) {
+  const t = useT();
+
   return (
     <div
       // TODO(tokens): no exact role for border-rose-200 #fecdd3, bg-rose-50 #fff1f2
@@ -19,7 +22,7 @@ export function RejectionFeedback({ comments }: Props) {
       >
         <Icon icon={AlertCircleIcon} size={16} />
         <Text variant="small-medium" as="span" className="!text-current">
-          Review feedback
+          {t("marketplace4.rejection.title")}
         </Text>
       </div>
       <Text

@@ -10,6 +10,7 @@ import { StepFooter } from "../StepFooter";
 import { Skeleton } from "@/components/atoms/Skeleton/Skeleton";
 import { useAgentSelectStep } from "./useAgentSelectStep";
 import { scrollbarStyles } from "@/components/styles/scrollbars";
+import { useLocale, useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { MyAgentsSortBy } from "@/app/api/__generated__/models/myAgentsSortBy";
 import {
@@ -37,17 +38,23 @@ interface Props {
   onOpenBuilder: () => void;
 }
 
-const SORT_OPTIONS = [
-  { value: MyAgentsSortBy.most_recent, label: "Sort by: Most recent" },
-  { value: MyAgentsSortBy.name, label: "Sort by: Alphabetical" },
-];
-
 export function AgentSelectStep({
   onSelect,
   onCancel,
   onNext,
   onOpenBuilder,
 }: Props) {
+  const t = useT();
+  const sortOptions = [
+    {
+      value: MyAgentsSortBy.most_recent,
+      label: t("marketplace4.select.sortMostRecent"),
+    },
+    {
+      value: MyAgentsSortBy.name,
+      label: t("marketplace4.select.sortAlphabetical"),
+    },
+  ];
   const {
     myAgents,
     isLoading,
@@ -77,8 +84,8 @@ export function AgentSelectStep({
     return (
       <div className="mx-auto flex w-full flex-col">
         <StepHeader
-          title="Choose a workflow"
-          description="Pick the saved workflow version you want to send to marketplace review."
+          title={t("marketplace4.select.title")}
+          description={t("marketplace4.select.description")}
           currentStep="select"
         />
         <div
@@ -96,18 +103,17 @@ export function AgentSelectStep({
             variant="large-medium"
             className="text-rose-900"
           >
-            We could not load your workflows
+            {t("marketplace4.select.loadFailedTitle")}
           </Text>
           <Text
             // TODO(tokens): no exact role for text-rose-700 #be123c
             variant="body"
             className="max-w-[420px] text-rose-700"
           >
-            Refresh the list and try again. Your current marketplace submissions
-            are unchanged.
+            {t("marketplace4.select.loadFailedBody")}
           </Text>
           <Button onClick={() => window.location.reload()} variant="secondary">
-            Retry
+            {t("marketplace4.select.retry")}
           </Button>
         </div>
       </div>
@@ -126,8 +132,8 @@ export function AgentSelectStep({
   return (
     <div className="mx-auto flex w-full flex-col">
       <StepHeader
-        title="Choose a workflow"
-        description="Pick the saved workflow version you want to send to marketplace review."
+        title={t("marketplace4.select.title")}
+        description={t("marketplace4.select.description")}
         currentStep="select"
       />
 
@@ -137,16 +143,17 @@ export function AgentSelectStep({
             <Icon icon={PlusSignIcon} size={20} />
           </div>
           <Text variant="large-medium" className="text-textBlack">
-            No publishable workflows yet
+            {t("marketplace4.select.emptyTitle")}
           </Text>
           <Text
             variant="body"
             className="max-w-[460px] text-foreground-secondary"
           >
-            Create and save a workflow in the builder. It will appear here when
-            a version is ready to submit.
+            {t("marketplace4.select.emptyBody")}
           </Text>
-          <Button onClick={onOpenBuilder}>Open builder</Button>
+          <Button onClick={onOpenBuilder}>
+            {t("marketplace4.select.openBuilder")}
+          </Button>
         </div>
       ) : (
         <>
@@ -155,8 +162,8 @@ export function AgentSelectStep({
               <SearchInput
                 value={searchInput}
                 onChange={setSearchInput}
-                placeholder="Search your workflows"
-                aria-label="Search your workflows"
+                placeholder={t("marketplace4.select.searchPlaceholder")}
+                aria-label={t("marketplace4.select.searchPlaceholder")}
                 maxLength={100}
                 loading={isFetching || isDebouncingSearch}
                 size="small"
@@ -165,19 +172,19 @@ export function AgentSelectStep({
             <div className="w-full sm:w-[220px]">
               <Select
                 id="agent-sort"
-                label="Sort workflows"
+                label={t("marketplace4.select.sortLabel")}
                 hideLabel
                 size="small"
                 value={sortBy}
                 onValueChange={handleSortChange}
-                options={SORT_OPTIONS}
+                options={sortOptions}
                 wrapperClassName="mb-0"
               />
             </div>
           </div>
 
           <div className="mt-1 flex-grow overflow-hidden pb-3">
-            <h3 className="sr-only">List of workflows</h3>
+            <h3 className="sr-only">{t("marketplace4.select.listHeading")}</h3>
             <div
               className={cn(
                 scrollbarStyles,
@@ -188,7 +195,7 @@ export function AgentSelectStep({
               aria-busy={isFetching}
             >
               <div id="agentListHeading" className="sr-only">
-                Scrollable list of workflows
+                {t("marketplace4.select.scrollableList")}
               </div>
               {isLoading ? (
                 <div className="grid grid-cols-1 gap-2 p-1 sm:grid-cols-2">
@@ -210,17 +217,19 @@ export function AgentSelectStep({
                   data-testid="agent-search-no-matches"
                 >
                   <Text variant="body-medium" className="text-textBlack">
-                    No workflows match &ldquo;{debouncedSearch}&rdquo;
+                    {t("marketplace4.select.noMatches", {
+                      query: debouncedSearch,
+                    })}
                   </Text>
                   <Text variant="small" className="text-foreground-tertiary">
-                    Try a different name or clear the search.
+                    {t("marketplace4.select.noMatchesHint")}
                   </Text>
                   <Button
                     variant="secondary"
                     size="small"
                     onClick={() => setSearchInput("")}
                   >
-                    Clear search
+                    {t("marketplace4.select.clearSearch")}
                   </Button>
                 </div>
               ) : (
@@ -306,7 +315,9 @@ export function AgentSelectStep({
                             >
                               {agent.description
                                 ? agent.description
-                                : `Edited ${agent.lastEdited}`}
+                                : t("marketplace4.select.edited", {
+                                    date: agent.lastEdited ?? "",
+                                  })}
                             </Text>
                           </div>
                           {isSelected ? (
@@ -346,7 +357,7 @@ export function AgentSelectStep({
                 onClick={onCancel}
                 className="w-full sm:w-auto"
               >
-                Cancel
+                {t("marketplace4.select.cancel")}
               </Button>
             }
             primary={
@@ -356,7 +367,7 @@ export function AgentSelectStep({
                 disabled={isNextDisabled}
                 className="w-full sm:w-auto"
               >
-                Continue
+                {t("marketplace4.select.continue")}
               </Button>
             }
           />
@@ -381,6 +392,8 @@ function PaginationBar({
   pageSize,
   onChange,
 }: PaginationBarProps) {
+  const t = useT();
+  const locale = useLocale();
   const start = (page - 1) * pageSize + 1;
   const end = Math.min(page * pageSize, totalItems);
   const pages = buildPageRange(page, totalPages);
@@ -388,12 +401,16 @@ function PaginationBar({
   return (
     <div className="flex flex-col items-center justify-between gap-3 pb-3 pt-1 text-foreground-tertiary sm:flex-row">
       <Text variant="small" className="text-foreground-tertiary">
-        {start}–{end} of {totalItems}
+        {t("marketplace4.select.range", {
+          start,
+          end,
+          total: totalItems.toLocaleString(locale),
+        })}
       </Text>
       <div className="flex items-center gap-2">
         <button
           type="button"
-          aria-label="Previous page"
+          aria-label={t("marketplace4.select.previousPage")}
           disabled={page <= 1}
           onClick={() => onChange(page - 1)}
           className="flex size-9 items-center justify-center rounded-full border border-border-base text-foreground-tertiary transition hover:border-border-strong hover:text-foreground-body disabled:cursor-not-allowed disabled:opacity-40"
@@ -446,7 +463,7 @@ function PaginationBar({
         )}
         <button
           type="button"
-          aria-label="Next page"
+          aria-label={t("marketplace4.select.nextPage")}
           disabled={page >= totalPages}
           onClick={() => onChange(page + 1)}
           className="flex size-9 items-center justify-center rounded-full border border-border-base text-foreground-tertiary transition hover:border-border-strong hover:text-foreground-body disabled:cursor-not-allowed disabled:opacity-40"

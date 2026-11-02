@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { Text } from "@/components/atoms/Text/Text";
+import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import {
   Clock01Icon,
@@ -19,29 +20,29 @@ interface Step {
   Icon: IconSvgElement;
 }
 
-const STEPS: Step[] = [
-  {
-    title: "Submitted for review",
-    description: "Your listing is queued in the marketplace review pipeline.",
-    state: "done",
-    Icon: Tick02Icon,
-  },
-  {
-    title: "In review",
-    description:
-      "Our team checks the details, media, and safety of your workflow.",
-    note: "Typically reviewed within 2–3 days.",
-    state: "current",
-    Icon: Clock01Icon,
-  },
-  {
-    title: "Goes live",
-    description:
-      "You'll get an email once it's approved. Rejected listings come back with feedback.",
-    state: "upcoming",
-    Icon: Rocket01Icon,
-  },
-];
+function getSteps(t: ReturnType<typeof useT>): Step[] {
+  return [
+    {
+      title: t("marketplace4.stepper.submittedTitle"),
+      description: t("marketplace4.stepper.submittedBody"),
+      state: "done",
+      Icon: Tick02Icon,
+    },
+    {
+      title: t("marketplace4.stepper.inReviewTitle"),
+      description: t("marketplace4.stepper.inReviewBody"),
+      note: t("marketplace4.stepper.inReviewNote"),
+      state: "current",
+      Icon: Clock01Icon,
+    },
+    {
+      title: t("marketplace4.stepper.liveTitle"),
+      description: t("marketplace4.stepper.liveBody"),
+      state: "upcoming",
+      Icon: Rocket01Icon,
+    },
+  ];
+}
 
 const NODE_CLASS: Record<StepState, string> = {
   done: "bg-emerald-500 text-action-foreground",
@@ -54,6 +55,9 @@ interface Props {
 }
 
 export function ReviewStepper({ shouldReduceMotion }: Props) {
+  const t = useT();
+  const steps = getSteps(t);
+
   return (
     <motion.div
       initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 8 }}
@@ -62,11 +66,11 @@ export function ReviewStepper({ shouldReduceMotion }: Props) {
       className="mt-6 flex w-full max-w-md flex-col gap-3 px-2"
     >
       <Text variant="body-medium" as="span" className="text-textBlack">
-        What happens next
+        {t("marketplace4.stepper.heading")}
       </Text>
       <ol className="flex flex-col">
-        {STEPS.map((step, index) => {
-          const isLast = index === STEPS.length - 1;
+        {steps.map((step, index) => {
+          const isLast = index === steps.length - 1;
           return (
             <li key={step.title} className="flex gap-3">
               <div className="flex flex-col items-center">

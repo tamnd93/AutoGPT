@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { render, screen } from "@testing-library/react";
+import { LocaleProvider } from "@/lib/i18n";
 import { StepStrip } from "../StepStrip";
 
 describe("StepStrip", () => {
@@ -14,6 +15,20 @@ describe("StepStrip", () => {
     expect(items).toHaveLength(1);
     const labels = ["Workflow", "Listing", "Review"];
     expect(items[0].textContent).toContain(labels[expectedIndex]);
+  });
+
+  it("reads the publish progress in Vietnamese", () => {
+    render(
+      <LocaleProvider locale="vi">
+        <StepStrip currentStep="select" />
+      </LocaleProvider>,
+    );
+
+    expect(screen.getByText("Đăng workflow")).toBeDefined();
+    expect(screen.getByRole("list", { name: "Tiến trình đăng" })).toBeDefined();
+    expect(screen.getByText("Workflow")).toBeDefined();
+    expect(screen.getByText("Thông tin")).toBeDefined();
+    expect(screen.getByText("Duyệt")).toBeDefined();
   });
 
   it("renders all three steps", () => {

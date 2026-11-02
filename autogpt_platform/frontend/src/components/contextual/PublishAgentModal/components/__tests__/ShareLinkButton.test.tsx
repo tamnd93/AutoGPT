@@ -6,6 +6,7 @@ vi.mock("@/components/molecules/Toast/use-toast", () => ({
   toast: (...args: unknown[]) => toast(...args),
 }));
 
+import { LocaleProvider } from "@/lib/i18n";
 import { ShareLinkButton } from "../ShareLinkButton";
 
 function mockClipboard(writeText: () => Promise<void>) {
@@ -34,6 +35,23 @@ describe("ShareLinkButton", () => {
     );
     expect(toast).toHaveBeenCalledWith({ title: "Link copied to clipboard" });
     expect(await screen.findByText("Copied")).toBeDefined();
+  });
+
+  it("reads the copied state in Vietnamese", async () => {
+    const writeText = vi.fn().mockResolvedValue(undefined);
+    mockClipboard(writeText);
+
+    render(
+      <LocaleProvider locale="vi">
+        <ShareLinkButton url="/marketplace/agent/creator/test-agent" />
+      </LocaleProvider>,
+    );
+    fireEvent.click(screen.getByTestId("copy-share-link-button"));
+
+    await waitFor(() =>
+      expect(toast).toHaveBeenCalledWith({ title: "Đã sao chép liên kết" }),
+    );
+    expect(await screen.findByText("Đã sao chép")).toBeDefined();
   });
 
   it("shows a destructive toast when copying fails", async () => {

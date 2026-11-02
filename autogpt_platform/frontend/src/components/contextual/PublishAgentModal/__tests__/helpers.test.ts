@@ -41,6 +41,16 @@ describe("PublishAgentModal helpers", () => {
       expect(formatRelativeDate("nope")).toBeNull();
     });
 
+    it("reads the relative buckets in Vietnamese", () => {
+      expect(formatRelativeDate(daysAgo(0), "vi")).toBe("hôm nay");
+      expect(formatRelativeDate(daysAgo(1), "vi")).toBe("hôm qua");
+      expect(formatRelativeDate(daysAgo(3), "vi")).toBe("3 ngày trước");
+      expect(formatRelativeDate(daysAgo(8), "vi")).toBe("1 tuần trước");
+      expect(formatRelativeDate(daysAgo(15), "vi")).toBe("2 tuần trước");
+      expect(formatRelativeDate(daysAgo(40), "vi")).toBe("1 tháng trước");
+      expect(formatRelativeDate(daysAgo(400), "vi")).toBe("1 năm trước");
+    });
+
     it("covers each relative bucket", () => {
       expect(formatRelativeDate(daysAgo(0))).toBe("today");
       expect(formatRelativeDate(daysAgo(-2))).toBe("today");
@@ -93,6 +103,42 @@ describe("PublishAgentModal helpers", () => {
         reviewedAt: "2026-07-02T00:00:00Z",
       });
       expect(items.some((i) => i.label === "Reviewed")).toBe(true);
+    });
+
+    it("reads the meta labels in Vietnamese", () => {
+      const rejected = getSubmissionMeta(
+        {
+          ...base,
+          status: SubmissionStatus.REJECTED,
+          reviewedAt: "2026-07-02T00:00:00Z",
+        },
+        "vi",
+      );
+      expect(rejected.some((i) => i.label === "Đã duyệt")).toBe(true);
+
+      const draft = getSubmissionMeta(
+        { ...base, status: SubmissionStatus.DRAFT },
+        "vi",
+      );
+      expect(draft).toContainEqual({
+        label: "Trạng thái",
+        value: "Chưa gửi",
+      });
+
+      const pending = getSubmissionMeta(
+        {
+          ...base,
+          status: SubmissionStatus.PENDING,
+          version: 4,
+          category: "Marketing",
+        },
+        "vi",
+      );
+      expect(pending).toContainEqual({ label: "Phiên bản", value: "v4" });
+      expect(pending).toContainEqual({
+        label: "Danh mục",
+        value: "Marketing",
+      });
     });
 
     it("shows 'Not submitted yet' for draft", () => {

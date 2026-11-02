@@ -13,6 +13,7 @@ import { integrationsVi } from "./integrations.vi";
 import { marketplace1Vi } from "./marketplace-1.vi";
 import { marketplace2Vi } from "./marketplace-2.vi";
 import { marketplace3Vi } from "./marketplace-3.vi";
+import { marketplace4Vi } from "./marketplace-4.vi";
 import { navVi } from "./nav.vi";
 import { nav1Vi } from "./nav-1.vi";
 import { nav2Vi } from "./nav-2.vi";
@@ -36,6 +37,7 @@ export const vi: Partial<Record<MessageKey, string>> = {
   ...marketplace1Vi,
   ...marketplace2Vi,
   ...marketplace3Vi,
+  ...marketplace4Vi,
   ...navVi,
   ...nav1Vi,
   ...nav2Vi,

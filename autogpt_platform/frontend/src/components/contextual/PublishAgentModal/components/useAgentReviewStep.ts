@@ -3,6 +3,7 @@
 import { usePathname } from "next/navigation";
 import { useReducedMotion } from "framer-motion";
 import { SubmissionStatus } from "@/app/api/__generated__/models/submissionStatus";
+import { useLocale, useT } from "@/lib/i18n";
 import { getSubmissionMeta } from "../helpers";
 import {
   Cancel01Icon,
@@ -22,41 +23,39 @@ interface HeroContent {
 function getHeroContent(
   status: SubmissionStatus | undefined,
   isDashboardPage: boolean,
+  t: ReturnType<typeof useT>,
 ): HeroContent {
   switch (status) {
     case SubmissionStatus.APPROVED:
       return {
-        title: "Workflow approved",
-        description:
-          "Your workflow has been approved and is now live on the AutoGPT marketplace.",
+        title: t("marketplace4.hero.approvedTitle"),
+        description: t("marketplace4.hero.approvedBody"),
         Icon: Tick02Icon,
         pulse: "bg-emerald-400/40",
         gradient: "from-emerald-400 to-emerald-600",
       };
     case SubmissionStatus.REJECTED:
       return {
-        title: "Workflow needs changes",
-        description:
-          "Your submission was not approved. Review the feedback and resubmit.",
+        title: t("marketplace4.hero.rejectedTitle"),
+        description: t("marketplace4.hero.rejectedBody"),
         Icon: Cancel01Icon,
         pulse: "bg-rose-400/40",
         gradient: "from-rose-400 to-rose-600",
       };
     case SubmissionStatus.DRAFT:
       return {
-        title: "Draft saved",
-        description:
-          "This workflow isn't submitted yet. Finish the details and submit it for review.",
+        title: t("marketplace4.hero.draftTitle"),
+        description: t("marketplace4.hero.draftBody"),
         Icon: NoteEditIcon,
         pulse: "bg-zinc-400/40",
         gradient: "from-zinc-400 to-zinc-600",
       };
     default:
       return {
-        title: "Submission received",
+        title: t("marketplace4.hero.pendingTitle"),
         description: isDashboardPage
-          ? "We'll notify you once review is complete. Approved workflows go live on the marketplace."
-          : "We'll notify you once review is complete. Track progress from the Creator Dashboard.",
+          ? t("marketplace4.hero.pendingBodyDashboard")
+          : t("marketplace4.hero.pendingBody"),
         Icon: Tick02Icon,
         pulse: "bg-purple-400/40",
         gradient: "from-purple-400 to-purple-600",
@@ -82,8 +81,10 @@ export function useAgentReviewStep({
   runCount,
 }: Args) {
   const pathname = usePathname();
+  const t = useT();
+  const locale = useLocale();
   const isDashboardPage = pathname.includes("/settings/creator-dashboard");
-  const hero = getHeroContent(status, isDashboardPage);
+  const hero = getHeroContent(status, isDashboardPage, t);
   const shouldReduceMotion = useReducedMotion();
 
   const isApproved = status === SubmissionStatus.APPROVED;
@@ -94,14 +95,17 @@ export function useAgentReviewStep({
   const showCelebration = isApproved || (isPending && !isDashboardPage);
   const showConfetti = showCelebration && !shouldReduceMotion;
 
-  const metaItems = getSubmissionMeta({
-    status,
-    version,
-    category,
-    submittedAt,
-    reviewedAt,
-    runCount,
-  });
+  const metaItems = getSubmissionMeta(
+    {
+      status,
+      version,
+      category,
+      submittedAt,
+      reviewedAt,
+      runCount,
+    },
+    locale,
+  );
 
   return {
     isDashboardPage,

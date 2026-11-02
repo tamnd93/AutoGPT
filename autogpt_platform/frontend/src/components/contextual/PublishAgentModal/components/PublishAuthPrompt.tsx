@@ -2,21 +2,22 @@ import { Skeleton } from "@/components/atoms/Skeleton/Skeleton";
 import { Button } from "@/components/atoms/Button/Button";
 import { Text } from "@/components/atoms/Text/Text";
 import { useRouter } from "next/navigation";
+import { useT } from "@/lib/i18n";
 
 export const PublishAuthPrompt = () => {
   const router = useRouter();
+  const t = useT();
   return (
     <div>
       <div className="mx-auto inline-flex h-[370px] w-full flex-col items-center justify-center gap-6 px-4 py-5 sm:px-6">
         <div className="flex flex-col items-center gap-4 text-center">
-          <Text variant="h3-semibold">Share your AI creations</Text>
+          <Text variant="h3-semibold">{t("marketplace4.auth.title")}</Text>
           <Text
             variant="lead"
             // TODO(tokens): no exact role for text-neutral-600 #525252
             className="max-w-[80%] text-neutral-600"
           >
-            Log in or create an account to publish your workflows to the
-            marketplace and join a community of creators
+            {t("marketplace4.auth.body")}
           </Text>
         </div>
         <div className="flex flex-col items-center gap-3 sm:flex-row">
@@ -25,10 +26,10 @@ export const PublishAuthPrompt = () => {
             // TODO(tokens): no exact role for bg-neutral-800 #262626, hover:bg-neutral-900 #171717
             className="bg-neutral-800 text-action-foreground hover:bg-neutral-900"
           >
-            Log in
+            {t("marketplace4.auth.login")}
           </Button>
           <Button onClick={() => router.push("/signup")} variant="secondary">
-            Create account
+            {t("marketplace4.auth.createAccount")}
           </Button>
         </div>
       </div>

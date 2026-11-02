@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { Text } from "@/components/atoms/Text/Text";
 import { Clock01Icon, ImageNotFound01Icon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   agentName: string;
@@ -22,6 +23,8 @@ export function SubmissionSummaryCard({
   isPending,
   shouldReduceMotion,
 }: Props) {
+  const t = useT();
+
   return (
     <motion.div
       initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 8 }}
@@ -65,7 +68,7 @@ export function SubmissionSummaryCard({
           className="inline-flex items-center gap-1.5 rounded-full bg-warning-surface px-2.5 py-1 text-caption-sm font-medium leading-inherit text-amber-800"
         >
           <Icon icon={Clock01Icon} size={12} />
-          In review
+          {t("marketplace4.summary.inReview")}
         </span>
       ) : null}
     </motion.div>

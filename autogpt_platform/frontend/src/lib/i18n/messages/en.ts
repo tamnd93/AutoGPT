@@ -12,6 +12,7 @@ import { integrationsEn } from "./integrations.en";
 import { marketplace1En } from "./marketplace-1.en";
 import { marketplace2En } from "./marketplace-2.en";
 import { marketplace3En } from "./marketplace-3.en";
+import { marketplace4En } from "./marketplace-4.en";
 import { navEn } from "./nav.en";
 import { nav1En } from "./nav-1.en";
 import { nav2En } from "./nav-2.en";
@@ -35,6 +36,7 @@ export const en = {
   ...marketplace1En,
   ...marketplace2En,
   ...marketplace3En,
+  ...marketplace4En,
   ...navEn,
   ...nav1En,
   ...nav2En,

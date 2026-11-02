@@ -7,6 +7,7 @@ import {
   Store01Icon,
 } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   onDone: () => void;
@@ -31,6 +32,8 @@ export function ReviewStepFooter({
   isDashboardPage,
   marketplaceUrl,
 }: Props) {
+  const t = useT();
+
   return (
     <div className="mt-8 w-full">
       <StepFooter
@@ -45,7 +48,7 @@ export function ReviewStepFooter({
                 leftIcon={<Icon icon={NoteEditIcon} size={14} />}
                 data-testid="edit-submission-button"
               >
-                Edit details
+                {t("marketplace4.reviewFooter.editDetails")}
               </Button>
             ) : null}
             <Button
@@ -54,7 +57,7 @@ export function ReviewStepFooter({
               onClick={onDone}
               className="w-full sm:w-auto"
             >
-              Done
+              {t("marketplace4.reviewFooter.done")}
             </Button>
           </>
         }
@@ -68,7 +71,7 @@ export function ReviewStepFooter({
               rightIcon={<Icon icon={Store01Icon} size={14} />}
               data-testid="view-marketplace-button"
             >
-              View on marketplace
+              {t("marketplace4.reviewFooter.viewOnMarketplace")}
             </Button>
           ) : isRejected || isDraft || isDashboardPage ? null : (
             <Button
@@ -78,7 +81,7 @@ export function ReviewStepFooter({
               rightIcon={<Icon icon={ArrowRight02Icon} size={14} />}
               data-testid="view-progress-button"
             >
-              Go to Creator Dashboard
+              {t("marketplace4.reviewFooter.goToDashboard")}
             </Button>
           )
         }
