@@ -181,7 +181,7 @@ function SheetBody({
             <TabsLineList className="overflow-x-auto">
               {VIEWS.map((item) => (
                 <TabsLineTrigger key={item.value} value={item.value}>
-                  {t(item.label)}
+                  {t(item.labelKey)}
                 </TabsLineTrigger>
               ))}
             </TabsLineList>
