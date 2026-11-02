@@ -3,14 +3,15 @@
 import { Button } from "@/components/atoms/Button/Button";
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { SwapFade } from "@/components/atoms/SwapFade/SwapFade";
+import { useT } from "@/lib/i18n";
 import {
   ArrowReloadHorizontalIcon,
   Mic01Icon,
 } from "@hugeicons/core-free-icons";
 
 const LABELS = {
-  rest: "Start talking",
-  failed: "Try again",
+  rest: "onboarding1.orb.start",
+  failed: "onboarding1.orb.retry",
 } as const;
 
 interface Props {
@@ -19,7 +20,8 @@ interface Props {
 }
 
 export function OrbControlButton({ screen, onClick }: Props) {
-  const ariaLabel = LABELS[screen];
+  const t = useT();
+  const ariaLabel = t(LABELS[screen]);
 
   return (
     <Button

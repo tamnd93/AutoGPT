@@ -4,10 +4,11 @@ import { Button } from "@/components/atoms/Button/Button";
 import { FadeIn } from "@/components/atoms/FadeIn/FadeIn";
 import { Input } from "@/components/atoms/Input/Input";
 import { Text } from "@/components/atoms/Text/Text";
+import { useLocale, useT } from "@/lib/i18n";
 import {
   MAX_TYPED_CHARS,
-  TYPED_TOO_LONG_COPY,
   typedCharsLeftHint,
+  typedTooLongCopy,
 } from "../helpers";
 
 interface Props {
@@ -27,6 +28,9 @@ export function TypedFallback({
   isTooLong,
   rows = 6,
 }: Props) {
+  const t = useT();
+  const locale = useLocale();
+
   return (
     <FadeIn className="w-full">
       <div className="flex w-full flex-col items-center gap-3">
@@ -34,11 +38,11 @@ export function TypedFallback({
           <Input
             id="brain-dump-text"
             type="textarea"
-            label="Your brain dump"
+            label={t("onboarding1.typed.label")}
             hideLabel
             rows={rows}
             className="rounded-xl border-border-base"
-            placeholder="What repeats every week? What would you hand off first?"
+            placeholder={t("onboarding1.typed.placeholder")}
             value={value}
             onChange={(e) => onChange(e.target.value)}
             maxLength={MAX_TYPED_CHARS}
@@ -54,7 +58,7 @@ export function TypedFallback({
               id={LIMIT_HINT_ID}
               className="text-left"
             >
-              {TYPED_TOO_LONG_COPY}
+              {typedTooLongCopy(t, locale)}
             </Text>
           ) : (
             <Text
@@ -63,7 +67,7 @@ export function TypedFallback({
               id={LIMIT_HINT_ID}
               className="min-h-[1.125rem] text-right"
             >
-              {typedCharsLeftHint(value.length)}
+              {typedCharsLeftHint(value.length, t, locale)}
             </Text>
           )}
         </div>
@@ -73,7 +77,7 @@ export function TypedFallback({
           disabled={!value.trim()}
           className="h-10 w-56"
         >
-          I&apos;m done
+          {t("onboarding1.typed.done")}
         </Button>
       </div>
     </FadeIn>

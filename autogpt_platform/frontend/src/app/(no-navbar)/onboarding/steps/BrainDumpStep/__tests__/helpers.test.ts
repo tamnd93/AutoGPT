@@ -1,3 +1,4 @@
+import { getMessage } from "@/lib/i18n/translate";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   encouragementAt,
@@ -5,7 +6,11 @@ import {
   isInsufficientDump,
   pickMimeType,
   recordingFeedbackAt,
+  typedCharsLeftHint,
 } from "../helpers";
+
+const tVi = (key: string, values?: Record<string, string | number>) =>
+  getMessage("vi", key, values);
 
 describe("encouragementAt", () => {
   it("shows nothing before the first line is due", () => {
@@ -96,6 +101,21 @@ describe("pickMimeType", () => {
       isTypeSupported: (type: string) => type !== "audio/webm",
     });
     expect(pickMimeType()).toBe("audio/mp4");
+  });
+});
+
+describe("Vietnamese recording copy", () => {
+  it("reads the encouragement and the duration guidance in Vietnamese", () => {
+    expect(recordingFeedbackAt(20, tVi)).toBe("Cứ kể tiếp, rất đáng giá");
+    expect(recordingFeedbackAt(4, tVi)).toBe(
+      "Một phút cũng quý. Cứ kể tiếp nếu bạn còn nhiều điều muốn nói.",
+    );
+    expect(recordingFeedbackAt(10, tVi)).toBeNull();
+  });
+
+  it("reads the remaining-character hint in Vietnamese", () => {
+    expect(typedCharsLeftHint(18_000, tVi, "vi")).toBe("còn lại 2.000 ký tự");
+    expect(typedCharsLeftHint(20_000, tVi, "vi")).toBe("còn lại 0 ký tự");
   });
 });
 

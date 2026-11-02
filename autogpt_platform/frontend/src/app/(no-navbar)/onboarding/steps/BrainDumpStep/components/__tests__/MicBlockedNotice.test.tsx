@@ -1,4 +1,5 @@
 import { render, screen } from "@testing-library/react";
+import { LocaleProvider } from "@/lib/i18n";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import { MicBlockedNotice } from "../MicBlockedNotice";
@@ -83,5 +84,25 @@ describe("MicBlockedNotice", () => {
     );
 
     expect(container.innerHTML).toBe("");
+  });
+});
+
+const VI_BLOCKED =
+  "Trình duyệt của bạn đã chặn micro, nên hãy viết ở đây. Để nói, hãy cho phép micro trong phần cài đặt trang của trình duyệt (biểu tượng ổ khóa hoặc micro cạnh thanh địa chỉ), sau đó thử lại micro.";
+
+describe("MicBlockedNotice — Vietnamese", () => {
+  it("explains a blocked microphone and how to get it back in Vietnamese", async () => {
+    const onRetry = vi.fn();
+    render(
+      <LocaleProvider locale="vi">
+        <MicBlockedNotice isBlocked permission="denied" onRetry={onRetry} />
+      </LocaleProvider>,
+    );
+
+    expect(screen.getByRole("alert").textContent).toBe(VI_BLOCKED);
+    await userEvent.click(
+      screen.getByRole("button", { name: "thử lại micro" }),
+    );
+    expect(onRetry).toHaveBeenCalledTimes(1);
   });
 });

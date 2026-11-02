@@ -1,9 +1,17 @@
 import type { OnboardingWizardProgress } from "@/app/api/__generated__/models/onboardingWizardProgress";
+import type { MessageKey } from "@/lib/i18n/messages/en";
+import { getMessage, type MessageValues } from "@/lib/i18n/translate";
 import {
   readLocalProgress,
   sameProgress,
   writeLocalProgress,
 } from "./progress";
+
+type Translate = (key: MessageKey, values?: MessageValues) => string;
+
+// The hook passes useT(); a call without one reads English, as the unit tests
+// do.
+const english: Translate = (key, values) => getMessage("en", key, values);
 
 interface ServerProgress {
   progress: OnboardingWizardProgress | null;
@@ -17,10 +25,12 @@ export function createProgressSaver({
   onError,
   onConflict,
   initialRevision,
+  t = english,
 }: {
   userID: string;
   initialRevision: number;
   onConflict: () => void;
+  t?: Translate;
   save: (
     progress: OnboardingWizardProgress,
     revision: number,
@@ -49,9 +59,7 @@ export function createProgressSaver({
     if (disposed || conflicted) return;
     pending = progress;
     if (!writeLocalProgress(userID, progress, true, revision)) {
-      onError(
-        "Your progress hasn't been saved yet. Please keep this page open while we retry.",
-      );
+      onError(t("onboarding1.saver.localFailed"));
     }
     schedule(200);
   }
@@ -92,9 +100,7 @@ export function createProgressSaver({
           throw error;
         }
         failures += 1;
-        onError(
-          "We couldn't save your progress to your account. We'll keep retrying; you can continue here.",
-        );
+        onError(t("onboarding1.saver.remoteFailed"));
         schedule(Math.min(30_000, 1000 * 2 ** (failures - 1)));
         throw error;
       }

@@ -3,17 +3,19 @@
 import { RevealItem } from "@/components/atoms/Reveal/Reveal";
 import { SwapFade } from "@/components/atoms/SwapFade/SwapFade";
 import { Text } from "@/components/atoms/Text/Text";
+import { useT } from "@/lib/i18n";
 import type { ScreenState } from "../useBrainDumpStep";
+import { type Translate } from "../helpers";
 import { ElapsedTime } from "./ElapsedTime";
 import { OttoMightAsk } from "./OttoMightAsk";
 
-const FAILURE_HEADLINE = "That didn't go through.";
-const TYPING_HEADLINE = "Write to me about your work";
+const FAILURE_HEADLINE_KEY = "onboarding1.header.failure";
+const TYPING_HEADLINE_KEY = "onboarding1.header.typing";
 // "Catch" fits a mishearing, not a typed answer — the typed reject asks
 // for more instead of implying the system misheard.
-const INSUFFICIENT_HEADLINES = {
-  voice: "We didn't catch enough of that.",
-  typed: "Tell us a bit more.",
+const INSUFFICIENT_HEADLINE_KEYS = {
+  voice: "onboarding1.header.insufficientVoice",
+  typed: "onboarding1.header.insufficientTyped",
 } as const;
 
 interface Props {
@@ -33,6 +35,7 @@ export function StepHeader({
   question,
   onTogglePause,
 }: Props) {
+  const t = useT();
   const isRecording = screen === "recording";
 
   return (
@@ -46,7 +49,7 @@ export function StepHeader({
             <ElapsedTime seconds={elapsedSeconds} />
           ) : (
             <Text variant="h3">
-              {stateHeadline(screen, restHeadline, insufficientMode)}
+              {stateHeadline(screen, restHeadline, insufficientMode, t)}
             </Text>
           )}
         </SwapFade>
@@ -54,11 +57,11 @@ export function StepHeader({
       {screen === "rest" && (
         <RevealItem className="flex flex-col items-center gap-4">
           <Text variant="large" tone="muted" className="max-w-xl md:text-lead">
-            Tell me what you do and what eats up your week.{" "}
+            {t("onboarding1.rest.lead")}{" "}
             <Text variant="body-medium" as="span">
-              Otto uses it to pick your experts and plan your first week.
+              {t("onboarding1.rest.mid")}
             </Text>{" "}
-            A minute is plenty, and you can type instead.
+            {t("onboarding1.rest.tail")}
           </Text>
           {/* On wide screens the ambient cards carry these questions, and
               they are hidden from assistive tech, so this one stays in the
@@ -74,9 +77,9 @@ export function StepHeader({
       {screen === "typing" && (
         <RevealItem>
           <Text variant="body" tone="muted" className="max-w-2xl">
-            What repeats every week, and what would you hand off first?{" "}
+            {t("onboarding1.typing.lead")}{" "}
             <Text variant="body-medium" as="span">
-              A few sentences is plenty.
+              {t("onboarding1.typing.tail")}
             </Text>
           </Text>
         </RevealItem>
@@ -89,10 +92,11 @@ function stateHeadline(
   screen: ScreenState,
   restHeadline: string,
   insufficientMode: "voice" | "typed",
+  t: Translate,
 ) {
-  if (screen === "failed") return FAILURE_HEADLINE;
-  if (screen === "typing") return TYPING_HEADLINE;
+  if (screen === "failed") return t(FAILURE_HEADLINE_KEY);
+  if (screen === "typing") return t(TYPING_HEADLINE_KEY);
   if (screen === "insufficient")
-    return INSUFFICIENT_HEADLINES[insufficientMode];
+    return t(INSUFFICIENT_HEADLINE_KEYS[insufficientMode]);
   return restHeadline;
 }

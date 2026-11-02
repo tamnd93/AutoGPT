@@ -2,12 +2,12 @@
 
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { Text } from "@/components/atoms/Text/Text";
+import { useT } from "@/lib/i18n";
 import { LockIcon } from "@hugeicons/core-free-icons";
 
-const PRIVACY_COPY =
-  "Private to you · Saved as Otto memory · Downloadable anytime";
-
 export function PrivacyNote() {
+  const t = useT();
+
   return (
     <div className="flex items-center justify-center gap-2 px-4">
       <Icon
@@ -19,7 +19,7 @@ export function PrivacyNote() {
         variant="small"
         className="text-center text-foreground-subtle sm:whitespace-nowrap"
       >
-        {PRIVACY_COPY}
+        {t("onboarding1.privacy.note")}
       </Text>
     </div>
   );

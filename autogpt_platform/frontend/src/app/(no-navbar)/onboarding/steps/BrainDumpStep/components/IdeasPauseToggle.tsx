@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/atoms/Button/Button";
+import { useT } from "@/lib/i18n";
 import type { ScreenState } from "../useBrainDumpStep";
 
 interface Props {
@@ -14,6 +15,7 @@ const ROTATING_ON: ScreenState[] = ["rest", "typing", "recording"];
 // The keyboard route to pausing the ideas. A mouse or touch user clicks an
 // idea instead, so this stays out of sight until it takes focus.
 export function IdeasPauseToggle({ screen, isPaused, onToggle }: Props) {
+  const t = useT();
   if (!ROTATING_ON.includes(screen)) return null;
   return (
     <Button
@@ -24,7 +26,7 @@ export function IdeasPauseToggle({ screen, isPaused, onToggle }: Props) {
       onClick={onToggle}
       className="sr-only focus-visible:not-sr-only focus-visible:absolute focus-visible:left-1/2 focus-visible:top-0 focus-visible:z-20 focus-visible:-translate-x-1/2"
     >
-      Pause changing ideas
+      {t("onboarding1.ambient.pause")}
     </Button>
   );
 }

@@ -8,6 +8,7 @@ import {
   waitFor,
 } from "@/tests/integrations/test-utils";
 import type { User } from "@/lib/auth/types";
+import { LocaleProvider } from "@/lib/i18n";
 import type { OnboardingWizardProgress } from "@/app/api/__generated__/models/onboardingWizardProgress";
 import {
   installGtagShim,
@@ -806,4 +807,58 @@ it("lets a new account finish while the previous account's profile save is outst
   await act(async () => release?.({ status: 200 }));
   expect(completeStep).toHaveBeenCalledOnce();
   expect(screen.queryByText(/couldn't save your profile/i)).toBeNull();
+});
+
+describe("onboarding page in Vietnamese", () => {
+  it("reads its loading status in Vietnamese", () => {
+    authLoading = true;
+    render(
+      <LocaleProvider locale="vi">
+        <OnboardingPage />
+      </LocaleProvider>,
+    );
+
+    expect(screen.getByRole("status").textContent).toBe(
+      "Đang tải thiết lập của bạn…",
+    );
+  });
+
+  it("reads the back and log-out controls in Vietnamese", async () => {
+    serverDraft = makeProgress({
+      currentStep: "painPoints",
+      completedSteps: ["role"],
+    });
+    render(
+      <LocaleProvider locale="vi">
+        <OnboardingPage />
+      </LocaleProvider>,
+    );
+
+    expect(
+      await screen.findByRole("button", { name: "Quay lại" }),
+    ).toBeDefined();
+    expect(screen.getByRole("link", { name: "Đăng xuất" })).toBeDefined();
+  });
+
+  it("reads the reload control of a broken progress in Vietnamese", async () => {
+    localStorage.setItem(
+      progressStorageKey("u1"),
+      JSON.stringify({
+        pending: true,
+        revision: 0,
+        progress: makeProgress({ role: "Local answer" }),
+      }),
+    );
+    serverDraft = makeProgress({ role: "Newer answer" });
+    revision = 2;
+    render(
+      <LocaleProvider locale="vi">
+        <OnboardingPage />
+      </LocaleProvider>,
+    );
+
+    expect(
+      await screen.findByRole("button", { name: "Tải lại tiến độ mới nhất" }),
+    ).toBeDefined();
+  });
 });

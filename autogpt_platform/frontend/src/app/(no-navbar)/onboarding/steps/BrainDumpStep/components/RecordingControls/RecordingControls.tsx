@@ -5,6 +5,7 @@ import * as Sentry from "@sentry/nextjs";
 import { Button } from "@/components/atoms/Button/Button";
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { SwapFade } from "@/components/atoms/SwapFade/SwapFade";
+import { useT } from "@/lib/i18n";
 import {
   ArrowReloadHorizontalIcon,
   Cancel01Icon,
@@ -35,6 +36,7 @@ export function RecordingControls({
   showSilenceNudge,
   isOffline,
 }: Props) {
+  const t = useT();
   const [pendingAction, setPendingAction] = useState<RecordingAction | null>(
     null,
   );
@@ -68,11 +70,11 @@ export function RecordingControls({
 
   const pendingStatus =
     pendingAction === "cancel"
-      ? "Discarding this take…"
+      ? t("onboarding1.recording.pending.cancel")
       : pendingAction === "send"
-        ? "Sending your recording…"
+        ? t("onboarding1.recording.pending.send")
         : pendingAction === "retry"
-          ? "Starting a fresh take…"
+          ? t("onboarding1.recording.pending.retry")
           : null;
 
   return (
@@ -80,8 +82,8 @@ export function RecordingControls({
       <div className="flex items-center gap-4">
         <div ref={cancelControlRef}>
           <RecordingControlButton
-            label="Cancel recording"
-            pendingLabel="Canceling recording"
+            label={t("onboarding1.recording.cancel")}
+            pendingLabel={t("onboarding1.recording.cancelPending")}
             icon={Cancel01Icon}
             action="cancel"
             pendingAction={pendingAction}
@@ -89,8 +91,8 @@ export function RecordingControls({
           />
         </div>
         <RecordingControlButton
-          label="Send recording"
-          pendingLabel="Sending recording"
+          label={t("onboarding1.recording.send")}
+          pendingLabel={t("onboarding1.recording.sendPending")}
           icon={SentIcon}
           action="send"
           pendingAction={pendingAction}
@@ -98,8 +100,8 @@ export function RecordingControls({
           primary
         />
         <RecordingControlButton
-          label="Retry recording"
-          pendingLabel="Restarting recording"
+          label={t("onboarding1.recording.retry")}
+          pendingLabel={t("onboarding1.recording.retryPending")}
           icon={ArrowReloadHorizontalIcon}
           action="retry"
           pendingAction={pendingAction}

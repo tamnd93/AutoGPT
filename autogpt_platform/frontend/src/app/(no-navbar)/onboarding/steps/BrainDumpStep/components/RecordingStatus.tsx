@@ -3,8 +3,9 @@
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { SwapFade } from "@/components/atoms/SwapFade/SwapFade";
 import { Text } from "@/components/atoms/Text/Text";
+import { useT } from "@/lib/i18n";
 import { CloudOffIcon } from "@hugeicons/core-free-icons";
-import { recordingFeedbackAt, SILENCE_NUDGE_COPY } from "../helpers";
+import { recordingFeedbackAt } from "../helpers";
 
 interface Props {
   elapsedSeconds: number;
@@ -12,16 +13,15 @@ interface Props {
   isOffline: boolean;
 }
 
-const OFFLINE_COPY = "You're offline. We'll send this when you're back.";
-
 export function RecordingStatus({
   elapsedSeconds,
   showSilenceNudge,
   isOffline,
 }: Props) {
+  const t = useT();
   const feedback = showSilenceNudge
     ? null
-    : recordingFeedbackAt(elapsedSeconds);
+    : recordingFeedbackAt(elapsedSeconds, t);
 
   return (
     <div className="flex flex-col items-center gap-2">
@@ -35,7 +35,7 @@ export function RecordingStatus({
 
       {showSilenceNudge && (
         <Text variant="small" tone="muted" className="max-w-sm text-center">
-          {SILENCE_NUDGE_COPY}
+          {t("onboarding1.recording.silenceNudge")}
         </Text>
       )}
 
@@ -49,7 +49,7 @@ export function RecordingStatus({
             className="shrink-0 text-foreground-subtle"
           />
           <Text variant="small" tone="muted">
-            {OFFLINE_COPY}
+            {t("onboarding1.recording.offline")}
           </Text>
         </div>
       )}

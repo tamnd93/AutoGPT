@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/atoms/Button/Button";
 import { Text } from "@/components/atoms/Text/Text";
+import { useT } from "@/lib/i18n";
 import { Dialog } from "@/components/molecules/Dialog/Dialog";
 
 interface Props {
@@ -15,17 +16,16 @@ export function CancelRecordingDialog({
   onOpenChange,
   onConfirm,
 }: Props) {
+  const t = useT();
+
   return (
     <Dialog
-      title="Discard recording?"
+      title={t("onboarding1.recording.discard.title")}
       className="min-w-0 max-w-[30rem] rounded-2xlarge"
       controlled={{ isOpen, set: onOpenChange }}
     >
       <Dialog.Content>
-        <Text variant="body">
-          This permanently deletes your current take. You can keep recording or
-          discard it and start again.
-        </Text>
+        <Text variant="body">{t("onboarding1.recording.discard.body")}</Text>
         <Dialog.Footer>
           <Button
             variant="secondary"
@@ -33,7 +33,7 @@ export function CancelRecordingDialog({
             onClick={() => onOpenChange(false)}
             className="h-10"
           >
-            Keep recording
+            {t("onboarding1.recording.discard.keep")}
           </Button>
           <Button
             variant="destructive"
@@ -41,7 +41,7 @@ export function CancelRecordingDialog({
             onClick={onConfirm}
             className="h-10"
           >
-            Discard recording
+            {t("onboarding1.recording.discard.confirm")}
           </Button>
         </Dialog.Footer>
       </Dialog.Content>

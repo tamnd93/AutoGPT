@@ -3,6 +3,7 @@
 import { Button } from "@/components/atoms/Button/Button";
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { Text } from "@/components/atoms/Text/Text";
+import { useT } from "@/lib/i18n";
 import { MicOff01Icon } from "@hugeicons/core-free-icons";
 import type { MicrophonePermission } from "../useMicrophonePermission";
 
@@ -17,26 +18,23 @@ interface Props {
 
 const COPY = {
   blocked: {
-    reason: "Your browser blocked the microphone, so write here instead.",
-    howTo:
-      "To talk, allow the microphone in your browser's site settings (the lock or microphone icon by the address bar), then",
+    reason: "onboarding1.mic.blocked.reason",
+    howTo: "onboarding1.mic.blocked.howTo",
   },
   // The prompt was closed rather than answered: asking again shows it again.
   dismissed: {
-    reason: "The microphone prompt was closed, so write here instead.",
-    howTo: "To talk,",
+    reason: "onboarding1.mic.dismissed.reason",
+    howTo: "onboarding1.mic.dismissed.howTo",
   },
   unavailable: {
-    reason: "We couldn't open your microphone, so write here instead.",
-    howTo:
-      "To talk, check that it's connected and no other app is using it, then",
+    reason: "onboarding1.mic.unavailable.reason",
+    howTo: "onboarding1.mic.unavailable.howTo",
   },
   // The site is allowed but the operating system refused the browser, as
   // Chrome on a Mac without microphone access in System Settings does.
   system: {
-    reason: "Your computer blocked the microphone, so write here instead.",
-    howTo:
-      "To talk, let your browser use the microphone in your computer's privacy settings, then",
+    reason: "onboarding1.mic.system.reason",
+    howTo: "onboarding1.mic.system.howTo",
   },
 } as const;
 
@@ -46,6 +44,7 @@ export function MicBlockedNotice({
   permission,
   onRetry,
 }: Props) {
+  const t = useT();
   if (!isBlocked && !isUnavailable) return null;
   const copy = isBlocked ? noticeCopy(permission) : COPY.unavailable;
 
@@ -61,9 +60,9 @@ export function MicBlockedNotice({
       />
       <Text variant="body" tone="secondary">
         <Text variant="body-medium" as="span">
-          {copy.reason}
+          {t(copy.reason)}
         </Text>{" "}
-        {copy.howTo}{" "}
+        {t(copy.howTo)}{" "}
         <Button
           type="button"
           variant="ghost"
@@ -71,7 +70,7 @@ export function MicBlockedNotice({
           onClick={onRetry}
           className="inline h-auto rounded-sm p-0 align-baseline text-body text-foreground-base underline underline-offset-4 hover:bg-transparent hover:text-foreground-strong"
         >
-          try the microphone again
+          {t("onboarding1.mic.retry")}
         </Button>
         .
       </Text>

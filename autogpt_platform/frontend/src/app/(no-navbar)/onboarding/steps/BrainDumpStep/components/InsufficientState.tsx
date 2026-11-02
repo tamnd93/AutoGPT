@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/atoms/Button/Button";
 import { Text } from "@/components/atoms/Text/Text";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   mode: "voice" | "typed";
@@ -23,7 +24,9 @@ export function InsufficientState({
   onTypeInstead,
   onSkip,
 }: Props) {
+  const t = useT();
   const recordIsPrimary = mode === "voice" && canRecord;
+
   return (
     <div
       role="alert"
@@ -31,12 +34,8 @@ export function InsufficientState({
     >
       <Text variant="body" tone="muted">
         {mode === "voice"
-          ? "We heard you, but there wasn't enough about your work to " +
-            "personalize things yet. A few sentences about what you do — " +
-            "in any language — is all it takes."
-          : "There wasn't enough about your work to personalize things " +
-            "yet. A few sentences about what you do — in any language — " +
-            "is all it takes."}
+          ? t("onboarding1.insufficient.voiceBody")
+          : t("onboarding1.insufficient.typedBody")}
       </Text>
       <div className="flex flex-wrap items-center justify-center gap-3">
         {canRecord && (
@@ -45,7 +44,7 @@ export function InsufficientState({
             size="small"
             onClick={onRecordAgain}
           >
-            Record again
+            {t("onboarding1.insufficient.recordAgain")}
           </Button>
         )}
         <Button
@@ -53,10 +52,12 @@ export function InsufficientState({
           size="small"
           onClick={onTypeInstead}
         >
-          {mode === "typed" ? "Add more detail" : "Type instead"}
+          {mode === "typed"
+            ? t("onboarding1.insufficient.addMore")
+            : t("onboarding1.insufficient.typeInstead")}
         </Button>
         <Button variant="ghost" size="small" onClick={onSkip}>
-          Continue without it
+          {t("onboarding1.common.continueWithout")}
         </Button>
       </div>
     </div>

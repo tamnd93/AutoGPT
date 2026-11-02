@@ -1,18 +1,20 @@
 "use client";
 
+import { useT } from "@/lib/i18n";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { formatElapsed } from "../helpers";
 
 // Each digit is its own slot, so only the digits that actually changed pop:
 // the seconds tick every second while the minutes sit still.
 export function ElapsedTime({ seconds }: { seconds: number }) {
+  const t = useT();
   const prefersReducedMotion = useReducedMotion();
   const characters = formatElapsed(seconds).split("");
 
   return (
     <span
       className="flex items-center font-poppins text-title font-medium tabular-nums leading-10 text-foreground-strong"
-      aria-label={`${seconds} seconds recorded`}
+      aria-label={t("onboarding1.recording.elapsedAria", { seconds })}
       role="timer"
     >
       {characters.map((character, index) => (

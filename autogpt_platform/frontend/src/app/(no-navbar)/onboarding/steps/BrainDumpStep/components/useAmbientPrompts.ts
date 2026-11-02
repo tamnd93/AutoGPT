@@ -1,3 +1,4 @@
+import { useT } from "@/lib/i18n";
 import { useReducedMotion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { BRAIN_DUMP_PROMPT_SETS, promptSetNameForRole } from "../prompts";
@@ -23,6 +24,7 @@ export interface AmbientContent {
 }
 
 export function useAmbientPrompts({ role, slots, isRotating }: Args) {
+  const t = useT();
   const promptSet = promptSetNameForRole(role);
   const reduceMotion = useReducedMotion() === true;
   const [rotation, setRotation] = useState({ promptSet, swaps: 0 });
@@ -51,7 +53,7 @@ export function useAmbientPrompts({ role, slots, isRotating }: Args) {
   const cards: AmbientContent[] = dealt.map((index, card) => {
     if (slots[card] === "example")
       return {
-        label: "For example",
+        label: t("onboarding1.ambient.exampleLabel"),
         text: `“${examples[index]}”`,
         isQuote: true,
       };

@@ -2,6 +2,7 @@
 import { Button } from "@/components/atoms/Button/Button";
 import { Text } from "@/components/atoms/Text/Text";
 import { ErrorCard } from "@/components/molecules/ErrorCard/ErrorCard";
+import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { ArrowLeft01Icon, Logout03Icon } from "@hugeicons/core-free-icons";
 import { ProgressBar } from "./components/ProgressBar";
@@ -18,6 +19,7 @@ import { useOnboardingWizardStore } from "./store";
 import { useOnboardingPage } from "./useOnboardingPage";
 
 export default function OnboardingPage() {
+  const t = useT();
   const {
     currentStep,
     isLoading,
@@ -40,7 +42,7 @@ export default function OnboardingPage() {
   if (isLoading && paidConfirmation.error)
     return (
       <ErrorCard
-        context="your payment"
+        context={t("onboarding1.page.errorPaymentContext")}
         responseError={{ message: paidConfirmation.error }}
         onRetry={paidConfirmation.retry}
       />
@@ -48,13 +50,13 @@ export default function OnboardingPage() {
   if (isLoading && paidConfirmation.pending)
     return (
       <Text variant="body" role="status">
-        Confirming your subscription…
+        {t("onboarding1.page.confirmingSubscription")}
       </Text>
     );
   if (isLoading)
     return !trialConfirmation.ready ? (
       <Text variant="body" role="status">
-        Confirming your trial and card setup…
+        {t("onboarding1.page.confirmingTrial")}
       </Text>
     ) : progressError ? (
       <ProgressError
@@ -64,7 +66,7 @@ export default function OnboardingPage() {
       />
     ) : (
       <Text variant="body" role="status">
-        Loading your setup…
+        {t("onboarding1.page.loading")}
       </Text>
     );
 
@@ -92,14 +94,14 @@ export default function OnboardingPage() {
       )}
       {completionError && (
         <ErrorCard
-          context="your account setup"
+          context={t("onboarding1.page.errorAccountContext")}
           responseError={{ message: completionError }}
           onRetry={handlePreparingComplete}
         />
       )}
       {trialConfirmation.error ? (
         <ErrorCard
-          context="your trial"
+          context={t("onboarding1.page.errorTrialContext")}
           responseError={{ message: trialConfirmation.error }}
           onRetry={trialConfirmation.retry}
         />
@@ -117,7 +119,7 @@ export default function OnboardingPage() {
           leadingIcon={ArrowLeft01Icon}
           className="absolute left-6 top-6 text-foreground-tertiary hover:text-foreground-strong"
         >
-          Back
+          {t("onboarding1.page.back")}
         </Button>
       )}
 
@@ -164,7 +166,7 @@ export default function OnboardingPage() {
           leadingIcon={Logout03Icon}
           className="absolute bottom-6 left-6 text-foreground-tertiary hover:text-foreground-strong"
         >
-          Log out
+          {t("onboarding1.page.logout")}
         </Button>
       )}
     </div>

@@ -1,3 +1,4 @@
+import { LocaleProvider } from "@/lib/i18n";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import type { ReactNode } from "react";
@@ -82,5 +83,23 @@ describe("OttoMightAsk", () => {
 
     expect(screen.queryByRole("button")).toBeNull();
     expect(screen.getByText(QUESTIONS[0].text)).toBeDefined();
+  });
+});
+
+describe("OttoMightAsk — Vietnamese", () => {
+  it("reads its label, its button and its announcement in Vietnamese", async () => {
+    render(
+      <LocaleProvider locale="vi">
+        <LivePrompt />
+      </LocaleProvider>,
+    );
+
+    expect(screen.getByText("Otto có thể sẽ hỏi")).toBeDefined();
+    await userEvent.click(screen.getByRole("button", { name: "Câu hỏi khác" }));
+
+    expect(await screen.findByText(QUESTIONS[5].text)).toBeDefined();
+    expect(screen.getByTestId("otto-might-ask-announcer").textContent).toBe(
+      `Otto có thể sẽ hỏi: ${QUESTIONS[5].text}`,
+    );
   });
 });

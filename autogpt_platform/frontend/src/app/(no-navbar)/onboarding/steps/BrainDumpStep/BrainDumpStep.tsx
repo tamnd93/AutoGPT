@@ -1,6 +1,7 @@
 "use client";
 
 import { Text } from "@/components/atoms/Text/Text";
+import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { AmbientPrompts } from "./components/AmbientPrompts";
 import { FailureState } from "./components/FailureState";
@@ -21,12 +22,8 @@ import { OrbControlButton } from "./components/OrbControlButton";
 import { toOrbScreen } from "./helpers";
 import { useBrainDumpStep } from "./useBrainDumpStep";
 
-const MIC_UNAVAILABLE_COPY =
-  "We couldn't open your microphone. You can write it instead.";
-const TIME_LIMIT_CAPTION =
-  "That's 30 minutes, the most we record in one go. Saving all of it…";
-
 export function BrainDumpStep() {
+  const t = useT();
   const dump = useBrainDumpStep();
   const isRecording = dump.screen === "recording";
   const isProcessing = dump.screen === "processing";
@@ -143,7 +140,7 @@ export function BrainDumpStep() {
                         role="alert"
                         className="mt-3 text-center"
                       >
-                        {MIC_UNAVAILABLE_COPY}
+                        {t("onboarding1.dump.micUnavailable")}
                       </Text>
                     )}
                   </>
@@ -159,8 +156,8 @@ export function BrainDumpStep() {
               {isProcessing && (
                 <Text variant="body" tone="muted" className="text-center">
                   {dump.reachedTimeLimit
-                    ? TIME_LIMIT_CAPTION
-                    : "Got it. One second…"}
+                    ? t("onboarding1.dump.timeLimit")
+                    : t("onboarding1.dump.processing")}
                 </Text>
               )}
             </RevealItem>

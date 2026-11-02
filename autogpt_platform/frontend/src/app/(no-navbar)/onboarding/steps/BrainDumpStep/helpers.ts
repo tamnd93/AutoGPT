@@ -1,7 +1,16 @@
 import type { HTTPValidationError } from "@/app/api/__generated__/models/hTTPValidationError";
 import { ApiError } from "@/lib/autogpt-server-api/helpers";
+import type { Locale } from "@/lib/i18n/locale";
+import type { MessageKey } from "@/lib/i18n/messages/en";
+import { getMessage, type MessageValues } from "@/lib/i18n/translate";
 import type { OrbScreen } from "./components/MicButton";
 import type { ScreenState } from "./useBrainDumpStep";
+
+export type Translate = (key: MessageKey, values?: MessageValues) => string;
+
+// The components pass useT(); a call without one reads English, as the unit
+// tests do.
+const english: Translate = (key, values) => getMessage("en", key, values);
 
 // Pure helpers for the brain dump. Timings and copy live here so the hook
 // stays about behaviour and the component stays about pixels.
@@ -17,7 +26,6 @@ export const HARD_STOP_SECONDS = 1800;
 // `onboarding_dump/models.py`); a test pins the two together.
 export const MAX_TYPED_CHARS = 20_000;
 const TYPED_CHARS_LEFT_FROM = 2_000;
-export const TYPED_TOO_LONG_COPY = `That's over the ${formatCount(MAX_TYPED_CHARS)}-character limit; trim it and try again.`;
 
 // Every 3s the recorder hands us a chunk to persist. Small enough that a
 // crash costs almost nothing, large enough not to thrash IndexedDB.
@@ -33,16 +41,14 @@ export const SILENCE_NUDGE_SECONDS = 5;
 // Waveform peak (0-127 either side of the 128 midpoint) that counts as
 // somebody talking rather than a quiet room.
 export const SPEECH_PEAK_THRESHOLD = 12;
-export const SILENCE_NUDGE_COPY =
-  "Start anywhere. What did you do yesterday that bored you?";
 
-const ENCOURAGEMENT_COPY = [
-  "Keep going, this is gold",
-  "The more you share, the sharper Otto gets",
-  "You're building Otto's memory right now",
-  "You're doing great. Keep going",
-  "Every detail makes Otto more useful",
-  "Share whatever comes to mind next",
+const ENCOURAGEMENT_KEYS = [
+  "onboarding1.recording.encouragement.gold",
+  "onboarding1.recording.encouragement.share",
+  "onboarding1.recording.encouragement.memory",
+  "onboarding1.recording.encouragement.great",
+  "onboarding1.recording.encouragement.detail",
+  "onboarding1.recording.encouragement.next",
 ] as const;
 
 const ENCOURAGEMENT_MILESTONES = [
@@ -51,32 +57,37 @@ const ENCOURAGEMENT_MILESTONES = [
 
 const ENCOURAGEMENTS = ENCOURAGEMENT_MILESTONES.map((atSeconds, index) => ({
   atSeconds,
-  text: ENCOURAGEMENT_COPY[index % ENCOURAGEMENT_COPY.length],
+  key: ENCOURAGEMENT_KEYS[index % ENCOURAGEMENT_KEYS.length],
 }));
 
 const ENCOURAGEMENT_VISIBLE_SECONDS = 6;
 const DURATION_GUIDANCE_START_SECONDS = 4;
 const DURATION_GUIDANCE_END_SECONDS = 10;
-export const DURATION_GUIDANCE_COPY =
-  "Even a minute helps. Keep going if you have more.";
+const DURATION_GUIDANCE_KEY = "onboarding1.recording.feedback.duration";
 
-export function encouragementAt(elapsedSeconds: number): string | null {
+export function encouragementAt(
+  elapsedSeconds: number,
+  t: Translate = english,
+): string | null {
   const active = ENCOURAGEMENTS.find(
     (line) =>
       elapsedSeconds >= line.atSeconds &&
       elapsedSeconds < line.atSeconds + ENCOURAGEMENT_VISIBLE_SECONDS,
   );
-  return active?.text ?? null;
+  return active ? t(active.key) : null;
 }
 
-export function recordingFeedbackAt(elapsedSeconds: number) {
-  const encouragement = encouragementAt(elapsedSeconds);
+export function recordingFeedbackAt(
+  elapsedSeconds: number,
+  t: Translate = english,
+) {
+  const encouragement = encouragementAt(elapsedSeconds, t);
   if (encouragement) return encouragement;
   if (
     elapsedSeconds >= DURATION_GUIDANCE_START_SECONDS &&
     elapsedSeconds < DURATION_GUIDANCE_END_SECONDS
   ) {
-    return DURATION_GUIDANCE_COPY;
+    return t(DURATION_GUIDANCE_KEY);
   }
   return null;
 }
@@ -124,32 +135,54 @@ export function isInsufficientDump(errorCode: unknown) {
 // was refused with, or "network" when no answer came back.
 export type FailureCause = string | number | null;
 
-const FAILURE_REASONS: Record<string, string> = {
-  storage_failed: "We couldn't store your recording on our side.",
-  no_audio_received: "Your recording didn't reach us.",
-  upload_failed: "Part of your recording didn't reach us.",
-  transcription_failed: "We couldn't turn your recording into text.",
-  transcription_unavailable: "Our speech-to-text service is unavailable.",
-  quality_check_unavailable: "We couldn't check what you told us just now.",
-  superseded:
-    "Something newer you sent, maybe from another tab, replaced this.",
-  "429": "You've tried a few times already. Wait a bit first.",
-  "503": "Personalization is unavailable for a moment.",
-  network: "We couldn't reach the server. Check your connection.",
+const FAILURE_REASON_KEYS: Record<string, MessageKey> = {
+  storage_failed: "onboarding1.failure.storageFailed",
+  no_audio_received: "onboarding1.failure.noAudio",
+  upload_failed: "onboarding1.failure.uploadFailed",
+  transcription_failed: "onboarding1.failure.transcriptionFailed",
+  transcription_unavailable: "onboarding1.failure.transcriptionUnavailable",
+  quality_check_unavailable: "onboarding1.failure.qualityCheck",
+  superseded: "onboarding1.failure.superseded",
+  "429": "onboarding1.failure.rateLimited",
+  "503": "onboarding1.failure.unavailable",
+  network: "onboarding1.failure.network",
 };
 
-export function failureReason(cause: FailureCause) {
-  return cause === null ? null : (FAILURE_REASONS[String(cause)] ?? null);
+export function failureReason(
+  cause: FailureCause,
+  t: Translate = english,
+): string | null {
+  if (cause === null) return null;
+  const key = FAILURE_REASON_KEYS[String(cause)];
+  return key ? t(key) : null;
 }
 
 export function failureCauseOf(error: unknown): FailureCause {
   return error instanceof ApiError ? error.status : "network";
 }
 
-export function typedCharsLeftHint(length: number) {
+export function typedTooLongCopy(
+  t: Translate = english,
+  locale: Locale = "en",
+) {
+  return t("onboarding1.typed.tooLong", {
+    max: formatCount(MAX_TYPED_CHARS, locale),
+  });
+}
+
+export function typedCharsLeftHint(
+  length: number,
+  t: Translate = english,
+  locale: Locale = "en",
+) {
   const left = Math.max(0, MAX_TYPED_CHARS - length);
   if (left > TYPED_CHARS_LEFT_FROM) return null;
-  return `${formatCount(left)} ${left === 1 ? "character" : "characters"} left`;
+  return t(
+    left === 1
+      ? "onboarding1.typed.charsLeftOne"
+      : "onboarding1.typed.charsLeftOther",
+    { left: formatCount(left, locale) },
+  );
 }
 
 export function isTypedTextTooLong(error: unknown) {
@@ -163,8 +196,8 @@ export function isTypedTextTooLong(error: unknown) {
   );
 }
 
-function formatCount(count: number) {
-  return count.toLocaleString("en-US");
+function formatCount(count: number, locale: Locale) {
+  return count.toLocaleString(locale === "vi" ? "vi-VN" : "en-US");
 }
 
 export function toOrbScreen(screen: ScreenState): OrbScreen | null {

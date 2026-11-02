@@ -3,6 +3,7 @@
 import { Button } from "@/components/atoms/Button/Button";
 import { SwapFade } from "@/components/atoms/SwapFade/SwapFade";
 import { Text } from "@/components/atoms/Text/Text";
+import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
 interface Props {
@@ -29,6 +30,7 @@ export function OttoMightAsk({
   onTogglePause,
   className,
 }: Props) {
+  const t = useT();
   const isLeft = align === "left";
 
   // Left aligned above the composer, the button shares the label's row to
@@ -52,7 +54,7 @@ export function OttoMightAsk({
           isLeft && "col-start-1 row-start-1",
         )}
       >
-        Otto might ask
+        {t("onboarding1.prompt.label")}
       </Text>
       <SwapFade
         swapKey={question}
@@ -78,7 +80,7 @@ export function OttoMightAsk({
             isLeft ? "col-start-2 row-start-1 -mr-2.5" : "mt-1",
           )}
         >
-          Another question
+          {t("onboarding1.prompt.another")}
         </Button>
       )}
       {/* The only announcement of the prompt layer: the ambient cards are
@@ -89,7 +91,8 @@ export function OttoMightAsk({
         data-testid="otto-might-ask-announcer"
         className="sr-only"
       >
-        {announcement && `Otto might ask: ${announcement}`}
+        {announcement &&
+          t("onboarding1.prompt.announce", { question: announcement })}
       </p>
     </div>
   );

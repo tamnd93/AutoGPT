@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/atoms/Button/Button";
+import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
 interface Props {
@@ -12,6 +13,8 @@ interface Props {
 // Pinned to the page's top right corner, so it is rendered outside the
 // step's own positioned wrapper.
 export function SkipButton({ isHidden, isProcessing, onSkip }: Props) {
+  const t = useT();
+
   return (
     <div
       className={cn(
@@ -30,7 +33,7 @@ export function SkipButton({ isHidden, isProcessing, onSkip }: Props) {
           onClick={onSkip}
           className="text-foreground-subtle hover:text-foreground-body"
         >
-          Skip for now
+          {t("onboarding1.skip")}
         </Button>
       )}
     </div>

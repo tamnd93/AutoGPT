@@ -1,4 +1,5 @@
 import { act, fireEvent, render, screen } from "@testing-library/react";
+import { LocaleProvider } from "@/lib/i18n";
 import type { ReactNode } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -204,4 +205,24 @@ describe("AmbientPrompts", () => {
       expect(screen.queryByTestId("ambient-prompts")).toBeNull();
     },
   );
+});
+
+describe("AmbientPrompts — Vietnamese", () => {
+  it("reads the example label in Vietnamese while the role's questions still show", () => {
+    render(
+      <LocaleProvider locale="vi">
+        <AmbientPrompts
+          role="Operations"
+          screen="rest"
+          isPaused={false}
+          onTogglePause={onTogglePause}
+        />
+      </LocaleProvider>,
+    );
+
+    expect(screen.getAllByText("Ví dụ")).toHaveLength(2);
+    expect(screen.queryByText("For example")).toBeNull();
+    fireEvent.click(screen.getByText(OPERATIONS.questions[0].text));
+    expect(onTogglePause).toHaveBeenCalledTimes(1);
+  });
 });

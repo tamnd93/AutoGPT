@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/atoms/Button/Button";
 import { SwapFade } from "@/components/atoms/SwapFade/SwapFade";
+import { useT } from "@/lib/i18n";
 import type { ScreenState } from "../useBrainDumpStep";
 
 interface Props {
@@ -20,6 +21,7 @@ export function ModeSwitchLink({
   onRecordInstead,
   onTypeInsteadOfRecovered,
 }: Props) {
+  const t = useT();
   if (screen !== "typing" && screen !== "failed" && screen !== "recovery") {
     return null;
   }
@@ -29,17 +31,21 @@ export function ModeSwitchLink({
       <SwapFade swapKey={screen}>
         {screen === "failed" && (
           <LinkButton onClick={onTypeInstead}>
-            {submittedMode === "typed" ? "edit your text" : "type instead"}
+            {submittedMode === "typed"
+              ? t("onboarding1.mode.editText")
+              : t("onboarding1.mode.typeInstead")}
           </LinkButton>
         )}
         {/* Kept while the microphone is refused: it asks the browser again
             rather than going back to an orb that would only be refused. */}
         {screen === "typing" && (
-          <LinkButton onClick={onRecordInstead}>record instead</LinkButton>
+          <LinkButton onClick={onRecordInstead}>
+            {t("onboarding1.mode.recordInstead")}
+          </LinkButton>
         )}
         {screen === "recovery" && (
           <LinkButton onClick={onTypeInsteadOfRecovered}>
-            type instead
+            {t("onboarding1.mode.typeInstead")}
           </LinkButton>
         )}
       </SwapFade>
