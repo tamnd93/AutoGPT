@@ -1,4 +1,5 @@
 import { SubmissionStatus } from "@/app/api/__generated__/models/submissionStatus";
+import { useT, type MessageKey } from "@/lib/i18n";
 import * as React from "react";
 
 interface StatusProps {
@@ -10,7 +11,7 @@ const statusConfig: Record<
   {
     bgColor: string;
     dotColor: string;
-    text: string;
+    textKey: MessageKey;
     darkBgColor: string;
     darkDotColor: string;
   }
@@ -18,34 +19,35 @@ const statusConfig: Record<
   [SubmissionStatus.DRAFT]: {
     bgColor: "bg-blue-50",
     dotColor: "bg-blue-500",
-    text: "Draft",
+    textKey: "shared1.status.draft",
     darkBgColor: "dark:bg-blue-900",
     darkDotColor: "dark:bg-blue-300",
   },
   [SubmissionStatus.PENDING]: {
     bgColor: "bg-amber-50",
     dotColor: "bg-amber-500",
-    text: "Awaiting review",
+    textKey: "shared1.status.pending",
     darkBgColor: "dark:bg-amber-900",
     darkDotColor: "dark:bg-amber-300",
   },
   [SubmissionStatus.APPROVED]: {
     bgColor: "bg-green-50",
     dotColor: "bg-green-500",
-    text: "Approved",
+    textKey: "shared1.status.approved",
     darkBgColor: "dark:bg-green-900",
     darkDotColor: "dark:bg-green-300",
   },
   [SubmissionStatus.REJECTED]: {
     bgColor: "bg-red-50",
     dotColor: "bg-red-500",
-    text: "Rejected",
+    textKey: "shared1.status.rejected",
     darkBgColor: "dark:bg-red-900",
     darkDotColor: "dark:bg-red-300",
   },
 };
 
 export const Status: React.FC<StatusProps> = ({ status }) => {
+  const t = useT();
   /**
    * Status component displays a badge with a colored dot and text indicating the agent's status
    * @param status - The current status of the agent
@@ -67,7 +69,7 @@ export const Status: React.FC<StatusProps> = ({ status }) => {
         className={`h-3 w-3 ${config.dotColor} ${config.darkDotColor} rounded-full`}
       />
       <div className="font-sans text-sm font-normal leading-tight text-neutral-600 dark:text-neutral-300">
-        {config.text}
+        {t(config.textKey)}
       </div>
     </div>
   );

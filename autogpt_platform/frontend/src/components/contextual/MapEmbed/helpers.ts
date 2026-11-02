@@ -1,3 +1,6 @@
+import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/locale";
+import { getMessage } from "@/lib/i18n/translate";
+
 export interface MapPin {
   name: string;
   lat: number;
@@ -16,20 +19,29 @@ function isFiniteNumber(value: unknown): value is number {
   return typeof value === "number" && Number.isFinite(value);
 }
 
-function toPin(value: unknown): MapPin | null {
+function toPin(
+  value: unknown,
+  locale: Locale = DEFAULT_LOCALE,
+): MapPin | null {
   if (typeof value !== "object" || value === null) return null;
   const { name, lat, lng, address } = value as Record<string, unknown>;
   if (!isFiniteNumber(lat) || !isFiniteNumber(lng)) return null;
   if (lat < -90 || lat > 90 || lng < -180 || lng > 180) return null;
   return {
-    name: typeof name === "string" && name.trim() ? name.trim() : "Location",
+    name:
+      typeof name === "string" && name.trim()
+        ? name.trim()
+        : getMessage(locale, "shared1.mapEmbed.location"),
     lat,
     lng,
     address: typeof address === "string" ? address : undefined,
   };
 }
 
-export function parseMapSource(source: string): MapData | null {
+export function parseMapSource(
+  source: string,
+  locale: Locale = DEFAULT_LOCALE,
+): MapData | null {
   let parsed: unknown;
   try {
     parsed = JSON.parse(source);
@@ -40,7 +52,7 @@ export function parseMapSource(source: string): MapData | null {
   const { title, pins } = parsed as Record<string, unknown>;
   if (!Array.isArray(pins)) return null;
   const valid = pins
-    .map(toPin)
+    .map((pin) => toPin(pin, locale))
     .filter((pin): pin is MapPin => pin !== null)
     .slice(0, MAX_PINS);
   if (valid.length === 0) return null;

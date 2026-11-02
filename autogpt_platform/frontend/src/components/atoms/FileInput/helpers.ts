@@ -1,18 +1,32 @@
-export function getFileLabel(filename: string, contentType?: string) {
+import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/locale";
+import { getMessage } from "@/lib/i18n/translate";
+
+export function getFileLabel(
+  filename: string,
+  contentType?: string,
+  locale: Locale = DEFAULT_LOCALE,
+) {
   if (contentType) {
     const mimeParts = contentType.split("/");
     if (mimeParts.length > 1) {
-      return `${mimeParts[1].toUpperCase()} file`;
+      return getMessage(locale, "shared1.fileInput.subtypeFile", {
+        type: mimeParts[1].toUpperCase(),
+      });
     }
-    return `${contentType} file`;
+    return getMessage(locale, "shared1.fileInput.subtypeFile", {
+      type: contentType,
+    });
   }
 
   const pathParts = filename.split(".");
   if (pathParts.length > 1) {
     const ext = pathParts.pop();
-    if (ext) return `${ext.toUpperCase()} file`;
+    if (ext)
+      return getMessage(locale, "shared1.fileInput.subtypeFile", {
+        type: ext.toUpperCase(),
+      });
   }
-  return "File";
+  return getMessage(locale, "shared1.fileInput.file");
 }
 
 export function formatFileSize(bytes: number): string {

@@ -8,38 +8,40 @@ import {
   DropdownMenuTrigger,
 } from "@/components/molecules/DropdownMenu/DropdownMenu";
 import { ChevronDownIcon } from "@radix-ui/react-icons";
+import { useT, type MessageKey } from "@/lib/i18n";
 
 const sortOptions: SortOption[] = [
-  { label: "Most Runs", value: "runs" },
-  { label: "Highest Rated", value: "rating" },
-  { label: "Name (A-Z)", value: "name" },
-  { label: "Recently Updated", value: "updated_at" },
+  { labelKey: "shared1.sortDropdown.mostRuns", value: "runs" },
+  { labelKey: "shared1.sortDropdown.highestRated", value: "rating" },
+  { labelKey: "shared1.sortDropdown.nameAZ", value: "name" },
+  { labelKey: "shared1.sortDropdown.recentlyUpdated", value: "updated_at" },
 ];
 
 interface SortOption {
-  label: string;
+  labelKey: MessageKey;
   value: string;
 }
 
 export const SortDropdown: React.FC<{
   onSort: (sortValue: string) => void;
 }> = ({ onSort }) => {
+  const t = useT();
   const [selected, setSelected] = React.useState(sortOptions[0]);
 
   const handleSelect = (option: SortOption) => {
     setSelected(option);
     onSort(option.value);
-    console.log(`Sorting by: ${option.label} (${option.value})`);
+    console.log(`Sorting by: ${option.value}`);
   };
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="flex items-center gap-1.5 focus:outline-none">
         <span className="text-base text-neutral-800 dark:text-neutral-200">
-          Sort by
+          {t("shared1.sortDropdown.sortBy")}
         </span>
         <span className="text-base text-neutral-800 dark:text-neutral-200">
-          {selected.label}
+          {t(selected.labelKey)}
         </span>
         <ChevronDownIcon className="h-4 w-4 text-neutral-800 dark:text-neutral-200" />
       </DropdownMenuTrigger>
@@ -57,7 +59,7 @@ export const SortDropdown: React.FC<{
             }`}
             onClick={() => handleSelect(option)}
           >
-            {option.label}
+            {t(option.labelKey)}
           </DropdownMenuItem>
         ))}
       </DropdownMenuContent>

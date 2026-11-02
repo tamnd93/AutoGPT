@@ -9,6 +9,7 @@ import {
 import { Menu } from "lucide-react";
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { DashboardLayoutGlyph } from "@/components/atoms/Icon/drawnIcons";
+import { useT } from "@/lib/i18n";
 
 export interface SidebarLink {
   text: string;
@@ -25,12 +26,12 @@ export interface SidebarProps {
 }
 
 // Helper function to get the default icon component based on link text
-const getDefaultIconForLink = () => {
+const getDefaultIconForLink = (label: string) => {
   // Default icon
   return (
     <Icon
       icon={DashboardLayoutGlyph}
-      aria-label="Icon"
+      aria-label={label}
       strokeWidth={1.25}
       className="h-6 w-6"
     />
@@ -38,6 +39,7 @@ const getDefaultIconForLink = () => {
 };
 
 export const Sidebar: React.FC<SidebarProps> = ({ linkGroups }) => {
+  const t = useT();
   // Extract all links from linkGroups
   const allLinks = linkGroups.flatMap((group) => group.links);
 
@@ -49,7 +51,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ linkGroups }) => {
         href={link.href}
         className="inline-flex w-full items-center gap-2.5 rounded-xl px-3 py-3 text-neutral-800 hover:bg-neutral-800 hover:text-white dark:text-neutral-200 dark:hover:bg-neutral-700 dark:hover:text-white"
       >
-        {link.icon || getDefaultIconForLink()}
+        {link.icon || getDefaultIconForLink(t("shared1.sidebar.iconAria"))}
         <div className="p-ui-medium text-base font-medium leading-normal">
           {link.text}
         </div>
@@ -62,11 +64,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ linkGroups }) => {
       <Sheet>
         <SheetTrigger asChild>
           <Button
-            aria-label="Open sidebar menu"
+            aria-label={t("shared1.sidebar.openMenu")}
             className="fixed left-4 top-4 z-50 flex h-14 w-14 items-center justify-center rounded-lg border border-neutral-500 bg-neutral-200 hover:bg-gray-200/50 dark:border-neutral-700 dark:bg-neutral-800 dark:hover:bg-gray-700/50 md:block lg:hidden"
           >
             <Menu className="h-8 w-8 stroke-black dark:stroke-white" />
-            <span className="sr-only">Open sidebar menu</span>
+            <span className="sr-only">{t("shared1.sidebar.openMenu")}</span>
           </Button>
         </SheetTrigger>
         <SheetContent

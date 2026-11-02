@@ -14,6 +14,7 @@ import {
   Upload01Icon,
 } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useLocale, useT } from "@/lib/i18n";
 
 function PreviewButton({
   value,
@@ -24,6 +25,7 @@ function PreviewButton({
   title: string;
   contentType?: string;
 }) {
+  const t = useT();
   const metadata = contentType ? { mimeType: contentType } : undefined;
   const renderer = globalRegistry.getRenderer(value, metadata);
   if (!renderer) return null;
@@ -37,7 +39,7 @@ function PreviewButton({
           size="small"
           className="h-7 w-7 min-w-0 flex-shrink-0 border-border-strong p-0 text-gray-500 hover:text-info-foreground dark:text-gray-400 dark:hover:text-blue-500"
           type="button"
-          aria-label="Preview file"
+          aria-label={t("shared1.fileInput.previewFileAria")}
         >
           <Icon data-slot="file-input-preview-icon" icon={EyeIcon} size={14} />
         </Button>
@@ -130,6 +132,8 @@ export function FileInput(props: Props) {
     mode = "upload",
   } = props;
 
+  const t = useT();
+  const locale = useLocale();
   const onUploadFile =
     mode === "upload" ? (props as UploadModeProps).onUploadFile : undefined;
 
@@ -143,7 +147,7 @@ export function FileInput(props: Props) {
 
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const storageNote = "Files are stored securely in your workspace.";
+  const storageNote = t("shared1.fileInput.storageNote");
 
   function acceptToString(a?: string | string[]) {
     if (!a) return "*/*";
@@ -185,21 +189,24 @@ export function FileInput(props: Props) {
         return getFileLabel(
           obj.name,
           typeof obj.type === "string" ? obj.type : "",
+          locale,
         );
       }
       if (typeof obj.type === "string") {
         const mimeParts = obj.type.split("/");
         if (mimeParts.length > 1) {
-          return `${mimeParts[1].toUpperCase()} file`;
+          return t("shared1.fileInput.subtypeFile", {
+            type: mimeParts[1].toUpperCase(),
+          });
         }
-        return `${obj.type} file`;
+        return t("shared1.fileInput.subtypeFile", { type: obj.type });
       }
-      return "File";
+      return t("shared1.fileInput.file");
     }
 
     // Handle string values (workspace URIs, data URIs, or file paths)
     if (typeof val !== "string") {
-      return "File";
+      return t("shared1.fileInput.file");
     }
 
     const wsURI = parseWorkspaceURI(val);
@@ -207,11 +214,13 @@ export function FileInput(props: Props) {
       if (wsURI.mimeType) {
         const parts = wsURI.mimeType.split("/");
         if (parts.length > 1) {
-          return `${parts[1].toUpperCase()} file`;
+          return t("shared1.fileInput.subtypeFile", {
+            type: parts[1].toUpperCase(),
+          });
         }
-        return "File";
+        return t("shared1.fileInput.file");
       }
-      return "Uploaded file";
+      return t("shared1.fileInput.uploadedFile");
     }
 
     if (val.startsWith("data:")) {
@@ -219,18 +228,23 @@ export function FileInput(props: Props) {
       if (matches?.[1]) {
         const mimeParts = matches[1].split("/");
         if (mimeParts.length > 1) {
-          return `${mimeParts[1].toUpperCase()} file`;
+          return t("shared1.fileInput.subtypeFile", {
+            type: mimeParts[1].toUpperCase(),
+          });
         }
-        return `${matches[1]} file`;
+        return t("shared1.fileInput.subtypeFile", { type: matches[1] });
       }
     } else {
       const pathParts = val.split(".");
       if (pathParts.length > 1) {
         const ext = pathParts.pop();
-        if (ext) return `${ext.toUpperCase()} file`;
+        if (ext)
+          return t("shared1.fileInput.subtypeFile", {
+            type: ext.toUpperCase(),
+          });
       }
     }
-    return "File";
+    return t("shared1.fileInput.file");
   }
 
   function processFileBase64(file: File) {
@@ -249,7 +263,7 @@ export function FileInput(props: Props) {
       setIsUploading(false);
     };
     reader.onerror = () => {
-      setUploadError("Failed to read file");
+      setUploadError(t("shared1.fileInput.readFailed"));
       setIsUploading(false);
     };
     reader.readAsDataURL(file);
@@ -262,7 +276,7 @@ export function FileInput(props: Props) {
     }
 
     if (!onUploadFile) {
-      setUploadError("Upload handler not provided");
+      setUploadError(t("shared1.fileInput.uploadHandlerMissing"));
       return;
     }
 
@@ -288,7 +302,11 @@ export function FileInput(props: Props) {
       }
     } catch (error) {
       console.error("Upload failed:", error);
-      setUploadError(error instanceof Error ? error.message : "Upload failed");
+      setUploadError(
+        error instanceof Error
+          ? error.message
+          : t("shared1.fileInput.uploadFailed"),
+      );
     } finally {
       setIsUploading(false);
     }
@@ -300,13 +318,16 @@ export function FileInput(props: Props) {
     // Validate max size
     if (typeof maxFileSize === "number" && file.size > maxFileSize) {
       setUploadError(
-        `File exceeds maximum size of ${formatFileSize(maxFileSize)} (selected ${formatFileSize(file.size)})`,
+        t("shared1.fileInput.tooLarge", {
+          max: formatFileSize(maxFileSize),
+          size: formatFileSize(file.size),
+        }),
       );
       return;
     }
     // Validate accept types
     if (!isAcceptedType(file, accept)) {
-      setUploadError("Selected file type is not allowed");
+      setUploadError(t("shared1.fileInput.typeNotAllowed"));
       return;
     }
     uploadFile(file);
@@ -329,7 +350,7 @@ export function FileInput(props: Props) {
     setFileInfo(null);
   }
 
-  const displayName = placeholder || "File";
+  const displayName = placeholder || t("shared1.fileInput.file");
 
   if (variant === "compact") {
     return (
@@ -355,7 +376,9 @@ export function FileInput(props: Props) {
                 variant="small"
                 className="text-blue-700 dark:text-blue-300"
               >
-                {mode === "base64" ? "Processing..." : "Uploading..."}
+                {mode === "base64"
+                  ? t("shared1.fileInput.processing")
+                  : t("shared1.fileInput.uploading")}
               </Text>
             </div>
           ) : value ? (
@@ -398,7 +421,7 @@ export function FileInput(props: Props) {
                   title={
                     fileInfo
                       ? getFileLabel(fileInfo.name, fileInfo.content_type)
-                      : "Preview"
+                      : t("shared1.fileInput.preview")
                   }
                   contentType={fileInfo?.content_type}
                 />
@@ -410,7 +433,7 @@ export function FileInput(props: Props) {
                 className="h-7 w-7 min-w-0 flex-shrink-0 border-border-strong p-0 text-gray-500 hover:text-error-hover dark:text-gray-400 dark:hover:text-red-500"
                 onClick={handleClear}
                 type="button"
-                aria-label="Clear file"
+                aria-label={t("shared1.fileInput.clearAria")}
               >
                 <Icon
                   data-slot="file-input-clear-icon"
@@ -438,7 +461,9 @@ export function FileInput(props: Props) {
                   icon={Upload01Icon}
                   className="mr-1.5 h-3.5 w-3.5"
                 />
-                {`Upload ${displayName}`}
+                {t("shared1.fileInput.uploadNamed", {
+                  name: displayName,
+                })}
               </Button>
             </div>
           )}
@@ -486,7 +511,9 @@ export function FileInput(props: Props) {
                 data-slot="file-input-progress-text"
                 className="text-gray-700"
               >
-                {mode === "base64" ? "Processing..." : "Uploading..."}
+                {mode === "base64"
+                  ? t("shared1.fileInput.processing")
+                  : t("shared1.fileInput.uploading")}
               </span>
             </div>
           </div>
@@ -537,7 +564,7 @@ export function FileInput(props: Props) {
                     title={
                       fileInfo
                         ? getFileLabel(fileInfo.name, fileInfo.content_type)
-                        : "Preview"
+                        : t("shared1.fileInput.preview")
                     }
                     contentType={fileInfo?.content_type}
                   />
@@ -548,7 +575,7 @@ export function FileInput(props: Props) {
                   size="small"
                   type="button"
                   onClick={handleClear}
-                  aria-label="Clear file"
+                  aria-label={t("shared1.fileInput.clearAria")}
                   className="h-7 w-7 min-w-0 flex-shrink-0 border-border-strong p-0 text-gray-500 hover:text-error-hover dark:text-gray-400 dark:hover:text-red-500"
                 >
                   <Icon
@@ -581,7 +608,7 @@ export function FileInput(props: Props) {
               onDragOver={(e) => e.preventDefault()}
               className="agpt-border-input flex min-h-14 w-full items-center justify-center rounded-xl border-dashed bg-surface-muted text-body leading-5 text-gray-500"
             >
-              Choose a file or drag and drop it here
+              {t("shared1.fileInput.dropzone")}
             </div>
 
             <Button
@@ -590,7 +617,7 @@ export function FileInput(props: Props) {
               className="min-w-40"
               type="button"
             >
-              Browse File
+              {t("shared1.fileInput.browse")}
             </Button>
           </div>
 
@@ -599,7 +626,7 @@ export function FileInput(props: Props) {
               data-slot="file-input-error"
               className="text-body leading-5 text-error-hover"
             >
-              Error: {uploadError}
+              {t("shared1.fileInput.errorPrefix")} {uploadError}
             </div>
           )}
 

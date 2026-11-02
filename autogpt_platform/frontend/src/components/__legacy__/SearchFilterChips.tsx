@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { useT } from "@/lib/i18n";
 
 interface FilterOption {
   label: string;
@@ -27,18 +28,39 @@ export const SearchFilterChips: React.FC<SearchFilterChipsProps> = ({
   expertsCount,
   onFilterChange,
 }) => {
+  const t = useT();
   const [selected, setSelected] = React.useState("all");
 
   const filters: FilterOption[] = [
-    { label: "All", count: totalCount, value: "all" },
+    { label: t("shared1.searchFilterChips.all"), count: totalCount, value: "all" },
     ...(expertsCount === undefined
       ? []
-      : [{ label: "Experts", count: expertsCount, value: "experts" }]),
-    { label: "Workflows", count: agentsCount, value: "agents" },
+      : [
+          {
+            label: t("shared1.searchFilterChips.experts"),
+            count: expertsCount,
+            value: "experts",
+          },
+        ]),
+    {
+      label: t("shared1.searchFilterChips.workflows"),
+      count: agentsCount,
+      value: "agents",
+    },
     ...(skillsCount === undefined
       ? []
-      : [{ label: "Skills", count: skillsCount, value: "skills" }]),
-    { label: "Creators", count: creatorsCount, value: "creators" },
+      : [
+          {
+            label: t("shared1.searchFilterChips.skills"),
+            count: skillsCount,
+            value: "skills",
+          },
+        ]),
+    {
+      label: t("shared1.searchFilterChips.creators"),
+      count: creatorsCount,
+      value: "creators",
+    },
   ];
 
   const handleFilterClick = (value: string) => {
