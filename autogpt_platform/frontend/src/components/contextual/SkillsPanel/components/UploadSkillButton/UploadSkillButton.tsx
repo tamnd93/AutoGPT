@@ -9,12 +9,14 @@ import {
 import { useUploadSkillButton } from "./useUploadSkillButton";
 import { Upload03Icon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   onUploaded?: (name: string) => void;
 }
 
 export function UploadSkillButton({ onUploaded }: Props) {
+  const t = useT();
   const { fileInputRef, isUploading, openFilePicker, handleFileChange } =
     useUploadSkillButton({ onUploaded });
 
@@ -38,11 +40,11 @@ export function UploadSkillButton({ onUploaded }: Props) {
             data-testid="skill-upload-button"
           >
             <Icon icon={Upload03Icon} className="mr-1 h-4 w-4" />
-            Upload skill
+            {t("skills1.upload.button")}
           </Button>
         </TooltipTrigger>
         <TooltipContent side="bottom">
-          Import a SKILL.md, or a zipped skill package
+          {t("skills1.upload.tooltip")}
         </TooltipContent>
       </Tooltip>
     </>

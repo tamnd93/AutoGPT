@@ -16,6 +16,7 @@ import { UploadSkillButton } from "./components/UploadSkillButton/UploadSkillBut
 import { useSkillsPanel } from "./useSkillsPanel";
 import { PlusSignIcon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   onGuidedPrompt: (prompt: string) => void;
@@ -23,6 +24,7 @@ interface Props {
 }
 
 export function SkillsPanel({ onGuidedPrompt, withHeading = true }: Props) {
+  const t = useT();
   const { skills, isLoading, error, newSkillName, handleSkillUploaded } =
     useSkillsPanel();
 
@@ -30,10 +32,11 @@ export function SkillsPanel({ onGuidedPrompt, withHeading = true }: Props) {
     <section className="space-y-6">
       <header className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div className="flex min-w-0 flex-col gap-2">
-          {withHeading && <Text variant="h2">Skills</Text>}
+          {withHeading && (
+            <Text variant="h2">{t("skills1.panel.heading")}</Text>
+          )}
           <Text variant="body" className="!text-foreground-tertiary">
-            Reusable playbooks your experts follow. Review your skills, import a
-            new one, or delete one you no longer need.
+            {t("skills1.panel.description")}
           </Text>
         </div>
         <div className="flex flex-shrink-0 items-center gap-2">
@@ -47,11 +50,11 @@ export function SkillsPanel({ onGuidedPrompt, withHeading = true }: Props) {
                 data-testid="skill-new-button"
               >
                 <Icon icon={PlusSignIcon} className="mr-1 h-4 w-4" />
-                New skill
+                {t("skills1.panel.newSkill")}
               </Button>
             </TooltipTrigger>
             <TooltipContent side="bottom">
-              Create a new skill in chat
+              {t("skills1.panel.newTooltip")}
             </TooltipContent>
           </Tooltip>
         </div>
@@ -61,7 +64,9 @@ export function SkillsPanel({ onGuidedPrompt, withHeading = true }: Props) {
         <ErrorCard
           responseError={{
             message:
-              error instanceof Error ? error.message : "Failed to load skills",
+              error instanceof Error
+                ? error.message
+                : t("skills1.panel.loadFailed"),
           }}
           context="skills"
         />
@@ -78,7 +83,7 @@ export function SkillsPanel({ onGuidedPrompt, withHeading = true }: Props) {
         <ul
           className="flex flex-col gap-3"
           data-testid="skills-list"
-          aria-label="Skills"
+          aria-label={t("skills1.panel.listAria")}
         >
           {skills.map((skill) => (
             <li key={skill.name}>

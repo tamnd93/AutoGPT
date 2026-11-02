@@ -10,6 +10,7 @@ import type { CopilotSkillDetail } from "@/app/api/__generated__/models/copilotS
 import { useToast } from "@/components/molecules/Toast/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
+import { useT } from "@/lib/i18n";
 import {
   buildSkillFileRows,
   describeSkill,
@@ -22,6 +23,7 @@ interface Args {
 }
 
 export function useSkillListItem({ skill }: Args) {
+  const t = useT();
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
@@ -53,7 +55,9 @@ export function useSkillListItem({ skill }: Args) {
   const detailErrorMessage = (() => {
     if (detailError instanceof Error) return detailError.message;
     if (detailRes && detailRes.status !== 200) {
-      return `Failed to load skill (HTTP ${detailRes.status})`;
+      return t("skills1.item.loadSkillFailed", {
+        status: detailRes.status,
+      });
     }
     return null;
   })();
@@ -81,13 +85,17 @@ export function useSkillListItem({ skill }: Args) {
     try {
       const res = await readCopilotSkill(skill.name);
       if (res.status !== 200) {
-        throw new Error(`Failed to download skill (HTTP ${res.status})`);
+        throw new Error(
+          t("skills1.item.downloadSkillFailed", { status: res.status }),
+        );
       }
       const skillDetail = res.data as CopilotSkillDetail;
       if (skillDetail.files?.length) {
         const archive = await downloadCopilotSkillPackage(skill.name);
         if (archive.status !== 200) {
-          throw new Error(`Failed to download skill (HTTP ${archive.status})`);
+          throw new Error(
+            t("skills1.item.downloadSkillFailed", { status: archive.status }),
+          );
         }
         downloadFile(`${skill.name}.zip`, archive.data);
         return;
@@ -100,11 +108,11 @@ export function useSkillListItem({ skill }: Args) {
       );
     } catch (error) {
       toast({
-        title: "Failed to download skill",
+        title: t("skills1.item.downloadFailed"),
         description:
           error instanceof Error
             ? error.message
-            : "An unexpected error occurred.",
+            : t("library2.common.unexpectedError"),
         variant: "destructive",
       });
     } finally {
@@ -115,18 +123,18 @@ export function useSkillListItem({ skill }: Args) {
   async function handleDelete() {
     try {
       await deleteSkill({ name: skill.name });
-      toast({ title: "Skill deleted" });
+      toast({ title: t("skills1.item.skillDeleted") });
       setIsDeleteOpen(false);
       queryClient.invalidateQueries({
         queryKey: getListCopilotSkillsQueryKey(),
       });
     } catch (error) {
       toast({
-        title: "Failed to delete skill",
+        title: t("skills1.item.deleteFailed"),
         description:
           error instanceof Error
             ? error.message
-            : "An unexpected error occurred.",
+            : t("library2.common.unexpectedError"),
         variant: "destructive",
       });
     }

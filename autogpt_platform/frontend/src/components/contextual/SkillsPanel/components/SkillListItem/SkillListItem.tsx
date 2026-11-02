@@ -6,6 +6,7 @@ import { Button } from "@/components/atoms/Button/Button";
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { LoadingSpinner } from "@/components/atoms/LoadingSpinner/LoadingSpinner";
 import { Text } from "@/components/atoms/Text/Text";
+import { useT } from "@/lib/i18n";
 import { Dialog } from "@/components/molecules/Dialog/Dialog";
 import { ErrorCard } from "@/components/molecules/ErrorCard/ErrorCard";
 import {
@@ -23,6 +24,7 @@ interface Props {
 }
 
 export function SkillListItem({ skill, isNew = false }: Props) {
+  const t = useT();
   const {
     descriptionPreview,
     triggers,
@@ -165,7 +167,7 @@ export function SkillListItem({ skill, isNew = false }: Props) {
                   style={{ whiteSpace: "pre-wrap" }}
                   data-testid="skill-view-body"
                 >
-                  {detail?.body || "(no body)"}
+                  {detail?.body || t("skills1.item.noBody")}
                 </pre>
                 {fileRows.length > 0 ? (
                   <div
@@ -173,7 +175,9 @@ export function SkillListItem({ skill, isNew = false }: Props) {
                     data-testid="skill-view-files"
                   >
                     <Text variant="small" className="!text-foreground-tertiary">
-                      Package files ({detail?.files?.length ?? 0}):
+                      {t("skills1.item.packageFiles", {
+                        count: detail?.files?.length ?? 0,
+                      })}
                     </Text>
                     <ul className="flex flex-col gap-0.5 text-xs text-foreground-secondary">
                       {fileRows.map((row) => (
@@ -201,13 +205,14 @@ export function SkillListItem({ skill, isNew = false }: Props) {
       <Dialog
         controlled={{ isOpen: isDeleteOpen, set: closeDelete }}
         styling={{ maxWidth: "32rem" }}
-        title="Delete skill"
+        title={t("skills1.item.deleteTitle")}
       >
         <Dialog.Content>
           <div className="flex flex-col gap-4">
             <Text variant="large">
-              Delete the skill <strong>{skill.name}</strong> from your library?
-              You can create or upload it again later if needed.
+              {t("skills1.item.deleteBodyPrefix")}{" "}
+              <strong>{skill.name}</strong>
+              {t("skills1.item.deleteBodySuffix")}
             </Text>
             <Dialog.Footer>
               <Button
@@ -215,7 +220,7 @@ export function SkillListItem({ skill, isNew = false }: Props) {
                 disabled={isDeleting}
                 onClick={() => closeDelete(false)}
               >
-                Keep it
+                {t("skills1.item.keepIt")}
               </Button>
               <Button
                 variant="destructive"
@@ -223,7 +228,7 @@ export function SkillListItem({ skill, isNew = false }: Props) {
                 loading={isDeleting}
                 data-testid="skill-confirm-delete"
               >
-                Yes, delete
+                {t("skills1.item.yesDelete")}
               </Button>
             </Dialog.Footer>
           </div>

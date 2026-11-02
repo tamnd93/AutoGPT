@@ -7,12 +7,15 @@ import { useToast } from "@/components/molecules/Toast/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRef } from "react";
 import { getSkillUploadError, isSkillPackageFile } from "./helpers";
+import { useLocale, useT } from "@/lib/i18n";
 
 interface Args {
   onUploaded?: (name: string) => void;
 }
 
 export function useUploadSkillButton({ onUploaded }: Args = {}) {
+  const t = useT();
+  const locale = useLocale();
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -41,7 +44,7 @@ export function useUploadSkillButton({ onUploaded }: Args = {}) {
 
       const name =
         result.status === 201 ? result.data.name : (file.name ?? "skill");
-      toast({ title: `Skill "${name}" uploaded` });
+      toast({ title: t("skills1.upload.uploaded", { name }) });
       if (result.status === 201) {
         onUploaded?.(result.data.name);
       }
@@ -50,11 +53,11 @@ export function useUploadSkillButton({ onUploaded }: Args = {}) {
       });
     } catch (error) {
       toast({
-        title: "Failed to upload skill",
+        title: t("skills1.upload.toastFailed"),
         description:
           error instanceof Error
             ? error.message
-            : "An unexpected error occurred.",
+            : t("library2.common.unexpectedError"),
         variant: "destructive",
       });
     }
@@ -67,10 +70,10 @@ export function useUploadSkillButton({ onUploaded }: Args = {}) {
 
     // Pre-flight the common rejections client-side so the user gets an
     // instant, specific message instead of waiting on a server round-trip.
-    const validationError = getSkillUploadError(content);
+    const validationError = getSkillUploadError(content, locale);
     if (validationError) {
       toast({
-        title: "Can't upload this skill",
+        title: t("skills1.upload.cannotUpload"),
         description: validationError,
         variant: "destructive",
       });

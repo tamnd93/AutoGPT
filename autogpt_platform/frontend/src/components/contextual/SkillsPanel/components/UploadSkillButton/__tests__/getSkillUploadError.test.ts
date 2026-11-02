@@ -85,6 +85,23 @@ describe("getSkillUploadError", () => {
     expect(getSkillUploadError(md(block))).toBeNull();
   });
 
+  test("writes the upload errors in Vietnamese when asked", () => {
+    const noFrontmatter = getSkillUploadError(
+      "just prose, no frontmatter block",
+      "vi",
+    );
+    expect(noFrontmatter).toContain("SKILL.md");
+    expect(noFrontmatter).toContain("frontmatter");
+
+    const desc = "x".repeat(MAX_SKILL_DESCRIPTION_CHARS + 1);
+    const tooLong = getSkillUploadError(
+      md(`name: ok_skill\ndescription: ${desc}`),
+      "vi",
+    );
+    expect(tooLong).toContain("1025/1024");
+    expect(tooLong).toContain("cắt bớt ít nhất 1");
+  });
+
   test("flags an empty description", () => {
     const err = getSkillUploadError(md("name: ok_skill\ndescription:"));
     expect(err).toContain("non-empty name and description");

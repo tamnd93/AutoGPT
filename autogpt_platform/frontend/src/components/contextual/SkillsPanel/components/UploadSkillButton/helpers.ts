@@ -18,10 +18,16 @@ export function isSkillPackageFile(file: File): boolean {
 // description) so the user gets an instant, specific message instead of a
 // round-trip. Anything we can't parse confidently (e.g. YAML block scalars)
 // returns `null` and falls through to the server's validation.
-export function getSkillUploadError(content: string): string | null {
+import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/locale";
+import { getMessage } from "@/lib/i18n/translate";
+
+export function getSkillUploadError(
+  content: string,
+  locale: Locale = DEFAULT_LOCALE,
+): string | null {
   const match = content.match(FRONTMATTER_RE);
   if (!match) {
-    return "File is not a valid SKILL.md — expected YAML frontmatter (---) with a name and description.";
+    return getMessage(locale, "skills1.uploadError.noFrontmatter");
   }
 
   const frontmatter = match[1];
@@ -32,7 +38,7 @@ export function getSkillUploadError(content: string): string | null {
   // assert this when we can see plain scalar lines — a block scalar would
   // read as absent here, so skip rather than false-reject.
   if (name === "" || description === "") {
-    return "File is not a valid SKILL.md — frontmatter must include a non-empty name and description.";
+    return getMessage(locale, "skills1.uploadError.missingFields");
   }
 
   const descriptionLength = description
@@ -43,7 +49,11 @@ export function getSkillUploadError(content: string): string | null {
     descriptionLength > MAX_SKILL_DESCRIPTION_CHARS
   ) {
     const over = descriptionLength - MAX_SKILL_DESCRIPTION_CHARS;
-    return `Description is ${descriptionLength}/${MAX_SKILL_DESCRIPTION_CHARS} characters — trim at least ${over}. It appears in the copilot's per-turn skills index, so it's kept short.`;
+    return getMessage(locale, "skills1.uploadError.tooLong", {
+      length: descriptionLength,
+      max: MAX_SKILL_DESCRIPTION_CHARS,
+      over,
+    });
   }
 
   return null;
