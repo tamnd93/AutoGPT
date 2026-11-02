@@ -69,6 +69,7 @@ import { Shared3En } from "./shared-3.en";
 import { Shared4En } from "./shared-4.en";
 import { Shared5En } from "./shared-5.en";
 import { Sharing1En } from "./sharing-1.en";
+import { Sharing2En } from "./sharing-2.en";
 import { Skills1En } from "./skills-1.en";
 import { team1En } from "./team-1.en";
 import { Team2En } from "./team-2.en";
@@ -153,6 +154,7 @@ export const en = {
   ...Shared4En,
   ...Shared5En,
   ...Sharing1En,
+  ...Sharing2En,
   ...Skills1En,
   ...team1En,
   ...Team2En,

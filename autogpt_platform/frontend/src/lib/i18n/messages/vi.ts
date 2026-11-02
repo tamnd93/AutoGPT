@@ -70,6 +70,7 @@ import { Shared3Vi } from "./shared-3.vi";
 import { Shared4Vi } from "./shared-4.vi";
 import { Shared5Vi } from "./shared-5.vi";
 import { Sharing1Vi } from "./sharing-1.vi";
+import { Sharing2Vi } from "./sharing-2.vi";
 import { Skills1Vi } from "./skills-1.vi";
 import { team1Vi } from "./team-1.vi";
 import { Team2Vi } from "./team-2.vi";
@@ -154,6 +155,7 @@ export const vi: Partial<Record<MessageKey, string>> = {
   ...Shared4Vi,
   ...Shared5Vi,
   ...Sharing1Vi,
+  ...Sharing2Vi,
   ...Skills1Vi,
   ...team1Vi,
   ...Team2Vi,

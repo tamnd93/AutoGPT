@@ -28,6 +28,7 @@ vi.mock("@/services/feature-flags/use-get-flag", async (importOriginal) => {
   };
 });
 
+import { LocaleProvider } from "@/lib/i18n";
 import { useCopilotUIStore } from "@/app/(platform)/copilot/store";
 import { buildTourArtifactRef } from "../helpers";
 import TourChatPage from "../page";
@@ -64,6 +65,23 @@ async function pressEnterToSend() {
 }
 
 describe("Tour chat app shell", () => {
+  test("reads the tour upsell card in Vietnamese", () => {
+    render(
+      <LocaleProvider locale="vi">
+        <TourChatPage />
+      </LocaleProvider>,
+    );
+
+    expect(screen.getByText("Dùng thử miễn phí")).toBeDefined();
+    expect(screen.getByText("Đội AI của bạn bắt đầu từ đây")).toBeDefined();
+    expect(
+      screen.getByRole("link", { name: "Bắt đầu dùng thử miễn phí" }),
+    ).toBeDefined();
+    expect(
+      screen.getByRole("link", { name: "Tự vận hành thay thế" }),
+    ).toBeDefined();
+  });
+
   beforeEach(() => {
     vi.useFakeTimers();
     vi.stubEnv("NEXT_PUBLIC_BEHAVE_AS", "CLOUD");

@@ -4,6 +4,7 @@ import { Button } from "@/components/atoms/Button/Button";
 import { Card } from "@/components/atoms/Card/Card";
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { Text } from "@/components/atoms/Text/Text";
+import { useT } from "@/lib/i18n";
 import { environment } from "@/services/environment";
 import {
   ArrowRight02Icon,
@@ -18,6 +19,7 @@ type Props = {
 };
 
 export function TourUpsellCard({ surface }: Props) {
+  const t = useT();
   const isCloud = environment.isCloud();
 
   function handleSignupClick() {
@@ -38,15 +40,17 @@ export function TourUpsellCard({ surface }: Props) {
           <Icon icon={SparklesIcon} size={18} aria-hidden />
         </span>
         <Text variant="eyebrow" tone="secondary">
-          {isCloud ? "Free trial" : "Get started"}
+          {isCloud
+             ? t("sharing2.upsell.eyebrowCloud")
+             : t("sharing2.upsell.eyebrowSelfHost")}
         </Text>
       </div>
       <div className="space-y-1.5">
         <Text variant="h5" as="h2" tone="primary">
-          Your AI team starts here
+          {t("sharing2.upsell.title")}
         </Text>
         <Text variant="body" tone="secondary">
-          Build workflows and put AI experts to work on your everyday tasks.
+          {t("sharing2.upsell.body")}
         </Text>
       </div>
       <div className="flex flex-col gap-1">
@@ -59,7 +63,9 @@ export function TourUpsellCard({ surface }: Props) {
           rightIcon={<Icon icon={ArrowRight02Icon} size={16} aria-hidden />}
           className="w-full"
         >
-          {isCloud ? "Start free trial" : "Create account"}
+          {isCloud
+             ? t("sharing2.upsell.ctaCloud")
+             : t("sharing2.upsell.ctaSelfHost")}
         </Button>
         <Button
           as="NextLink"
@@ -72,7 +78,7 @@ export function TourUpsellCard({ surface }: Props) {
           leftIcon={<Icon icon={GithubIcon} size={14} aria-hidden />}
           className="w-full text-xs text-zinc-600"
         >
-          Self-host instead
+          {t("sharing2.upsell.selfHost")}
         </Button>
       </div>
     </Card>
