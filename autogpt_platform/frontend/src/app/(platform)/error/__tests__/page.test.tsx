@@ -5,6 +5,7 @@ import {
   screen,
   waitFor,
 } from "@testing-library/react";
+import { LocaleProvider } from "@/lib/i18n";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import ErrorPage from "../page";
 
@@ -109,6 +110,21 @@ describe("ErrorPage", () => {
       expect(replaceMock).not.toHaveBeenCalled();
     },
   );
+
+  it("words the error message and its context in Vietnamese", async () => {
+    searchMessage = "session-expired";
+    authState = { isUserLoading: false, isLoggedIn: true };
+
+    render(
+      <LocaleProvider locale="vi">
+        <ErrorPage />
+      </LocaleProvider>,
+    );
+
+    await waitFor(() => {
+      expect(screen.queryByText(/Phiên của bạn đã hết hạn/)).not.toBeNull();
+    });
+  });
 
   it("returns home when retrying a general server error", () => {
     searchMessage = "server-error";

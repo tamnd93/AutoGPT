@@ -1,4 +1,7 @@
 import { useCallback, useState, useEffect } from "react";
+import { useLocale } from "@/lib/i18n";
+import type { Locale } from "@/lib/i18n/locale";
+import { getMessage } from "@/lib/i18n/translate";
 import { usePatchV1UpdateGraphSettings } from "@/app/api/__generated__/endpoints/graphs/graphs";
 import {
   getGetV2GetLibraryAgentQueryOptions,
@@ -62,6 +65,7 @@ export function useAgentSafeMode(graph: GraphModel | LibraryAgent | Graph) {
     },
   );
 
+  const locale = useLocale();
   const [localHITLSafeMode, setLocalHITLSafeMode] = useState<boolean>(true);
   const [localSensitiveActionSafeMode, setLocalSensitiveActionSafeMode] =
     useState<boolean>(false);
@@ -117,14 +121,22 @@ export function useAgentSafeMode(graph: GraphModel | LibraryAgent | Graph) {
       queryClient.invalidateQueries({ queryKey: ["v2", "executions"] });
 
       toast({
-        title: `HITL safe mode ${newSafeMode ? "enabled" : "disabled"}`,
-        description: newSafeMode
-          ? "Human-in-the-loop blocks will require manual review"
-          : "Human-in-the-loop blocks will proceed automatically",
+        title: getMessage(
+          locale,
+          newSafeMode
+            ? "errors1.safeMode.hitlOnTitle"
+            : "errors1.safeMode.hitlOffTitle",
+        ),
+        description: getMessage(
+          locale,
+          newSafeMode
+            ? "errors1.safeMode.hitlOnDetail"
+            : "errors1.safeMode.hitlOffDetail",
+        ),
         duration: 2000,
       });
     } catch (error) {
-      handleToggleError(error, isAgent, toast);
+      handleToggleError(error, isAgent, toast, locale);
     }
   }, [
     currentHITLSafeMode,
@@ -134,6 +146,7 @@ export function useAgentSafeMode(graph: GraphModel | LibraryAgent | Graph) {
     updateGraphSettings,
     queryClient,
     toast,
+    locale,
   ]);
 
   const handleSensitiveActionToggle = useCallback(async () => {
@@ -162,14 +175,22 @@ export function useAgentSafeMode(graph: GraphModel | LibraryAgent | Graph) {
       queryClient.invalidateQueries({ queryKey: ["v2", "executions"] });
 
       toast({
-        title: `Sensitive action safe mode ${newSafeMode ? "enabled" : "disabled"}`,
-        description: newSafeMode
-          ? "Sensitive action blocks will require manual review"
-          : "Sensitive action blocks will proceed automatically",
+        title: getMessage(
+          locale,
+          newSafeMode
+            ? "errors1.safeMode.sensitiveOnTitle"
+            : "errors1.safeMode.sensitiveOffTitle",
+        ),
+        description: getMessage(
+          locale,
+          newSafeMode
+            ? "errors1.safeMode.sensitiveOnDetail"
+            : "errors1.safeMode.sensitiveOffDetail",
+        ),
         duration: 2000,
       });
     } catch (error) {
-      handleToggleError(error, isAgent, toast);
+      handleToggleError(error, isAgent, toast, locale);
     }
   }, [
     currentSensitiveActionSafeMode,
@@ -179,6 +200,7 @@ export function useAgentSafeMode(graph: GraphModel | LibraryAgent | Graph) {
     updateGraphSettings,
     queryClient,
     toast,
+    locale,
   ]);
 
   return {
@@ -209,6 +231,7 @@ function handleToggleError(
   error: unknown,
   isAgent: boolean,
   toast: ReturnType<typeof useToast>["toast"],
+  locale: Locale,
 ) {
   const isNotFoundError =
     error instanceof Error &&
@@ -216,18 +239,17 @@ function handleToggleError(
 
   if (!isAgent && isNotFoundError) {
     toast({
-      title: "Safe mode not available",
-      description:
-        "To configure safe mode, please save this workflow to your library first.",
+      title: getMessage(locale, "errors1.safeMode.notAvailableTitle"),
+      description: getMessage(locale, "errors1.safeMode.notAvailableBody"),
       variant: "destructive",
     });
   } else {
     toast({
-      title: "Failed to update safe mode",
+      title: getMessage(locale, "errors1.safeMode.updateFailedTitle"),
       description:
         error instanceof Error
           ? error.message
-          : "An unexpected error occurred.",
+          : getMessage(locale, "errors1.safeMode.unexpectedError"),
       variant: "destructive",
     });
   }

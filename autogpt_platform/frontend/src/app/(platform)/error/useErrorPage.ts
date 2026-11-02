@@ -1,9 +1,11 @@
 import { useAuth } from "@/lib/auth/hooks/useAuth";
+import { useLocale } from "@/lib/i18n";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 import { getErrorDetails } from "./helpers";
 
 export function useErrorPage() {
+  const locale = useLocale();
   const searchParams = useSearchParams();
   const router = useRouter();
   const { isLoggedIn, isUserLoading } = useAuth();
@@ -31,7 +33,7 @@ export function useErrorPage() {
   }
 
   return {
-    errorDetails: getErrorDetails(errorMessage),
+    errorDetails: getErrorDetails(errorMessage, locale),
     hideSessionError: expiredSession && (isUserLoading || !isLoggedIn),
     handleRetry,
   };

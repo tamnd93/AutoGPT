@@ -3,6 +3,7 @@ import {
   RefundRequest,
   TransactionHistory,
 } from "@/lib/autogpt-server-api/types";
+import { getMessage, useLocale } from "@/lib/i18n";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
@@ -32,6 +33,7 @@ export default function useCredits({
   fetchRefundRequests: () => void;
   formatCredits: (credit: number | null) => string;
 } {
+  const locale = useLocale();
   const [credits, setCredits] = useState<number | null>(null);
   const [autoTopUpConfig, setAutoTopUpConfig] = useState<{
     amount: number;
@@ -86,11 +88,11 @@ export default function useCredits({
     async (credit_amount: number) => {
       const response = await api.requestTopUp(credit_amount);
       if (!response.checkout_url) {
-        throw new Error("Checkout didn't start. Please try again later.");
+        throw new Error(getMessage(locale, "errors1.credits.checkoutFailed"));
       }
       router.push(response.checkout_url);
     },
-    [api, router],
+    [api, locale, router],
   );
 
   const refundTopUp = useCallback(

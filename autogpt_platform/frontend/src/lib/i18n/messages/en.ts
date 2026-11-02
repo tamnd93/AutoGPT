@@ -34,6 +34,7 @@ import { ConnectServices1En } from "./connect-services-1.en";
 import { ConnectServices2En } from "./connect-services-2.en";
 import { credentials1En } from "./credentials-1.en";
 import { credentials2En } from "./credentials-2.en";
+import { errors1En } from "./errors-1.en";
 import { formatEn } from "./format.en";
 import { home1En } from "./home-1.en";
 import { home2En } from "./home-2.en";
@@ -120,6 +121,7 @@ export const en = {
   ...ConnectServices2En,
   ...credentials1En,
   ...credentials2En,
+  ...errors1En,
   ...formatEn,
   ...home1En,
   ...home2En,

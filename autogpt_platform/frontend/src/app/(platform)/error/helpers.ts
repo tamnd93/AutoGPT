@@ -1,67 +1,54 @@
-export function getErrorDetails(errorType: string | null) {
-  switch (errorType) {
-    case "user-creation-failed":
-      return {
-        responseError: {
-          message:
-            "Failed to create your user account in our system. This could be due to a temporary server issue or a problem with your account setup.",
-        },
-        context: "user account creation",
-      };
-    case "auth-token-invalid":
-      return {
-        responseError: {
-          message:
-            "Your authentication token is missing or invalid. Please try signing in again.",
-        },
-        context: "authentication token",
-      };
-    case "server-error":
-      return {
-        responseError: {
-          message:
-            "Our servers are experiencing issues. Please try again in a few minutes, or contact support if the problem persists.",
-        },
-        context: "server error",
-      };
-    case "rate-limited":
-      return {
-        responseError: {
-          message:
-            "Too many requests have been made. Please wait a moment before trying again.",
-        },
-        context: "rate limiting",
-      };
-    case "network-error":
-      return {
-        responseError: {
-          message:
-            "Unable to connect to our servers. Please check your internet connection and try again.",
-        },
-        context: "network connectivity",
-      };
-    case "auth-failed":
-      return {
-        responseError: {
-          message: "Authentication failed. Please try signing in again.",
-        },
-        context: "authentication",
-      };
-    case "session-expired":
-      return {
-        responseError: {
-          message:
-            "Your session has expired. Please sign in again to continue.",
-        },
-        context: "session",
-      };
-    default:
-      return {
-        responseError: {
-          message:
-            "An unexpected error occurred. Please try again or contact support if the problem persists.",
-        },
-        context: "application",
-      };
-  }
+import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/locale";
+import type { MessageKey } from "@/lib/i18n/messages/en";
+import { getMessage } from "@/lib/i18n/translate";
+
+const ERROR_CASES: Record<
+  string,
+  { message: MessageKey; context: MessageKey }
+> = {
+  "user-creation-failed": {
+    message: "errors1.error.userCreation.message",
+    context: "errors1.error.userCreation.context",
+  },
+  "auth-token-invalid": {
+    message: "errors1.error.authToken.message",
+    context: "errors1.error.authToken.context",
+  },
+  "server-error": {
+    message: "errors1.error.server.message",
+    context: "errors1.error.server.context",
+  },
+  "rate-limited": {
+    message: "errors1.error.rateLimited.message",
+    context: "errors1.error.rateLimited.context",
+  },
+  "network-error": {
+    message: "errors1.error.network.message",
+    context: "errors1.error.network.context",
+  },
+  "auth-failed": {
+    message: "errors1.error.authFailed.message",
+    context: "errors1.error.authFailed.context",
+  },
+  "session-expired": {
+    message: "errors1.error.sessionExpired.message",
+    context: "errors1.error.sessionExpired.context",
+  },
+};
+
+const UNEXPECTED_CASE = {
+  message: "errors1.error.unexpected.message" as MessageKey,
+  context: "errors1.error.unexpected.context" as MessageKey,
+};
+
+export function getErrorDetails(
+  errorType: string | null,
+  locale: Locale = DEFAULT_LOCALE,
+) {
+  const errorCase =
+    (errorType ? ERROR_CASES[errorType] : undefined) ?? UNEXPECTED_CASE;
+  return {
+    responseError: { message: getMessage(locale, errorCase.message) },
+    context: getMessage(locale, errorCase.context),
+  };
 }

@@ -35,6 +35,7 @@ import { ConnectServices1Vi } from "./connect-services-1.vi";
 import { ConnectServices2Vi } from "./connect-services-2.vi";
 import { credentials1Vi } from "./credentials-1.vi";
 import { credentials2Vi } from "./credentials-2.vi";
+import { errors1Vi } from "./errors-1.vi";
 import { formatVi } from "./format.vi";
 import { home1Vi } from "./home-1.vi";
 import { home2Vi } from "./home-2.vi";
@@ -121,6 +122,7 @@ export const vi: Partial<Record<MessageKey, string>> = {
   ...ConnectServices2Vi,
   ...credentials1Vi,
   ...credentials2Vi,
+  ...errors1Vi,
   ...formatVi,
   ...home1Vi,
   ...home2Vi,
