@@ -14,6 +14,7 @@ import {
 } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { useImageFallback } from "@/hooks/useImageFallback";
+import { useT } from "@/lib/i18n";
 
 interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
   title?: string;
@@ -40,6 +41,7 @@ export const MarketplaceAgentBlock: MarketplaceAgentBlockComponent = ({
   slug,
   ...rest
 }) => {
+  const t = useT();
   const { showImage, handleImageError } = useImageFallback(image_url);
 
   return (
@@ -58,7 +60,7 @@ export const MarketplaceAgentBlock: MarketplaceAgentBlockComponent = ({
           <Image
             src={image_url}
             unoptimized={isLocalStoreMediaUrl(image_url)}
-            alt="integration-icon"
+            alt={t("build3.integration.iconAlt")}
             fill
             sizes="5.625rem"
             className="w-full object-contain group-disabled:opacity-50"
@@ -84,7 +86,7 @@ export const MarketplaceAgentBlock: MarketplaceAgentBlockComponent = ({
             tone="muted"
             className={cn("truncate group-disabled:text-foreground-subtle")}
           >
-            By {creator_name}
+            {t("build3.marketplace.by", { creator: creator_name ?? "" })}
           </Text>
 
           <Text variant="body-medium-tight" as="span" tone="subtle">
@@ -97,7 +99,7 @@ export const MarketplaceAgentBlock: MarketplaceAgentBlockComponent = ({
             tone="muted"
             className={cn("truncate group-disabled:text-foreground-subtle")}
           >
-            {number_of_runs} runs
+            {t("build3.marketplace.runs", { count: number_of_runs ?? 0 })}
           </Text>
           <Text variant="body-medium-tight" as="span" tone="subtle">
             •
@@ -113,7 +115,7 @@ export const MarketplaceAgentBlock: MarketplaceAgentBlockComponent = ({
               // TODO(tokens): no exact role: text-blue-700 #1D4ED8
               className="text-blue-700"
             >
-              Workflow page
+              {t("build3.marketplace.workflowPage")}
             </Text>
             <Icon
               icon={LinkSquare01Icon}

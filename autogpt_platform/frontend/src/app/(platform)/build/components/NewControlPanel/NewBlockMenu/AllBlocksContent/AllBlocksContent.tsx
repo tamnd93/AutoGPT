@@ -7,8 +7,10 @@ import { beautifyString } from "@/lib/utils";
 import { useAllBlockContent } from "./useAllBlockContent";
 import { ErrorCard } from "@/components/molecules/ErrorCard/ErrorCard";
 import { blockMenuContainerStyle } from "../style";
+import { useT } from "@/lib/i18n";
 
 export const AllBlocksContent = () => {
+  const t = useT();
   const {
     data,
     isLoading,
@@ -37,10 +39,11 @@ export const AllBlocksContent = () => {
           responseError={error || undefined}
           httpError={{
             status: data?.status,
-            statusText: "Request failed",
-            message: (error?.detail as string) || "An error occurred",
+            statusText: t("build3.errors.statusRequestFailed"),
+            message:
+              (error?.detail as string) || t("build3.errors.messageDefault"),
           }}
-          context="block menu"
+          context={t("build3.errors.contextBlockMenu")}
           onRetry={() => window.location.reload()}
         />
       </div>
@@ -100,8 +103,10 @@ export const AllBlocksContent = () => {
               {!isErrorOnLoadingMore && (
                 <ErrorCard
                   isSuccess={false}
-                  responseError={{ message: "Error loading blocks" }}
-                  context="blocks"
+                  responseError={{
+                    message: t("build3.errors.loadingBlocks"),
+                  }}
+                  context={t("build3.errors.contextBlocks")}
                   onRetry={() => handleRefetchBlocks(category.name)}
                 />
               )}
@@ -119,7 +124,7 @@ export const AllBlocksContent = () => {
                     tone="inherit"
                     className="underline"
                   >
-                    see all
+                    {t("build3.allBlocks.seeAll")}
                   </Text>
                 </Button>
               )}

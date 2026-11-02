@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { useT } from "@/lib/i18n";
 import React from "react";
 import { BaseInput } from "@/components/atoms/Input/BaseInput";
 import { useBlockMenuSearchBar } from "./useBlockMenuSearchBar";
@@ -13,6 +14,7 @@ interface BlockMenuSearchBarProps {
 export const BlockMenuSearchBar: React.FC<BlockMenuSearchBarProps> = ({
   className = "",
 }) => {
+  const t = useT();
   const {
     handleClear,
     inputRef,
@@ -44,7 +46,7 @@ export const BlockMenuSearchBar: React.FC<BlockMenuSearchBarProps> = ({
           setLocalQuery(e.target.value);
           debouncedSetSearchQuery(e.target.value);
         }}
-        placeholder={"Blocks, Workflows, Integrations or Keywords..."}
+        placeholder={t("build3.blockMenu.searchPlaceholder")}
         className={cn(
           "m-0 border-none p-0 font-sans text-body-lg font-normal leading-6 text-foreground-emphasis shadow-none outline-none",
           "placeholder:text-foreground-subtle focus:shadow-none focus:outline-none focus:ring-0",

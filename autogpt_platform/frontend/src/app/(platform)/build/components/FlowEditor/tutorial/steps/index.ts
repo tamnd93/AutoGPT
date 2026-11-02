@@ -14,13 +14,13 @@ export const createTutorialSteps = (
   tour: any,
   locale: Locale = DEFAULT_LOCALE,
 ): StepOptions[] => [
-  ...createWelcomeSteps(tour),
+  ...createWelcomeSteps(tour, locale),
   ...createBlockMenuSteps(tour, locale),
   ...createBlockBasicsSteps(tour, locale),
   ...createConfigureCalculatorSteps(tour, locale),
-  ...createSecondCalculatorSteps(tour),
+  ...createSecondCalculatorSteps(tour, locale),
   ...createConnectionSteps(tour, locale),
-  ...createSaveSteps(),
+  ...createSaveSteps(locale),
   ...createRunSteps(tour, locale),
   ...createCompletionSteps(tour, locale),
 ];

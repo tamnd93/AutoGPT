@@ -1,14 +1,15 @@
+import type { MessageKey } from "@/lib/i18n/messages/en";
 import { CategoryKey } from "./types";
 
-export const categories: Array<{ key: CategoryKey; name: string }> = [
-  { key: "blocks", name: "Blocks" },
+export const categories: Array<{ key: CategoryKey; nameKey: MessageKey }> = [
+  { key: "blocks", nameKey: "build3.filters.categoryBlocks" },
   {
     key: "integrations",
-    name: "Integrations",
+    nameKey: "build3.filters.categoryIntegrations",
   },
   {
     key: "marketplace_agents",
-    name: "Marketplace workflows",
+    nameKey: "build3.filters.categoryMarketplace",
   },
-  { key: "my_agents", name: "My workflows" },
+  { key: "my_agents", nameKey: "build3.filters.categoryMine" },
 ];

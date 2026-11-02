@@ -15,6 +15,7 @@ import {
   waitFor,
 } from "@/tests/integrations/test-utils";
 import { beforeEach, describe, expect, test, vi } from "vitest";
+import { LocaleProvider } from "@/lib/i18n";
 
 import { BlockMenuDefault } from "../BlockMenuDefault/BlockMenuDefault";
 import { BlockMenuFilters } from "../BlockMenuFilters/BlockMenuFilters";
@@ -150,5 +151,34 @@ describe("block menu filters", () => {
 
     fireEvent.click(screen.getByText("Blocks"));
     expect(useBlockMenuStore.getState().filters).toEqual([]);
+  });
+});
+
+describe("block menu in Vietnamese", () => {
+  test("words the sidebar entries in Vietnamese", async () => {
+    render(
+      <LocaleProvider locale="vi">
+        <BlockMenuDefault />
+      </LocaleProvider>,
+    );
+
+    expect(await screen.findByText("Gợi ý")).toBeDefined();
+    expect(screen.getByText("Tất cả khối")).toBeDefined();
+    expect(screen.getByText("Khối đầu vào")).toBeDefined();
+    expect(screen.getByText("Khối hành động")).toBeDefined();
+    expect(screen.getByText("Khối đầu ra")).toBeDefined();
+  });
+
+  test("words the filter sheet trigger and category chips in Vietnamese", () => {
+    render(
+      <LocaleProvider locale="vi">
+        <BlockMenuFilters />
+      </LocaleProvider>,
+    );
+
+    expect(screen.getByRole("button", { name: "Tất cả bộ lọc" })).toBeDefined();
+    expect(screen.getByText("Khối")).toBeDefined();
+    expect(screen.getByText("Tích hợp")).toBeDefined();
+    expect(screen.getByText("Workflow của tôi")).toBeDefined();
   });
 });

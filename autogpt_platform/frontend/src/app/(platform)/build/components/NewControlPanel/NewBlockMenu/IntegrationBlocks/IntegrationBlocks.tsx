@@ -8,8 +8,10 @@ import { ErrorCard } from "@/components/molecules/ErrorCard/ErrorCard";
 import { InfiniteScroll } from "@/components/contextual/InfiniteScroll/InfiniteScroll";
 import { useBlockMenuStore } from "../../../../stores/blockMenuStore";
 import { useShallow } from "zustand/react/shallow";
+import { useT } from "@/lib/i18n";
 
 export const IntegrationBlocks = () => {
+  const t = useT();
   const { integration, setIntegration } = useBlockMenuStore(
     useShallow((state) => ({
       integration: state.integration,
@@ -56,10 +58,11 @@ export const IntegrationBlocks = () => {
           responseError={error || undefined}
           httpError={{
             status: status,
-            statusText: "Request failed",
-            message: (error?.detail as string) || "An error occurred",
+            statusText: t("build3.errors.statusRequestFailed"),
+            message:
+              (error?.detail as string) || t("build3.errors.messageDefault"),
           }}
-          context="block menu"
+          context={t("build3.errors.contextBlockMenu")}
           onRetry={() => refetch()}
         />
       </div>
@@ -83,7 +86,7 @@ export const IntegrationBlocks = () => {
               }}
             >
               <Text variant="body-medium" as="span" tone="inherit">
-                Integrations
+                {t("build3.sidebar.integrations")}
               </Text>
             </Button>
             <Text variant="body-medium" tone="emphasis">

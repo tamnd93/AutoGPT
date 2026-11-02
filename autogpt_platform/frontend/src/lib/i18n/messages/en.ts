@@ -6,6 +6,7 @@ import { billing1En } from "./billing-1.en";
 import { billing2En } from "./billing-2.en";
 import { build1En } from "./build-1.en";
 import { build2En } from "./build-2.en";
+import { build3En } from "./build-3.en";
 import { build4En } from "./build-4.en";
 import { chatFiles1En } from "./chat-files-1.en";
 import { chatFiles2En } from "./chat-files-2.en";
@@ -52,6 +53,7 @@ export const en = {
   ...billing2En,
   ...build1En,
   ...build2En,
+  ...build3En,
   ...build4En,
   ...chatFiles1En,
   ...chatFiles2En,

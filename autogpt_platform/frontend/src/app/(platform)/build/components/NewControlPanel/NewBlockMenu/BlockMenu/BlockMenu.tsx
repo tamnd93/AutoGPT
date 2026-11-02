@@ -13,8 +13,10 @@ import { ControlPanelButton } from "../../ControlPanelButton";
 import { BlockMenuContent } from "../BlockMenuContent/BlockMenuContent";
 import { ToyBrickIcon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 
 export const BlockMenu = () => {
+  const t = useT();
   const { blockMenuOpen, setBlockMenuOpen, forceOpenBlockMenu } =
     useControlPanelStore();
   return (
@@ -39,7 +41,9 @@ export const BlockMenu = () => {
             </ControlPanelButton>
           </PopoverTrigger>
         </TooltipTrigger>
-        <TooltipContent side="right">Blocks</TooltipContent>
+        <TooltipContent side="right">
+          {t("build3.blockMenu.triggerTooltip")}
+        </TooltipContent>
       </Tooltip>
 
       {/* rounded-medium is the 12px corner this menu renders today, the old

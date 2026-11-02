@@ -11,6 +11,7 @@ import {
   CredentialsProvidersContext,
   type CredentialsProvidersContextType,
 } from "@/providers/agent-credentials/credentials-provider";
+import { LocaleProvider } from "@/lib/i18n";
 
 import { MCPToolDialog } from "../MCPToolDialog";
 
@@ -627,5 +628,25 @@ describe("MCPToolDialog tool list", () => {
     expect(tool.textContent).toContain("2 params");
     expect(screen.getByText("query").textContent).toBe("query*");
     expect(screen.getByText("limit").textContent).toBe("limit");
+  });
+});
+
+describe("MCPToolDialog in Vietnamese", () => {
+  it("words its heading, URL field and actions in Vietnamese", () => {
+    render(
+      <LocaleProvider locale="vi">
+        <MCPToolDialog open onClose={() => {}} onConfirm={vi.fn()} />
+      </LocaleProvider>,
+    );
+
+    expect(screen.getByText("Kết nối tới máy chủ MCP")).toBeDefined();
+    expect(
+      screen.getByText("Nhập URL của máy chủ MCP để xem các công cụ khả dụng."),
+    ).toBeDefined();
+    expect(screen.getByLabelText("URL máy chủ")).toBeDefined();
+    expect(
+      screen.getByRole("button", { name: "Khám phá công cụ" }),
+    ).toBeDefined();
+    expect(screen.getByRole("button", { name: "Huỷ" })).toBeDefined();
   });
 });

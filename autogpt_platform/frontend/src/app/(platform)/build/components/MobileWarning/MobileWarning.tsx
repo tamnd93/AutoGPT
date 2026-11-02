@@ -6,13 +6,15 @@ import { Dialog } from "@/components/molecules/Dialog/Dialog";
 import { useMobileWarning } from "./useMobileWarning";
 import { SmartPhone01Icon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 
 export function MobileWarning() {
+  const t = useT();
   const { isOpen, dismiss, suppress } = useMobileWarning();
 
   return (
     <Dialog
-      title="Builder works best on desktop"
+      title={t("build3.mobile.title")}
       controlled={{
         isOpen,
         set: (next) => {
@@ -28,16 +30,14 @@ export function MobileWarning() {
             className="h-10 w-10 text-amber-600"
           />
           <Text variant="body" tone="body">
-            The workflow builder relies on canvas interactions that don&apos;t
-            work well on this screen size. For the best experience, switch to a
-            desktop browser.
+            {t("build3.mobile.body")}
           </Text>
           <div className="mt-2 flex w-full flex-col gap-2 sm:flex-row sm:justify-center">
             <Button variant="secondary" size="small" onClick={dismiss}>
-              Continue anyway
+              {t("build3.mobile.continueAnyway")}
             </Button>
             <Button variant="ghost" size="small" onClick={suppress}>
-              Don&apos;t show again
+              {t("build3.mobile.dontShow")}
             </Button>
           </div>
         </div>

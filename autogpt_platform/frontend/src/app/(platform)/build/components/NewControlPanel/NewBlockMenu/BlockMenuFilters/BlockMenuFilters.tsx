@@ -4,8 +4,10 @@ import { FilterChip } from "../FilterChip";
 import { categories } from "./constants";
 import { FilterSheet } from "../FilterSheet/FilterSheet";
 import { CategoryKey } from "./types";
+import { useT } from "@/lib/i18n";
 
 export const BlockMenuFilters = () => {
+  const t = useT();
   const {
     filters,
     addFilter,
@@ -44,12 +46,19 @@ export const BlockMenuFilters = () => {
 
   return (
     <div className="flex flex-wrap gap-2">
-      <FilterSheet categories={categories} />
+      <FilterSheet
+        categories={categories.map((category) => ({
+          key: category.key,
+          name: t(category.nameKey),
+        }))}
+      />
       {creators.length > 0 &&
         creators.map((creator) => (
           <FilterChip
             key={creator}
-            name={"Created by " + creator.slice(0, 10) + "..."}
+            name={t("build3.filters.createdByChip", {
+              creator: creator.slice(0, 10),
+            })}
             selected={creators.includes(creator)}
             onClick={() => handleCreatorClick(creator)}
           />
@@ -57,7 +66,7 @@ export const BlockMenuFilters = () => {
       {categories.map((category) => (
         <FilterChip
           key={category.key}
-          name={category.name}
+          name={t(category.nameKey)}
           selected={filters.includes(category.key)}
           onClick={() => handleFilterClick(category.key)}
           number={categoryCounts[category.key] ?? 0}

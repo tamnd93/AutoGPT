@@ -5,8 +5,10 @@ import { Skeleton } from "@/components/atoms/Skeleton/Skeleton";
 import { ErrorCard } from "@/components/molecules/ErrorCard/ErrorCard";
 import { useBlockMenuStore } from "../../../../stores/blockMenuStore";
 import { DefaultStateType } from "../types";
+import { useT } from "@/lib/i18n";
 
 export const BlockMenuSidebar = () => {
+  const t = useT();
   const { data, setDefaultState, defaultState, isLoading, isError, error } =
     useBlockMenuSidebar();
   const setIntegration = useBlockMenuStore((state) => state.setIntegration);
@@ -29,11 +31,12 @@ export const BlockMenuSidebar = () => {
           className="w-[12.875rem]"
           isSuccess={false}
           responseError={error || undefined}
-          context="block menu"
+          context={t("build3.errors.contextBlockMenu")}
           httpError={{
             status: data?.status,
-            statusText: "Internal Server Error",
-            message: (error?.detail as string) || "An error occurred",
+            statusText: t("build3.errors.statusServerError"),
+            message:
+              (error?.detail as string) || t("build3.errors.messageDefault"),
           }}
         />
       </div>
@@ -44,11 +47,11 @@ export const BlockMenuSidebar = () => {
 
   const topLevelMenuItems = [
     {
-      name: "Suggestion",
+      name: t("build3.sidebar.suggestion"),
       type: "suggestion",
     },
     {
-      name: "All blocks",
+      name: t("build3.sidebar.allBlocks"),
       type: "all_blocks",
       number: blockCounts?.all_blocks,
     },
@@ -56,17 +59,17 @@ export const BlockMenuSidebar = () => {
 
   const subMenuItems = [
     {
-      name: "Input blocks",
+      name: t("build3.sidebar.inputBlocks"),
       type: "input_blocks",
       number: blockCounts?.input_blocks,
     },
     {
-      name: "Action blocks",
+      name: t("build3.sidebar.actionBlocks"),
       type: "action_blocks",
       number: blockCounts?.action_blocks,
     },
     {
-      name: "Output blocks",
+      name: t("build3.sidebar.outputBlocks"),
       type: "output_blocks",
       number: blockCounts?.output_blocks,
     },
@@ -74,7 +77,7 @@ export const BlockMenuSidebar = () => {
 
   const bottomMenuItems = [
     {
-      name: "Integrations",
+      name: t("build3.sidebar.integrations"),
       type: "integrations",
       number: blockCounts?.integrations,
       onClick: () => {
@@ -83,12 +86,12 @@ export const BlockMenuSidebar = () => {
       },
     },
     {
-      name: "Marketplace Workflows",
+      name: t("build3.sidebar.marketplace"),
       type: "marketplace_agents",
       number: blockCounts?.marketplace_agents,
     },
     {
-      name: "My Workflows",
+      name: t("build3.sidebar.mine"),
       type: "my_agents",
       number: blockCounts?.my_agents,
     },

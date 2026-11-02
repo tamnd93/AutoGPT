@@ -9,8 +9,10 @@ import * as Sentry from "@sentry/nextjs";
 import { getQueryClient } from "@/lib/react-query/queryClient";
 import { useState } from "react";
 import { useToast } from "@/components/molecules/Toast/use-toast";
+import { useT } from "@/lib/i18n";
 
 export const useAllBlockContent = () => {
+  const t = useT();
   const { toast } = useToast();
   const [loadingCategories, setLoadingCategories] = useState<Set<string>>(
     new Set(),
@@ -75,8 +77,8 @@ export const useAllBlockContent = () => {
       Sentry.captureException(error);
       setErrorLoadingCategories((prev) => new Set(prev).add(targetCategory));
       toast({
-        title: "Error loading blocks",
-        description: "Please try again later",
+        title: t("build3.errors.loadingBlocks"),
+        description: t("build3.errors.tryLater"),
         variant: "destructive",
       });
     } finally {

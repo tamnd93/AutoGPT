@@ -85,7 +85,7 @@ describe("useNodeDataViewer", () => {
       () => useNodeDataViewer([], "result", "exec-2", [], "output"),
       {
         wrapper: ({ children }) =>
-          createElement(LocaleProvider, { locale: "vi" }, children),
+          createElement(LocaleProvider, { locale: "vi", children }),
       },
     );
 

@@ -51,6 +51,7 @@ import { isKey } from "@/lib/keyboard";
 import { mcpServerIdentity, normalizeMcpUrl } from "@/lib/mcp-url";
 import { ArrowDown01Icon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 
 export type MCPToolDialogResult = {
   serverUrl: string;
@@ -75,6 +76,7 @@ export function MCPToolDialog({
   onClose,
   onConfirm,
 }: MCPToolDialogProps) {
+  const t = useT();
   const allProviders = useContext(CredentialsProvidersContext);
 
   const [step, setStep] = useState<DialogStep>("url");
@@ -189,12 +191,12 @@ export function MCPToolDialog({
           startOAuthRef.current = true;
           return;
         }
-        setError(getErrorMessage(error, "Failed to connect to MCP server"));
+        setError(getErrorMessage(error, t("build3.mcp.failedConnect")));
       } finally {
         setLoading(false);
       }
     },
-    [applyDiscoveredTools],
+    [applyDiscoveredTools, t],
   );
 
   const connectWithManualCredential = useCallback(async () => {
@@ -251,9 +253,7 @@ export function MCPToolDialog({
 
       applyDiscoveredTools(toolsResponse);
     } catch (error: unknown) {
-      setError(
-        getErrorMessage(error, "Failed to connect with this credential"),
-      );
+      setError(getErrorMessage(error, t("build3.mcp.failedCredential")));
     } finally {
       setLoading(false);
     }
@@ -263,6 +263,7 @@ export function MCPToolDialog({
     manualAuthScheme,
     manualToken,
     serverUrl,
+    t,
   ]);
 
   const handleDiscoverTools = useCallback(() => {
@@ -316,14 +317,11 @@ export function MCPToolDialog({
     } catch (error: unknown) {
       if (signal.aborted) return;
       const status = getErrorStatus(error);
-      const message = getErrorMessage(error, "Failed to complete sign-in");
+      const message = getErrorMessage(error, t("build3.mcp.failedSignIn"));
       if (message === "OAuth flow timed out") {
-        setError("OAuth sign-in timed out. Please try again.");
+        setError(t("build3.mcp.signInTimedOut"));
       } else if (status === 401 || status === 403) {
-        setError(
-          "Authentication succeeded but the server still rejected the request. " +
-            "The token audience may not match. Please try again.",
-        );
+        setError(t("build3.mcp.rejectedAfterAuth"));
       } else {
         setError(message);
       }
@@ -336,7 +334,7 @@ export function MCPToolDialog({
         }
       }
     }
-  }, [serverUrl, allProviders, applyDiscoveredTools]);
+  }, [serverUrl, allProviders, applyDiscoveredTools, t]);
 
   // Auto-start OAuth sign-in when server returns 401/403
   useEffect(() => {
@@ -384,20 +382,26 @@ export function MCPToolDialog({
         <DialogHeader>
           <DialogTitle>
             {step === "url"
-              ? "Connect to MCP Server"
-              : `Select a Tool${serverName ? ` — ${serverName}` : ""}`}
+              ? t("build3.mcp.urlTitle")
+              : serverName
+                ? t("build3.mcp.toolTitleWithServer", { server: serverName })
+                : t("build3.mcp.toolTitle")}
           </DialogTitle>
           <DialogDescription>
             {step === "url"
-              ? "Enter the URL of an MCP server to discover its available tools."
-              : `Found ${tools.length} tool${tools.length !== 1 ? "s" : ""}. Select one to add to your workflow.`}
+              ? t("build3.mcp.urlDescription")
+              : tools.length === 1
+                ? t("build3.mcp.foundOne")
+                : t("build3.mcp.foundMany", { count: tools.length })}
           </DialogDescription>
         </DialogHeader>
 
         {step === "url" && (
           <div className="flex flex-col gap-4 py-2">
             <div className="flex flex-col gap-2">
-              <Label htmlFor="mcp-server-url">Server URL</Label>
+              <Label htmlFor="mcp-server-url">
+                {t("build3.mcp.serverUrl")}
+              </Label>
               <BaseInput
                 id="mcp-server-url"
                 type="url"
@@ -441,7 +445,7 @@ export function MCPToolDialog({
                   tone="inherit"
                   className="block"
                 >
-                  or enter an API credential manually
+                  {t("build3.mcp.manualCredential")}
                 </Text>
               </button>
             )}
@@ -527,11 +531,11 @@ export function MCPToolDialog({
                 setSelectedTool(null);
               }}
             >
-              Back
+              {t("build3.tutorial.common.back")}
             </Button>
           )}
           <Button variant="legacy-outline" onClick={handleClose}>
-            Cancel
+            {t("build3.mcp.cancel")}
           </Button>
           {step === "url" && (
             <Button
@@ -555,14 +559,16 @@ export function MCPToolDialog({
                     className="size-4"
                     aria-hidden="true"
                   />
-                  {oauthLoading ? "Waiting for sign-in..." : "Connecting..."}
+                  {oauthLoading
+                    ? t("build3.mcp.waitingSignIn")
+                    : t("build3.mcp.connecting")}
                 </span>
               ) : authRequired && !showManualToken ? (
-                "Sign in & Connect"
+                t("build3.mcp.signInConnect")
               ) : showManualToken ? (
-                "Connect & Discover"
+                t("build3.mcp.connectDiscover")
               ) : (
-                "Discover Tools"
+                t("build3.mcp.discoverTools")
               )}
             </Button>
           )}
@@ -572,7 +578,7 @@ export function MCPToolDialog({
               onClick={handleConfirm}
               disabled={!selectedTool}
             >
-              Add Block
+              {t("build3.mcp.addBlock")}
             </Button>
           )}
         </DialogFooter>
@@ -608,6 +614,7 @@ function MCPToolCard({
   selected: boolean;
   onSelect: () => void;
 }) {
+  const t = useT();
   const [expanded, setExpanded] = useState(false);
   const schema = tool.input_schema as Record<string, any>;
   const properties = schema?.properties ?? {};
@@ -650,7 +657,9 @@ function MCPToolCard({
         </Text>
         {paramNames.length > 0 && (
           <Badge variant="secondary" size="tiny">
-            {paramNames.length} param{paramNames.length !== 1 ? "s" : ""}
+            {paramNames.length === 1
+              ? t("build3.mcp.paramOne")
+              : t("build3.mcp.paramMany", { count: paramNames.length })}
           </Badge>
         )}
       </div>
@@ -684,7 +693,7 @@ function MCPToolCard({
           ))}
           {paramNames.length > 6 && (
             <Badge variant="outline" size="tiny-normal">
-              +{paramNames.length - 6} more
+              {t("build3.mcp.moreParams", { count: paramNames.length - 6 })}
             </Badge>
           )}
         </div>
@@ -708,7 +717,7 @@ function MCPToolCard({
                   // TODO(tokens): no exact role: text-gray-500 #6B7280; dark-mode classes kept as written (QUALITY 43): no fitting role for dark:text-gray-400 #9CA3AF; #9CA3AF is handle (the builder node handle)
                   className="px-2 py-1 text-left text-gray-500 dark:text-gray-400"
                 >
-                  Parameter
+                  {t("build3.mcp.parameter")}
                 </Text>
                 <Text
                   variant="small-medium-tight"
@@ -716,7 +725,7 @@ function MCPToolCard({
                   // TODO(tokens): no exact role: text-gray-500 #6B7280; dark-mode classes kept as written (QUALITY 43): no fitting role for dark:text-gray-400 #9CA3AF; #9CA3AF is handle (the builder node handle)
                   className="px-2 py-1 text-left text-gray-500 dark:text-gray-400"
                 >
-                  Type
+                  {t("build3.mcp.type")}
                 </Text>
                 <Text
                   variant="small-medium-tight"
@@ -724,7 +733,7 @@ function MCPToolCard({
                   // TODO(tokens): no exact role: text-gray-500 #6B7280; dark-mode classes kept as written (QUALITY 43): no fitting role for dark:text-gray-400 #9CA3AF; #9CA3AF is handle (the builder node handle)
                   className="px-2 py-1 text-left text-gray-500 dark:text-gray-400"
                 >
-                  Description
+                  {t("build3.mcp.description")}
                 </Text>
               </tr>
             </thead>
@@ -789,7 +798,9 @@ function MCPToolCard({
           className="flex w-full items-center justify-center gap-1 border-t border-gray-100 py-1.5 text-gray-400 hover:text-gray-600 dark:border-slate-700 dark:text-gray-500 dark:hover:text-gray-300"
         >
           <Text variant="tiny-inherit" as="span" tone="inherit">
-            {expanded ? "Hide details" : "Show details"}
+            {expanded
+              ? t("build3.mcp.hideDetails")
+              : t("build3.mcp.showDetails")}
           </Text>
           <Icon
             icon={ArrowDown01Icon}

@@ -10,6 +10,7 @@ import { useFilterSheet } from "./useFilterSheet";
 import { INITIAL_CREATORS_TO_SHOW } from "./constant";
 import { Cancel01Icon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 
 export function FilterSheet({
   categories,
@@ -33,11 +34,16 @@ export function FilterSheet({
     handleOpenFilters,
     hasActiveFilters,
   } = useFilterSheet();
+  const t = useT();
 
   return (
     <div className="m-0 inline w-fit p-0">
       <FilterChip
-        name={hasActiveFilters() ? "Edit filters" : "All filters"}
+        name={
+          hasActiveFilters()
+            ? t("build3.filters.edit")
+            : t("build3.filters.all")
+        }
         onClick={handleOpenFilters}
       />
 
@@ -55,7 +61,7 @@ export function FilterSheet({
           >
             {/* Top section */}
             <div className="flex items-center justify-between px-5 pt-4">
-              <Text variant="body">Filters</Text>
+              <Text variant="body">{t("build3.filters.title")}</Text>
               <Button
                 className="p-0"
                 variant="ghost"
@@ -73,7 +79,7 @@ export function FilterSheet({
 
             {/* Category section */}
             <div className="space-y-4 px-5">
-              <Text variant="large">Categories</Text>
+              <Text variant="large">{t("build3.filters.categories")}</Text>
               <div className="space-y-2">
                 {categories.map((category) => (
                   <div
@@ -105,7 +111,7 @@ export function FilterSheet({
             {/* Created by section */}
             <div className="space-y-4 px-5">
               <Text variant="large-medium-tight" tone="emphasis">
-                Created by
+                {t("build3.filters.createdBy")}
               </Text>
               <div className="space-y-2">
                 {visibleCreators.map((creator, i) => (
@@ -135,7 +141,9 @@ export function FilterSheet({
                   onClick={handleToggleShowMoreCreators}
                 >
                   <Text variant="body-medium" as="span" tone="inherit">
-                    {displayedCreatorsCount < creators.length ? "More" : "Less"}
+                    {displayedCreatorsCount < creators.length
+                      ? t("build3.filters.more")
+                      : t("build3.filters.less")}
                   </Text>
                 </Button>
               )}
@@ -149,7 +157,7 @@ export function FilterSheet({
                 onClick={handleClearFilters}
                 className="rounded-[8px] px-2 py-1.5"
               >
-                Clear
+                {t("build3.filters.clear")}
               </Button>
 
               <Button
@@ -158,7 +166,7 @@ export function FilterSheet({
                 disabled={!hasLocalActiveFilters()}
                 className="rounded-[8px] px-2 py-1.5"
               >
-                Apply filters
+                {t("build3.filters.apply")}
               </Button>
             </div>
           </motion.div>

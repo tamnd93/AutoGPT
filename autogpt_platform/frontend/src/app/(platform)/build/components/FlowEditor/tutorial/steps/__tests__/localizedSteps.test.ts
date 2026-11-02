@@ -7,6 +7,9 @@ import { createCompletionSteps } from "../completion";
 import { createConfigureCalculatorSteps } from "../configure-calculator";
 import { createConnectionSteps } from "../connections";
 import { createRunSteps } from "../run";
+import { createSaveSteps } from "../save";
+import { createSecondCalculatorSteps } from "../second-calculator";
+import { createWelcomeSteps } from "../welcome";
 
 const tour = {
   next: () => {},
@@ -50,6 +53,59 @@ describe("tutorial steps keep their English copy", () => {
 });
 
 describe("tutorial steps in Vietnamese", () => {
+  it("words the welcome step in Vietnamese", () => {
+    const step = stepOf(createWelcomeSteps(tour, "vi"), "welcome");
+
+    expect(step.title).toBe("Chào mừng tới AutoGPT Builder! 👋🏻");
+    expect(step.text).toContain(
+      "Hướng dẫn tương tác này sẽ dạy bạn cách dựng workflow AI đầu tiên.",
+    );
+    expect(step.text).toContain("- Thêm khối vào workflow");
+    expect(step.text).toContain("Thời gian ước tính: 3-4 phút");
+    expect(step.buttons?.[0]?.text).toBe("Bỏ qua hướng dẫn");
+    expect(step.buttons?.[1]?.text).toBe("Bắt đầu");
+  });
+
+  it("words the save steps in Vietnamese", () => {
+    const steps = createSaveSteps("vi");
+
+    const open = stepOf(steps, "open-save");
+    expect(open.title).toBe("Lưu workflow của bạn");
+    expect(open.text).toContain(
+      "Trước khi chạy, chúng ta cần <strong>lưu</strong> workflow",
+    );
+    expect(open.text).toContain("Bấm nút Save");
+
+    const details = stepOf(steps, "save-details");
+    expect(details.title).toBe("Đặt tên cho workflow");
+    expect(details.text).toContain('Nhập tên rồi bấm "Save Workflow"');
+    expect(details.text).toContain('Ví dụ: "Workflow máy tính của tôi"');
+  });
+
+  it("words the second-calculator steps in Vietnamese", () => {
+    const steps = createSecondCalculatorSteps(tour, "vi");
+
+    const adding = stepOf(steps, "adding-second-calculator");
+    expect(adding.title).toBe("Thêm Calculator thứ hai");
+    expect(adding.text).toContain("Chúng ta sẽ tạo một chuỗi:");
+    expect(adding.buttons?.[1]?.text).toBe("Thêm Calculator thứ hai");
+
+    const added = stepOf(steps, "second-calculator-added");
+    expect(added.title).toBe("Đã thêm Calculator thứ hai! ✅");
+    expect(added.buttons?.[0]?.text).toBe("Cấu hình khối này");
+
+    const configure = stepOf(steps, "configure-second-calculator");
+    expect(configure.title).toBe("Cấu hình Calculator thứ hai");
+    expect(configure.text).toContain("Bắt buộc để tiếp tục:");
+    expect(configure.text).toContain(
+      "Nhập một số vào trường <strong>B</strong> (ví dụ: 2)",
+    );
+    expect(configure.text).toContain(
+      "trường A sẽ được nối từ đầu ra của Calculator thứ nhất",
+    );
+    expect(configure.buttons?.[1]?.text).toBe("Tiếp tục");
+  });
+
   it("words the block menu steps in Vietnamese", () => {
     const steps = createBlockMenuSteps(tour, "vi");
 
@@ -166,5 +222,12 @@ describe("tutorial steps in Vietnamese", () => {
     );
     expect(stepOf(steps, "press-run").title).toBe("Chạy workflow của bạn");
     expect(stepOf(steps, "congratulations").title).toBe("Chúc mừng! 🎉");
+    expect(stepOf(steps, "welcome").title).toBe(
+      "Chào mừng tới AutoGPT Builder! 👋🏻",
+    );
+    expect(stepOf(steps, "open-save").title).toBe("Lưu workflow của bạn");
+    expect(stepOf(steps, "adding-second-calculator").title).toBe(
+      "Thêm Calculator thứ hai",
+    );
   });
 });

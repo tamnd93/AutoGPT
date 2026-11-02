@@ -25,8 +25,10 @@ import { getQueryClient } from "@/lib/react-query/queryClient";
 import { useToast } from "@/components/molecules/Toast/use-toast";
 import * as Sentry from "@sentry/nextjs";
 import { CategoryCounts } from "../BlockMenuFilters/types";
+import { useT } from "@/lib/i18n";
 
 export const useBlockMenuSearchContent = () => {
+  const t = useT();
   const {
     searchQuery,
     searchId,
@@ -100,10 +102,9 @@ export const useBlockMenuSearchContent = () => {
       onError: (error) => {
         Sentry.captureException(error);
         toast({
-          title: "Failed to add workflow to library",
+          title: t("build3.toast.addWorkflowFailed"),
           description:
-            ((error as any).message as string) ||
-            "An unexpected error occurred.",
+            ((error as any).message as string) || t("build3.toast.unexpected"),
           variant: "destructive",
         });
       },
@@ -193,8 +194,8 @@ export const useBlockMenuSearchContent = () => {
       addAgentToBuilder(libraryAgentDetails as LibraryAgent);
 
       toast({
-        title: "Workflow Added",
-        description: "Workflow has been added to your library and builder",
+        title: t("build3.toast.workflowAdded"),
+        description: t("build3.toast.workflowAddedBody"),
       });
     } catch (error) {
       Sentry.captureException(error);

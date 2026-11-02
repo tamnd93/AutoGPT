@@ -6,8 +6,10 @@ import { ErrorCard } from "@/components/molecules/ErrorCard/ErrorCard";
 import { cn } from "@/lib/utils";
 import { InfiniteScroll } from "@/components/contextual/InfiniteScroll/InfiniteScroll";
 import { blockMenuContainerStyle } from "../style";
+import { useT } from "@/lib/i18n";
 
 export const MarketplaceAgentsContent = () => {
+  const t = useT();
   const {
     handleAddStoreAgent,
     addingAgent,
@@ -44,13 +46,13 @@ export const MarketplaceAgentsContent = () => {
       <div className="h-full p-4">
         <ErrorCard
           isSuccess={false}
-          context="block menu"
+          context={t("build3.errors.contextBlockMenu")}
           httpError={{
             status: status,
-            statusText: "Request failed",
+            statusText: t("build3.errors.statusRequestFailed"),
             message:
               (listStoreAgentsError?.detail as unknown as string) ||
-              "An error occurred",
+              t("build3.errors.messageDefault"),
           }}
           responseError={listStoreAgentsError || undefined}
           onRetry={() => refetchListStoreAgents()}

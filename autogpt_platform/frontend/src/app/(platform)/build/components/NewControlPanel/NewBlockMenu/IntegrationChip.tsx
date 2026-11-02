@@ -1,6 +1,7 @@
 import { Button } from "@/components/atoms/Button/Button";
 import { Text } from "@/components/atoms/Text/Text";
 import { Skeleton } from "@/components/atoms/Skeleton/Skeleton";
+import { useT } from "@/lib/i18n";
 import { beautifyString, cn } from "@/lib/utils";
 import Image from "next/image";
 import React, { ButtonHTMLAttributes } from "react";
@@ -20,6 +21,7 @@ export const IntegrationChip: IntegrationChipComponent = ({
   className,
   ...rest
 }) => {
+  const t = useT();
   return (
     <Button
       variant="legacy-default"
@@ -35,7 +37,7 @@ export const IntegrationChip: IntegrationChipComponent = ({
         {icon_url && (
           <Image
             src={icon_url}
-            alt="integration-icon"
+            alt={t("build3.integration.iconAlt")}
             fill
             sizes="2.25rem"
             className="w-full object-contain"
