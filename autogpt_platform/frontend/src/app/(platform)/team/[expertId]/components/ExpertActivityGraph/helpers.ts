@@ -1,5 +1,7 @@
 import { ExpertActivityDay } from "@/app/api/__generated__/models/expertActivityDay";
 import { format, subDays } from "date-fns";
+import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/locale";
+import { getMessage } from "@/lib/i18n/translate";
 
 export const DAYS_PER_WEEK = 7;
 const DAYS_PER_MONTH = 30;
@@ -102,7 +104,10 @@ export function getActivityCells(days: ExpertActivityDay[]): ActivityCell[] {
   ];
 }
 
-export function getActivitySummary(days: ExpertActivityDay[]) {
+export function getActivitySummary(
+  days: ExpertActivityDay[],
+  locale: Locale = DEFAULT_LOCALE,
+) {
   const recent = days.slice(-RECENT_WINDOW_DAYS);
   const sessions = days.reduce((total, day) => total + day.sessions, 0);
   const runs = days.reduce((total, day) => total + day.runs, 0);
@@ -111,12 +116,12 @@ export function getActivitySummary(days: ExpertActivityDay[]) {
     isActive: recent.some((day) => getActivityTotal(day) > 0),
     rangeLabel:
       days.length >= DAYS_PER_YEAR
-        ? "last year"
+        ? getMessage(locale, "errors5.range.lastYear")
         : days.length >= THREE_MONTH_DAYS
-          ? "last 3 months"
+          ? getMessage(locale, "errors5.range.lastThreeMonths")
           : days.length >= DAYS_PER_MONTH
-            ? "last month"
-            : `last ${weeks} weeks`,
+            ? getMessage(locale, "errors5.range.lastMonth")
+            : getMessage(locale, "errors5.range.lastWeeks", { weeks }),
     totalsLabel: `${pluralize(sessions, "session")} · ${pluralize(runs, "run")}`,
   };
 }

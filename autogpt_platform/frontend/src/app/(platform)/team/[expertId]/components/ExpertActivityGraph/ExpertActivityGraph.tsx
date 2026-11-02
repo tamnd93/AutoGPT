@@ -1,7 +1,7 @@
 import { ditherColorsFor } from "@/app/(platform)/raise/components/ColorStep/helpers";
 import { ExpertActivityDay } from "@/app/api/__generated__/models/expertActivityDay";
 import { cn } from "@/lib/utils";
-import { useT } from "@/lib/i18n";
+import { useLocale, useT } from "@/lib/i18n";
 import { getActivityCells, getActivitySummary } from "./helpers";
 
 const LEVEL_OPACITY = [0, 0.18, 0.34, 0.52, 0.7] as const;
@@ -13,8 +13,9 @@ interface Props {
 
 export function ExpertActivityGraph({ days, color }: Props) {
   const t = useT();
+  const locale = useLocale();
   const cells = getActivityCells(days);
-  const { rangeLabel } = getActivitySummary(days);
+  const { rangeLabel } = getActivitySummary(days, locale);
   // The dither ramp's first stop is the -400 shade, dark enough to read at
   // 25% opacity for the lightest level.
   const fillColor = ditherColorsFor(color ?? null)?.[0];

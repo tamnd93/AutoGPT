@@ -22,5 +22,9 @@ export const Errors5En = {
   "errors5.access.servicesTitle": "Services {name} can work with",
   "errors5.access.servicesBody":
     "{name} will ask you to connect these the first time they are needed — nothing is shared until you do.",
+  "errors5.range.lastYear": "last year",
+  "errors5.range.lastThreeMonths": "last 3 months",
+  "errors5.range.lastMonth": "last month",
+  "errors5.range.lastWeeks": "last {weeks} weeks",
   "errors5.dayOne.title": "What {name} sets up on day one",
 } as const;

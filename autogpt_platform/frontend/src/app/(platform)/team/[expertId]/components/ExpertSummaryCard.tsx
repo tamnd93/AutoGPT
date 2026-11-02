@@ -5,7 +5,7 @@ import { Text } from "@/components/atoms/Text/Text";
 import { cn } from "@/lib/utils";
 import { FireIcon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
-import { useT } from "@/lib/i18n";
+import { useLocale, useT } from "@/lib/i18n";
 import { ExpertActivityGraph } from "./ExpertActivityGraph/ExpertActivityGraph";
 import {
   getActivityStreak,
@@ -28,12 +28,13 @@ export function ExpertSummaryCard({
   isActivityError,
 }: Props) {
   const t = useT();
+  const locale = useLocale();
   const activityDays = activity ? getYearActivityDays(activity.days) : null;
   const visibleActivityDays = activityDays
     ? getThreeMonthActivityDays(activityDays)
     : null;
   const summary = visibleActivityDays
-    ? getActivitySummary(visibleActivityDays)
+    ? getActivitySummary(visibleActivityDays, locale)
     : null;
   const streak = activityDays ? getActivityStreak(activityDays) : null;
 

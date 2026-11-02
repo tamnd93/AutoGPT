@@ -24,5 +24,9 @@ export const Errors5Vi: Partial<Record<keyof typeof Errors5En, string>> = {
   "errors5.access.servicesTitle": "Dịch vụ {name} có thể dùng",
   "errors5.access.servicesBody":
     "{name} sẽ hỏi bạn kết nối những dịch vụ này ở lần dùng đầu tiên — chưa có gì được chia sẻ cho tới khi bạn làm vậy.",
+  "errors5.range.lastYear": "năm qua",
+  "errors5.range.lastThreeMonths": "3 tháng qua",
+  "errors5.range.lastMonth": "tháng qua",
+  "errors5.range.lastWeeks": "{weeks} tuần qua",
   "errors5.dayOne.title": "Những gì {name} thiết lập ngay ngày đầu",
 };
