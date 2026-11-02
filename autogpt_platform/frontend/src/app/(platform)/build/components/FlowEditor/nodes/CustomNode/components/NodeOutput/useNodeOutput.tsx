@@ -2,10 +2,12 @@ import { useNodeStore } from "@/app/(platform)/build/stores/nodeStore";
 import { useToast } from "@/components/molecules/Toast/use-toast";
 import { useShallow } from "zustand/react/shallow";
 import { useState } from "react";
+import { useT } from "@/lib/i18n";
 
 export const useNodeOutput = (nodeId: string) => {
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
   const { toast } = useToast();
+  const t = useT();
 
   const latestResult = useNodeStore(
     useShallow((state) => state.getLatestNodeExecutionResult(nodeId)),
@@ -25,14 +27,14 @@ export const useNodeOutput = (nodeId: string) => {
       await navigator.clipboard.writeText(text);
       setCopiedKey(key);
       toast({
-        title: "Copied to clipboard!",
+        title: t("build2.nodeOutput.copied"),
         duration: 2000,
       });
       setTimeout(() => setCopiedKey(null), 2000);
     } catch (error) {
       console.error("Failed to copy:", error);
       toast({
-        title: "Failed to copy",
+        title: t("build2.nodeOutput.copyFailed"),
         variant: "destructive",
         duration: 2000,
       });

@@ -11,6 +11,7 @@ import {
 } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { Text } from "@/components/atoms/Text/Text";
+import { useT } from "@/lib/i18n";
 
 type IncompatibleUpdateDialogProps = {
   isOpen: boolean;
@@ -31,6 +32,7 @@ export function IncompatibleUpdateDialog({
   agentName,
   incompatibilities,
 }: IncompatibleUpdateDialogProps) {
+  const t = useT();
   const hasMissingInputs = incompatibilities.missingInputs.length > 0;
   const hasMissingOutputs = incompatibilities.missingOutputs.length > 0;
   const hasNewInputs = incompatibilities.newInputs.length > 0;
@@ -72,11 +74,11 @@ export function IncompatibleUpdateDialog({
           {/* Input changes - two column layout */}
           {hasInputChanges && (
             <TwoColumnSection
-              title="Input Changes"
+              title={t("build2.incompatible.inputChanges")}
               leftIcon={
                 <Icon icon={CancelCircleIcon} className="h-4 w-4 text-error" />
               }
-              leftTitle="Removed"
+              leftTitle={t("build2.incompatible.removed")}
               leftItems={incompatibilities.missingInputs}
               rightIcon={
                 <Icon
@@ -85,7 +87,7 @@ export function IncompatibleUpdateDialog({
                   className="h-4 w-4 text-green-500"
                 />
               }
-              rightTitle="Added"
+              rightTitle={t("build2.incompatible.added")}
               rightItems={incompatibilities.newInputs}
             />
           )}
@@ -93,11 +95,11 @@ export function IncompatibleUpdateDialog({
           {/* Output changes - two column layout */}
           {hasOutputChanges && (
             <TwoColumnSection
-              title="Output Changes"
+              title={t("build2.incompatible.outputChanges")}
               leftIcon={
                 <Icon icon={CancelCircleIcon} className="h-4 w-4 text-error" />
               }
-              leftTitle="Removed"
+              leftTitle={t("build2.incompatible.removed")}
               leftItems={incompatibilities.missingOutputs}
               rightIcon={
                 <Icon
@@ -106,7 +108,7 @@ export function IncompatibleUpdateDialog({
                   className="h-4 w-4 text-green-500"
                 />
               }
-              rightTitle="Added"
+              rightTitle={t("build2.incompatible.added")}
               rightItems={incompatibilities.newOutputs}
             />
           )}
@@ -116,8 +118,8 @@ export function IncompatibleUpdateDialog({
               icon={
                 <Icon icon={CancelCircleIcon} className="h-4 w-4 text-error" />
               }
-              title="Type Changed"
-              description="These connected inputs have a different type:"
+              title={t("build2.incompatible.typeChanged")}
+              description={t("build2.incompatible.typeChangedBody")}
               items={incompatibilities.inputTypeMismatches.map(
                 (m) => `${m.name} (${m.oldType} → ${m.newType})`,
               )}
@@ -132,8 +134,8 @@ export function IncompatibleUpdateDialog({
                   className="h-4 w-4 text-warning"
                 />
               }
-              title="New Required Inputs"
-              description="These inputs are now required:"
+              title={t("build2.incompatible.newRequired")}
+              description={t("build2.incompatible.newRequiredBody")}
               items={incompatibilities.newRequiredInputs}
             />
           )}

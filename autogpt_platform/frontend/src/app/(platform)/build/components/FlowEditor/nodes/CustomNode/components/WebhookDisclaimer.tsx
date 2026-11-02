@@ -5,8 +5,10 @@ import { Alert, AlertDescription } from "@/components/molecules/Alert/Alert";
 import { isValidUUID } from "@/lib/utils";
 import Link from "next/link";
 import { parseAsString, useQueryStates } from "nuqs";
+import { useT } from "@/lib/i18n";
 
 export const WebhookDisclaimer = ({ nodeId }: { nodeId: string }) => {
+  const t = useT();
   const [{ flowID }] = useQueryStates({
     flowID: parseAsString,
   });
@@ -33,7 +35,7 @@ export const WebhookDisclaimer = ({ nodeId }: { nodeId: string }) => {
         <Alert className="mb-3 rounded-xlarge">
           <AlertDescription>
             <Text variant="small-medium">
-              You can set up and manage this trigger in your{" "}
+              {t("build2.webhook.prefix")}{" "}
               <Link
                 href={
                   libraryAgent
@@ -43,10 +45,10 @@ export const WebhookDisclaimer = ({ nodeId }: { nodeId: string }) => {
                 className="underline"
               >
                 <Text variant="small-medium-inherit" as="span" tone="inherit">
-                  Workflow Library
+                  {t("build2.webhook.library")}
                 </Text>
               </Link>
-              {!isNodeSaved && " (after saving the workflow)"}.
+              {!isNodeSaved && t("build2.webhook.afterSave")}.
             </Text>
           </AlertDescription>
         </Alert>
@@ -57,7 +59,7 @@ export const WebhookDisclaimer = ({ nodeId }: { nodeId: string }) => {
         variant="small"
         className="mb-4 ml-6 !text-purple-700"
       >
-        Below inputs are only for display purposes and cannot be edited.
+        {t("build2.webhook.displayOnly")}
       </Text>
     </>
   );

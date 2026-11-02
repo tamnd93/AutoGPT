@@ -16,6 +16,7 @@ import {
 } from "../helpers";
 import { Copy01Icon, Tick02Icon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 
 export const ViewMoreData = ({
   nodeId,
@@ -26,6 +27,7 @@ export const ViewMoreData = ({
 }) => {
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
   const { toast } = useToast();
+  const t = useT();
   const executionResults = useNodeStore(
     useShallow((state) => state.getNodeExecutionResults(nodeId)),
   );
@@ -45,7 +47,7 @@ export const ViewMoreData = ({
   const copyExecutionId = (executionId: string) => {
     navigator.clipboard.writeText(executionId || "N/A").then(() => {
       toast({
-        title: "Execution ID copied to clipboard!",
+        title: t("build2.dataViewer.execIdCopied"),
         duration: 2000,
       });
     });
@@ -53,7 +55,7 @@ export const ViewMoreData = ({
 
   return (
     <Dialog
-      title="View Data"
+      title={t("build2.dataViewer.viewData")}
       styling={{ width: "600px", paddingRight: "16px" }}
     >
       <Dialog.Trigger>
@@ -74,7 +76,12 @@ export const ViewMoreData = ({
             variant="h4"
             className="text-slate-900"
           >
-            Complete {dataType === "input" ? "Input" : "Output"} Data
+            {t("build2.dataViewer.completeData", {
+              kind:
+                dataType === "input"
+                  ? t("build2.dataViewer.input")
+                  : t("build2.dataViewer.output"),
+            })}
           </Text>
 
           <ScrollArea className="h-full">

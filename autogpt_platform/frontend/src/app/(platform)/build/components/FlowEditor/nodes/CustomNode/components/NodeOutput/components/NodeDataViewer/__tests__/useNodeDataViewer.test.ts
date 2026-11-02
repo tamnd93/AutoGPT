@@ -1,11 +1,14 @@
-import { renderHook } from "@testing-library/react";
+import { act, renderHook } from "@testing-library/react";
+import { createElement } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { LocaleProvider } from "@/lib/i18n";
 import type { NodeExecutionResult } from "@/app/api/__generated__/models/nodeExecutionResult";
 import * as helpers from "../../../helpers";
 import { useNodeDataViewer } from "../useNodeDataViewer";
 
+const toastMock = vi.hoisted(() => vi.fn());
 vi.mock("@/components/molecules/Toast/use-toast", () => ({
-  useToast: () => ({ toast: vi.fn() }),
+  useToast: () => ({ toast: toastMock }),
 }));
 
 vi.mock("../../../helpers", async (importOriginal) => {
@@ -70,6 +73,29 @@ describe("useNodeDataViewer", () => {
       "exec-1",
     ]);
     expect(result.current.totalGroupedItems).toBe(3);
+  });
+
+  it("copies the execution ID with a Vietnamese confirmation when the app is set to Vietnamese", async () => {
+    Object.defineProperty(navigator, "clipboard", {
+      value: { writeText: vi.fn().mockResolvedValue(undefined) },
+      configurable: true,
+    });
+
+    const { result } = renderHook(
+      () => useNodeDataViewer([], "result", "exec-2", [], "output"),
+      {
+        wrapper: ({ children }) =>
+          createElement(LocaleProvider, { locale: "vi" }, children),
+      },
+    );
+
+    await act(async () => {
+      result.current.copyExecutionId();
+    });
+
+    expect(toastMock).toHaveBeenCalledWith(
+      expect.objectContaining({ title: "Đã sao chép Execution ID!" }),
+    );
   });
 
   it("does not rebuild the items when its node re-renders with the same data", () => {

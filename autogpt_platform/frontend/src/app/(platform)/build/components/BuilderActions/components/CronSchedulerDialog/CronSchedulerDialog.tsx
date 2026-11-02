@@ -21,7 +21,7 @@ export function CronSchedulerDialog({
   setOpen,
 
   defaultCronExpression = "",
-  title = "Schedule Workflow",
+  title,
   inputs,
   credentials,
 }: CronSchedulerDialogProps) {
@@ -45,7 +45,7 @@ export function CronSchedulerDialog({
   return (
     <Dialog
       controlled={{ isOpen: open, set: setOpen }}
-      title={title}
+      title={title ?? t("build2.cron.defaultTitle")}
       styling={{ maxWidth: "600px", minWidth: "600px" }}
     >
       <Dialog.Content>

@@ -21,6 +21,7 @@ import {
   InformationCircleIcon,
 } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 
 export const OutputHandler = ({
   outputSchema,
@@ -31,6 +32,7 @@ export const OutputHandler = ({
   nodeId: string;
   uiType: BlockUIType;
 }) => {
+  const t = useT();
   const { isOutputConnected } = useEdgeStore();
   const properties = outputSchema?.properties || {};
   const [isOutputVisible, setIsOutputVisible] = useState(true);
@@ -107,7 +109,11 @@ export const OutputHandler = ({
                   onClick={() => toggleObjectExpanded(fullKey)}
                   // TODO(tokens): no exact role: text-slate-500 #64748B, hover:text-slate-700 #475263
                   className="flex items-center text-slate-500 hover:text-slate-700"
-                  aria-label={isExpanded ? "Collapse" : "Expand"}
+                  aria-label={
+                    isExpanded
+                      ? t("build2.outputHandler.collapse")
+                      : t("build2.outputHandler.expand")
+                  }
                 >
                   {isExpanded ? (
                     <Icon icon={ArrowDown01Icon} size={12} />

@@ -8,6 +8,7 @@ import { IncompatibilityInfo } from "@/app/(platform)/build/hooks/useSubAgentUpd
 import { Alert01Icon, InformationCircleIcon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { Text } from "@/components/atoms/Text/Text";
+import { useT } from "@/lib/i18n";
 
 type ResolutionModeBarProps = {
   incompatibilities: IncompatibilityInfo | null;
@@ -16,8 +17,10 @@ type ResolutionModeBarProps = {
 export function ResolutionModeBar({
   incompatibilities,
 }: ResolutionModeBarProps): React.ReactElement {
+  const t = useT();
+
   const renderIncompatibilities = () => {
-    if (!incompatibilities) return <span>No incompatibilities</span>;
+    if (!incompatibilities) return <span>{t("build2.resolve.none")}</span>;
 
     const sections: React.ReactNode[] = [];
 
@@ -25,7 +28,7 @@ export function ResolutionModeBar({
       sections.push(
         <div key="missing-inputs" className="mb-1">
           <Text variant="small-semibold-tight" as="span" tone="inherit">
-            Missing inputs:{" "}
+            {t("build2.resolve.missingInputs")}{" "}
           </Text>
           {incompatibilities.missingInputs.map((name, i) => (
             <React.Fragment key={name}>
@@ -42,7 +45,7 @@ export function ResolutionModeBar({
       sections.push(
         <div key="missing-outputs" className="mb-1">
           <Text variant="small-semibold-tight" as="span" tone="inherit">
-            Missing outputs:{" "}
+            {t("build2.resolve.missingOutputs")}{" "}
           </Text>
           {incompatibilities.missingOutputs.map((name, i) => (
             <React.Fragment key={name}>
@@ -59,7 +62,7 @@ export function ResolutionModeBar({
       sections.push(
         <div key="new-required" className="mb-1">
           <Text variant="small-semibold-tight" as="span" tone="inherit">
-            New required inputs:{" "}
+            {t("build2.resolve.newRequired")}{" "}
           </Text>
           {incompatibilities.newRequiredInputs.map((name, i) => (
             <React.Fragment key={name}>
@@ -76,7 +79,7 @@ export function ResolutionModeBar({
       sections.push(
         <div key="type-mismatches" className="mb-1">
           <Text variant="small-semibold-tight" as="span" tone="inherit">
-            Type changed:{" "}
+            {t("build2.resolve.typeChanged")}{" "}
           </Text>
           {incompatibilities.inputTypeMismatches.map((m, i) => (
             <React.Fragment key={m.name}>
@@ -133,7 +136,7 @@ export function ResolutionModeBar({
               tone="inherit"
               className="mb-2"
             >
-              Incompatible changes:
+              {t("build2.resolve.incompatibleChanges")}
             </Text>
             <Text variant="small-tight" tone="inherit" as="div">
               {renderIncompatibilities()}
@@ -144,8 +147,8 @@ export function ResolutionModeBar({
               className="mt-2 text-gray-400"
             >
               {(incompatibilities?.newRequiredInputs.length ?? 0) > 0
-                ? "Replace / delete"
-                : "Delete"}{" "}
+                ? t("build2.resolve.replaceOrDelete")
+                : t("build2.resolve.delete")}{" "}
               the red connections to continue
             </Text>
           </TooltipContent>

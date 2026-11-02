@@ -13,6 +13,7 @@ import { ResolutionModeBar } from "./components/ResolutionModeBar";
 import { Alert01Icon, ArrowUp02Icon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { Text } from "@/components/atoms/Text/Text";
+import { useT } from "@/lib/i18n";
 
 /**
  * Inline component for the update bar that can be placed after the header.
@@ -27,6 +28,7 @@ export function SubAgentUpdateFeature({
   nodeID,
   nodeData,
 }: SubAgentUpdateFeatureProps) {
+  const t = useT();
   const {
     updateInfo,
     isInResolutionMode,
@@ -36,7 +38,7 @@ export function SubAgentUpdateFeature({
     handleConfirmIncompatibleUpdate,
   } = useSubAgentUpdateState({ nodeID: nodeID, nodeData: nodeData });
 
-  const agentName = nodeData.title || "Workflow";
+  const agentName = nodeData.title || t("build2.subAgent.workflowFallback");
 
   if (!updateInfo.hasUpdate && !isInResolutionMode) {
     return null;

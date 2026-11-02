@@ -10,6 +10,7 @@ import {
   normalizeToArray,
   type OutputItem,
 } from "../../helpers";
+import { useT } from "@/lib/i18n";
 
 export type GroupedExecution = {
   execId: string;
@@ -24,6 +25,7 @@ export const useNodeDataViewer = (
   dataType?: NodeDataType,
 ) => {
   const { toast } = useToast();
+  const t = useT();
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
 
@@ -58,7 +60,7 @@ export const useNodeDataViewer = (
   const copyExecutionId = () => {
     navigator.clipboard.writeText(execId).then(() => {
       toast({
-        title: "Execution ID copied to clipboard!",
+        title: t("build2.dataViewer.execIdCopied"),
         duration: 2000,
       });
     });

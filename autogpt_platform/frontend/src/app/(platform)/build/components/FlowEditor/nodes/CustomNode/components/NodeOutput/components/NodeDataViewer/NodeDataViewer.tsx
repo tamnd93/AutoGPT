@@ -24,6 +24,7 @@ import {
   Tick02Icon,
 } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 
 export interface NodeDataViewerProps {
   data?: any;
@@ -42,6 +43,7 @@ export const NodeDataViewer: FC<NodeDataViewerProps> = ({
   isViewMoreData = false,
   dataType = "output",
 }) => {
+  const t = useT();
   const executionResults = useNodeStore(
     useShallow((state) =>
       nodeId ? state.getNodeExecutionResults(nodeId) : [],
@@ -86,7 +88,7 @@ export const NodeDataViewer: FC<NodeDataViewerProps> = ({
 
   const shouldGroupExecutions = groupedExecutions.length > 0;
   return (
-    <Dialog title="Data Preview" styling={{ width: "600px" }}>
+    <Dialog title={t("build2.dataViewer.title")} styling={{ width: "600px" }}>
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>
@@ -105,7 +107,7 @@ export const NodeDataViewer: FC<NodeDataViewerProps> = ({
             </Dialog.Trigger>
           </TooltipTrigger>
           <TooltipContent>
-            <p>View Data</p>
+            <p>{t("build2.dataViewer.viewData")}</p>
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
@@ -118,7 +120,12 @@ export const NodeDataViewer: FC<NodeDataViewerProps> = ({
                 variant="large-medium"
                 className="text-slate-900"
               >
-                Full {dataType === "input" ? "Input" : "Output"} Preview
+                {t("build2.dataViewer.fullPreview", {
+                  kind:
+                    dataType === "input"
+                      ? t("build2.dataViewer.input")
+                      : t("build2.dataViewer.output"),
+                })}
               </Text>
             </div>
             <Text
@@ -238,7 +245,7 @@ export const NodeDataViewer: FC<NodeDataViewerProps> = ({
                                     item,
                                   )
                                 }
-                                aria-label="Copy item"
+                                aria-label={t("build2.dataViewer.copyItem")}
                               >
                                 {copiedKey ===
                                 `${execution.execId}-${index}` ? (
@@ -258,7 +265,7 @@ export const NodeDataViewer: FC<NodeDataViewerProps> = ({
                                 size="icon"
                                 className="min-w-0 p-1"
                                 onClick={() => handleDownloadGroupedItem(item)}
-                                aria-label="Download item"
+                                aria-label={t("build2.dataViewer.downloadItem")}
                               >
                                 <Icon
                                   icon={Download04Icon}
@@ -295,7 +302,7 @@ export const NodeDataViewer: FC<NodeDataViewerProps> = ({
                         className="min-w-0 p-1"
                         size="icon"
                         onClick={() => handleCopyItem(index)}
-                        aria-label="Copy item"
+                        aria-label={t("build2.dataViewer.copyItem")}
                       >
                         {copiedIndex === index ? (
                           <Icon
@@ -314,7 +321,7 @@ export const NodeDataViewer: FC<NodeDataViewerProps> = ({
                         size="icon"
                         className="min-w-0 p-1"
                         onClick={() => handleDownloadItem(index)}
-                        aria-label="Download item"
+                        aria-label={t("build2.dataViewer.downloadItem")}
                       >
                         <Icon
                           icon={Download04Icon}
