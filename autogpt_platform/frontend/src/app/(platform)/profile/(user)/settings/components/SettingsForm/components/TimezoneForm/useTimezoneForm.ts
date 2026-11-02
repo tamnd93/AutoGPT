@@ -5,6 +5,8 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useToast } from "@/components/molecules/Toast/use-toast";
+import { useLocale } from "@/lib/i18n";
+import { getMessage } from "@/lib/i18n/translate";
 import type { User } from "@/lib/auth/types";
 import {
   usePostV1UpdateUserTimezone,
@@ -12,11 +14,11 @@ import {
 } from "@/app/api/__generated__/endpoints/auth/auth";
 import { useQueryClient } from "@tanstack/react-query";
 
-const formSchema = z.object({
-  timezone: z.string().min(1, "Please select a timezone"),
-});
+function timezoneSchema(message: string) {
+  return z.object({ timezone: z.string().min(1, message) });
+}
 
-type FormData = z.infer<typeof formSchema>;
+type FormData = z.infer<ReturnType<typeof timezoneSchema>>;
 
 type UseTimezoneFormProps = {
   user: User;
@@ -24,12 +26,15 @@ type UseTimezoneFormProps = {
 };
 
 export const useTimezoneForm = ({ currentTimezone }: UseTimezoneFormProps) => {
+  const locale = useLocale();
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
   const form = useForm<FormData>({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(
+      timezoneSchema(getMessage(locale, "profile3.timezone.required")),
+    ),
     defaultValues: {
       timezone: currentTimezone,
     },
@@ -50,14 +55,14 @@ export const useTimezoneForm = ({ currentTimezone }: UseTimezoneFormProps) => {
       });
 
       toast({
-        title: "Success",
-        description: "Your timezone has been updated successfully.",
+        title: getMessage(locale, "profile3.timezone.successTitle"),
+        description: getMessage(locale, "profile3.timezone.successDesc"),
         variant: "success",
       });
     } catch {
       toast({
-        title: "Error",
-        description: "Failed to update timezone. Please try again.",
+        title: getMessage(locale, "profile3.timezone.errorTitle"),
+        description: getMessage(locale, "profile3.timezone.errorDesc"),
         variant: "destructive",
       });
     } finally {

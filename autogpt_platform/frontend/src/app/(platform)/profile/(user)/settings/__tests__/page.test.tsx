@@ -1,4 +1,6 @@
 import type { ReactNode } from "react";
+
+import { LocaleProvider } from "@/lib/i18n";
 import {
   render,
   screen,
@@ -67,6 +69,24 @@ describe("SettingsPage", () => {
     expect(
       screen.getByRole("link", { name: "Reset password" }).getAttribute("href"),
     ).toBe("/reset-password");
+  });
+
+  test("renders the settings page chrome in vietnamese", async () => {
+    server.use(
+      getGetV1GetNotificationPreferencesMockHandler(defaultPreferences),
+      getGetV1GetUserTimezoneMockHandler({ timezone: "Asia/Kolkata" }),
+    );
+
+    render(
+      <LocaleProvider locale="vi">
+        <SettingsPage />
+      </LocaleProvider>,
+    );
+
+    expect(await screen.findByText("Tài khoản của tôi")).toBeDefined();
+    expect(
+      screen.getByText("Quản lý cài đặt và tuỳ chọn tài khoản của bạn."),
+    ).toBeDefined();
   });
 
   test("saves notification preference changes", async () => {

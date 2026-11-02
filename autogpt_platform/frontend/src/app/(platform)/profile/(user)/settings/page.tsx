@@ -10,10 +10,12 @@ import { okData } from "@/app/api/helpers";
 import { Text } from "@/components/atoms/Text/Text";
 import { ErrorCard } from "@/components/molecules/ErrorCard/ErrorCard";
 import { useAuth } from "@/lib/auth/hooks/useAuth";
+import { useT } from "@/lib/i18n";
 import { useEffect } from "react";
 import SettingsLoading from "./loading";
 
 export default function SettingsPage() {
+  const t = useT();
   const { user } = useAuth();
 
   const {
@@ -40,7 +42,7 @@ export default function SettingsPage() {
   useTimezoneDetection(!!user ? timezone : undefined);
 
   useEffect(() => {
-    document.title = "Settings – AutoGPT Platform";
+    document.title = t("profile3.page.title");
   }, []);
 
   if (preferencesError) {
@@ -70,10 +72,8 @@ export default function SettingsPage() {
   return (
     <div className="container max-w-2xl space-y-6 py-10">
       <div className="flex flex-col gap-2">
-        <Text variant="h3">My account</Text>
-        <Text variant="large">
-          Manage your account settings and preferences.
-        </Text>
+        <Text variant="h3">{t("profile3.page.heading")}</Text>
+        <Text variant="large">{t("profile3.page.description")}</Text>
       </div>
       <SettingsForm preferences={preferences} user={user} timezone={timezone} />
     </div>

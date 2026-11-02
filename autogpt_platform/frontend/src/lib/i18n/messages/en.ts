@@ -54,6 +54,7 @@ import { nav3En } from "./nav-3.en";
 import { onboarding1En } from "./onboarding-1.en";
 import { onboarding2En } from "./onboarding-2.en";
 import { onboarding3En } from "./onboarding-3.en";
+import { profile3En } from "./profile-3.en";
 import { settingsRest1En } from "./settings-rest-1.en";
 import { settingsRest2En } from "./settings-rest-2.en";
 import { settingsRest3En } from "./settings-rest-3.en";
@@ -121,6 +122,7 @@ export const en = {
   ...onboarding1En,
   ...onboarding2En,
   ...onboarding3En,
+  ...profile3En,
   ...settingsRest1En,
   ...settingsRest2En,
   ...settingsRest3En,
