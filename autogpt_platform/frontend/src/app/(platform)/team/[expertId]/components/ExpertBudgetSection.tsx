@@ -4,7 +4,7 @@ import { Expert } from "@/app/api/__generated__/models/expert";
 import { Button } from "@/components/atoms/Button/Button";
 import { Text } from "@/components/atoms/Text/Text";
 import { creditsToUsdLabel } from "@/lib/credits";
-import { useLocale } from "@/lib/i18n";
+import { useLocale, useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { PencilEdit02Icon } from "@hugeicons/core-free-icons";
 import { useState } from "react";
@@ -20,13 +20,14 @@ interface Props {
 }
 
 export function ExpertBudgetSection({ expert, color, className }: Props) {
+  const t = useT();
   const weeklySpend = getWeeklySpend(expert);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const locale = useLocale();
 
   return (
     <section
-      aria-label={`${expert.name} budget`}
+      aria-label={t("team2.budget.region", { name: expert.name })}
       style={
         color
           ? {
@@ -43,14 +44,14 @@ export function ExpertBudgetSection({ expert, color, className }: Props) {
             tone="secondary"
             className={cn(color && "!text-inherit")}
           >
-            Budget
+            {t("team2.budget.label")}
           </Text>
           <Button
             type="button"
             variant="ghost"
             size="icon-xs"
             leadingIcon={PencilEdit02Icon}
-            aria-label="Edit budget"
+            aria-label={t("team2.budget.editAria")}
             className={cn(color && "text-inherit hover:bg-surface/50")}
             onClick={() => setIsEditOpen(true)}
           />
@@ -62,7 +63,7 @@ export function ExpertBudgetSection({ expert, color, className }: Props) {
         >
           {weeklySpend
             ? `${creditsToUsdLabel(weeklySpend.spent, locale)} / ${creditsToUsdLabel(weeklySpend.budget, locale)}`
-            : "No budget"}
+            : t("team2.budget.none")}
         </Text>
       </div>
       <SpendMeter

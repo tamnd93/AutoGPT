@@ -64,6 +64,7 @@ import { format, subDays } from "date-fns";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { heldRead } from "@/app/(platform)/copilot/components/ApprovalQueue/__tests__/fixtures";
 import ExpertDetailPage from "../page";
+import { LocaleProvider } from "@/lib/i18n";
 import { RECENT_CONVERSATIONS_LIMIT } from "../components/ExpertOverview/useExpertOverview";
 
 vi.mock("@/services/environment", async (importActual) => {
@@ -1490,6 +1491,23 @@ describe("ExpertDetailPage", () => {
 
     expect(await screen.findByRole("heading", { name: "Maria" })).toBeDefined();
     expect(screen.queryByRole("region", { name: "Needs you" })).toBeNull();
+  });
+
+  test("reads the expert detail chrome in Vietnamese", async () => {
+    render(
+      <LocaleProvider locale="vi">
+        <ExpertDetailPage />
+      </LocaleProvider>,
+    );
+
+    expect(
+      await screen.findByRole("button", { name: "Sửa Soul" }),
+    ).toBeDefined();
+    expect(screen.getByRole("button", { name: "Trò chuyện" })).toBeDefined();
+    expect(screen.getByText("Ngân sách")).toBeDefined();
+    expect(
+      screen.getByRole("button", { name: "Sửa ngân sách" }),
+    ).toBeDefined();
   });
 
   test("hides the Needs you block when nothing is waiting on the user", async () => {

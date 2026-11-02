@@ -17,12 +17,7 @@ import { SectionEmptyState } from "../../../components/SectionEmptyState";
 import { ToolbarSearch } from "../../../components/ToolbarSearch";
 import { ExpertFileRow } from "./ExpertFileRow";
 import { useExpertFilesSection } from "./useExpertFilesSection";
-
-const FILTERS = [
-  { value: "all", label: "All files", icon: Folder01Icon },
-  { value: "generated", label: "Created", icon: SparklesIcon },
-  { value: "uploaded", label: "Uploaded", icon: Upload04Icon },
-] as const;
+import { useT } from "@/lib/i18n";
 
 interface Props {
   expertId: string;
@@ -31,28 +26,34 @@ interface Props {
 
 /** Everything in the expert's chats: what it made and what you gave it. */
 export function ExpertFilesSection({ expertId, expertName }: Props) {
+  const t = useT();
+  const filters = [
+    { value: "all", label: t("team2.files.filterAll"), icon: Folder01Icon },
+    { value: "generated", label: t("team2.files.created"), icon: SparklesIcon },
+    { value: "uploaded", label: t("team2.files.uploaded"), icon: Upload04Icon },
+  ] as const;
   const files = useExpertFilesSection(expertId);
 
   return (
     <section>
       <div className="mb-2.5 flex flex-wrap items-center justify-between gap-3">
         <Text variant="large-medium" tone="primary">
-          {expertName}&apos;s Files
+          {t("team2.files.title", { name: expertName })}
         </Text>
         <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto">
           <ToolbarSearch
             textSize="body-md"
             id="expert-files-search"
-            label="Search files"
+            label={t("team2.files.search")}
             value={files.query}
             onChange={files.setQuery}
           />
           <PillFilterMenu
             textSize="body-md"
-            label="Filter files"
+            label={t("team2.files.filter")}
             value={files.filter}
             defaultValue="all"
-            options={FILTERS}
+            options={filters}
             onChange={files.setFilter}
           />
         </div>
@@ -67,8 +68,8 @@ export function ExpertFilesSection({ expertId, expertName }: Props) {
       ) : files.isError ? (
         <ErrorCard
           textSize="body-md"
-          context={`${expertName}'s files`}
-          hint="We could not load the files."
+          context={t("team2.files.errorContext", { name: expertName })}
+          hint={t("team2.files.errorHint")}
           onRetry={() => files.refetch()}
         />
       ) : files.files.length === 0 ? (
@@ -96,16 +97,19 @@ export function ExpertFilesSection({ expertId, expertName }: Props) {
               className="text-violet-500"
             />,
           ]}
-          title="No files yet"
-          description={`Files you share with ${expertName} and documents it creates show up here.`}
+          title={t("team2.files.emptyTitle")}
+          description={t("team2.files.emptyBody", { name: expertName })}
         />
       ) : files.visible.length === 0 ? (
         <Text variant="body-md" tone="muted" className="pt-4">
-          No files match.
+          {t("team2.files.noMatch")}
         </Text>
       ) : (
         <div className="mt-4 rounded-2xl bg-surface p-2 smooth-shadow-ring-sm">
-          <ul aria-label={`${expertName}'s files`} className="flex flex-col">
+          <ul
+            aria-label={t("team2.files.listAria", { name: expertName })}
+            className="flex flex-col"
+          >
             {files.visible.map((file) => (
               <li key={file.id}>
                 <ExpertFileRow file={file} />
@@ -117,7 +121,7 @@ export function ExpertFilesSection({ expertId, expertName }: Props) {
               variant="small"
               className="px-2 pb-1 pt-2 !text-foreground-tertiary"
             >
-              Showing the latest 200 files.
+              {t("team2.files.showingLatest")}
             </Text>
           ) : null}
         </div>

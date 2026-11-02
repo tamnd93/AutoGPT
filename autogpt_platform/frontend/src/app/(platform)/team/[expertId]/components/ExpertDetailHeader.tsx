@@ -11,6 +11,7 @@ import { ExpertCover } from "../../components/ExpertTeamCard/components/ExpertCo
 import { IntegrationIcons } from "../../components/ExpertTeamCard/components/IntegrationIcons";
 import { ExpertAvatarButton } from "./ExpertAvatarButton/ExpertAvatarButton";
 import { ExpertBudgetSection } from "./ExpertBudgetSection";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   expert: Expert;
@@ -19,6 +20,7 @@ interface Props {
 }
 
 export function ExpertDetailHeader({ expert, onEditSoul, onChat }: Props) {
+  const t = useT();
   const cover = getExpertCover(expert);
   const topic = expert.categories?.[0];
 
@@ -62,7 +64,7 @@ export function ExpertDetailHeader({ expert, onEditSoul, onChat }: Props) {
             leadingIcon={PencilEdit02Icon}
             onClick={onEditSoul}
           >
-            Edit Soul
+            {t("team2.header.editSoul")}
           </Button>
           <Button
             variant="primary"
@@ -70,7 +72,7 @@ export function ExpertDetailHeader({ expert, onEditSoul, onChat }: Props) {
             leadingIcon={BubbleChatIcon}
             onClick={onChat}
           >
-            Chat
+            {t("team2.header.chat")}
           </Button>
         </div>
       </div>

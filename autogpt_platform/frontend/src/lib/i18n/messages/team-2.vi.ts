@@ -43,5 +43,29 @@ export const Team2Vi: Partial<Record<keyof typeof Team2En, string>> = {
   "team2.computer.openFailedTitle": "Không mở được màn hình",
   "team2.computer.openFailedBody":
     "Sandbox không khởi động. Hãy thử lại sau ít phút.",
+  "team2.header.editSoul": "Sửa Soul",
+  "team2.header.chat": "Trò chuyện",
+  "team2.files.title": "Tệp của {name}",
+  "team2.files.search": "Tìm tệp",
+  "team2.files.filter": "Lọc tệp",
+  "team2.files.filterAll": "Tất cả tệp",
+  "team2.files.created": "Đã tạo",
+  "team2.files.uploaded": "Đã tải lên",
+  "team2.files.errorContext": "Tệp của {name}",
+  "team2.files.errorHint": "Không tải được các tệp.",
+  "team2.files.emptyTitle": "Chưa có tệp nào",
+  "team2.files.emptyBody":
+    "Tệp bạn chia sẻ với {name} và tài liệu nó tạo sẽ xuất hiện ở đây.",
+  "team2.files.noMatch": "Không có tệp nào khớp.",
+  "team2.files.listAria": "Tệp của {name}",
+  "team2.files.showingLatest": "Đang hiện 200 tệp mới nhất.",
+  "team2.budget.label": "Ngân sách",
+  "team2.budget.region": "Ngân sách của {name}",
+  "team2.budget.editAria": "Sửa ngân sách",
+  "team2.budget.none": "Chưa đặt ngân sách",
+  "team2.avatar.updated": "Đã cập nhật ảnh đại diện",
+  "team2.avatar.failed": "Không cập nhật được ảnh đại diện",
+  "team2.avatar.failedBody":
+    "Ảnh đại diện hiện tại không đổi. Hãy thử lại.",
 };
 export const team2Vi = Team2Vi;

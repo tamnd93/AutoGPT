@@ -7,8 +7,10 @@ import {
 import { useToast } from "@/components/molecules/Toast/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
+import { useT } from "@/lib/i18n";
 
 export function useExpertAvatarButton(expertId: string) {
+  const t = useT();
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const [isOpen, setIsOpen] = useState(false);
@@ -27,11 +29,11 @@ export function useExpertAvatarButton(expertId: string) {
         }),
       ]);
       setIsOpen(false);
-      toast({ title: "Avatar updated", variant: "success" });
+      toast({ title: t("team2.avatar.updated"), variant: "success" });
     } catch {
       toast({
-        title: "Could not update avatar",
-        description: "Your current avatar is unchanged. Try again.",
+        title: t("team2.avatar.failed"),
+        description: t("team2.avatar.failedBody"),
         variant: "destructive",
       });
     }

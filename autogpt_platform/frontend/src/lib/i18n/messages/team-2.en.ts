@@ -41,5 +41,28 @@ export const Team2En = {
   "team2.computer.openFailedTitle": "Could not open the desktop",
   "team2.computer.openFailedBody":
     "The sandbox did not come up. Try again in a moment.",
+  "team2.header.editSoul": "Edit Soul",
+  "team2.header.chat": "Chat",
+  "team2.files.title": "{name}'s Files",
+  "team2.files.search": "Search files",
+  "team2.files.filter": "Filter files",
+  "team2.files.filterAll": "All files",
+  "team2.files.created": "Created",
+  "team2.files.uploaded": "Uploaded",
+  "team2.files.errorContext": "{name}'s files",
+  "team2.files.errorHint": "We could not load the files.",
+  "team2.files.emptyTitle": "No files yet",
+  "team2.files.emptyBody":
+    "Files you share with {name} and documents it creates show up here.",
+  "team2.files.noMatch": "No files match.",
+  "team2.files.listAria": "{name}'s files",
+  "team2.files.showingLatest": "Showing the latest 200 files.",
+  "team2.budget.label": "Budget",
+  "team2.budget.region": "{name} budget",
+  "team2.budget.editAria": "Edit budget",
+  "team2.budget.none": "No budget",
+  "team2.avatar.updated": "Avatar updated",
+  "team2.avatar.failed": "Could not update avatar",
+  "team2.avatar.failedBody": "Your current avatar is unchanged. Try again.",
 } as const;
 export const team2En = Team2En;
