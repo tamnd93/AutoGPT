@@ -3,6 +3,7 @@
 import { Button } from "@/components/atoms/Button/Button";
 import { Text } from "@/components/atoms/Text/Text";
 import { Dialog } from "@/components/molecules/Dialog/Dialog";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   isOpen: boolean;
@@ -23,20 +24,28 @@ export function DeleteFolderDialog({
   isDeleting,
   onConfirm,
 }: Props) {
+  const t = useT();
   return (
     <Dialog
       controlled={{ isOpen, set: setIsOpen }}
       styling={{ maxWidth: "28rem" }}
-      title="Delete folder"
+      title={t("artifacts3.delete.title")}
     >
       <Dialog.Content>
         <div className="flex flex-col gap-4">
           <Text variant="body" className="text-foreground-secondary">
-            Delete{" "}
+            {t("artifacts3.delete.confirm")}{" "}
             <span className="font-medium">&ldquo;{folderName}&rdquo;</span>
             {subfolderCount > 0
-              ? ` and its ${subfolderCount} ${subfolderCount === 1 ? "folder" : "folders"}? Files inside them will be moved back to the root, not deleted.`
-              : "? Files inside it will be moved back to the root, not deleted."}
+              ? t("artifacts3.delete.andSubfolders", {
+                  count: subfolderCount,
+                  noun: t(
+                    subfolderCount === 1
+                      ? "artifacts3.delete.folderOne"
+                      : "artifacts3.delete.folderMany",
+                  ),
+                })
+              : t("artifacts3.delete.confirmNoSubfolders")}
           </Text>
           <div className="flex justify-end gap-2">
             <Button
@@ -44,7 +53,7 @@ export function DeleteFolderDialog({
               onClick={() => setIsOpen(false)}
               disabled={isDeleting}
             >
-              Cancel
+              {t("artifacts3.delete.cancel")}
             </Button>
             <Button
               variant="destructive"
@@ -53,7 +62,7 @@ export function DeleteFolderDialog({
               disabled={isDeleting}
               data-testid="confirm-delete-folder"
             >
-              Delete
+              {t("artifacts3.delete.confirm")}
             </Button>
           </div>
         </div>

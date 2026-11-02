@@ -1,6 +1,8 @@
 "use client";
 
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
+import type { MessageKey } from "@/lib/i18n/messages/en";
 import { cn } from "@/lib/utils";
 import { GridViewIcon, ListViewIcon } from "@hugeicons/core-free-icons";
 import type { IconSvgElement } from "@hugeicons/react";
@@ -13,20 +15,21 @@ interface Props {
 
 interface Option {
   value: ArtifactsView;
-  label: string;
+  labelKey: MessageKey;
   icon: IconSvgElement;
 }
 
 const OPTIONS: Option[] = [
-  { value: "grid", label: "Grid view", icon: GridViewIcon },
-  { value: "list", label: "List view", icon: ListViewIcon },
+  { value: "grid", labelKey: "artifacts3.view.grid", icon: GridViewIcon },
+  { value: "list", labelKey: "artifacts3.view.list", icon: ListViewIcon },
 ];
 
 export function ViewToggle({ value, onChange }: Props) {
+  const t = useT();
   return (
     <div
       role="group"
-      aria-label="Layout"
+      aria-label={t("artifacts3.view.layout")}
       className="flex items-center gap-1"
       data-testid="artifacts-view-toggle"
     >
@@ -36,7 +39,7 @@ export function ViewToggle({ value, onChange }: Props) {
           <button
             key={option.value}
             type="button"
-            aria-label={option.label}
+            aria-label={t(option.labelKey)}
             aria-pressed={active}
             onClick={() => onChange(option.value)}
             className={cn(

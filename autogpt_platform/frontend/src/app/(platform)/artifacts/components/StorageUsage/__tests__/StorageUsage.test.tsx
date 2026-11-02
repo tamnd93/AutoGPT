@@ -1,3 +1,4 @@
+import { LocaleProvider } from "@/lib/i18n";
 import { describe, expect, test } from "vitest";
 
 import { render, screen } from "@/tests/integrations/test-utils";
@@ -41,6 +42,32 @@ describe("StorageUsage", () => {
 
     await screen.findByTestId("storage-usage");
     expect(screen.queryByText(/skills and working files/)).toBeNull();
+  });
+
+  test("renders the storage chrome in vietnamese", async () => {
+    server.use(
+      getGetWorkspaceStorageUsageMockHandler({
+        used_bytes: 182_789,
+        limit_bytes: 262_144_000,
+        used_percent: 50,
+        file_count: 4,
+        internal_bytes: 182_536,
+      }),
+    );
+
+    render(
+      <LocaleProvider locale="vi">
+        <StorageUsage />
+      </LocaleProvider>,
+    );
+
+    const usage = await screen.findByTestId("storage-usage");
+    expect(usage.textContent).toContain("Dung lượng");
+    expect(usage.textContent).toContain("trên 250.0 MB");
+    expect(usage.getAttribute("title")).toBe("50% dung lượng đã dùng");
+    expect(
+      screen.getByText("178.3 KB là kỹ năng và tệp làm việc của đội bạn"),
+    ).toBeDefined();
   });
 
   test("says nothing extra when the backend sends no internal share", async () => {

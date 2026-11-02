@@ -8,6 +8,7 @@ import {
 } from "@/components/molecules/DropdownMenu/DropdownMenu";
 import { ArrowRight01Icon, Home01Icon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
 export interface BreadcrumbItem {
@@ -30,6 +31,7 @@ interface Props {
 const MAX_CRUMBS_BESIDE_ROOT = 3;
 
 export function FolderBreadcrumb({ items, onNavigate, compact }: Props) {
+  const t = useT();
   const { hidden, visible } = splitForOverflow(items);
   const separator = (
     <Icon
@@ -42,7 +44,7 @@ export function FolderBreadcrumb({ items, onNavigate, compact }: Props) {
 
   return (
     <nav
-      aria-label="Breadcrumb"
+      aria-label={t("artifacts3.breadcrumb.aria")}
       data-testid="folder-breadcrumb"
       className="min-w-0"
     >
@@ -61,7 +63,7 @@ export function FolderBreadcrumb({ items, onNavigate, compact }: Props) {
           >
             <Icon icon={Home01Icon} size={compact ? 14 : 16} />
             <Text variant="small-medium" as="span">
-              Files
+              {t("nav.files")}
             </Text>
           </button>
         </li>
@@ -72,7 +74,7 @@ export function FolderBreadcrumb({ items, onNavigate, compact }: Props) {
               <DropdownMenuTrigger asChild>
                 <button
                   type="button"
-                  aria-label="Show hidden folders"
+                  aria-label={t("artifacts3.breadcrumb.showHidden")}
                   className={CRUMB_BUTTON_CLASS}
                   data-testid="folder-breadcrumb-overflow"
                 >

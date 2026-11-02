@@ -4,10 +4,12 @@ import { useGetWorkspaceStorageUsage } from "@/app/api/__generated__/endpoints/w
 import { Progress } from "@/components/atoms/Progress/Progress";
 import { Skeleton } from "@/components/atoms/Skeleton/Skeleton";
 import { Text } from "@/components/atoms/Text/Text";
+import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { formatFileSize } from "../ArtifactsList/helpers";
 
 export function StorageUsage() {
+  const t = useT();
   const { data, isLoading, isError } = useGetWorkspaceStorageUsage({
     query: {
       select: (res) => (res.status === 200 ? res.data : null),
@@ -29,7 +31,9 @@ export function StorageUsage() {
   if (isError || !data) return null;
 
   const percent = Math.min(Math.max(data.used_percent, 0), 100);
-  const usedLabel = `${Math.round(percent)}% of storage used`;
+  const usedLabel = t("artifacts3.storage.usedPercent", {
+    percent: Math.round(percent),
+  });
   const internalBytes = data.internal_bytes ?? 0;
 
   return (
@@ -39,7 +43,7 @@ export function StorageUsage() {
       data-testid="storage-usage"
     >
       <Text variant="small" as="span" className="text-foreground-secondary">
-        Storage
+        {t("artifacts3.storage.label")}
       </Text>
       <Progress
         value={percent}
@@ -58,7 +62,9 @@ export function StorageUsage() {
         <span className="font-medium text-foreground-body">
           {formatFileSize(data.used_bytes)}
         </span>{" "}
-        of {formatFileSize(data.limit_bytes)}
+        {t("artifacts3.storage.of", {
+          limit: formatFileSize(data.limit_bytes),
+        })}
       </Text>
       {internalBytes > 0 ? (
         <Text
@@ -66,7 +72,9 @@ export function StorageUsage() {
           as="span"
           className="hidden text-foreground-secondary lg:inline"
         >
-          {`${formatFileSize(internalBytes)} is your team's skills and working files`}
+          {t("artifacts3.storage.teamSkills", {
+            size: formatFileSize(internalBytes),
+          })}
         </Text>
       ) : null}
     </div>

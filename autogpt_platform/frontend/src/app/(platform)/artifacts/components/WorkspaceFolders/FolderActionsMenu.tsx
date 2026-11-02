@@ -8,6 +8,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/molecules/DropdownMenu/DropdownMenu";
+import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import {
   Delete02Icon,
@@ -31,12 +32,13 @@ export function FolderActionsMenu({
   onDelete,
   className,
 }: Props) {
+  const t = useT();
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <button
           type="button"
-          aria-label={`Actions for ${folderName}`}
+          aria-label={t("artifacts3.actions.ariaLabel", { name: folderName })}
           onClick={(e) => e.stopPropagation()}
           className={cn(
             "inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-foreground-tertiary transition-colors hover:bg-surface-hover hover:text-foreground-strong",
@@ -58,7 +60,7 @@ export function FolderActionsMenu({
           data-testid="folder-rename-menu"
         >
           <Icon icon={PencilEdit02Icon} size={16} className="mr-2" />
-          Rename
+          {t("artifacts3.actions.rename")}
         </DropdownMenuItem>
         <DropdownMenuItem
           onSelect={(e) => {
@@ -68,7 +70,7 @@ export function FolderActionsMenu({
           data-testid="folder-move-menu"
         >
           <Icon icon={Folder01Icon} size={16} className="mr-2" />
-          Move to folder
+          {t("artifacts3.actions.move")}
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem
@@ -81,7 +83,7 @@ export function FolderActionsMenu({
           data-testid="folder-delete-menu"
         >
           <Icon icon={Delete02Icon} size={16} className="mr-2" />
-          Delete
+          {t("artifacts3.actions.delete")}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

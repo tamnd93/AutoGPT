@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Skeleton } from "@/components/atoms/Skeleton/Skeleton";
 import { Text } from "@/components/atoms/Text/Text";
 import { ErrorCard } from "@/components/molecules/ErrorCard/ErrorCard";
+import { useT } from "@/lib/i18n";
 import type { WorkspaceFolder as WorkspaceFolderModel } from "@/app/api/__generated__/models/workspaceFolder";
 import { useArtifactsFolders } from "../../useArtifactsFolders";
 import { FolderDialogs } from "./FolderDialogs";
@@ -17,6 +18,7 @@ interface Props {
 }
 
 export function WorkspaceFolders({ parentId, onSelectFolder }: Props) {
+  const t = useT();
   const { folders, isLoading, isError, error, moveFilesToFolder } =
     useArtifactsFolders();
 
@@ -51,7 +53,7 @@ export function WorkspaceFolders({ parentId, onSelectFolder }: Props) {
   return (
     <div className="flex flex-col gap-3" data-testid="workspace-folders">
       <Text variant="large-medium" className="text-foreground-body">
-        Folders
+        {t("artifacts3.folders.heading")}
       </Text>
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
         {children.map((folder) => (

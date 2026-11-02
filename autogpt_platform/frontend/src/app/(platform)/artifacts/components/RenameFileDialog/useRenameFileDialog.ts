@@ -1,6 +1,8 @@
 import { useRenameWorkspaceFile } from "@/app/api/__generated__/endpoints/workspace/workspace";
 import type { WorkspaceFileItem } from "@/app/api/__generated__/models/workspaceFileItem";
 import { useToast } from "@/components/molecules/Toast/use-toast";
+import { useLocale } from "@/lib/i18n";
+import { getMessage } from "@/lib/i18n/translate";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { ARTIFACTS_LIST_QUERY_KEY } from "../../useArtifactsPage";
@@ -10,6 +12,7 @@ export function useRenameFileDialog(
   file: WorkspaceFileItem,
   onRenamed: () => void,
 ) {
+  const locale = useLocale();
   const [name, setName] = useState(file.name);
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -17,14 +20,16 @@ export function useRenameFileDialog(
     mutation: {
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ARTIFACTS_LIST_QUERY_KEY });
-        toast({ title: "File renamed" });
+        toast({ title: getMessage(locale, "artifacts3.rename.renamed") });
         onRenamed();
       },
       onError: (error) => {
         toast({
-          title: "Failed to rename file",
+          title: getMessage(locale, "artifacts3.rename.failed"),
           description:
-            error instanceof Error ? error.message : "Please try again.",
+            error instanceof Error
+              ? error.message
+              : getMessage(locale, "artifacts3.rename.retry"),
           variant: "destructive",
         });
       },
@@ -32,7 +37,7 @@ export function useRenameFileDialog(
   });
 
   const trimmed = name.trim();
-  const validationError = validateFileName(trimmed);
+  const validationError = validateFileName(trimmed, locale);
   const isUnchanged = trimmed === file.name;
   const canSubmit = validationError === null && !isUnchanged && !isPending;
 

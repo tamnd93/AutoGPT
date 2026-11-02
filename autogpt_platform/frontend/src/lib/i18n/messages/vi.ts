@@ -3,6 +3,7 @@ import { account1Vi } from "./account-1.vi";
 import { account2Vi } from "./account-2.vi";
 import { AiConnections1Vi } from "./ai-connections-1.vi";
 import { Artifacts1Vi } from "./artifacts-1.vi";
+import { artifacts3Vi } from "./artifacts-3.vi";
 import { auth1Vi } from "./auth-1.vi";
 import { auth2Vi } from "./auth-2.vi";
 import { billing1Vi } from "./billing-1.vi";
@@ -67,6 +68,7 @@ export const vi: Partial<Record<MessageKey, string>> = {
   ...account2Vi,
   ...AiConnections1Vi,
   ...Artifacts1Vi,
+  ...artifacts3Vi,
   ...auth1Vi,
   ...auth2Vi,
   ...billing1Vi,

@@ -10,9 +10,13 @@ import {
 import { okData } from "@/app/api/helpers";
 import { ApiError } from "@/lib/autogpt-server-api/helpers";
 import { useToast } from "@/components/molecules/Toast/use-toast";
+import { useLocale } from "@/lib/i18n";
+import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/locale";
+import { getMessage } from "@/lib/i18n/translate";
 import { ARTIFACTS_LIST_QUERY_KEY } from "./useArtifactsPage";
 
 export function useArtifactsFolders() {
+  const locale = useLocale();
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
@@ -31,12 +35,15 @@ export function useArtifactsFolders() {
     mutation: {
       onSuccess: () => {
         invalidate();
-        toast({ title: "Folder created" });
+        toast({ title: getMessage(locale, "artifacts3.folders.created") });
       },
       onError: () => {
         toast({
-          title: "Failed to create folder",
-          description: "A folder with this name may already exist.",
+          title: getMessage(locale, "artifacts3.folders.createFailed"),
+          description: getMessage(
+            locale,
+            "artifacts3.folders.createFailedDesc",
+          ),
           variant: "destructive",
         });
       },
@@ -47,11 +54,11 @@ export function useArtifactsFolders() {
     mutation: {
       onSuccess: () => {
         invalidate();
-        toast({ title: "Folder updated" });
+        toast({ title: getMessage(locale, "artifacts3.folders.updated") });
       },
       onError: () => {
         toast({
-          title: "Failed to update folder",
+          title: getMessage(locale, "artifacts3.folders.updateFailed"),
           variant: "destructive",
         });
       },
@@ -64,7 +71,7 @@ export function useArtifactsFolders() {
     mutation: {
       onSuccess: () => {
         invalidate();
-        toast({ title: "Folder moved" });
+        toast({ title: getMessage(locale, "artifacts3.folders.moved") });
       },
     },
   });
@@ -73,11 +80,14 @@ export function useArtifactsFolders() {
     mutation: {
       onSuccess: () => {
         invalidate();
-        toast({ title: "Folder deleted", description: "Files moved to root." });
+        toast({
+          title: getMessage(locale, "artifacts3.folders.deleted"),
+          description: getMessage(locale, "artifacts3.folders.deletedDesc"),
+        });
       },
       onError: () => {
         toast({
-          title: "Failed to delete folder",
+          title: getMessage(locale, "artifacts3.folders.deleteFailed"),
           variant: "destructive",
         });
       },
@@ -89,12 +99,22 @@ export function useArtifactsFolders() {
       onSuccess: (_, variables) => {
         invalidate();
         const count = variables.data.file_ids.length;
-        toast({ title: count === 1 ? "File moved" : `${count} files moved` });
+        toast({
+          title:
+            count === 1
+              ? getMessage(locale, "artifacts3.folders.fileMovedOne")
+              : getMessage(locale, "artifacts3.folders.fileMovedMany", {
+                  count,
+                }),
+        });
       },
       onError: (_, variables) => {
         const count = variables.data.file_ids.length;
         toast({
-          title: count === 1 ? "Failed to move file" : "Failed to move files",
+          title:
+            count === 1
+              ? getMessage(locale, "artifacts3.folders.moveFileFailedOne")
+              : getMessage(locale, "artifacts3.folders.moveFilesFailedMany"),
           variant: "destructive",
         });
       },
@@ -133,7 +153,7 @@ export function useArtifactsFolders() {
           // The name the 409 message needs is not in the request body —
           // sending it would rename the folder — so the toast lives here.
           toast({
-            title: describeFolderMoveError(error, args.name),
+            title: describeFolderMoveError(error, args.name, locale),
             variant: "destructive",
           });
           throw error;
@@ -149,9 +169,17 @@ export function useArtifactsFolders() {
   };
 }
 
-export function describeFolderMoveError(error: unknown, name: string): string {
+export function describeFolderMoveError(
+  error: unknown,
+  name: string,
+  locale: Locale = DEFAULT_LOCALE,
+): string {
   const status = error instanceof ApiError ? error.status : null;
-  if (status === 409) return `A folder named “${name}” is already there`;
-  if (status === 400) return "A folder can't be moved into itself";
-  return "Failed to move folder";
+  if (status === 409) {
+    return getMessage(locale, "artifacts3.folders.moveConflict", { name });
+  }
+  if (status === 400) {
+    return getMessage(locale, "artifacts3.folders.moveIntoItself");
+  }
+  return getMessage(locale, "artifacts3.folders.moveFailed");
 }

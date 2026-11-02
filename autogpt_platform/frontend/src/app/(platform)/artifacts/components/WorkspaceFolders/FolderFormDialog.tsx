@@ -5,6 +5,7 @@ import { Button } from "@/components/atoms/Button/Button";
 import { Input } from "@/components/atoms/Input/Input";
 import { Text } from "@/components/atoms/Text/Text";
 import { Dialog } from "@/components/molecules/Dialog/Dialog";
+import { useT } from "@/lib/i18n";
 import { isKey } from "@/lib/keyboard";
 
 interface Props {
@@ -27,6 +28,7 @@ export function FolderFormDialog({
   isSubmitting,
   onSubmit,
 }: Props) {
+  const t = useT();
   const [name, setName] = useState(initialName);
 
   useEffect(() => {
@@ -48,14 +50,18 @@ export function FolderFormDialog({
     <Dialog
       controlled={{ isOpen, set: setIsOpen }}
       styling={{ maxWidth: "28rem" }}
-      title={mode === "create" ? "Create folder" : "Rename folder"}
+      title={t(
+        mode === "create"
+          ? "artifacts3.form.titleCreate"
+          : "artifacts3.form.titleEdit",
+      )}
     >
       <Dialog.Content>
         <div className="flex flex-col gap-3">
           <Input
             id="folder-name"
-            label="Folder name"
-            placeholder="Enter folder name"
+            label={t("artifacts3.form.nameLabel")}
+            placeholder={t("artifacts3.form.namePlaceholder")}
             value={name}
             onChange={(e) => setName(e.target.value)}
             onKeyDown={(e) => {
@@ -66,7 +72,7 @@ export function FolderFormDialog({
           />
           {location ? (
             <Text variant="small" className="text-foreground-tertiary">
-              Inside &ldquo;{location}&rdquo;
+              {t("artifacts3.form.inside", { location })}
             </Text>
           ) : null}
           <Button
@@ -77,7 +83,11 @@ export function FolderFormDialog({
             onClick={handleSubmit}
             data-testid="folder-form-submit"
           >
-            {mode === "create" ? "Create" : "Save"}
+            {t(
+              mode === "create"
+                ? "artifacts3.form.create"
+                : "artifacts3.form.save",
+            )}
           </Button>
         </div>
       </Dialog.Content>
