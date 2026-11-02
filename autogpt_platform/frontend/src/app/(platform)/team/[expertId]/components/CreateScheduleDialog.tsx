@@ -8,6 +8,7 @@ import { Button } from "@/components/atoms/Button/Button";
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { Text } from "@/components/atoms/Text/Text";
 import { Dialog } from "@/components/molecules/Dialog/Dialog";
+import { useT } from "@/lib/i18n";
 import { ArrowRight01Icon, Calendar03Icon } from "@hugeicons/core-free-icons";
 import { useCreateScheduleDialog } from "./useCreateScheduleDialog";
 import { useFitListToDialog } from "./useFitListToDialog";
@@ -25,6 +26,7 @@ export function CreateScheduleDialog({
   open,
   onClose,
 }: Props) {
+  const t = useT();
   const { handleScheduleCreated } = useCreateScheduleDialog(expertId, onClose);
   const schedulable = workflows.filter((workflow) => workflow.library_agent_id);
   const { attachList } = useFitListToDialog<HTMLUListElement>();
@@ -39,19 +41,19 @@ export function CreateScheduleDialog({
         },
       }}
       styling={{ maxWidth: "28rem", maxHeight: "60vh" }}
-      title="Create schedule"
+      title={t("team5.schedule.title")}
     >
       <Dialog.Content>
         <div className="flex flex-col">
           {schedulable.length === 0 ? (
             <Text variant="body" tone="secondary">
-              Install a workflow first, then schedule it here.
+              {t("team5.schedule.noWorkflows")}
             </Text>
           ) : (
             <ul
               ref={attachList}
               className="flex flex-col gap-2 overflow-y-auto pr-1"
-              aria-label="Schedulable workflows"
+              aria-label={t("team5.schedule.listAria")}
             >
               {schedulable.map((workflow) => (
                 <li key={workflow.id}>
@@ -65,7 +67,7 @@ export function CreateScheduleDialog({
           )}
           <div className="flex justify-end pt-1">
             <Button variant="secondary" size="small" onClick={onClose}>
-              Cancel
+              {t("team5.common.cancel")}
             </Button>
           </div>
         </div>
@@ -80,11 +82,12 @@ interface RowProps {
 }
 
 function ScheduleWorkflowRow({ workflow, onScheduleCreated }: RowProps) {
+  const t = useT();
   const { data: agent } = useGetV2GetLibraryAgent(
     workflow.library_agent_id ?? "",
     { query: { select: okData, enabled: Boolean(workflow.library_agent_id) } },
   );
-  const name = workflow.name ?? "Unnamed workflow";
+  const name = workflow.name ?? t("team5.schedule.unnamed");
   const row = (
     <button
       type="button"

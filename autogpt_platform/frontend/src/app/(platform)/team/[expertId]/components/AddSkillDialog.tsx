@@ -18,6 +18,7 @@ import {
   Store01Icon,
 } from "@hugeicons/core-free-icons";
 import NextLink from "next/link";
+import { useT } from "@/lib/i18n";
 import { useState } from "react";
 import { useFitListToDialog } from "./useFitListToDialog";
 
@@ -54,6 +55,7 @@ export function AddSkillDialog({
   onAddMarketplace,
   onClose,
 }: Props) {
+  const t = useT();
   const [query, setQuery] = useState("");
   const { attachList } = useFitListToDialog<HTMLUListElement>();
   const needle = query.trim().toLowerCase();
@@ -75,13 +77,12 @@ export function AddSkillDialog({
         },
       }}
       styling={{ maxWidth: "30rem", maxHeight: "60vh" }}
-      title="Add a skill"
+      title={t("team5.addSkill.title")}
     >
       <Dialog.Content>
         <div className="flex flex-col gap-3">
           <Text variant="body" tone="muted">
-            Skills are reusable instructions this expert follows for a specific
-            job. Pick one from your library or install one from the marketplace.
+            {t("team5.addSkill.intro")}
           </Text>
           <TabsLine
             variant="compact"
@@ -90,10 +91,10 @@ export function AddSkillDialog({
           >
             <TabsLineList>
               <TabsLineTrigger value="library" icon={BookOpen01Icon}>
-                Library
+                {t("team5.addSkill.library")}
               </TabsLineTrigger>
               <TabsLineTrigger value="marketplace" icon={Store01Icon}>
-                Marketplace
+                {t("team5.addSkill.marketplace")}
               </TabsLineTrigger>
             </TabsLineList>
           </TabsLine>
@@ -104,23 +105,23 @@ export function AddSkillDialog({
                 size="small"
                 value={query}
                 onChange={setQuery}
-                placeholder="Search your library"
+                placeholder={t("team5.addSkill.searchLibrary")}
               />
               {isLoading ? (
                 <Text variant="small" tone="muted">
-                  Loading your skills…
+                  {t("team5.addSkill.loading")}
                 </Text>
               ) : visible.length === 0 ? (
                 <Text variant="small" tone="muted">
                   {skills.length === 0
-                    ? "Every library skill is already on this expert."
-                    : "No skills match."}
+                    ? t("team5.addSkill.allInstalled")
+                    : t("team5.addSkill.noMatch")}
                 </Text>
               ) : (
                 <ul
                   ref={attachList}
                   className="flex flex-col gap-2 overflow-y-auto pr-1"
-                  aria-label="Library skills"
+                  aria-label={t("team5.addSkill.libraryAria")}
                 >
                   {visible.map((skill) => (
                     <SkillOption
@@ -141,7 +142,7 @@ export function AddSkillDialog({
                   tone="muted"
                   className="underline underline-offset-2"
                 >
-                  Upload a new skill in your library
+                  {t("team5.addSkill.uploadNew")}
                 </Text>
               </NextLink>
             </>
@@ -151,21 +152,21 @@ export function AddSkillDialog({
                 size="small"
                 value={marketQuery}
                 onChange={onMarketQueryChange}
-                placeholder="Search the marketplace"
+                placeholder={t("team5.addSkill.searchMarket")}
               />
               {isMarketplaceLoading ? (
                 <Text variant="small" tone="muted">
-                  Searching the marketplace…
+                  {t("team5.addSkill.searchingMarket")}
                 </Text>
               ) : marketplaceSkills.length === 0 ? (
                 <Text variant="small" tone="muted">
-                  No marketplace skills match.
+                  {t("team5.addSkill.noMarketMatch")}
                 </Text>
               ) : (
                 <ul
                   ref={attachList}
                   className="flex flex-col gap-2 overflow-y-auto pr-1"
-                  aria-label="Marketplace skills"
+                  aria-label={t("team5.addSkill.marketAria")}
                 >
                   {marketplaceSkills.map((skill) => (
                     <SkillOption
@@ -183,7 +184,7 @@ export function AddSkillDialog({
           )}
           <div className="flex justify-end pt-1">
             <Button variant="secondary" size="small" onClick={onClose}>
-              Cancel
+              {t("team5.common.cancel")}
             </Button>
           </div>
         </div>
@@ -207,6 +208,8 @@ function SkillOption({
   disabled,
   onAdd,
 }: OptionProps) {
+  const t = useT();
+
   return (
     <li className="flex items-center gap-3 rounded-lg border border-border-base px-3 py-2.5">
       <Icon
@@ -234,7 +237,7 @@ function SkillOption({
         onClick={onAdd}
         leadingIcon={PlusSignIcon}
       >
-        Add
+        {t("team5.addSkill.add")}
       </Button>
     </li>
   );

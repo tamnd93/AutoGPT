@@ -5,6 +5,7 @@ import { Button } from "@/components/atoms/Button/Button";
 import { Input } from "@/components/atoms/Input/Input";
 import { Text } from "@/components/atoms/Text/Text";
 import { Dialog } from "@/components/molecules/Dialog/Dialog";
+import { useT } from "@/lib/i18n";
 import { useEditBudgetDialog } from "./useEditBudgetDialog";
 
 interface Props {
@@ -14,6 +15,7 @@ interface Props {
 }
 
 export function EditBudgetDialog({ expert, open, onClose }: Props) {
+  const t = useT();
   const { value, setValue, isInvalid, isPending, save } = useEditBudgetDialog({
     expert,
     open,
@@ -23,7 +25,7 @@ export function EditBudgetDialog({ expert, open, onClose }: Props) {
   return (
     <Dialog
       variant="compact"
-      title="Weekly budget"
+      title={t("team5.budget.title")}
       styling={{ maxWidth: "24rem" }}
       controlled={{
         isOpen: open,
@@ -38,19 +40,16 @@ export function EditBudgetDialog({ expert, open, onClose }: Props) {
             <Input
               id="expert-weekly-budget"
               size="small"
-              label="Weekly budget"
+              label={t("team5.budget.title")}
               labelVariant="small-medium"
-              placeholder="e.g. 25"
+              placeholder={t("team5.budget.placeholder")}
               value={value}
-              error={
-                isInvalid ? "Enter a dollar amount like 25 or 12.50" : undefined
-              }
+              error={isInvalid ? t("team5.budget.invalid") : undefined}
               onChange={(event) => setValue(event.target.value)}
               wrapperClassName="!mb-0"
             />
             <Text variant="small" tone="muted">
-              What {expert.name} may spend each week, in dollars. Leave empty
-              for the default, or enter 0 to remove the cap.
+              {t("team5.budget.note", { name: expert.name })}
             </Text>
           </div>
           <div className="flex justify-end gap-2">
@@ -60,7 +59,7 @@ export function EditBudgetDialog({ expert, open, onClose }: Props) {
               variant="secondary"
               onClick={onClose}
             >
-              Cancel
+              {t("team5.common.cancel")}
             </Button>
             <Button
               size="small"
@@ -69,7 +68,7 @@ export function EditBudgetDialog({ expert, open, onClose }: Props) {
               disabled={isInvalid}
               loading={isPending}
             >
-              Save budget
+              {t("team5.budget.save")}
             </Button>
           </div>
         </form>

@@ -4,6 +4,8 @@ import { ExpertWorkflowChainItem } from "@/app/api/__generated__/models/expertWo
 import { ExpertWorkflowChainItemKind } from "@/app/api/__generated__/models/expertWorkflowChainItemKind";
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { IntegrationLogo } from "@/components/molecules/IntegrationLogo/IntegrationLogo";
+import { useT } from "@/lib/i18n";
+import type { MessageKey } from "@/lib/i18n/messages/en";
 import { cn } from "@/lib/utils";
 import {
   AiChat02Icon,
@@ -18,16 +20,16 @@ import type { IconSvgElement } from "@hugeicons/react";
 
 const KIND_ICONS: Record<
   ExpertWorkflowChainItemKind,
-  { icon: IconSvgElement; label: string }
+  { icon: IconSvgElement; labelKey: MessageKey }
 > = {
-  integration: { icon: Plug01Icon, label: "Integration" },
-  input: { icon: InputCursorTextIcon, label: "Workflow input" },
-  output: { icon: FileExportIcon, label: "Workflow output" },
-  trigger: { icon: FlashIcon, label: "Trigger" },
-  agent: { icon: Robot01Icon, label: "Workflow" },
-  ai: { icon: AiChat02Icon, label: "AI model" },
-  mcp: { icon: Plug01Icon, label: "MCP tool" },
-  human: { icon: UserCheck01Icon, label: "Human review" },
+  integration: { icon: Plug01Icon, labelKey: "team5.chain.kind.integration" },
+  input: { icon: InputCursorTextIcon, labelKey: "team5.chain.kind.input" },
+  output: { icon: FileExportIcon, labelKey: "team5.chain.kind.output" },
+  trigger: { icon: FlashIcon, labelKey: "team5.chain.kind.trigger" },
+  agent: { icon: Robot01Icon, labelKey: "team5.chain.kind.agent" },
+  ai: { icon: AiChat02Icon, labelKey: "team5.chain.kind.ai" },
+  mcp: { icon: Plug01Icon, labelKey: "team5.chain.kind.mcp" },
+  human: { icon: UserCheck01Icon, labelKey: "team5.chain.kind.human" },
 };
 
 interface Props {
@@ -36,6 +38,7 @@ interface Props {
 }
 
 export function ChainTile({ item, size }: Props) {
+  const t = useT();
   const fallback = KIND_ICONS[item.kind];
   const isSmall = size === "sm";
   return (
@@ -52,7 +55,7 @@ export function ChainTile({ item, size }: Props) {
           icon={fallback.icon}
           size={isSmall ? 16 : 20}
           role="img"
-          aria-label={fallback.label}
+          aria-label={t(fallback.labelKey)}
           className="text-foreground-secondary"
         />
       )}

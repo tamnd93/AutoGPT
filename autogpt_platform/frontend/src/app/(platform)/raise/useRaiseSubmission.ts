@@ -1,6 +1,7 @@
 import { useCreateRaisedExpert } from "@/app/api/__generated__/endpoints/experts/experts";
 import type { RaiseResult } from "@/app/api/__generated__/models/raiseResult";
 import { toast } from "@/components/molecules/Toast/use-toast";
+import { useT } from "@/lib/i18n";
 import { ApiError } from "@/lib/autogpt-server-api/helpers";
 import { invalidateExpertRosterQueries } from "@/services/experts/invalidate-experts";
 import { useQueryClient } from "@tanstack/react-query";
@@ -19,6 +20,7 @@ import {
 } from "./helpers";
 
 export function useRaiseSubmission() {
+  const t = useT();
   const queryClient = useQueryClient();
   const router = useRouter();
   const { mutateAsync: createRaisedExpert, isPending } =
@@ -50,7 +52,9 @@ export function useRaiseSubmission() {
       const result = response.data as RaiseResult;
       if (result.failed_attachments?.length) {
         toast({
-          title: `Created ${draft.name || "your expert"}, but some tools didn't attach`,
+          title: t("team5.raise.partialTitle", {
+            name: draft.name || t("team5.raise.defaultName"),
+          }),
           description: failedAttachmentMessage(
             result.failed_attachments,
             kit.attachments,
@@ -71,38 +75,40 @@ export function useRaiseSubmission() {
     } catch (error) {
       submitLatch.current = false;
       setIsLocked(false);
-      reportFailure(error, draft.name);
+      reportFailure(error, draft.name, t);
     }
   }
 
   return { finish, isSubmitting: isPending || isLocked };
 }
 
-function reportFailure(error: unknown, name: string) {
+type Translate = ReturnType<typeof useT>;
+
+function reportFailure(error: unknown, name: string, t: Translate) {
   if (error instanceof ApiError && error.status === 409) {
     if (getExpertLimitCode(error.response) === "raised_expert_lifetime_limit") {
       toast({
-        title: "Expert creation limit reached",
-        description:
-          "This account has reached its lifetime limit for created Experts. Contact support if you need more capacity.",
+        title: t("team5.raise.limitTitle"),
+        description: t("team5.raise.limitBody"),
         variant: "destructive",
       });
       return;
     }
     toast({
-      title: "Your team is full",
-      description:
-        "You've reached the limit of active experts. Archive one from your team page to create another.",
+      title: t("team5.raise.teamFullTitle"),
+      description: t("team5.raise.teamFullBody"),
       variant: "destructive",
     });
     return;
   }
   toast({
-    title: `Couldn't create ${name || "your expert"}`,
+    title: t("team5.raise.createFailed", {
+      name: name || t("team5.raise.defaultName"),
+    }),
     description:
       error instanceof ApiError && [400, 422, 503].includes(error.status)
         ? error.message
-        : "Something went wrong. Please try again.",
+        : t("team5.raise.genericError"),
     variant: "destructive",
   });
 }

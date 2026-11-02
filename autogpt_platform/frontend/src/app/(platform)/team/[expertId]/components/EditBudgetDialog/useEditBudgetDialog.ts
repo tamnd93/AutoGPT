@@ -5,6 +5,7 @@ import {
 } from "@/app/api/__generated__/endpoints/experts/experts";
 import { Expert } from "@/app/api/__generated__/models/expert";
 import { toast } from "@/components/molecules/Toast/use-toast";
+import { useT } from "@/lib/i18n";
 import { CREDITS_PER_USD, parseUsdToCredits } from "@/lib/credits";
 import { useQueryClient } from "@tanstack/react-query";
 import { FormEvent, useEffect, useState } from "react";
@@ -24,6 +25,7 @@ function toUsdInput(credits: number | null | undefined) {
 }
 
 export function useEditBudgetDialog({ expert, open, onClose }: Args) {
+  const t = useT();
   const queryClient = useQueryClient();
   const [value, setValue] = useState(() => toUsdInput(expert.weekly_budget));
 
@@ -44,13 +46,13 @@ export function useEditBudgetDialog({ expert, open, onClose }: Args) {
           queryKey: getGetExpertQueryKey(expert.id),
         });
         queryClient.invalidateQueries({ queryKey: getListExpertsQueryKey() });
-        toast({ title: "Budget updated" });
+        toast({ title: t("team5.budget.updated") });
         onClose();
       },
       onError: () => {
         toast({
-          title: "Could not update the budget",
-          description: "Please try again.",
+          title: t("team5.budget.updateFailed"),
+          description: t("team5.common.tryAgain"),
           variant: "destructive",
         });
       },

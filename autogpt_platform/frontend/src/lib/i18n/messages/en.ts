@@ -61,6 +61,7 @@ import { team1En } from "./team-1.en";
 import { Team2En } from "./team-2.en";
 import { team3En } from "./team-3.en";
 import { Team4En } from "./team-4.en";
+import { Team5En } from "./team-5.en";
 import { voice1En } from "./voice-1.en";
 
 export const en = {
@@ -127,6 +128,7 @@ export const en = {
   ...Team2En,
   ...team3En,
   ...Team4En,
+  ...Team5En,
   ...voice1En,
   "common.planSuffix": "{plan} plan",
 } as const;

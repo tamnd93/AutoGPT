@@ -62,6 +62,7 @@ import { team1Vi } from "./team-1.vi";
 import { Team2Vi } from "./team-2.vi";
 import { team3Vi } from "./team-3.vi";
 import { Team4Vi } from "./team-4.vi";
+import { Team5Vi } from "./team-5.vi";
 import { voice1Vi } from "./voice-1.vi";
 
 export const vi: Partial<Record<MessageKey, string>> = {
@@ -128,6 +129,7 @@ export const vi: Partial<Record<MessageKey, string>> = {
   ...Team2Vi,
   ...team3Vi,
   ...Team4Vi,
+  ...Team5Vi,
   ...voice1Vi,
   "common.planSuffix": "gói {plan}",
 };
