@@ -18,6 +18,7 @@ import {
   Presentation01Icon,
 } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 
 export const CustomControls = memo(
   ({
@@ -34,6 +35,7 @@ export const CustomControls = memo(
     const [isTutorialLoading, setIsTutorialLoading] = useState(false);
     const searchParams = useSearchParams();
     const router = useRouter();
+    const t = useT();
 
     useEffect(() => {
       setTutorialLoadingCallback(setIsTutorialLoading);
@@ -62,7 +64,7 @@ export const CustomControls = memo(
             className="size-3.5 text-foreground-secondary"
           />
         ),
-        label: "Zoom In",
+        label: t("build1.controls.zoomIn"),
         onClick: () => zoomIn(),
         className: "h-10 w-10 border-none",
       },
@@ -74,7 +76,7 @@ export const CustomControls = memo(
             className="size-3.5 text-foreground-secondary"
           />
         ),
-        label: "Zoom Out",
+        label: t("build1.controls.zoomOut"),
         onClick: () => zoomOut(),
         className: "h-10 w-10 border-none",
       },
@@ -91,7 +93,9 @@ export const CustomControls = memo(
             className="size-3.5 text-foreground-secondary"
           />
         ),
-        label: isTutorialLoading ? "Loading Tutorial..." : "Start Tutorial",
+        label: isTutorialLoading
+          ? t("build1.controls.loadingTutorial")
+          : t("build1.controls.startTutorial"),
         onClick: handleTutorialClick,
         // TODO(tokens): no fitting role for bg-zinc-100 #EFEFF0; #EFEFF0 is surface-hover, a hover fill, and this fill is not a hover state (QUALITY 41)
         className: `h-10 w-10 border-none ${isTutorialRunning || isTutorialLoading ? "bg-zinc-100" : "bg-surface"}`,
@@ -105,7 +109,7 @@ export const CustomControls = memo(
             className="size-3.5 text-foreground-secondary"
           />
         ),
-        label: "Fit View",
+        label: t("build1.controls.fitView"),
         onClick: () => fitView({ padding: 0.2, duration: 800, maxZoom: 1 }),
         className: "h-10 w-10 border-none",
       },
@@ -117,8 +121,8 @@ export const CustomControls = memo(
           <LockIcon className="size-3.5 text-foreground-secondary" />
         ),
         label: isReadOnly
-          ? "Canvas is locked because this is a read-only workflow"
-          : "Toggle Lock",
+          ? t("build1.controls.readOnlyLock")
+          : t("build1.controls.toggleLock"),
         onClick: () => setIsLocked(!isLocked),
         // TODO(tokens): no fitting role for bg-zinc-100 #EFEFF0; #EFEFF0 is surface-hover, a hover fill, and this fill is not a hover state (QUALITY 41)
         className: `h-10 w-10 border-none ${isLocked ? "bg-zinc-100" : "bg-surface"}`,

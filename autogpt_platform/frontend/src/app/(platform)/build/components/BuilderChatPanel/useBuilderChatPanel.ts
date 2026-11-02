@@ -26,6 +26,7 @@ import { useGetV2GetSession } from "@/app/api/__generated__/endpoints/chat/chat"
 import { isKey } from "@/lib/keyboard";
 import { retryUnlessClientError } from "../../helpers/graphLoadError";
 import { getDeploymentModelStatus, isNoModelError } from "./helpers";
+import { useT } from "@/lib/i18n";
 
 interface UseBuilderChatPanelArgs {
   panelRef?: React.RefObject<HTMLElement | null>;
@@ -88,6 +89,7 @@ export function useBuilderChatPanel({
     flowVersion: parseAsInteger,
   });
   const { toast } = useToast();
+  const t = useT();
   const queryClient = useQueryClient();
 
   // Checked before anything is created: with no model the chat can never
@@ -278,8 +280,8 @@ export function useBuilderChatPanel({
         setBindError("failed_to_bind_builder_session");
         toast({
           variant: "destructive",
-          title: "Could not start the builder chat",
-          description: "Please retry or close and reopen the chat panel.",
+          title: t("build1.chat.startFailed"),
+          description: t("build1.chat.startFailedBody"),
         });
       } finally {
         bindingRef.current = false;
@@ -339,8 +341,8 @@ export function useBuilderChatPanel({
         setBootstrapError("failed_to_bootstrap_agent");
         toast({
           variant: "destructive",
-          title: "Could not create a blank workflow",
-          description: "Please try again.",
+          title: t("build1.chat.blankFailed"),
+          description: t("build1.chat.tryAgain"),
         });
       } finally {
         isBootstrappingRef.current = false;
@@ -511,15 +513,17 @@ export function useBuilderChatPanel({
       }
       setRevertTargetVersion(null);
       toast({
-        title: "Reverted to the previous version",
-        description: `Now viewing version ${revertTargetVersion}.`,
+        title: t("build1.chat.reverted"),
+        description: t("build1.chat.revertedBody", {
+          version: revertTargetVersion,
+        }),
       });
     } catch (err) {
       Sentry.captureException(err);
       toast({
         variant: "destructive",
-        title: "Revert failed",
-        description: "Please try again.",
+        title: t("build1.chat.revertFailed"),
+        description: t("build1.chat.tryAgain"),
       });
     }
   }

@@ -8,6 +8,7 @@ import type { MyUnpublishedAgent } from "@/app/api/__generated__/models/myUnpubl
 import type { MyUnpublishedAgentsResponse } from "@/app/api/__generated__/models/myUnpublishedAgentsResponse";
 import type { StoreSubmissionsResponse } from "@/app/api/__generated__/models/storeSubmissionsResponse";
 import { server } from "@/mocks/mock-server";
+import { LocaleProvider } from "@/lib/i18n";
 import {
   fireEvent,
   render,
@@ -135,6 +136,18 @@ describe("PublishToMarketplace (builder)", () => {
     expect(screen.queryByText(/choose a workflow/i)).toBeNull();
 
     expect(await screen.findByDisplayValue(AGENT_NAME)).toBeDefined();
+  });
+
+  test("reads the publish action in Vietnamese", () => {
+    render(
+      <LocaleProvider locale="vi">
+        <PublishToMarketplace flowID={FLOW_ID} flowVersion={FLOW_VERSION} />
+      </LocaleProvider>,
+    );
+
+    expect(
+      screen.getByRole("button", { name: "Đăng lên Marketplace" }),
+    ).toBeDefined();
   });
 
   test("closes the modal when going back from the pre-scoped listing form", async () => {

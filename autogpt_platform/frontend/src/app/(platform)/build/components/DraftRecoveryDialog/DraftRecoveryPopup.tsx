@@ -15,12 +15,16 @@ import { AnimatePresence, motion } from "framer-motion";
 import { DraftDiff } from "@/lib/dexie/draft-utils";
 import { Cancel01Icon, HistoryIcon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 
 interface DraftRecoveryPopupProps {
   isInitialLoadComplete: boolean;
 }
 
-function formatDiffSummary(diff: DraftDiff | null): string {
+function formatDiffSummary(
+  diff: DraftDiff | null,
+  t: ReturnType<typeof useT>,
+): string {
   if (!diff) return "";
 
   const parts: string[] = [];
@@ -33,7 +37,7 @@ function formatDiffSummary(diff: DraftDiff | null): string {
 
   if (nodeChanges.length > 0) {
     parts.push(
-      `${nodeChanges.join("/")} block${diff.nodes.added + diff.nodes.removed + diff.nodes.modified !== 1 ? "s" : ""}`,
+      `${nodeChanges.join("/")} ${diff.nodes.added + diff.nodes.removed + diff.nodes.modified !== 1 ? t("build1.draft.blocks") : t("build1.draft.block")}`,
     );
   }
 
@@ -45,7 +49,7 @@ function formatDiffSummary(diff: DraftDiff | null): string {
 
   if (edgeChanges.length > 0) {
     parts.push(
-      `${edgeChanges.join("/")} connection${diff.edges.added + diff.edges.removed + diff.edges.modified !== 1 ? "s" : ""}`,
+      `${edgeChanges.join("/")} ${diff.edges.added + diff.edges.removed + diff.edges.modified !== 1 ? t("build1.draft.connections") : t("build1.draft.connection")}`,
     );
   }
 
@@ -55,6 +59,7 @@ function formatDiffSummary(diff: DraftDiff | null): string {
 export function DraftRecoveryPopup({
   isInitialLoadComplete,
 }: DraftRecoveryPopupProps) {
+  const t = useT();
   const {
     isOpen,
     popupRef,
@@ -67,7 +72,7 @@ export function DraftRecoveryPopup({
   } = useDraftRecoveryPopup(isInitialLoadComplete);
 
   const locale = useLocale();
-  const diffSummary = formatDiffSummary(diff);
+  const diffSummary = formatDiffSummary(diff, t);
 
   return (
     <AnimatePresence>
@@ -124,7 +129,7 @@ export function DraftRecoveryPopup({
                 className="text-warning-foreground dark:text-amber-400"
               >
                 {diffSummary ||
-                  `${nodeCount} block${nodeCount !== 1 ? "s" : ""}, ${edgeCount} connection${edgeCount !== 1 ? "s" : ""}`}{" "}
+                  `${nodeCount} ${nodeCount === 1 ? t("build1.draft.block") : t("build1.draft.blocks")}, ${edgeCount} ${edgeCount === 1 ? t("build1.draft.connection") : t("build1.draft.connections")}`}{" "}
                 • {formatTimeAgo(new Date(savedAt).toISOString(), locale)}
               </Text>
             </div>
@@ -142,7 +147,7 @@ export function DraftRecoveryPopup({
                     <span className="sr-only">Restore changes</span>
                   </Button>
                 </TooltipTrigger>
-                <TooltipContent>Restore changes</TooltipContent>
+                <TooltipContent>{t("build1.draft.restore")}</TooltipContent>
               </Tooltip>
               <Tooltip delayDuration={10}>
                 <TooltipTrigger asChild>
@@ -157,7 +162,7 @@ export function DraftRecoveryPopup({
                     <span className="sr-only">Discard changes</span>
                   </Button>
                 </TooltipTrigger>
-                <TooltipContent>Discard changes</TooltipContent>
+                <TooltipContent>{t("build1.draft.discard")}</TooltipContent>
               </Tooltip>
             </div>
           </div>

@@ -5,6 +5,7 @@ import { Text } from "@/components/atoms/Text/Text";
 import { Dialog } from "@/components/molecules/Dialog/Dialog";
 import { InfoIcon } from "lucide-react";
 import { useCronSchedulerDialog } from "./useCronSchedulerDialog";
+import { useT } from "@/lib/i18n";
 
 type CronSchedulerDialogProps = {
   open: boolean;
@@ -24,6 +25,7 @@ export function CronSchedulerDialog({
   inputs,
   credentials,
 }: CronSchedulerDialogProps) {
+  const t = useT();
   const {
     setCronExpression,
     userTimezone,
@@ -50,8 +52,8 @@ export function CronSchedulerDialog({
         <div className="flex flex-col gap-4">
           <Input
             id="schedule-name"
-            label="Schedule Name"
-            placeholder="Enter schedule name"
+            label={t("build1.cron.nameLabel")}
+            placeholder={t("build1.cron.namePlaceholder")}
             size="small"
             className="max-w-80"
             value={scheduleName}
@@ -111,7 +113,9 @@ export function CronSchedulerDialog({
             onClick={handleCreateSchedule}
             className="h-fit"
           >
-            {isCreatingSchedule ? "Creating schedule..." : "Done"}
+            {isCreatingSchedule
+              ? t("build1.cron.creating")
+              : t("build1.cron.done")}
           </Button>
         </div>
       </Dialog.Content>

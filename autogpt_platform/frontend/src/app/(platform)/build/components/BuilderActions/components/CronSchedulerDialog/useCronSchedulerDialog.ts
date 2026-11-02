@@ -8,6 +8,7 @@ import { invalidateAllScheduleQueries } from "@/services/schedules/invalidate-sc
 import { useQueryClient } from "@tanstack/react-query";
 import { parseAsInteger, parseAsString, useQueryStates } from "nuqs";
 import { useEffect, useState } from "react";
+import { useT } from "@/lib/i18n";
 
 export function useCronSchedulerDialog({
   open,
@@ -23,6 +24,7 @@ export function useCronSchedulerDialog({
   defaultCronExpression?: string;
 }) {
   const { toast } = useToast();
+  const t = useT();
   const queryClient = useQueryClient();
   const [cronExpression, setCronExpression] = useState<string>("");
   const [scheduleName, setScheduleName] = useState<string>("");
@@ -45,8 +47,8 @@ export function useCronSchedulerDialog({
           if (response.status === 200) {
             setOpen(false);
             toast({
-              title: "Schedule created",
-              description: "Schedule created successfully",
+              title: t("build1.cron.created"),
+              description: t("build1.cron.createdBody"),
             });
             invalidateAllScheduleQueries(queryClient, flowID ?? undefined);
           }
@@ -54,7 +56,7 @@ export function useCronSchedulerDialog({
         onError: (error) => {
           toast({
             variant: "destructive",
-            title: "Failed to create schedule",
+            title: t("build1.cron.failed"),
             description:
               (error.detail as string) ?? "An unexpected error occurred.",
           });
@@ -84,11 +86,11 @@ export function useCronSchedulerDialog({
 
   async function handleCreateSchedule() {
     if (!scheduleName || scheduleName.trim() === "") {
-      setScheduleNameError("Schedule name is required");
+      setScheduleNameError(t("build1.cron.nameRequiredError"));
       toast({
         variant: "destructive",
-        title: "Invalid schedule",
-        description: "Please enter a schedule name",
+        title: t("build1.cron.invalid"),
+        description: t("build1.cron.nameRequiredBody"),
       });
       return;
     }
@@ -96,8 +98,8 @@ export function useCronSchedulerDialog({
     if (!cronExpression || cronExpression.trim() === "") {
       toast({
         variant: "destructive",
-        title: "Invalid schedule",
-        description: "Please enter a valid cron expression",
+        title: t("build1.cron.invalid"),
+        description: t("build1.cron.cronInvalid"),
       });
       return;
     }

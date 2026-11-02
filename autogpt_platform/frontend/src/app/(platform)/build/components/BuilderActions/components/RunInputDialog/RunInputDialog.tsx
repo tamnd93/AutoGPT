@@ -12,6 +12,7 @@ import { useEffect } from "react";
 import { CredentialsGroupedView } from "@/components/contextual/CredentialsInput/components/CredentialsGroupedView/CredentialsGroupedView";
 import { Clock01Icon, PlayIcon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 
 export const RunInputDialog = ({
   isOpen,
@@ -61,7 +62,11 @@ export const RunInputDialog = ({
   return (
     <>
       <Dialog
-        title={purpose === "run" ? "Run Workflow" : "Schedule Run"}
+        title={
+          purpose === "run"
+            ? t("build1.runInput.runTitle")
+            : t("build1.runInput.scheduleTitle")
+        }
         controlled={{
           isOpen,
           set: setIsOpen,

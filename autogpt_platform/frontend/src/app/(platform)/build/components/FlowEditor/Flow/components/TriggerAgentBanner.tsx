@@ -8,8 +8,10 @@ import { Text } from "@/components/atoms/Text/Text";
 import { useGetV2GetLibraryAgentByGraphId } from "@/app/api/__generated__/endpoints/library/library";
 import { LibraryAgent } from "@/app/api/__generated__/models/libraryAgent";
 import { useQueryStates, parseAsString } from "nuqs";
+import { useT } from "@/lib/i18n";
 
 export const TriggerAgentBanner = () => {
+  const t = useT();
   const [{ flowID }] = useQueryStates({
     flowID: parseAsString,
   });
@@ -29,10 +31,9 @@ export const TriggerAgentBanner = () => {
 
   return (
     <Alert className="absolute bottom-4 left-1/2 z-20 w-auto -translate-x-1/2 select-none rounded-xlarge">
-      <AlertTitle>You are building a Trigger Workflow</AlertTitle>
+      <AlertTitle>{t("build1.triggerBanner.title")}</AlertTitle>
       <AlertDescription>
-        Your workflow will listen for its trigger and will run when the time is
-        right.
+        {t("build1.triggerBanner.body")}
         <br />
         You can view its activity in your{" "}
         <Link
@@ -42,7 +43,7 @@ export const TriggerAgentBanner = () => {
           className="underline"
         >
           <Text variant="body-tight" as="span" tone="inherit">
-            Workflow Library
+            {t("build1.triggerBanner.library")}
           </Text>
         </Link>
         .

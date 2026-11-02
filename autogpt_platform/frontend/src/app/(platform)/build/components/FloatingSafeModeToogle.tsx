@@ -12,6 +12,7 @@ import {
 } from "@/components/atoms/Tooltip/BaseTooltip";
 import { SecurityCheckIcon, Shield01Icon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   graph: GraphModel | LibraryAgent | Graph;
@@ -56,14 +57,14 @@ function SafeModeButton({
                 variant="body"
                 className="text-zinc-200"
               >
-                {label}: ON
+                {label}: {t("build1.safeMode.on")}
               </Text>
             </>
           ) : (
             <>
               <Icon icon={Shield01Icon} size={16} />
               <Text variant="body" tone="secondary">
-                {label}: OFF
+                {label}: {t("build1.safeMode.off")}
               </Text>
             </>
           )}
@@ -72,7 +73,8 @@ function SafeModeButton({
       <TooltipContent>
         <div className="text-center">
           <Text variant="small-medium-lh-normal" as="div" tone="inherit">
-            {label}: {isEnabled ? "ON" : "OFF"}
+            {label}:{" "}
+            {isEnabled ? t("build1.safeMode.on") : t("build1.safeMode.off")}
           </Text>
           <Text
             variant="small-tight"
@@ -92,6 +94,7 @@ export function FloatingSafeModeToggle({
   className,
   fullWidth = false,
 }: Props) {
+  const t = useT();
   const {
     currentHITLSafeMode,
     showHITLToggle,
@@ -112,9 +115,9 @@ export function FloatingSafeModeToggle({
       {showHITLToggle && (
         <SafeModeButton
           isEnabled={currentHITLSafeMode}
-          label="Human in the loop block approval"
-          tooltipEnabled="The workflow will pause at human-in-the-loop blocks and wait for your approval"
-          tooltipDisabled="Human in the loop blocks will proceed automatically"
+          label={t("build1.safeMode.hitlLabel")}
+          tooltipEnabled={t("build1.safeMode.hitlEnabled")}
+          tooltipDisabled={t("build1.safeMode.hitlDisabled")}
           onToggle={handleHITLToggle}
           isPending={isPending}
           fullWidth={fullWidth}
@@ -123,9 +126,9 @@ export function FloatingSafeModeToggle({
       {showSensitiveActionToggle && (
         <SafeModeButton
           isEnabled={currentSensitiveActionSafeMode}
-          label="Sensitive actions blocks approval"
-          tooltipEnabled="The workflow will pause at sensitive action blocks and wait for your approval"
-          tooltipDisabled="Sensitive action blocks will proceed automatically"
+          label={t("build1.safeMode.sensitiveLabel")}
+          tooltipEnabled={t("build1.safeMode.sensitiveEnabled")}
+          tooltipDisabled={t("build1.safeMode.sensitiveDisabled")}
           onToggle={handleSensitiveActionToggle}
           isPending={isPending}
           fullWidth={fullWidth}

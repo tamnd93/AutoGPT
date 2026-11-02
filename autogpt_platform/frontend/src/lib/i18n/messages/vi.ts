@@ -3,6 +3,7 @@ import { account1Vi } from "./account-1.vi";
 import { account2Vi } from "./account-2.vi";
 import { auth1Vi } from "./auth-1.vi";
 import { auth2Vi } from "./auth-2.vi";
+import { build1Vi } from "./build-1.vi";
 import { chatFiles1Vi } from "./chat-files-1.vi";
 import { chatFiles2Vi } from "./chat-files-2.vi";
 import { chatInput1Vi } from "./chat-input-1.vi";
@@ -42,6 +43,7 @@ export const vi: Partial<Record<MessageKey, string>> = {
   ...account2Vi,
   ...auth1Vi,
   ...auth2Vi,
+  ...build1Vi,
   ...chatFiles1Vi,
   ...chatFiles2Vi,
   ...chatInput1Vi,

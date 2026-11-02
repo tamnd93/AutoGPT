@@ -6,6 +6,7 @@ import { useEdgeStore } from "../../../stores/edgeStore";
 import { CustomNode } from "../nodes/CustomNode/CustomNode";
 import { CustomEdge } from "../edges/CustomEdge";
 import { useToast } from "@/components/molecules/Toast/use-toast";
+import { useT } from "@/lib/i18n";
 
 interface CopyableData {
   nodes: CustomNode[];
@@ -17,6 +18,7 @@ const CLIPBOARD_PREFIX = "autogpt-flow-data:";
 export function useCopyPaste(isReadOnly = false) {
   const { getViewport } = useReactFlow();
   const { toast } = useToast();
+  const t = useT();
 
   const handleCopyPaste = useCallback(
     (event: KeyboardEvent) => {
@@ -62,8 +64,10 @@ export function useCopyPaste(isReadOnly = false) {
             .writeText(clipboardText)
             .then(() => {
               toast({
-                title: "Copied successfully",
-                description: `${selectedNodes.length} node(s) copied to clipboard`,
+                title: t("build1.copyPaste.copied"),
+                description: t("build1.copyPaste.copiedBody", {
+                  count: selectedNodes.length,
+                }),
               });
             })
             .catch((error) => {

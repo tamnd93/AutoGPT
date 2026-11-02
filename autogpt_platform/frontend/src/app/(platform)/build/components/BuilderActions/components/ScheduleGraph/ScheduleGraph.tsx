@@ -10,6 +10,7 @@ import { RunInputDialog } from "../RunInputDialog/RunInputDialog";
 import { useScheduleGraph } from "./useScheduleGraph";
 import { Clock01Icon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 
 export const ScheduleGraph = ({ flowID }: { flowID: string | null }) => {
   const {
@@ -35,7 +36,7 @@ export const ScheduleGraph = ({ flowID }: { flowID: string | null }) => {
             </Button>
           </TooltipTrigger>
           <TooltipContent>
-            <p>Schedule Workflow</p>
+            <p>{t("build1.schedule.title")}</p>
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>

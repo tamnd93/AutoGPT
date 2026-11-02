@@ -12,6 +12,7 @@ import { useNodeStore } from "@/app/(platform)/build/stores/nodeStore";
 import { useToast } from "@/components/molecules/Toast/use-toast";
 import { useReactFlow } from "@xyflow/react";
 import type { CredentialField } from "@/components/contextual/CredentialsInput/components/CredentialsGroupedView/helpers";
+import { useT } from "@/lib/i18n";
 
 export const useRunInputDialog = ({
   setIsOpen,
@@ -38,6 +39,7 @@ export const useRunInputDialog = ({
     flowVersion: parseAsInteger,
   });
   const { toast } = useToast();
+  const t = useT();
   const { setViewport } = useReactFlow();
 
   const { mutateAsync: executeGraph, isPending: isExecutingGraph } =
@@ -75,9 +77,8 @@ export const useRunInputDialog = ({
             }
 
             toast({
-              title: errorData?.message || "Workflow validation failed",
-              description:
-                "Please fix the validation errors on the highlighted nodes and try again.",
+              title: errorData?.message || t("build1.run.validationFailed"),
+              description: t("build1.run.fixValidation"),
               variant: "destructive",
             });
             setIsOpen(false);
@@ -111,7 +112,7 @@ export const useRunInputDialog = ({
             }
           } else {
             toast({
-              title: "Error running workflow",
+              title: t("build1.runInput.errorRunning"),
               description:
                 (error as Error).message || "An unexpected error occurred.",
               variant: "destructive",

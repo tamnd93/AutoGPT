@@ -28,6 +28,7 @@ import { useShallow } from "zustand/react/shallow";
 import { BookOpen01Icon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { Text } from "@/components/atoms/Text/Text";
+import { useT } from "@/lib/i18n";
 
 export const AgentOutputs = ({ flowID }: { flowID: string | null }) => {
   const hasOutputs = useGraphStore(useShallow((state) => state.hasOutputs));
@@ -66,10 +67,12 @@ export const AgentOutputs = ({ flowID }: { flowID: string | null }) => {
         return {
           nodeID: node.id,
           metadata: {
-            name: node.data.hardcodedValues?.name || "Output",
+            name:
+              node.data.hardcodedValues?.name ||
+              t("build1.outputs.defaultName"),
             description:
               node.data.hardcodedValues?.description ||
-              "Output from the workflow",
+              t("build1.outputs.description"),
           },
           items,
         };
@@ -104,7 +107,7 @@ export const AgentOutputs = ({ flowID }: { flowID: string | null }) => {
             </SheetTrigger>
           </TooltipTrigger>
           <TooltipContent>
-            <p>Workflow Outputs</p>
+            <p>{t("build1.outputs.header")}</p>
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
@@ -154,7 +157,7 @@ export const AgentOutputs = ({ flowID }: { flowID: string | null }) => {
                           as="span"
                           tone="inherit"
                         >
-                          {group.metadata.name || "Unnamed Output"}
+                          {group.metadata.name || t("build1.outputs.unnamed")}
                         </Text>
                       </Label>
                       {group.metadata.description && (
@@ -188,7 +191,7 @@ export const AgentOutputs = ({ flowID }: { flowID: string | null }) => {
                   // TODO(tokens): no exact role: text-gray-500 #6B7280
                   className="flex h-full items-center justify-center text-gray-500"
                 >
-                  <p>No output blocks available.</p>
+                  <p>{t("build1.outputs.none")}</p>
                 </div>
               )}
             </div>

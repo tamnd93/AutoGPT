@@ -8,6 +8,7 @@ import { PublishAgentModal } from "@/components/contextual/PublishAgentModal/Pub
 import { usePublishToMarketplace } from "./usePublishToMarketplace";
 import { Share01Icon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   flowID: string | null;
@@ -15,6 +16,7 @@ interface Props {
 }
 
 export function PublishToMarketplace({ flowID, flowVersion }: Props) {
+  const t = useT();
   const { handlePublishToMarketplace, publishState, handleStateChange } =
     usePublishToMarketplace({ flowID, flowVersion });
 
@@ -29,11 +31,12 @@ export function PublishToMarketplace({ flowID, flowVersion }: Props) {
             size="icon"
             onClick={handlePublishToMarketplace}
             disabled={isDisabled}
+            aria-label={t("build1.publish.tooltip")}
           >
             <Icon icon={Share01Icon} className="size-4" />
           </Button>
         </TooltipTrigger>
-        <TooltipContent>Publish to Marketplace</TooltipContent>
+        <TooltipContent>{t("build1.publish.tooltip")}</TooltipContent>
       </Tooltip>
 
       <PublishAgentModal

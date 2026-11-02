@@ -6,6 +6,7 @@ import {
 } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { Text } from "@/components/atoms/Text/Text";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   onClose: () => void;
@@ -20,6 +21,7 @@ export function PanelHeader({
   revertTargetVersion,
   onRevert,
 }: Props) {
+  const t = useT();
   return (
     <div
       // TODO(tokens): no exact role: border-slate-100 #EFF1F4
@@ -50,10 +52,12 @@ export function PanelHeader({
             leftIcon={<Icon icon={RefreshIcon} size={14} />}
             aria-label={
               revertTargetVersion != null
-                ? `Revert to version ${revertTargetVersion}`
-                : "Revert to previous version"
+                ? t("build1.panelHeader.revertToVersion", {
+                    version: revertTargetVersion,
+                  })
+                : t("build1.panelHeader.revertPrev")
             }
-            title="Revert to the workflow version that was active before the last edit"
+            title={t("build1.panelHeader.revertTooltip")}
           >
             Revert
           </Button>

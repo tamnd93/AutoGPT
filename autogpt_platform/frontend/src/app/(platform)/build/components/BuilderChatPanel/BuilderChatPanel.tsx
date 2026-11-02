@@ -11,12 +11,14 @@ import { useBuilderChatPanel } from "./useBuilderChatPanel";
 import { BubbleChatIcon, Cancel01Icon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { Text } from "@/components/atoms/Text/Text";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   className?: string;
 }
 
 export function BuilderChatPanel({ className }: Props) {
+  const t = useT();
   const panelRef = useRef<HTMLDivElement>(null);
   const {
     isOpen,
@@ -50,10 +52,10 @@ export function BuilderChatPanel({ className }: Props) {
         ? retryTransportCheck
         : null;
   const activeErrorTitle = bindError
-    ? "Could not start the builder chat"
+    ? t("build1.chat.startFailed")
     : bootstrapError
-      ? "Could not create a blank workflow"
-      : "Could not check the AI connection";
+      ? t("build1.chat.blankFailed")
+      : t("build1.chat.checkFailed");
 
   return (
     <div
@@ -146,7 +148,7 @@ export function BuilderChatPanel({ className }: Props) {
                       isTurnStarting={status === "submitted"}
                       onStop={stop}
                       onEnqueue={onSend}
-                      placeholder="Ask the builder to edit or run this workflow…"
+                      placeholder={t("build1.chat.placeholder")}
                       hasSession={true}
                     />
                   </div>

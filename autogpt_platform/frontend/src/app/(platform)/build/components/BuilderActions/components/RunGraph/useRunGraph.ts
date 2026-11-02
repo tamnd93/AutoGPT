@@ -12,12 +12,14 @@ import { useSaveGraph } from "@/app/(platform)/build/hooks/useSaveGraph";
 import { useNodeStore } from "@/app/(platform)/build/stores/nodeStore";
 import { ApiError } from "@/lib/autogpt-server-api/helpers"; // Check if this exists
 import { useTutorialStore } from "@/app/(platform)/build/stores/tutorialStore";
+import { useT } from "@/lib/i18n";
 
 export const useRunGraph = () => {
   const { saveGraph, isSaving } = useSaveGraph({
     showToast: false,
   });
   const { toast } = useToast();
+  const t = useT();
   const hasInputs = useGraphStore(useShallow((state) => state.hasInputs));
   const hasCredentials = useGraphStore(
     useShallow((state) => state.hasCredentials),
@@ -108,9 +110,8 @@ export const useRunGraph = () => {
             }
 
             toast({
-              title: errorData?.message || "Workflow validation failed",
-              description:
-                "Please fix the validation errors on the highlighted nodes and try again.",
+              title: errorData?.message || t("build1.run.validationFailed"),
+              description: t("build1.run.fixValidation"),
               variant: "destructive",
             });
           } else {
