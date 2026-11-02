@@ -18,6 +18,7 @@ import { useExpertIntegrationsSection } from "./useExpertIntegrationsSection";
 import { IntegrationLogo } from "@/components/molecules/IntegrationLogo/IntegrationLogo";
 import { SectionEmptyState } from "../../../components/SectionEmptyState";
 import { ToolbarSearch } from "../../../components/ToolbarSearch";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   expertId: string;
@@ -25,6 +26,7 @@ interface Props {
 }
 
 export function ExpertIntegrationsSection({ expertId, expertName }: Props) {
+  const t = useT();
   const {
     granted,
     grantable,
@@ -59,7 +61,7 @@ export function ExpertIntegrationsSection({ expertId, expertName }: Props) {
     <section data-testid="expert-integrations-section">
       <div className="mb-2.5 flex flex-wrap items-center justify-between gap-3">
         <Text variant="large-medium" tone="primary">
-          {expertName}&apos;s Integrations
+          {t("team4.section.title", { name: expertName })}
         </Text>
         <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto">
           <Tooltip>
@@ -75,21 +77,21 @@ export function ExpertIntegrationsSection({ expertId, expertName }: Props) {
                   }
                   onClick={openUseExisting}
                 >
-                  Use existing
+                  {t("team4.section.useExisting")}
                 </Button>
               </span>
             </TooltipTrigger>
             {isError ? (
               <TooltipContent side="bottom">
-                Couldn&apos;t load what {expertName} already has.
+                {t("team4.section.couldntLoadGranted", { name: expertName })}
               </TooltipContent>
             ) : isGrantableError ? (
               <TooltipContent side="bottom">
-                Couldn&apos;t load your services.
+                {t("team4.section.couldntLoadServices")}
               </TooltipContent>
             ) : grantable.length === 0 && !isGrantableLoading ? (
               <TooltipContent side="bottom">
-                {expertName} can already use everything in your account.
+                {t("team4.section.hasEverything", { name: expertName })}
               </TooltipContent>
             ) : null}
           </Tooltip>
@@ -100,12 +102,12 @@ export function ExpertIntegrationsSection({ expertId, expertName }: Props) {
             leadingIcon={PlusSignIcon}
             onClick={openConnect}
           >
-            Add integration
+            {t("team4.section.addIntegration")}
           </Button>
           <ToolbarSearch
             textSize="body-md"
             id="expert-integrations-search"
-            label="Search integrations"
+            label={t("team4.section.searchLabel")}
             value={query}
             onChange={setQuery}
           />
@@ -117,8 +119,8 @@ export function ExpertIntegrationsSection({ expertId, expertName }: Props) {
       ) : isError ? (
         <ErrorCard
           textSize="body-md"
-          context="this expert's integrations"
-          hint="We could not load what this expert can reach."
+          context={t("team4.section.errorContext")}
+          hint={t("team4.section.errorHint")}
           onRetry={refetch}
         />
       ) : granted.length === 0 ? (
@@ -128,8 +130,8 @@ export function ExpertIntegrationsSection({ expertId, expertName }: Props) {
             <IntegrationLogo key="notion" provider="notion" size={24} />,
             <IntegrationLogo key="google" provider="google" size={24} />,
           ]}
-          title="No integrations yet"
-          description={`Connect a tool and ${expertName} can use it on your behalf.`}
+          title={t("team4.section.emptyTitle")}
+          description={t("team4.section.emptyBody", { name: expertName })}
         >
           <Button
             variant="primary"
@@ -138,7 +140,7 @@ export function ExpertIntegrationsSection({ expertId, expertName }: Props) {
             leadingIcon={PlusSignIcon}
             onClick={openConnect}
           >
-            Add integration
+            {t("team4.section.addIntegration")}
           </Button>
           {grantable.length > 0 && !isGrantableError ? (
             <Button
@@ -148,13 +150,13 @@ export function ExpertIntegrationsSection({ expertId, expertName }: Props) {
               leadingIcon={Share01Icon}
               onClick={openUseExisting}
             >
-              Use existing
+              {t("team4.section.useExisting")}
             </Button>
           ) : null}
         </SectionEmptyState>
       ) : visible.length === 0 ? (
         <Text variant="body-md" tone="muted" className="pt-4">
-          No integrations match.
+          {t("team4.section.noMatch")}
         </Text>
       ) : (
         <ExpertIntegrationGroups

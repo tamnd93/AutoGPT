@@ -8,6 +8,7 @@ import type { CredentialsMetaResponse } from "@/app/api/__generated__/models/cre
 import { okData } from "@/app/api/helpers";
 import { filterSystemCredentials } from "@/components/contextual/CredentialsInput/helpers";
 import { useToast } from "@/components/molecules/Toast/use-toast";
+import { useT } from "@/lib/i18n";
 import { invalidateExpertGrantQueries } from "@/services/experts/invalidate-experts";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
@@ -15,6 +16,7 @@ import { useState } from "react";
 export function useExpertIntegrationsSection(expertId: string) {
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const t = useT();
   const [isConnecting, setIsConnecting] = useState(false);
   const [isUsingExisting, setIsUsingExisting] = useState(false);
   // Whether the dialog we just closed actually created something. Closing
@@ -48,7 +50,10 @@ export function useExpertIntegrationsSection(expertId: string) {
     mutation: {
       onSuccess: invalidate,
       onError: () =>
-        toast({ title: "Could not add integration", variant: "destructive" }),
+        toast({
+          title: t("team4.integrations.connectFailed"),
+          variant: "destructive",
+        }),
     },
   });
 
@@ -57,7 +62,7 @@ export function useExpertIntegrationsSection(expertId: string) {
       onSuccess: invalidate,
       onError: () =>
         toast({
-          title: "Could not remove integration",
+          title: t("team4.integrations.removeFailed"),
           variant: "destructive",
         }),
     },

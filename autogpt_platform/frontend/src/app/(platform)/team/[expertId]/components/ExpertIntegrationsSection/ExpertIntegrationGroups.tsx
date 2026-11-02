@@ -17,7 +17,9 @@ import {
 import { IntegrationLogo } from "@/components/molecules/IntegrationLogo/IntegrationLogo";
 import { Delete02Icon, Loading03Icon } from "@hugeicons/core-free-icons";
 import { motion, useReducedMotion, type Variants } from "framer-motion";
+import { useT, type MessageKey } from "@/lib/i18n";
 
+/** Kept for the credentials tab, which renders the raw type label. */
 export const TYPE_LABELS: Record<string, string> = {
   api_key: "API Key",
   oauth2: "OAuth",
@@ -26,12 +28,20 @@ export const TYPE_LABELS: Record<string, string> = {
   device_code: "Device auth",
 };
 
-const CONNECTION_LABELS: Record<string, string> = {
-  api_key: "API key configured",
-  oauth2: "Connected via OAuth",
-  user_password: "Username/password set",
-  host_scoped: "Host configured",
-  device_code: "Connected via device auth",
+const TYPE_KEYS: Record<string, string> = {
+  api_key: "team4.groups.type.apiKey",
+  oauth2: "team4.groups.type.oauth",
+  user_password: "team4.groups.type.userPassword",
+  host_scoped: "team4.groups.type.host",
+  device_code: "team4.groups.type.device",
+};
+
+const CONNECTION_KEYS: Record<string, string> = {
+  api_key: "team4.groups.connection.apiKey",
+  oauth2: "team4.groups.connection.oauth",
+  user_password: "team4.groups.connection.userPassword",
+  host_scoped: "team4.groups.connection.host",
+  device_code: "team4.groups.connection.device",
 };
 
 const CONTAINER_VARIANTS: Variants = {
@@ -86,6 +96,7 @@ export function ExpertIntegrationGroups({
   isRemoving,
   onRemove,
 }: Props) {
+  const t = useT();
   const reduceMotion = useReducedMotion();
   const groups = groupExpertIntegrations(integrations);
 
@@ -118,7 +129,7 @@ export function ExpertIntegrationGroups({
                 <div className="flex items-center gap-2.5">
                   <IntegrationLogo
                     provider={group.icon}
-                    alt={`${group.name} logo`}
+                    alt={t("team4.groups.logoAlt", { name: group.name })}
                     size={20}
                     className="rounded-full bg-surface"
                   />
@@ -162,7 +173,10 @@ interface RowProps {
 }
 
 function ExpertIntegrationRow({ integration, isRemoving, onRemove }: RowProps) {
+  const t = useT();
   const name = formatCredentialName(integration.title, integration.provider);
+  const typeKey = TYPE_KEYS[integration.type];
+  const connectionKey = CONNECTION_KEYS[integration.type];
   return (
     <div
       className="flex w-full items-center justify-between py-2.5 pl-3 pr-4"
@@ -179,11 +193,13 @@ function ExpertIntegrationRow({ integration, isRemoving, onRemove }: RowProps) {
             tone="secondary"
             className="inline-flex items-center justify-center rounded-md bg-surface-hover px-1.5 py-0.5 leading-4"
           >
-            {TYPE_LABELS[integration.type] ?? integration.type}
+            {typeKey ? t(typeKey as MessageKey) : integration.type}
           </Text>
         </div>
         <Text variant="body-md" as="span" tone="muted">
-          {CONNECTION_LABELS[integration.type] ?? "Configured"}
+          {connectionKey
+            ? t(connectionKey as MessageKey)
+            : t("team4.groups.configured")}
         </Text>
       </div>
       <div className="flex items-center gap-3">
@@ -192,14 +208,14 @@ function ExpertIntegrationRow({ integration, isRemoving, onRemove }: RowProps) {
           variant="eyebrow"
           className="text-emerald-600"
         >
-          Ready
+          {t("team4.groups.ready")}
         </Text>
         <button
           type="button"
           onClick={onRemove}
           disabled={isRemoving}
           aria-busy={isRemoving}
-          aria-label={`Remove ${name}`}
+          aria-label={t("team4.groups.removeAria", { name })}
           // TODO(tokens): no fitting role for focus-visible:ring-zinc-400 #ADADB3; #ADADB3 is foreground-subtle (a text colour)
           className="inline-flex size-7 items-center justify-center rounded-md text-foreground-tertiary transition-colors hover:bg-surface-hover hover:text-error focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-zinc-400 disabled:cursor-not-allowed disabled:opacity-50"
         >

@@ -14,6 +14,7 @@ import { ErrorCard } from "@/components/molecules/ErrorCard/ErrorCard";
 import { useMeasuredHeight } from "@/components/contextual/IntegrationsPanel/components/ConnectServiceDialog/useMeasuredHeight";
 import { Plug01Icon } from "@hugeicons/core-free-icons";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { useT, type MessageKey } from "@/lib/i18n";
 import { useBottomScrollShadow } from "../../../components/SoulDrawer/useBottomScrollShadow";
 import { useFitListToDialog } from "../useFitListToDialog";
 import {
@@ -55,6 +56,7 @@ export function ExpertConnectServiceDialog({
   onClose,
   onConnected,
 }: Props) {
+  const t = useT();
   const {
     query,
     setQuery,
@@ -145,11 +147,10 @@ export function ExpertConnectServiceDialog({
                   >
                     <div className="flex flex-col gap-1">
                       <Text variant="lead-medium" as="h3" tone="primary">
-                        Connect a service for {expertName}
+                        {t("team4.connect.title", { name: expertName })}
                       </Text>
                       <Text variant="small" tone="muted">
-                        Pick a service to connect. {expertName} will be able to
-                        use it on your behalf.
+                        {t("team4.connect.body", { name: expertName })}
                       </Text>
                     </div>
                     {isLoading ? (
@@ -163,8 +164,8 @@ export function ExpertConnectServiceDialog({
                       </div>
                     ) : isError ? (
                       <ErrorCard
-                        context="services"
-                        hint="We could not load the services you can connect."
+                        context={t("team4.connect.errorContext")}
+                        hint={t("team4.connect.errorHint")}
                         onRetry={() => refetch()}
                       />
                     ) : (
@@ -173,12 +174,14 @@ export function ExpertConnectServiceDialog({
                           size="small"
                           value={query}
                           onChange={setQuery}
-                          placeholder="Search services..."
-                          aria-label="Search services"
+                          placeholder={t(
+                            "team4.connect.searchPlaceholder",
+                          )}
+                          aria-label={t("team4.connect.searchAria")}
                         />
                         <div
                           role="group"
-                          aria-label="Filter services"
+                          aria-label={t("team4.connect.filterAria")}
                           className="flex items-center gap-1"
                         >
                           {SERVICE_FILTERS.map((option) => (
@@ -190,7 +193,7 @@ export function ExpertConnectServiceDialog({
                               aria-pressed={filter === option.value}
                               onClick={() => setFilter(option.value)}
                             >
-                              {option.label}
+                              {t(option.labelKey as MessageKey)}
                             </Button>
                           ))}
                         </div>
@@ -203,10 +206,12 @@ export function ExpertConnectServiceDialog({
                             />
                             <Text variant="body" tone="secondary">
                               {query.trim()
-                                ? `No services match "${query.trim()}"`
+                                ? t("team4.connect.noMatch", {
+                                    query: query.trim(),
+                                  })
                                 : filter === "connected"
-                                  ? "No services connected yet."
-                                  : "No services available."}
+                                  ? t("team4.connect.noneConnected")
+                                  : t("team4.connect.noneAvailable")}
                             </Text>
                           </div>
                         ) : (
@@ -214,7 +219,7 @@ export function ExpertConnectServiceDialog({
                             <ul
                               ref={attachList}
                               className="grid grid-cols-2 gap-2 overflow-y-auto pr-1"
-                              aria-label="Services"
+                              aria-label={t("team4.connect.servicesAria")}
                             >
                               {providers.map((provider) => (
                                 <li key={provider.id}>
@@ -257,7 +262,7 @@ export function ExpertConnectServiceDialog({
                     size="small"
                     onClick={handleBackToList}
                   >
-                    Back
+                    {t("team4.connect.back")}
                   </Button>
                   {showContinue ? (
                     <Button
@@ -267,13 +272,15 @@ export function ExpertConnectServiceDialog({
                       loading={isConnecting}
                       onClick={handleContinue}
                     >
-                      {isConnecting ? "Connecting…" : "Continue"}
+                      {isConnecting
+                        ? t("team4.connect.connecting")
+                        : t("team4.connect.continue")}
                     </Button>
                   ) : null}
                 </>
               ) : (
                 <Button variant="secondary" size="small" onClick={onClose}>
-                  Cancel
+                  {t("library2.common.cancel")}
                 </Button>
               )}
             </div>

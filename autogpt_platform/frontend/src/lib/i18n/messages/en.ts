@@ -57,6 +57,7 @@ import { settingsRest2En } from "./settings-rest-2.en";
 import { settingsRest3En } from "./settings-rest-3.en";
 import { team1En } from "./team-1.en";
 import { Team2En } from "./team-2.en";
+import { Team4En } from "./team-4.en";
 import { voice1En } from "./voice-1.en";
 
 export const en = {
@@ -119,6 +120,7 @@ export const en = {
   ...settingsRest3En,
   ...team1En,
   ...Team2En,
+  ...Team4En,
   ...voice1En,
   "common.planSuffix": "{plan} plan",
 } as const;

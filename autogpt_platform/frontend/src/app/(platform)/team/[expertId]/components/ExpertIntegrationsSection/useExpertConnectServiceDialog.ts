@@ -22,11 +22,11 @@ export type ServiceFilter = "all" | "connected" | "available";
 
 export const SERVICE_FILTERS: readonly {
   value: ServiceFilter;
-  label: string;
+  labelKey: string;
 }[] = [
-  { value: "all", label: "All" },
-  { value: "connected", label: "Connected" },
-  { value: "available", label: "Not connected" },
+  { value: "all", labelKey: "team4.connect.filterAll" },
+  { value: "connected", labelKey: "team4.connect.filterConnected" },
+  { value: "available", labelKey: "team4.connect.filterNotConnected" },
 ];
 
 interface Args {

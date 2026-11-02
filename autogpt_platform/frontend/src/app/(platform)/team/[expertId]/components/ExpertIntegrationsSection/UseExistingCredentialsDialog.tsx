@@ -19,6 +19,7 @@ import { ArrowLeft02Icon } from "@hugeicons/core-free-icons";
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
 import { useBottomScrollShadow } from "../../../components/SoulDrawer/useBottomScrollShadow";
+import { useT } from "@/lib/i18n";
 import { useFitListToDialog } from "../useFitListToDialog";
 
 interface Props {
@@ -71,6 +72,7 @@ export function UseExistingCredentialsDialog({
   onUse,
   onClose,
 }: Props) {
+  const t = useT();
   const [query, setQuery] = useState("");
   const [selectedProvider, setSelectedProvider] = useState<string | null>(null);
   const { attachList, list } = useFitListToDialog<HTMLUListElement>();
@@ -110,7 +112,7 @@ export function UseExistingCredentialsDialog({
     <Dialog
       variant="compact"
       styling={{ maxWidth: "40rem", maxHeight: "60vh" }}
-      title="Use an existing connection"
+      title={t("team4.existing.title")}
       controlled={{
         isOpen: open,
         set: (next) => {
@@ -128,15 +130,20 @@ export function UseExistingCredentialsDialog({
                 className="flex w-fit items-center gap-1 text-sm text-foreground-tertiary hover:text-foreground-emphasis"
               >
                 <Icon icon={ArrowLeft02Icon} size={14} />
-                All connections
+                {t("team4.existing.allConnections")}
               </button>
               <Text variant="body" tone="muted" className="leading-5">
-                You have {selected.credentials.length} {selected.provider.name}{" "}
-                connections. Choose which one {expertName} should use.
+                {t("team4.existing.chooseBody", {
+                  count: selected.credentials.length,
+                  provider: selected.provider.name,
+                  name: expertName,
+                })}
               </Text>
               <ul
                 className="flex flex-col gap-2"
-                aria-label={`${selected.provider.name} connections`}
+                aria-label={t("team4.existing.connectionsAria", {
+                  provider: selected.provider.name,
+                })}
               >
                 {selected.credentials.map((credential) => {
                   const name = formatCredentialName(
@@ -166,9 +173,12 @@ export function UseExistingCredentialsDialog({
                         size="small"
                         disabled={isGranting}
                         onClick={() => onUse(credential.id)}
-                        aria-label={`Let ${expertName} use ${name}`}
+                        aria-label={t("team4.existing.useAria", {
+                          name: expertName,
+                          credential: name,
+                        })}
                       >
-                        Use
+                        {t("team4.existing.use")}
                       </Button>
                     </li>
                   );
@@ -178,29 +188,28 @@ export function UseExistingCredentialsDialog({
           ) : (
             <>
               <Text variant="body" tone="muted" className="leading-5">
-                These connections are already set up on your account but{" "}
-                {expertName} can&apos;t use them yet. Choose one to give{" "}
-                {expertName} access. Nothing is re-authorised, and you can
-                remove the access from this tab at any time.
+                {t("team4.existing.explain", { name: expertName })}
               </Text>
               <SearchInput
                 size="small"
                 value={query}
                 onChange={setQuery}
-                placeholder="Search connections"
+                placeholder={t("team4.existing.searchPlaceholder")}
               />
               {groups.length === 0 ? (
                 <Text variant="small" tone="muted">
                   {credentials.length === 0
-                    ? `${expertName} can already use everything in your account.`
-                    : "No connections match."}
+                    ? t("team4.existing.hasEverything", {
+                        name: expertName,
+                      })
+                    : t("team4.existing.noMatch")}
                 </Text>
               ) : (
                 <div className="relative">
                   <ul
                     ref={attachList}
                     className="grid grid-cols-2 gap-2 overflow-y-auto pr-1"
-                    aria-label="Existing connections"
+                    aria-label={t("team4.existing.listAria")}
                   >
                     {groups.map((group) => (
                       <li key={group.provider.id}>
@@ -214,7 +223,9 @@ export function UseExistingCredentialsDialog({
                                     group.provider.name,
                                   group.credentials[0].provider,
                                 )
-                              : `${group.credentials.length} connections · choose one`
+                              : t("team4.existing.multiDescription", {
+                                  count: group.credentials.length,
+                                })
                           }
                         />
                       </li>
@@ -235,7 +246,7 @@ export function UseExistingCredentialsDialog({
           )}
           <div className="flex justify-end pt-1">
             <Button variant="secondary" size="small" onClick={onClose}>
-              Cancel
+              {t("library2.common.cancel")}
             </Button>
           </div>
         </div>
