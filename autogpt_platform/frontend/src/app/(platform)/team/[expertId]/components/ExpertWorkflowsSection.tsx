@@ -26,10 +26,11 @@ import { ViewToggle } from "./ViewToggle";
 import { SectionEmptyState } from "../../components/SectionEmptyState";
 import { ToolbarSearch } from "../../components/ToolbarSearch";
 import { PillFilterMenu } from "../../components/PillFilterMenu";
+import { useT } from "@/lib/i18n";
 
 const VIEW_OPTIONS = [
-  { value: "list", label: "List view", icon: ListViewIcon },
-  { value: "grid", label: "Grid view", icon: GridViewIcon },
+  { value: "list", labelKey: "team7.workflows.listView", icon: ListViewIcon },
+  { value: "grid", labelKey: "team7.workflows.gridView", icon: GridViewIcon },
 ] as const;
 
 interface Props {
@@ -51,6 +52,7 @@ export function ExpertWorkflowsSection({
   onInstallWorkflow,
   onAskWorkflow,
 }: Props) {
+  const t = useT();
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<WorkflowFilter>("all");
   const { view, setView } = useExpertWorkflowsView();
@@ -61,7 +63,7 @@ export function ExpertWorkflowsSection({
     <section>
       <div className="mb-2.5 flex flex-wrap items-center justify-between gap-3">
         <Text variant="large-medium" tone="primary">
-          {expertName}&apos;s Workflows
+          {t("team7.workflows.title", { name: expertName })}
         </Text>
         <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto">
           {onInstallWorkflow ? (
@@ -72,25 +74,32 @@ export function ExpertWorkflowsSection({
               leadingIcon={PlusSignIcon}
               onClick={onInstallWorkflow}
             >
-              Install workflow
+              {t("team7.workflows.install")}
             </Button>
           ) : null}
           <ToolbarSearch
             textSize="body-md"
             id="expert-workflows-search"
-            label="Search workflows"
+            label={t("team7.workflows.search")}
             value={query}
             onChange={setQuery}
           />
           <PillFilterMenu
             textSize="body-md"
-            label="Filter workflows"
+            label={t("team7.workflows.filter")}
             value={filter}
             defaultValue="all"
             options={WORKFLOW_FILTERS}
             onChange={setFilter}
           />
-          <ViewToggle value={view} options={VIEW_OPTIONS} onChange={setView} />
+          <ViewToggle
+            value={view}
+            options={VIEW_OPTIONS.map((option) => ({
+              ...option,
+              label: t(option.labelKey),
+            }))}
+            onChange={setView}
+          />
         </div>
       </div>
       {workflows.length === 0 ? (
@@ -118,10 +127,10 @@ export function ExpertWorkflowsSection({
               className="text-violet-500"
             />,
           ]}
-          title="No workflows yet"
+          title={t("team7.workflows.noneTitle")}
           description={
             emptyMessage ??
-            `Install a workflow to give ${expertName} something to run.`
+            t("team7.workflows.emptyDesc", { name: expertName })
           }
         >
           {onInstallWorkflow ? (
@@ -132,13 +141,13 @@ export function ExpertWorkflowsSection({
               leadingIcon={PlusSignIcon}
               onClick={onInstallWorkflow}
             >
-              Install workflow
+              {t("team7.workflows.install")}
             </Button>
           ) : null}
         </SectionEmptyState>
       ) : visible.length === 0 ? (
         <Text variant="body-md" tone="muted">
-          No workflows match.
+          {t("team7.workflows.noMatch")}
         </Text>
       ) : view === "list" ? (
         <div className="flex flex-col gap-3 pt-4" data-testid="workflow-list">

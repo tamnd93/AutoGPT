@@ -24,6 +24,7 @@ import {
 import { CreateScheduleDialog } from "./CreateScheduleDialog";
 import { ToolbarSearch } from "../../components/ToolbarSearch";
 import { PillFilterMenu } from "../../components/PillFilterMenu";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   title: string;
@@ -44,6 +45,7 @@ export function ExpertSchedulesSection({
   schedules,
   lastRunLabel,
 }: Props) {
+  const t = useT();
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<ScheduleFilter>("all");
   const [isCreateOpen, setIsCreateOpen] = useState(false);
@@ -71,19 +73,19 @@ export function ExpertSchedulesSection({
               leadingIcon={PlusSignIcon}
               onClick={() => setIsCreateOpen(true)}
             >
-              Create schedule
+              {t("team7.schedules.create")}
             </Button>
           ) : null}
           <ToolbarSearch
             textSize="body-md"
             id="expert-schedules-search"
-            label="Search schedules"
+            label={t("team7.schedules.search")}
             value={query}
             onChange={setQuery}
           />
           <PillFilterMenu
             textSize="body-md"
-            label="Filter schedules"
+            label={t("team7.schedules.filter")}
             value={filter}
             defaultValue="all"
             options={SCHEDULE_FILTERS}
@@ -116,8 +118,8 @@ export function ExpertSchedulesSection({
               className="text-violet-500"
             />,
           ]}
-          title="No schedules yet"
-          description={`Put a workflow on a schedule and ${expertName} runs it for you, on time, every time.`}
+          title={t("team7.schedules.noneTitle")}
+          description={t("team7.schedules.emptyDesc", { name: expertName })}
         >
           {expertId && workflows ? (
             <Button
@@ -127,16 +129,19 @@ export function ExpertSchedulesSection({
               leadingIcon={PlusSignIcon}
               onClick={() => setIsCreateOpen(true)}
             >
-              Create schedule
+              {t("team7.schedules.create")}
             </Button>
           ) : null}
         </SectionEmptyState>
       ) : visible.length === 0 ? (
         <Text variant="body-md" tone="muted" className="pt-4">
-          No schedules match.
+          {t("team7.schedules.noMatch")}
         </Text>
       ) : (
-        <ul className="flex flex-col gap-3 pt-4" aria-label="Expert schedules">
+        <ul
+          className="flex flex-col gap-3 pt-4"
+          aria-label={t("team7.schedules.ariaList")}
+        >
           {visible.map((schedule) => (
             <li key={schedule.id}>
               <GraphScheduleListItem

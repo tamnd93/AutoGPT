@@ -18,6 +18,7 @@ import { AddSkillDialog } from "./AddSkillDialog";
 import { ExpertSkillListItem } from "./ExpertSkillListItem";
 import { useExpertLearning } from "./useExpertLearning";
 import { useExpertSkills } from "./useExpertSkills";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   expert: Expert;
@@ -32,6 +33,7 @@ export function ExpertSkillsSection({
   initialSkill = null,
   initialVersionId = null,
 }: Props) {
+  const t = useT();
   const {
     query,
     setQuery,
@@ -59,7 +61,7 @@ export function ExpertSkillsSection({
     <section>
       <div className="mb-2.5 flex flex-wrap items-center justify-between gap-3">
         <Text variant="large-medium" tone="primary">
-          {expert.name}&apos;s Skills
+          {t("team7.skills.title", { name: expert.name })}
         </Text>
         <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto">
           <Button
@@ -69,12 +71,12 @@ export function ExpertSkillsSection({
             leadingIcon={PlusSignIcon}
             onClick={openAdd}
           >
-            Add skill
+            {t("team7.skills.add")}
           </Button>
           <ToolbarSearch
             textSize="body-md"
             id="expert-skills-search"
-            label="Search skills"
+            label={t("team7.skills.search")}
             value={query}
             onChange={setQuery}
           />
@@ -88,16 +90,20 @@ export function ExpertSkillsSection({
           <Text variant="small" tone="secondary">
             {learning.recentChange
               ? `${learning.recentChange.summary} · ${learning.recentChange.origin_label ?? ""} · ${learning.recentChange.state_label}`
-              : "No overnight changes yet. Verified procedures from chats are reviewed nightly."}
+              : t("team7.skills.noChanges")}
           </Text>
           <label className="flex shrink-0 items-center gap-2 whitespace-nowrap">
             <Text variant="small" tone="primary">
-              {learning.isLearningPaused ? "Learning paused" : "Learning on"}
+              {learning.isLearningPaused
+                ? t("team7.skills.learningPaused")
+                : t("team7.skills.learningOn")}
             </Text>
             <Switch
               checked={!learning.isLearningPaused}
               disabled={learning.isTogglingLearning}
-              aria-label={`Nightly learning for ${expert.name}`}
+              aria-label={t("team7.skills.nightlyAria", {
+                name: expert.name,
+              })}
               onCheckedChange={(checked) =>
                 learning.setLearningPaused(!checked)
               }
@@ -129,8 +135,8 @@ export function ExpertSkillsSection({
               className="text-violet-500"
             />,
           ]}
-          title="No skills yet"
-          description={`Add skills from your library so ${expert.name} knows how you like things done.`}
+          title={t("team7.skills.noneTitle")}
+          description={t("team7.skills.emptyDesc", { name: expert.name })}
         >
           <Button
             variant="primary"
@@ -139,17 +145,17 @@ export function ExpertSkillsSection({
             leadingIcon={PlusSignIcon}
             onClick={openAdd}
           >
-            Add skill
+            {t("team7.skills.add")}
           </Button>
         </SectionEmptyState>
       ) : visible.length === 0 ? (
         <Text variant="body-md" tone="muted" className="pt-4">
-          No skills match.
+          {t("team7.skills.noMatch")}
         </Text>
       ) : (
         <ul
           className="grid grid-cols-1 gap-3 pt-4 md:grid-cols-2"
-          aria-label="Expert skills"
+          aria-label={t("team7.skills.ariaList")}
         >
           {visible.map((entry) => (
             <li key={entry.name}>

@@ -1,4 +1,5 @@
 import { Text } from "@/components/atoms/Text/Text";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   label: string;
@@ -8,6 +9,7 @@ interface Props {
 /** One labelled paragraph on a Basics tab, shared by the expert and
  *  Otto pages so their headings stay the same size. */
 export function ProfileEntry({ label, value }: Props) {
+  const t = useT();
   return (
     <div>
       <Text variant="large-medium" as="dt" tone="primary">
@@ -19,7 +21,7 @@ export function ProfileEntry({ label, value }: Props) {
         tone="secondary"
         className="mt-1 whitespace-pre-line"
       >
-        {value || "Not set yet."}
+        {value || t("team7.profile.notSet")}
       </Text>
     </div>
   );

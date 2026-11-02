@@ -6,6 +6,7 @@ import { Text } from "@/components/atoms/Text/Text";
 import { cn } from "@/lib/utils";
 import { IntegrationLogo } from "@/components/molecules/IntegrationLogo/IntegrationLogo";
 import { toDisplayName } from "@/components/renderers/InputRenderer/custom/CredentialField/helpers";
+import { useT } from "@/lib/i18n";
 
 const MAX_VISIBLE = 3;
 
@@ -39,6 +40,7 @@ interface Props {
 }
 
 export function WorkflowCredentialStack({ providers }: Props) {
+  const t = useT();
   if (providers.length === 0) return null;
   const visible = providers.slice(0, MAX_VISIBLE);
   const hidden = providers.length - visible.length;
@@ -46,7 +48,7 @@ export function WorkflowCredentialStack({ providers }: Props) {
     <div
       className="flex items-center"
       role="list"
-      aria-label="Credentials used"
+      aria-label={t("team7.workflows.credentialsAria")}
       title={providers.map(toDisplayName).join(", ")}
     >
       {visible.map((provider, index) => (
@@ -75,7 +77,9 @@ export function WorkflowCredentialStack({ providers }: Props) {
           role="listitem"
           // TODO(tokens): no fitting role for ring-white #FEFEFE; #FEFEFE is surface (a surface fill), action-foreground (a text colour)
           className="-ml-2 flex size-7 items-center justify-center rounded-full border border-border-base bg-surface-hover ring-2 ring-white"
-          aria-label={`${hidden} more`}
+          aria-label={t("team7.workflows.credentialsMore", {
+            count: hidden,
+          })}
         >
           +{hidden}
         </Text>

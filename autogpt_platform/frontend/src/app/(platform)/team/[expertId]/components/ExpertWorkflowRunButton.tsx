@@ -4,6 +4,7 @@ import { LibraryAgent } from "@/app/api/__generated__/models/libraryAgent";
 import { RunAgentModal } from "@/app/(platform)/library/agents/[id]/components/NewAgentLibraryView/components/modals/RunAgentModal/RunAgentModal";
 import { Button } from "@/components/atoms/Button/Button";
 import { PlayIcon } from "@hugeicons/core-free-icons";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   agent: LibraryAgent;
@@ -20,10 +21,15 @@ export function ExpertWorkflowRunButton({
   onTriggerSetup,
   variant = "secondary",
 }: Props) {
+  const t = useT();
   return (
     <RunAgentModal
       agent={agent}
-      title={isTriggerWorkflow ? "Set up trigger" : "Run workflow"}
+      title={
+        isTriggerWorkflow
+          ? t("team7.workflows.runButton.setUpTrigger")
+          : t("team7.workflows.runButton.runWorkflow")
+      }
       dialogVariant="compact"
       onRunCreated={onRunCreated}
       onTriggerSetup={onTriggerSetup}
@@ -35,7 +41,9 @@ export function ExpertWorkflowRunButton({
           textSize="body-md"
           leadingIcon={PlayIcon}
         >
-          {isTriggerWorkflow ? "Set up trigger" : "Run"}
+          {isTriggerWorkflow
+            ? t("team7.workflows.runButton.setUpTrigger")
+            : t("team7.workflows.runButton.run")}
         </Button>
       }
     />

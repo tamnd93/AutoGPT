@@ -8,6 +8,7 @@ import {
 import { useGetV1ListExecutionSchedulesForAUser } from "@/app/api/__generated__/endpoints/schedules/schedules";
 import { okData } from "@/app/api/helpers";
 import { useToast } from "@/components/molecules/Toast/use-toast";
+import { useT } from "@/lib/i18n";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { getExpertSchedules } from "../helpers";
@@ -17,6 +18,7 @@ interface Args {
 }
 
 export function useExpertDetailPage({ expertId }: Args) {
+  const t = useT();
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const [isPickerOpen, setIsPickerOpen] = useState(false);
@@ -54,7 +56,7 @@ export function useExpertDetailPage({ expertId }: Args) {
         },
         onError: () => {
           toast({
-            title: "Could not resume schedules",
+            title: t("team7.detail.resumeFailed"),
             variant: "destructive",
           });
         },

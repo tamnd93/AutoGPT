@@ -3,6 +3,7 @@
 import { ExpertWorkflowRef } from "@/app/api/__generated__/models/expertWorkflowRef";
 import { Button } from "@/components/atoms/Button/Button";
 import { PencilEdit02Icon, SparklesIcon } from "@hugeicons/core-free-icons";
+import { useT } from "@/lib/i18n";
 import { ExpertWorkflowCardMenu } from "./ExpertWorkflowCardMenu";
 
 interface Props {
@@ -31,6 +32,7 @@ export function ExpertWorkflowActions({
   variant = "floating",
   size = "icon-xs",
 }: Props) {
+  const t = useT();
   return (
     <>
       {builderHref ? (
@@ -39,7 +41,7 @@ export function ExpertWorkflowActions({
           href={builderHref}
           variant={variant}
           size={size}
-          aria-label="Edit workflow"
+          aria-label={t("team7.workflows.actions.edit")}
           leadingIcon={PencilEdit02Icon}
         />
       ) : null}
@@ -48,7 +50,7 @@ export function ExpertWorkflowActions({
           type="button"
           variant={variant}
           size={size}
-          aria-label="Ask about this workflow"
+          aria-label={t("team7.workflows.actions.ask")}
           leadingIcon={SparklesIcon}
           onClick={() => onAsk(chatPrompt)}
         />
@@ -58,7 +60,7 @@ export function ExpertWorkflowActions({
           href={chatHref}
           variant={variant}
           size={size}
-          aria-label="Ask about this workflow"
+          aria-label={t("team7.workflows.actions.ask")}
           leadingIcon={SparklesIcon}
         />
       )}

@@ -10,6 +10,7 @@ import {
   LinkSquare02Icon,
   WorkHistoryIcon,
 } from "@hugeicons/core-free-icons";
+import { useT } from "@/lib/i18n";
 import { ExpertSkillEntry } from "./useExpertSkills";
 
 const VISIBLE_TRIGGERS = 3;
@@ -37,6 +38,7 @@ export function ExpertSkillListItem({
   learning,
   onRemove,
 }: Props) {
+  const t = useT();
   const details = entry.skill ?? entry.library;
   const triggers = details?.triggers ?? [];
   const shown = triggers.slice(0, VISIBLE_TRIGGERS);
@@ -73,7 +75,7 @@ export function ExpertSkillListItem({
             variant="small"
             className="line-clamp-2 !text-foreground-tertiary"
           >
-            {details?.description ?? "Skill details unavailable."}
+            {details?.description ?? t("team7.skills.detailsUnavailable")}
           </Text>
           {learning ? (
             <Text
@@ -121,7 +123,9 @@ export function ExpertSkillListItem({
             size="icon-sm"
             leadingIcon={WorkHistoryIcon}
             onClick={learning.onDetails}
-            aria-label={`Learning details for ${entry.name}`}
+            aria-label={t("team7.skills.learningDetailsAria", {
+              name: entry.name,
+            })}
             className="text-foreground-tertiary"
           />
         ) : null}
@@ -131,7 +135,7 @@ export function ExpertSkillListItem({
             href="/library/skills"
             variant="ghost"
             size="icon-sm"
-            aria-label="Open in library"
+            aria-label={t("team7.skills.openInLibrary")}
             leadingIcon={LinkSquare02Icon}
             className="text-foreground-tertiary"
           />
@@ -143,7 +147,7 @@ export function ExpertSkillListItem({
             leadingIcon={Delete02Icon}
             disabled={isSaving}
             onClick={() => onRemove(entry.name)}
-            aria-label={`Remove ${entry.name}`}
+            aria-label={t("team7.skills.removeAria", { name: entry.name })}
             // TODO(tokens): no fitting role for hover:text-red-600 #D93636; #D93636 is error-hover (a hover fill)
             className="text-foreground-tertiary hover:text-red-600"
           />

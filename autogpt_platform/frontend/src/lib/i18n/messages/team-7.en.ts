@@ -1,0 +1,126 @@
+export const Team7En = {
+  "team7.tabs.overview": "Overview",
+  "team7.tabs.soul": "Soul",
+  "team7.tabs.schedules": "Schedules",
+  "team7.tabs.workflows": "Workflows",
+  "team7.tabs.files": "Files",
+  "team7.tabs.computer": "Computer",
+  "team7.tabs.integrations": "Integrations",
+  "team7.tabs.skills": "Skills",
+  "team7.tabs.settings": "Settings",
+
+  "team7.page.loadFailed": "We could not load this expert.",
+  "team7.page.errorContext": "this expert",
+  "team7.page.schedulesPaused": "Schedules paused",
+  "team7.page.resumeSchedules": "Resume schedules",
+  "team7.page.schedulesTitle": "{name}'s Schedules",
+
+  "team7.settings.fireAria": "Fire {name}",
+  "team7.settings.fireTitle": "Fire {name}",
+  "team7.settings.fireBody":
+    "{name} leaves your team and stops working for you. Here is what that means for what you have set up.",
+  "team7.settings.checking": "Checking schedules and triggers…",
+  "team7.settings.checkFailed":
+    "Couldn't check which schedules and triggers would pause",
+  "team7.settings.automationOne": "{count} automation will pause",
+  "team7.settings.automationMany": "{count} automations will pause",
+  "team7.settings.noPauses": "No schedules or triggers to pause",
+  "team7.settings.pausesTag": "Pauses",
+  "team7.settings.keptTag": "Kept",
+  "team7.settings.workflowOne": "{count} workflow stays in your library",
+  "team7.settings.workflowMany": "{count} workflows stay in your library",
+  "team7.settings.workflowsDefault":
+    "Installed workflows stay in your library",
+  "team7.settings.fileOne": "{count} file from its chats stays in your workspace",
+  "team7.settings.fileMany":
+    "{count} files from its chats stay in your workspace",
+  "team7.settings.fileManyPlus":
+    "{count}+ files from its chats stay in your workspace",
+  "team7.settings.filesDefault": "Files from its chats stay in your workspace",
+  "team7.settings.chatHistory": "Chat history stays, read-only",
+  "team7.settings.hireAgain":
+    "You can hire {name} again anytime from the marketplace",
+  "team7.settings.retry": "Retry",
+  "team7.settings.morePauses": "+{count} more",
+
+  "team7.soul.identity": "Identity",
+  "team7.soul.voice": "Voice",
+  "team7.soul.boundaries": "Boundaries",
+  "team7.profile.notSet": "Not set yet.",
+
+  "team7.skills.search": "Search skills",
+  "team7.skills.noChanges":
+    "No overnight changes yet. Verified procedures from chats are reviewed nightly.",
+  "team7.skills.learningPaused": "Learning paused",
+  "team7.skills.learningOn": "Learning on",
+  "team7.skills.nightlyAria": "Nightly learning for {name}",
+  "team7.skills.noneTitle": "No skills yet",
+  "team7.skills.ariaList": "Expert skills",
+  "team7.skills.detailsUnavailable": "Skill details unavailable.",
+  "team7.skills.learningDetailsAria": "Learning details for {name}",
+  "team7.skills.openInLibrary": "Open in library",
+  "team7.skills.removeAria": "Remove {name}",
+  "team7.skills.updateFailed": "Couldn't update skills",
+  "team7.skills.added": "Added {name}",
+  "team7.skills.addFailed": "Couldn't add that skill",
+
+  "team7.schedules.search": "Search schedules",
+  "team7.schedules.filter": "Filter schedules",
+  "team7.schedules.noneTitle": "No schedules yet",
+  "team7.schedules.ariaList": "Expert schedules",
+
+  "team7.workflows.listView": "List view",
+  "team7.workflows.gridView": "Grid view",
+  "team7.workflows.search": "Search workflows",
+  "team7.workflows.filter": "Filter workflows",
+  "team7.workflows.noneTitle": "No workflows yet",
+  "team7.workflows.status.needsSetup": "Needs setup",
+  "team7.workflows.status.scheduled": "Scheduled",
+  "team7.workflows.status.triggered": "Triggered",
+  "team7.workflows.status.manual": "Manual",
+  "team7.workflows.unnamed": "Unnamed workflow",
+  "team7.workflows.actions.edit": "Edit workflow",
+  "team7.workflows.actions.ask": "Ask about this workflow",
+  "team7.workflows.cardMenu.more": "More actions",
+  "team7.workflows.cardMenu.setUp": "Set up",
+  "team7.workflows.cardMenu.openInLibrary": "Open in library",
+  "team7.workflows.cardMenu.removed": "Workflow removed",
+  "team7.workflows.cardMenu.removeFailed": "Couldn't remove workflow",
+  "team7.workflows.runButton.runWorkflow": "Run workflow",
+  "team7.workflows.runButton.setUpTrigger": "Set up trigger",
+  "team7.workflows.runButton.run": "Run",
+  "team7.workflows.credentialsAria": "Credentials used",
+  "team7.workflows.credentialsMore": "{count} more",
+
+  "team7.learning.updateFailed": "Could not update learning",
+  "team7.detail.resumeFailed": "Could not resume schedules",
+  "team7.schedule.created": "Schedule created",
+  "team7.skills.title": "{name}'s Skills",
+  "team7.skills.add": "Add skill",
+  "team7.skills.emptyDesc":
+    "Add skills from your library so {name} knows how you like things done.",
+  "team7.skills.noMatch": "No skills match.",
+  "team7.skills.removed": "Removed {name}",
+
+  "team7.schedules.create": "Create schedule",
+  "team7.schedules.noMatch": "No schedules match.",
+  "team7.schedules.emptyDesc":
+    "Put a workflow on a schedule and {name} runs it for you, on time, every time.",
+
+  "team7.workflows.title": "{name}'s Workflows",
+  "team7.workflows.install": "Install workflow",
+  "team7.workflows.noMatch": "No workflows match.",
+  "team7.workflows.emptyDesc":
+    "Install a workflow to give {name} something to run.",
+  "team7.workflows.cardMenu.removeFromExpert": "Remove from expert",
+  "team7.workflows.cardMenu.removeTitle": "Remove {name}?",
+  "team7.workflows.cardMenu.removeBody":
+    "This expert will stop running it and its schedule will be removed. The workflow stays in your library.",
+  "team7.workflows.cardMenu.keep": "Keep",
+  "team7.workflows.cardMenu.remove": "Remove",
+
+  "team7.learning.pausedTitle": "Learning paused for {name}",
+  "team7.learning.resumedTitle": "Learning resumed for {name}",
+  "team7.learning.pausedBody":
+    "Existing skills stay in use; no new automatic changes.",
+} as const;

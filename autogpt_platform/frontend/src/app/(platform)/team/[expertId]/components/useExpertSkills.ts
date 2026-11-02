@@ -17,6 +17,7 @@ import { MarketplaceSkill } from "@/app/api/__generated__/models/marketplaceSkil
 import { okData } from "@/app/api/helpers";
 import { useToast } from "@/components/molecules/Toast/use-toast";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
+import { useT } from "@/lib/i18n";
 import { ApiError } from "@/lib/autogpt-server-api/helpers";
 import { invalidateExpertRosterQueries } from "@/services/experts/invalidate-experts";
 import { useQueryClient } from "@tanstack/react-query";
@@ -29,6 +30,7 @@ export interface ExpertSkillEntry {
 }
 
 export function useExpertSkills(expert: Expert) {
+  const t = useT();
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [query, setQuery] = useState("");
@@ -96,7 +98,7 @@ export function useExpertSkills(expert: Expert) {
       return true;
     } catch (error) {
       toast({
-        title: "Couldn't update skills",
+        title: t("team7.skills.updateFailed"),
         description: error instanceof ApiError ? error.message : undefined,
         variant: "destructive",
       });
@@ -105,7 +107,10 @@ export function useExpertSkills(expert: Expert) {
   }
 
   async function addSkill(name: string) {
-    const saved = await save({ skills: [name] }, `Added ${name}`);
+    const saved = await save(
+      { skills: [name] },
+      t("team7.skills.added", { name }),
+    );
     if (saved) setIsAddOpen(false);
   }
 
@@ -119,11 +124,14 @@ export function useExpertSkills(expert: Expert) {
       });
       if (response.status !== 200) throw new Error("install failed");
       await refreshExpert();
-      toast({ title: `Added ${skill.name}`, variant: "success" });
+      toast({
+        title: t("team7.skills.added", { name: skill.name }),
+        variant: "success",
+      });
       setIsAddOpen(false);
     } catch (error) {
       toast({
-        title: "Couldn't add that skill",
+        title: t("team7.skills.addFailed"),
         description: error instanceof ApiError ? error.message : undefined,
         variant: "destructive",
       });
@@ -143,7 +151,7 @@ export function useExpertSkills(expert: Expert) {
   }
 
   function removeSkill(name: string) {
-    return save({ remove: [name] }, `Removed ${name}`);
+    return save({ remove: [name] }, t("team7.skills.removed", { name }));
   }
 
   return {

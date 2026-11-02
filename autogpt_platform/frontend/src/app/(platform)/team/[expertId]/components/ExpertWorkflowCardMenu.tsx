@@ -27,6 +27,7 @@ import {
 import { useQueryClient } from "@tanstack/react-query";
 import NextLink from "next/link";
 import { useState } from "react";
+import { useT } from "@/lib/i18n";
 import { workflowNeedsSetup } from "../../helpers";
 
 interface Props {
@@ -44,6 +45,7 @@ export function ExpertWorkflowCardMenu({
   variant = "floating",
   size = "icon-xs",
 }: Props) {
+  const t = useT();
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [isRemoveOpen, setIsRemoveOpen] = useState(false);
@@ -65,10 +67,13 @@ export function ExpertWorkflowCardMenu({
         }),
         invalidateExpertRosterQueries(queryClient),
       ]);
-      toast({ title: "Workflow removed", variant: "success" });
+      toast({ title: t("team7.workflows.cardMenu.removed"), variant: "success" });
       setIsRemoveOpen(false);
     } catch {
-      toast({ title: "Couldn't remove workflow", variant: "destructive" });
+      toast({
+        title: t("team7.workflows.cardMenu.removeFailed"),
+        variant: "destructive",
+      });
     }
   }
 
@@ -80,7 +85,7 @@ export function ExpertWorkflowCardMenu({
             type="button"
             variant={variant}
             size={size}
-            aria-label="More actions"
+            aria-label={t("team7.workflows.cardMenu.more")}
             leadingIcon={MoreHorizontalIcon}
           />
         </DropdownMenuTrigger>
@@ -94,7 +99,9 @@ export function ExpertWorkflowCardMenu({
                   }
                   size={16}
                 />
-                {workflowNeedsSetup(workflow) ? "Set up" : "Open in library"}
+                {workflowNeedsSetup(workflow)
+                  ? t("team7.workflows.cardMenu.setUp")
+                  : t("team7.workflows.cardMenu.openInLibrary")}
               </NextLink>
             </DropdownMenuItem>
           ) : null}
@@ -106,7 +113,7 @@ export function ExpertWorkflowCardMenu({
               onSelect={() => setIsRemoveOpen(true)}
             >
               <Icon icon={Delete02Icon} size={16} />
-              Remove from expert
+              {t("team7.workflows.cardMenu.removeFromExpert")}
             </DropdownMenuItem>
           ) : null}
         </DropdownMenuContent>
@@ -122,13 +129,12 @@ export function ExpertWorkflowCardMenu({
           },
         }}
         className="max-h-[60vh] max-w-md"
-        title={`Remove ${name}?`}
+        title={t("team7.workflows.cardMenu.removeTitle", { name })}
       >
         <Dialog.Content>
           <div className="flex flex-col gap-4">
             <Text variant="body" tone="secondary">
-              This expert will stop running it and its schedule will be removed.
-              The workflow stays in your library.
+              {t("team7.workflows.cardMenu.removeBody")}
             </Text>
             <div className="flex justify-end gap-2">
               <Button
@@ -138,7 +144,7 @@ export function ExpertWorkflowCardMenu({
                 disabled={isRemoving}
                 onClick={() => setIsRemoveOpen(false)}
               >
-                Keep
+                {t("team7.workflows.cardMenu.keep")}
               </Button>
               <Button
                 type="button"
@@ -147,7 +153,7 @@ export function ExpertWorkflowCardMenu({
                 loading={isRemoving}
                 onClick={handleRemove}
               >
-                Remove
+                {t("team7.workflows.cardMenu.remove")}
               </Button>
             </div>
           </div>

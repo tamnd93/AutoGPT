@@ -16,6 +16,7 @@ import { Icon } from "@/components/atoms/Icon/Icon";
 import { Text } from "@/components/atoms/Text/Text";
 import { cn } from "@/lib/utils";
 import { useExpertSettingsSection } from "./useExpertSettingsSection";
+import { useT } from "@/lib/i18n";
 
 const VISIBLE_PAUSE_NAMES = 4;
 
@@ -24,13 +25,10 @@ interface Props {
   onFire: () => void;
 }
 
-function plural(count: number, word: string) {
-  return `${count} ${word}${count === 1 ? "" : "s"}`;
-}
-
 /** Firing, spelled out before anyone reaches for the button: what pauses,
  *  what stays, and that the expert can come back. */
 export function ExpertSettingsSection({ expert, onFire }: Props) {
+  const t = useT();
   const {
     pauseItems,
     isPreviewLoading,
@@ -45,7 +43,7 @@ export function ExpertSettingsSection({ expert, onFire }: Props) {
 
   return (
     <section
-      aria-label={`Fire ${expert.name}`}
+      aria-label={t("team7.settings.fireAria", { name: expert.name })}
       className="overflow-hidden rounded-2xl bg-surface smooth-shadow-ring-sm"
     >
       <div
@@ -60,11 +58,10 @@ export function ExpertSettingsSection({ expert, onFire }: Props) {
         </span>
         <div className="min-w-0">
           <Text variant="large-medium" className="!text-foreground-strong">
-            Fire {expert.name}
+            {t("team7.settings.fireTitle", { name: expert.name })}
           </Text>
           <Text variant="body-md" className="mt-0.5 !text-foreground-secondary">
-            {expert.name} leaves your team and stops working for you. Here is
-            what that means for what you have set up.
+            {t("team7.settings.fireBody", { name: expert.name })}
           </Text>
         </div>
       </div>
@@ -73,15 +70,20 @@ export function ExpertSettingsSection({ expert, onFire }: Props) {
         <Consequence
           icon={Calendar03Icon}
           tone={pauseItems.length > 0 || isPreviewError ? "warn" : "neutral"}
-          tag={pauseItems.length > 0 ? "Pauses" : undefined}
+          tag={pauseItems.length > 0 ? t("team7.settings.pausesTag") : undefined}
           title={
             isPreviewLoading
-              ? "Checking schedules and triggers…"
+              ? t("team7.settings.checking")
               : isPreviewError
-                ? "Couldn't check which schedules and triggers would pause"
+                ? t("team7.settings.checkFailed")
                 : pauseItems.length > 0
-                  ? `${plural(pauseItems.length, "automation")} will pause`
-                  : "No schedules or triggers to pause"
+                  ? t(
+                      pauseItems.length === 1
+                        ? "team7.settings.automationOne"
+                        : "team7.settings.automationMany",
+                      { count: pauseItems.length },
+                    )
+                  : t("team7.settings.noPauses")
           }
         >
           {isPreviewError ? (
@@ -91,7 +93,7 @@ export function ExpertSettingsSection({ expert, onFire }: Props) {
               className="mt-1 inline-flex text-foreground-body underline underline-offset-2 hover:text-foreground"
             >
               <Text variant="body-md-medium" as="span" tone="inherit">
-                Retry
+                {t("team7.settings.retry")}
               </Text>
             </button>
           ) : null}
@@ -115,7 +117,9 @@ export function ExpertSettingsSection({ expert, onFire }: Props) {
               {hiddenPauseCount > 0 ? (
                 <span className="flex px-1 py-0.5">
                   <Text variant="small-tight" as="span" tone="muted">
-                    +{hiddenPauseCount} more
+                    {t("team7.settings.morePauses", {
+                      count: hiddenPauseCount,
+                    })}
                   </Text>
                 </span>
               ) : null}
@@ -124,30 +128,42 @@ export function ExpertSettingsSection({ expert, onFire }: Props) {
         </Consequence>
         <Consequence
           icon={WorkflowSquare01Icon}
-          tag="Kept"
+          tag={t("team7.settings.keptTag")}
           title={
             workflowCount > 0
-              ? `${plural(workflowCount, "workflow")} stay in your library`
-              : "Installed workflows stay in your library"
+              ? t(
+                  workflowCount === 1
+                    ? "team7.settings.workflowOne"
+                    : "team7.settings.workflowMany",
+                  { count: workflowCount },
+                )
+              : t("team7.settings.workflowsDefault")
           }
         />
         <Consequence
           icon={Folder01Icon}
-          tag="Kept"
+          tag={t("team7.settings.keptTag")}
           title={
             fileCount > 0
-              ? `${hasMoreFiles ? `${fileCount}+ files` : plural(fileCount, "file")} from its chats ${fileCount === 1 && !hasMoreFiles ? "stays" : "stay"} in your workspace`
-              : "Files from its chats stay in your workspace"
+              ? t(
+                  hasMoreFiles
+                    ? "team7.settings.fileManyPlus"
+                    : fileCount === 1
+                      ? "team7.settings.fileOne"
+                      : "team7.settings.fileMany",
+                  { count: fileCount },
+                )
+              : t("team7.settings.filesDefault")
           }
         />
         <Consequence
           icon={BubbleChatIcon}
-          tag="Kept"
-          title="Chat history stays, read-only"
+          tag={t("team7.settings.keptTag")}
+          title={t("team7.settings.chatHistory")}
         />
         <Consequence
           icon={Store01Icon}
-          title={`You can hire ${expert.name} again anytime from the marketplace`}
+          title={t("team7.settings.hireAgain", { name: expert.name })}
         />
       </ul>
 
@@ -159,7 +175,7 @@ export function ExpertSettingsSection({ expert, onFire }: Props) {
           onClick={onFire}
           data-testid="expert-fire-button"
         >
-          Fire {expert.name}
+          {t("team7.settings.fireTitle", { name: expert.name })}
         </Button>
       </div>
     </section>

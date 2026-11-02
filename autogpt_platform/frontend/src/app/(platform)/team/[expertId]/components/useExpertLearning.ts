@@ -9,6 +9,7 @@ import { LearningHistoryItem } from "@/app/api/__generated__/models/learningHist
 import { okData } from "@/app/api/helpers";
 import { useToast } from "@/components/molecules/Toast/use-toast";
 import { Flag, useGetFlag } from "@/services/feature-flags/use-get-flag";
+import { useT } from "@/lib/i18n";
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 
@@ -24,6 +25,7 @@ export function useExpertLearning(
   initialSkill: string | null,
   initialVersionId: string | null,
 ) {
+  const t = useT();
   const enabled = Boolean(useGetFlag(Flag.DREAM_SKILL_LEARNING_ENABLED));
   const queryClient = useQueryClient();
   const { toast } = useToast();
@@ -63,15 +65,18 @@ export function useExpertLearning(
           });
           toast({
             title: variables.data.learning_paused
-              ? `Learning paused for ${expert.name}`
-              : `Learning resumed for ${expert.name}`,
+              ? t("team7.learning.pausedTitle", { name: expert.name })
+              : t("team7.learning.resumedTitle", { name: expert.name }),
             description: variables.data.learning_paused
-              ? "Existing skills stay in use; no new automatic changes."
+              ? t("team7.learning.pausedBody")
               : undefined,
           });
         },
         onError: () =>
-          toast({ title: "Could not update learning", variant: "destructive" }),
+          toast({
+            title: t("team7.learning.updateFailed"),
+            variant: "destructive",
+          }),
       },
     });
 

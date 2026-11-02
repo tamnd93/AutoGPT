@@ -7,34 +7,35 @@ import {
   FlashIcon,
   PlayIcon,
 } from "@hugeicons/core-free-icons";
+import { useT } from "@/lib/i18n";
 import { useRouter } from "next/navigation";
 import { workflowNeedsSetup } from "../../helpers";
 import { getWorkflowCredentialProviders } from "./WorkflowCredentialStack";
 
 const STATUS = {
   "needs-setup": {
-    label: "Needs setup",
+    labelKey: "team7.workflows.status.needsSetup",
     className: "bg-warning-surface text-warning-foreground",
     icon: Alert01Icon,
     // TODO(tokens): no exact role: text-amber-600 #D97706
     iconClassName: "bg-warning-surface text-amber-600",
   },
   scheduled: {
-    label: "Scheduled",
+    labelKey: "team7.workflows.status.scheduled",
     className: "bg-surface text-foreground-body",
     icon: Calendar03Icon,
     // TODO(tokens): no exact role: text-violet-600 #7C3AED
     iconClassName: "bg-accent-surface text-violet-600",
   },
   trigger: {
-    label: "Triggered",
+    labelKey: "team7.workflows.status.triggered",
     className: "bg-surface text-foreground-body",
     icon: FlashIcon,
     // TODO(tokens): no exact role: bg-sky-50 #F0F9FF, text-sky-600 #0284C7
     iconClassName: "bg-sky-50 text-sky-600",
   },
   manual: {
-    label: "Manual",
+    labelKey: "team7.workflows.status.manual",
     className: "bg-surface text-foreground-tertiary",
     icon: PlayIcon,
     iconClassName: "bg-surface-hover text-foreground-tertiary",
@@ -52,8 +53,9 @@ export function useExpertWorkflowCard({
   libraryAgent,
   expertId,
 }: Args) {
+  const t = useT();
   const router = useRouter();
-  const name = workflow.name ?? "Unnamed workflow";
+  const name = workflow.name ?? t("team7.workflows.unnamed");
   const needsSetup = workflowNeedsSetup(workflow);
   const libraryHref = workflow.library_agent_id
     ? `/library/agents/${workflow.library_agent_id}`
@@ -84,7 +86,10 @@ export function useExpertWorkflowCard({
     needsSetup,
     runCount: libraryAgent?.execution_count,
     isTriggerWorkflow,
-    status: STATUS[statusKind],
+    status: {
+      ...STATUS[statusKind],
+      label: t(STATUS[statusKind].labelKey),
+    },
     credentialProviders: getWorkflowCredentialProviders(
       libraryAgent,
       workflow.chain ?? [],
