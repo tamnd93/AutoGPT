@@ -1,4 +1,7 @@
+"use client";
+
 import React from "react";
+import { useLocale, useT } from "@/lib/i18n";
 import { handleReportError } from "../helpers";
 import { ErrorCardProps } from "../ErrorCard";
 import { Button } from "@/components/atoms/Button/Button";
@@ -24,6 +27,9 @@ export function ActionButtons({
   context,
   textSize = "body",
 }: ActionButtonsProps) {
+  const t = useT();
+  const locale = useLocale();
+
   return (
     <div
       data-slot="error-card-actions"
@@ -42,19 +48,21 @@ export function ActionButtons({
             icon={Refresh01Icon}
             size={16}
           />
-          Try Again
+          {t("shared3.errorCard.retry")}
         </Button>
       )}
 
       <Button
-        onClick={() => handleReportError(responseError, httpError, context)}
+        onClick={() =>
+          handleReportError(responseError, httpError, context, locale)
+        }
         variant="ghost"
         size="small"
         textSize={textSize}
         data-slot="error-card-report"
       >
         <Icon data-slot="error-card-report-icon" icon={Bug01Icon} size={16} />
-        Report Error
+        {t("shared3.errorCard.report")}
       </Button>
 
       <Button
@@ -68,7 +76,7 @@ export function ActionButtons({
         data-slot="error-card-help"
       >
         <Icon data-slot="error-card-help-icon" icon={DiscordIcon} size={16} />
-        Get Help
+        {t("shared3.errorCard.getHelp")}
       </Button>
     </div>
   );

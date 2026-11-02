@@ -1,5 +1,8 @@
+"use client";
+
 import React from "react";
 import { Text } from "@/components/atoms/Text/Text";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   errorMessage: string;
@@ -14,6 +17,8 @@ export function ErrorMessage({
   hint,
   textSize = "body",
 }: Props) {
+  const t = useT();
+
   return (
     <div data-slot="error-card-message" className="space-y-2">
       <Text
@@ -21,7 +26,9 @@ export function ErrorMessage({
         data-slot="error-card-context"
         className="text-foreground-body"
       >
-        We had the following error when retrieving {context ?? "your data"}:
+        {t("shared3.errorCard.retrieveFrame", {
+          context: context ?? t("shared3.errorCard.dataFallback"),
+        })}
       </Text>
       <div
         data-slot="error-card-detail"

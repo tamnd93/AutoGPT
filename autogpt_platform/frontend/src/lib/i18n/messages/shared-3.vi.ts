@@ -39,7 +39,8 @@ export const Shared3Vi: Partial<Record<keyof typeof Shared3En, string>> = {
 
   "shared3.searchInput.placeholder": "Tìm kiếm",
   "shared3.searchInput.searching": "Đang tìm",
-  "shared3.searchInput.clear": "Xoá tìm kiếm",  "shared3.sheet.close": "Đóng",
+  "shared3.searchInput.clear": "Xoá tìm kiếm",
+  "shared3.sheet.close": "Đóng",
   "shared3.scrollArea.scrollToTop": "Cuộn lên đầu",
   "shared3.multiSelect.removeOption": "Xoá tuỳ chọn {item}",
   "shared3.multiSelect.removeRole": "nút xoá tuỳ chọn",
@@ -57,5 +58,11 @@ export const Shared3Vi: Partial<Record<keyof typeof Shared3En, string>> = {
   "shared3.avatarStatus.failedHint": "lượt chạy gần nhất bị lỗi",
   "shared3.avatarStatus.sleeping": "Tạm dừng",
   "shared3.avatarStatus.sleepingHint": "lịch chạy đang tắt",
+
+  "shared3.errorCard.retry": "Thử lại",
+  "shared3.errorCard.report": "Báo lỗi",
+  "shared3.errorCard.getHelp": "Nhận trợ giúp",
+  "shared3.errorCard.retrieveFrame": "Chúng tôi gặp lỗi sau khi lấy {context}:",
+  "shared3.errorCard.dataFallback": "dữ liệu của bạn",
 
 };

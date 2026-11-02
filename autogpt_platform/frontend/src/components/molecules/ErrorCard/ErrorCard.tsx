@@ -1,4 +1,7 @@
+"use client";
+
 import React from "react";
+import { useLocale, useT } from "@/lib/i18n";
 import { getErrorMessage, getHttpErrorMessage } from "./helpers";
 import { CardWrapper } from "./components/CardWrapper";
 import { ErrorHeader } from "./components/ErrorHeader";
@@ -30,12 +33,15 @@ export function ErrorCard({
   isOurProblem = true,
   responseError,
   httpError,
-  context = "data",
+  context,
   hint,
   onRetry,
   className = "",
   textSize = "body",
 }: ErrorCardProps) {
+  const locale = useLocale();
+  const t = useT();
+
   if (isSuccess && !responseError && !httpError) {
     return null;
   }
@@ -49,9 +55,11 @@ export function ErrorCard({
       (responseError.message && responseError.message.length > 0))
   );
 
+  const resolvedContext = context ?? t("shared3.errorCard.dataFallback");
+
   const errorMessage = hasResponseDetail
-    ? getErrorMessage(responseError)
-    : getHttpErrorMessage(httpError);
+    ? getErrorMessage(responseError, locale)
+    : getHttpErrorMessage(httpError, locale);
 
   return (
     <CardWrapper className={className}>
@@ -59,7 +67,7 @@ export function ErrorCard({
         <ErrorHeader />
         <ErrorMessage
           errorMessage={errorMessage}
-          context={context}
+          context={resolvedContext}
           hint={hint}
           textSize={textSize}
         />
@@ -68,7 +76,7 @@ export function ErrorCard({
             onRetry={onRetry}
             responseError={responseError}
             httpError={httpError}
-            context={context}
+            context={resolvedContext}
             textSize={textSize}
           />
         )}

@@ -5,7 +5,7 @@ import type { MessageKey } from "@/lib/i18n/messages/en";
 import { getMessage } from "@/lib/i18n/translate";
 import {
   SCOPE_API_VERSION,
-  SCOPE_DESCRIPTIONS,
+  SCOPE_DESCRIPTION_KEYS,
   SCOPE_GROUPS,
 } from "@/lib/api-key-scopes";
 
@@ -46,13 +46,18 @@ export function humanizePermission(permission: APIKeyPermission): string {
     .join(" ");
 }
 
-export const PERMISSION_GROUPS = SCOPE_GROUPS.map((group) => ({
-  ...group,
-  options: Object.values(APIKeyPermission)
-    .filter((permission) => SCOPE_API_VERSION[permission] === group.version)
-    .map((permission) => ({
-      value: permission,
-      label: humanizePermission(permission),
-      description: SCOPE_DESCRIPTIONS[permission],
-    })),
-}));
+export function getPermissionGroups(t: Translate = english) {
+  return SCOPE_GROUPS.map((group) => ({
+    ...group,
+    label: t(group.labelKey),
+    options: Object.values(APIKeyPermission)
+      .filter((permission) => SCOPE_API_VERSION[permission] === group.version)
+      .map((permission) => ({
+        value: permission,
+        label: humanizePermission(permission),
+        description: t(SCOPE_DESCRIPTION_KEYS[permission]),
+      })),
+  }));
+}
+
+export type PermissionGroup = ReturnType<typeof getPermissionGroups>[number];

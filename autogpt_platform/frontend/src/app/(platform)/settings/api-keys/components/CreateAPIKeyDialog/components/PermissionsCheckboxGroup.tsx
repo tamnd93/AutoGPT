@@ -3,7 +3,7 @@ import type { APIKeyPermission } from "@/app/api/__generated__/models/aPIKeyPerm
 import { Text } from "@/components/atoms/Text/Text";
 import { useT } from "@/lib/i18n";
 
-import { PERMISSION_GROUPS } from "../schema";
+import { getPermissionGroups, type PermissionGroup } from "../schema";
 import { CheckmarkSquare02Icon, SquareIcon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
 
@@ -14,6 +14,7 @@ interface Props {
 
 export function PermissionsCheckboxGroup({ value, onChange }: Props) {
   const t = useT();
+  const permissionGroups = getPermissionGroups(t);
 
   function toggle(permission: APIKeyPermission) {
     if (value.includes(permission)) {
@@ -38,7 +39,7 @@ export function PermissionsCheckboxGroup({ value, onChange }: Props) {
         aria-labelledby="api-key-permissions-label"
         className="flex max-h-[min(320px,30vh)] flex-col gap-5 overflow-y-auto overscroll-contain pr-1"
       >
-        {PERMISSION_GROUPS.map((group) => (
+        {permissionGroups.map((group) => (
           <PermissionGroup
             key={group.version}
             group={group}
@@ -52,7 +53,7 @@ export function PermissionsCheckboxGroup({ value, onChange }: Props) {
 }
 
 interface GroupProps {
-  group: (typeof PERMISSION_GROUPS)[number];
+  group: PermissionGroup;
   value: APIKeyPermission[];
   onToggle: (permission: APIKeyPermission) => void;
 }

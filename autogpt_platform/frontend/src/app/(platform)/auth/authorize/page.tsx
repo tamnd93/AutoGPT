@@ -12,7 +12,7 @@ import {
   useGetOauthGetOauthAppInfo,
 } from "@/app/api/__generated__/endpoints/oauth/oauth";
 import type { APIKeyPermission } from "@/app/api/__generated__/models/aPIKeyPermission";
-import { SCOPE_DESCRIPTIONS } from "@/lib/api-key-scopes";
+import { SCOPE_DESCRIPTION_KEYS } from "@/lib/api-key-scopes";
 import { CheckmarkBadge01Icon, Image01Icon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { ApiError } from "@/lib/autogpt-server-api/helpers";
@@ -248,8 +248,13 @@ export default function AuthorizePage() {
                     className="mt-0.5 text-green-600"
                   />
                   <Text variant="body">
-                    {SCOPE_DESCRIPTIONS[scopeKey as APIKeyPermission] ||
-                      scopeKey}
+                    {SCOPE_DESCRIPTION_KEYS[scopeKey as APIKeyPermission]
+                      ? t(
+                          SCOPE_DESCRIPTION_KEYS[
+                            scopeKey as APIKeyPermission
+                          ],
+                        )
+                      : scopeKey}
                   </Text>
                 </li>
               ))}

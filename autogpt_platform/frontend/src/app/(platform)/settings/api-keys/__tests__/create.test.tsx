@@ -16,6 +16,7 @@ import {
 } from "@/app/api/__generated__/endpoints/api-keys/api-keys.msw";
 
 import { APIKeyPermission } from "@/app/api/__generated__/models/aPIKeyPermission";
+import { LocaleProvider } from "@/lib/i18n";
 
 import SettingsApiKeysPage from "../page";
 
@@ -374,6 +375,36 @@ describe("SettingsApiKeysPage - create flow", () => {
       await submitUntilSuccessView();
 
       expect(screen.getByText(plain).closest(".ph-no-capture")).not.toBeNull();
+    });
+
+    test("words permission groups and descriptions in Vietnamese", async () => {
+      server.use(getGetV1ListUserApiKeysMockHandler([]));
+
+      render(
+        <LocaleProvider locale="vi">
+          <SettingsApiKeysPage />
+        </LocaleProvider>,
+      );
+      await screen.findByText("Chưa có khoá API nào");
+
+      fireEvent.click(screen.getAllByRole("button", { name: "Tạo khoá" })[0]);
+      const dialog = await screen.findByRole("dialog");
+
+      const v2Group = within(dialog).getByRole("group", { name: "API v2" });
+      expect(
+        within(v2Group).getByRole("checkbox", { name: "Run Agent" }),
+      ).toBeDefined();
+      expect(
+        within(v2Group).getByText("Chạy workflow từ thư viện của bạn"),
+      ).toBeDefined();
+      expect(
+        within(dialog).getByRole("group", { name: "API v1 và v2" }),
+      ).toBeDefined();
+      expect(
+        within(dialog).getByRole("group", {
+          name: "Chỉ API v1 (ngừng hoạt động 01/02/2027)",
+        }),
+      ).toBeDefined();
     });
 
     test("shows a destructive toast when the clipboard write fails", async () => {

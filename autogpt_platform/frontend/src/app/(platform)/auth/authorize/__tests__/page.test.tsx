@@ -103,6 +103,9 @@ describe("AuthorizePage", () => {
 
     expect(await screen.findByText("Uỷ quyền ứng dụng")).toBeDefined();
     expect(screen.getByText("Ứng dụng này đang yêu cầu quyền:")).toBeDefined();
+    expect(
+      screen.getByText("Xem ID người dùng, e-mail và múi giờ của bạn"),
+    ).toBeDefined();
     expect(screen.getByRole("button", { name: "Uỷ quyền" })).toBeDefined();
     expect(screen.getByRole("button", { name: "Từ chối" })).toBeDefined();
     expect(

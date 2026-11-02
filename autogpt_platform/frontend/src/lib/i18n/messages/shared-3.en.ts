@@ -56,4 +56,10 @@ export const Shared3En = {
   "shared3.avatarStatus.sleeping": "Paused",
   "shared3.avatarStatus.sleepingHint": "schedules off",
 
+  "shared3.errorCard.retry": "Try Again",
+  "shared3.errorCard.report": "Report Error",
+  "shared3.errorCard.getHelp": "Get Help",
+  "shared3.errorCard.retrieveFrame": "We had the following error when retrieving {context}:",
+  "shared3.errorCard.dataFallback": "your data",
+
 } as const;
