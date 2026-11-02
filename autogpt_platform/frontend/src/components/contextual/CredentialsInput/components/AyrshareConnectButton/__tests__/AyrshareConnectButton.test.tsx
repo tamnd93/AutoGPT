@@ -6,6 +6,7 @@ import {
   waitFor,
 } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi, beforeEach } from "vitest";
+import { LocaleProvider } from "@/lib/i18n";
 import { AyrshareConnectButton } from "../AyrshareConnectButton";
 import { CredentialsActionsContext } from "@/providers/agent-credentials/credentials-provider";
 
@@ -73,5 +74,21 @@ describe("AyrshareConnectButton", () => {
     await waitFor(() => expect(getV1GetAyrshareSsoUrl).toHaveBeenCalled());
     await new Promise((resolve) => setTimeout(resolve, 0));
     expect(reload).not.toHaveBeenCalled();
+  });
+
+  it("words its connect button in Vietnamese", () => {
+    render(
+      <LocaleProvider locale="vi">
+        <CredentialsActionsContext.Provider
+          value={{ reload: vi.fn(), upsert: vi.fn() }}
+        >
+          <AyrshareConnectButton />
+        </CredentialsActionsContext.Provider>
+      </LocaleProvider>,
+    );
+
+    expect(
+      screen.getByRole("button", { name: "Kết nối tài khoản mạng xã hội" }),
+    ).toBeDefined();
   });
 });

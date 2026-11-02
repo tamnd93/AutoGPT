@@ -20,6 +20,7 @@ import {
 } from "@/lib/autogpt-server-api/types";
 import { useAPIKeyCredentialsModal } from "../APIKeyCredentialsModal/useAPIKeyCredentialsModal";
 import { getCredentialTypeIcon, getCredentialTypeLabel } from "../../helpers";
+import { useT } from "@/lib/i18n";
 
 type Props = {
   schema: BlockIOCredentialsSubSchema;
@@ -48,11 +49,12 @@ export function CredentialTypeSelector({
   onOpenHostScopedModal,
   siblingInputs,
 }: Props) {
+  const t = useT();
   const defaultTab = supportedTypes[0];
 
   return (
     <Dialog
-      title={`Add credential for ${providerName}`}
+      title={t("credentials1.typeSelector.title", { name: providerName })}
       controlled={{
         isOpen: open,
         set: (isOpen) => {
@@ -108,8 +110,8 @@ export function CredentialTypeSelector({
           {supportedTypes.includes("user_password") && (
             <TabsLineContent value="user_password">
               <SimpleActionTab
-                description="Add a username and password credential."
-                buttonLabel="Enter credentials"
+                description={t("credentials1.typeSelector.passwordDesc")}
+                buttonLabel={t("credentials1.typeSelector.passwordButton")}
                 onClick={() => {
                   onClose();
                   onOpenPasswordModal();
@@ -121,8 +123,8 @@ export function CredentialTypeSelector({
           {supportedTypes.includes("host_scoped") && (
             <TabsLineContent value="host_scoped">
               <SimpleActionTab
-                description="Add host-scoped headers for authentication."
-                buttonLabel="Add headers"
+                description={t("credentials1.typeSelector.hostDesc")}
+                buttonLabel={t("credentials1.typeSelector.hostButton")}
                 onClick={() => {
                   onClose();
                   onOpenHostScopedModal();
@@ -142,10 +144,11 @@ type OAuthTabContentProps = {
 };
 
 function OAuthTabContent({ providerName, onOAuthLogin }: OAuthTabContentProps) {
+  const t = useT();
   return (
     <div className="space-y-4">
       <Text variant="body-tight" as="p" tone="secondary">
-        Sign in with your {providerName} account using OAuth.
+        {t("credentials1.typeSelector.oauthDesc", { name: providerName })}
       </Text>
       <Button
         variant="primary"
@@ -153,7 +156,7 @@ function OAuthTabContent({ providerName, onOAuthLogin }: OAuthTabContentProps) {
         onClick={onOAuthLogin}
         type="button"
       >
-        Sign in with {providerName}
+        {t("credentials1.typeSelector.oauthButton", { name: providerName })}
       </Button>
     </div>
   );
@@ -170,6 +173,7 @@ function APIKeyTabContent({
   siblingInputs,
   onCredentialsCreate,
 }: APIKeyTabContentProps) {
+  const t = useT();
   const {
     form,
     isLoading,
@@ -213,9 +217,9 @@ function APIKeyTabContent({
             render={({ field }) => (
               <Input
                 id="title"
-                label="Name"
+                label={t("credentials1.apiKey.name")}
                 type="text"
-                placeholder="Enter a name for this API Key..."
+                placeholder={t("credentials1.apiKey.namePlaceholder")}
                 {...field}
               />
             )}
@@ -226,9 +230,9 @@ function APIKeyTabContent({
             render={({ field }) => (
               <Input
                 id="apiKey"
-                label="API Key"
+                label={t("credentials1.apiKey.label")}
                 type="password"
-                placeholder="Enter API Key..."
+                placeholder={t("credentials1.apiKey.placeholder")}
                 hint={
                   schema.credentials_scopes ? (
                     <FormDescription
@@ -236,7 +240,7 @@ function APIKeyTabContent({
                       // dark:text-neutral-400: the legacy FormDescription's, moved verbatim (DS6, SECRT-3116)
                       className="text-[0.8rem] leading-inherit dark:text-neutral-400"
                     >
-                      Required scope(s) for this block:{" "}
+                      {t("credentials1.apiKey.scopesHint")}{" "}
                       {schema.credentials_scopes?.map((s, i, a) => (
                         <span key={i}>
                           <Text
@@ -262,9 +266,9 @@ function APIKeyTabContent({
             render={({ field }) => (
               <Input
                 id="expiresAt"
-                label="Expiration Date"
+                label={t("credentials1.apiKey.expiration")}
                 type="datetime-local"
-                placeholder="Select expiration date..."
+                placeholder={t("credentials1.apiKey.expirationPlaceholder")}
                 value={field.value}
                 onChange={(e) => field.onChange(e.target.value)}
                 onBlur={field.onBlur}
@@ -278,7 +282,7 @@ function APIKeyTabContent({
             loading={isSubmitting}
             disabled={isSubmitting}
           >
-            Add API Key
+            {t("credentials1.apiKey.submit")}
           </Button>
         </form>
       </FormProvider>

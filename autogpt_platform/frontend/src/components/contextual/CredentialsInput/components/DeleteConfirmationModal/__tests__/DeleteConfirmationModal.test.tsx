@@ -1,5 +1,6 @@
 import { render, screen, fireEvent, cleanup } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { LocaleProvider } from "@/lib/i18n";
 import { DeleteConfirmationModal } from "../DeleteConfirmationModal";
 
 afterEach(() => {
@@ -72,5 +73,24 @@ describe("DeleteConfirmationModal", () => {
     renderModal({ isDeleting: true });
     const cancelButton = screen.getByText("Cancel");
     expect(cancelButton.closest("button")?.disabled).toBe(true);
+  });
+
+  it("words its confirmation, title and buttons in Vietnamese", () => {
+    render(
+      <LocaleProvider locale="vi">
+        <DeleteConfirmationModal
+          credentialToDelete={credential}
+          isDeleting={false}
+          onClose={vi.fn()}
+          onConfirm={vi.fn()}
+          onForceConfirm={vi.fn()}
+        />
+      </LocaleProvider>,
+    );
+
+    expect(screen.getByText("Xoá thông tin kết nối")).toBeDefined();
+    expect(screen.getByText(/Bạn có chắc muốn xoá "My API Key"/)).toBeDefined();
+    expect(screen.getByText("Huỷ")).toBeDefined();
+    expect(screen.getByText("Xoá")).toBeDefined();
   });
 });

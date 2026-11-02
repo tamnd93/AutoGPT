@@ -5,6 +5,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/molecules/DropdownMenu/DropdownMenu";
+import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { useEffect, useRef, useState } from "react";
 import { CredentialsType } from "@/lib/autogpt-server-api/types";
@@ -49,6 +50,7 @@ export function CredentialRow({
   asSelectTrigger = false,
   variant = "default",
 }: CredentialRowProps) {
+  const t = useT();
   const ProviderIcon = providerIcons[provider] || fallbackIcon;
   const isRealCredentialType = [
     "api_key",
@@ -172,7 +174,7 @@ export function CredentialRow({
                 onDelete();
               }}
             >
-              Delete
+              {t("credentials1.row.delete")}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

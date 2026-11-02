@@ -3,6 +3,7 @@ import {
   BlockIOCredentialsSubSchema,
   CredentialsMetaInput,
 } from "@/lib/autogpt-server-api/types";
+import { useT } from "@/lib/i18n";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm, type UseFormReturn } from "react-hook-form";
@@ -34,12 +35,13 @@ export function useAPIKeyCredentialsModal({
   schemaDescription?: string;
   onSubmit: (values: APIKeyFormValues) => Promise<void>;
 } {
+  const t = useT();
   const credentials = useCredentials(schema, siblingInputs);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const formSchema = z.object({
-    apiKey: z.string().min(1, "API Key is required"),
-    title: z.string().min(1, "Name is required"),
+    apiKey: z.string().min(1, t("credentials1.apiKey.keyRequired")),
+    title: z.string().min(1, t("credentials1.apiKey.nameRequired")),
     expiresAt: z.string().optional(),
   });
 

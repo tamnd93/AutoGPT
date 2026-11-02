@@ -4,6 +4,7 @@ import {
   getCredentialDisplayName,
   getCredentialTypeLabel,
 } from "../../helpers";
+import { useT } from "@/lib/i18n";
 import { CredentialRow } from "../CredentialRow/CredentialRow";
 
 interface Props {
@@ -36,6 +37,8 @@ export function CredentialsSelect({
   allowNone = true,
   variant = "default",
 }: Props) {
+  const t = useT();
+
   function handleValueChange(e: React.ChangeEvent<HTMLSelectElement>) {
     const value = e.target.value;
     if (value === "__none__") {
@@ -60,13 +63,13 @@ export function CredentialsSelect({
     : allowNone
       ? {
           id: "__none__",
-          title: "None (skip this credential)",
+          title: t("credentials1.select.none"),
           type: "none",
           provider: provider,
         }
       : {
           id: "__placeholder__",
-          title: "Select credential",
+          title: t("credentials1.select.placeholder"),
           type: "placeholder",
           provider: provider,
         };
@@ -79,13 +82,13 @@ export function CredentialsSelect({
           onChange={handleValueChange}
           disabled={readOnly}
           className="absolute inset-0 z-10 cursor-pointer opacity-0"
-          aria-label={`Select ${displayName} credential`}
+          aria-label={t("credentials1.select.aria", { name: displayName })}
         >
           {allowNone ? (
-            <option value="__none__">None (skip this credential)</option>
+            <option value="__none__">{t("credentials1.select.none")}</option>
           ) : (
             <option value="__none__" disabled hidden>
-              Select a credential
+              {t("credentials1.select.selectOne")}
             </option>
           )}
           {credentials.map((credential) => (

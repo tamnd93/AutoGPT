@@ -8,6 +8,7 @@ import {
   BlockIOCredentialsSubSchema,
   CredentialsMetaInput,
 } from "@/lib/autogpt-server-api/types";
+import { useT } from "@/lib/i18n";
 import { useAPIKeyCredentialsModal } from "./useAPIKeyCredentialsModal";
 
 type Props = {
@@ -25,6 +26,7 @@ export function APIKeyCredentialsModal({
   onCredentialsCreate,
   siblingInputs,
 }: Props) {
+  const t = useT();
   const {
     form,
     isLoading,
@@ -41,7 +43,7 @@ export function APIKeyCredentialsModal({
 
   return (
     <Dialog
-      title={`Add new API key for ${providerName ?? ""}`}
+      title={t("credentials1.apiKey.title", { name: providerName ?? "" })}
       controlled={{
         isOpen: open,
         set: (isOpen) => {
@@ -71,9 +73,9 @@ export function APIKeyCredentialsModal({
               render={({ field }) => (
                 <Input
                   id="title"
-                  label="Name"
+                  label={t("credentials1.apiKey.name")}
                   type="text"
-                  placeholder="Enter a name for this API Key..."
+                  placeholder={t("credentials1.apiKey.namePlaceholder")}
                   {...field}
                 />
               )}
@@ -85,9 +87,9 @@ export function APIKeyCredentialsModal({
                 <>
                   <Input
                     id="apiKey"
-                    label="API Key"
+                    label={t("credentials1.apiKey.label")}
                     type="password"
-                    placeholder="Enter API Key..."
+                    placeholder={t("credentials1.apiKey.placeholder")}
                     hint={
                       schema.credentials_scopes ? (
                         <FormDescription
@@ -95,7 +97,7 @@ export function APIKeyCredentialsModal({
                           // dark:text-neutral-400: the legacy FormDescription's, moved verbatim (DS6, SECRT-3116)
                           className="text-[0.8rem] leading-inherit dark:text-neutral-400"
                         >
-                          Required scope(s) for this block:{" "}
+                          {t("credentials1.apiKey.scopesHint")}{" "}
                           {schema.credentials_scopes?.map((s, i, a) => (
                             <span key={i}>
                               <Text
@@ -123,9 +125,9 @@ export function APIKeyCredentialsModal({
               render={({ field }) => (
                 <Input
                   id="expiresAt"
-                  label="Expiration Date"
+                  label={t("credentials1.apiKey.expiration")}
                   type="datetime-local"
-                  placeholder="Select expiration date..."
+                  placeholder={t("credentials1.apiKey.expirationPlaceholder")}
                   value={field.value}
                   onChange={(e) => {
                     const value = e.target.value;
@@ -155,7 +157,7 @@ export function APIKeyCredentialsModal({
               loading={isSubmitting}
               disabled={isSubmitting}
             >
-              Add API Key
+              {t("credentials1.apiKey.submit")}
             </Button>
           </form>
         </FormProvider>

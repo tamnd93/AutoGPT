@@ -6,6 +6,7 @@ import {
   CredentialsMetaInput,
 } from "@/lib/autogpt-server-api/types";
 import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
+import { useT } from "@/lib/i18n";
 import { useState } from "react";
 import { AyrshareConnectButton } from "../AyrshareConnectButton/AyrshareConnectButton";
 import { CredentialRow } from "../CredentialRow/CredentialRow";
@@ -107,6 +108,7 @@ export function CredentialsFlatView({
   onAddCredential,
   onDeleteCredential,
 }: Props) {
+  const t = useT();
   const hasCredentials = credentials.length > 0;
   // Ayrshare has no user-settable credential — provisioning runs on the
   // server after the user clicks the Connect Social Media Accounts
@@ -122,13 +124,13 @@ export function CredentialsFlatView({
         <div className="mb-2 flex items-center gap-2">
           <Text variant="small" className="flex items-center gap-2">
             <span className="inline-flex items-center gap-1 text-foreground-secondary">
-              {displayName} credentials
+              {t("credentials1.flatView.credentials", { name: displayName })}
               {isOptional && (
                 <span
                   // TODO(tokens): no exact role for text-gray-500 #6b7280
                   className="font-normal text-gray-500"
                 >
-                  (optional)
+                  {t("credentials1.flatView.optional")}
                 </span>
               )}
               {!isOptional && !selectedCredential && (
@@ -137,7 +139,9 @@ export function CredentialsFlatView({
                   className="inline-flex items-center gap-1 text-red-600"
                 >
                   <ExclamationTriangleIcon className="size-3.5" />
-                  <span className="font-normal">required</span>
+                  <span className="font-normal">
+                    {t("credentials1.flatView.required")}
+                  </span>
                 </span>
               )}
             </span>
