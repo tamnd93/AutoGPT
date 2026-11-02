@@ -6,6 +6,7 @@ import {
 import type { TrialOfferResponse } from "@/app/api/__generated__/models/trialOfferResponse";
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { Text } from "@/components/atoms/Text/Text";
+import { useLocale, useT } from "@/lib/i18n";
 import {
   describeTrialTimeLeft,
   formatPlanPrice,
@@ -19,25 +20,31 @@ interface Props {
 }
 
 export function WorthDoingPanel({ offer, endsAt }: Props) {
-  const planStart = describePlanStart(endsAt);
+  const t = useT();
+  const locale = useLocale();
+  const planStart = describePlanStart(endsAt, locale);
   const resumeNote = planStart
-    ? ` Resume your trial instead and your plan starts ${planStart}.`
+    ? t("billing3.worthDoing.resumeNote", { date: planStart })
     : "";
   const rows = [
     {
       icon: Clock01Icon,
-      title: "Put an Expert on a schedule",
-      body: 'Say "do this every Monday at 8am" to any Expert. It runs while you\'re away and the result is waiting on Home.',
+      title: t("billing3.worthDoing.row1Title"),
+      body: t("billing3.worthDoing.row1Body"),
     },
     {
       icon: Note01Icon,
-      title: "Your work stays",
-      body: "Chats, Experts and schedules stay on your account. Subscribe later and you pick up where you left off.",
+      title: t("billing3.worthDoing.row2Title"),
+      body: t("billing3.worthDoing.row2Body"),
     },
     {
       icon: DollarSignIcon,
-      title: "Subscribe any time",
-      body: `${trialPlanLabels[offer.tier]} is ${formatPlanPrice(offer)}, cancel anytime.${resumeNote}`,
+      title: t("billing3.worthDoing.row3Title"),
+      body: t("billing3.worthDoing.row3Body", {
+        plan: trialPlanLabels[offer.tier],
+        price: formatPlanPrice(offer, locale),
+        note: resumeNote,
+      }),
     },
   ];
 
@@ -47,7 +54,7 @@ export function WorthDoingPanel({ offer, endsAt }: Props) {
       className="rounded-xl border border-border-base bg-surface-muted px-4 pt-3"
     >
       <Text variant="eyebrow" as="h3">
-        Worth doing before then
+                {t("billing3.worthDoing.title")}
       </Text>
       <ul
         data-slot="worth-doing-panel-list"
@@ -84,9 +91,12 @@ export function WorthDoingPanel({ offer, endsAt }: Props) {
   );
 }
 
-function describePlanStart(endsAt: Props["endsAt"]) {
+function describePlanStart(
+  endsAt: Props["endsAt"],
+  locale: Parameters<typeof formatTrialEndDate>[1],
+) {
   if (!endsAt) return null;
-  const left = describeTrialTimeLeft(endsAt);
+  const left = describeTrialTimeLeft(endsAt, undefined, locale);
   if (left.kind === "ended") return null;
-  return left.kind === "days" ? formatTrialEndDate(endsAt) : left.kind;
+  return left.kind === "days" ? formatTrialEndDate(endsAt, locale) : left.kind;
 }

@@ -5,6 +5,7 @@ import { auth1En } from "./auth-1.en";
 import { auth2En } from "./auth-2.en";
 import { billing1En } from "./billing-1.en";
 import { billing2En } from "./billing-2.en";
+import { billing3En } from "./billing-3.en";
 import { build1En } from "./build-1.en";
 import { build2En } from "./build-2.en";
 import { build3En } from "./build-3.en";
@@ -58,6 +59,7 @@ export const en = {
   ...auth2En,
   ...billing1En,
   ...billing2En,
+  ...billing3En,
   ...build1En,
   ...build2En,
   ...build3En,

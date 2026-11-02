@@ -4,6 +4,7 @@ import {
 } from "@/app/api/__generated__/endpoints/trials/trials";
 import type { TrialStatusResponse } from "@/app/api/__generated__/models/trialStatusResponse";
 import { useAuthStore } from "@/lib/auth/hooks/useAuthStore";
+import { useT } from "@/lib/i18n";
 import { TrialEvent } from "@/services/analytics/posthog-events";
 import { updateTrialStatusCache } from "@/services/trials/updateTrialStatusCache";
 import type { useTrialStatus } from "@/services/trials/useTrialStatus";
@@ -23,6 +24,7 @@ interface Args {
 }
 
 export function useTrialCancellation({ userID, query, failure }: Args) {
+  const t = useT();
   const queryClient = useQueryClient();
   const posthog = usePostHog();
   const dialog = useTrialCanceledDialog({
@@ -52,7 +54,11 @@ export function useTrialCancellation({ userID, query, failure }: Args) {
         },
       });
     } catch (error) {
-      failure.reportFailure({ userID, error, fallback: CANCEL_FAILED });
+      failure.reportFailure({
+        userID,
+        error,
+        fallback: t("billing3.trial.cancelFailed"),
+      });
       await query.refetch();
     }
   }
@@ -69,7 +75,11 @@ export function useTrialCancellation({ userID, query, failure }: Args) {
       if (response.status !== 200) throw new Error(RESUME_FAILED);
       await updateTrialStatusCache({ queryClient, userID, response });
     } catch (error) {
-      failure.reportFailure({ userID, error, fallback: RESUME_FAILED });
+      failure.reportFailure({
+        userID,
+        error,
+        fallback: t("billing3.trial.resumeFailed"),
+      });
       await query.refetch();
     } finally {
       // Only this account's popup: another account may have opened its own.

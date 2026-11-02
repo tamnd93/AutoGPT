@@ -4,6 +4,7 @@ import { Text } from "@/components/atoms/Text/Text";
 import { CancelTrialDialog } from "./CancelTrialDialog";
 import { formatTrialEnd, formatTrialPrice } from "./helpers";
 import { TrialCancelPending } from "./TrialCancelPending";
+import { useLocale, useT } from "@/lib/i18n";
 import { TrialRejection } from "./TrialRejection";
 
 interface Props {
@@ -21,6 +22,8 @@ export function TrialStatus({
   isResuming,
   onResume,
 }: Props) {
+  const t = useT();
+    const locale = useLocale();
   if (!trial.offer) return null;
   if (trial.status === "canceled" && trial.rejection_reason)
     return <TrialRejection reason={trial.rejection_reason} />;
@@ -33,7 +36,7 @@ export function TrialStatus({
         onResume={onResume}
       />
     );
-  const end = formatTrialEnd(trial.ends_at);
+  const end = formatTrialEnd(trial.ends_at, locale);
   return (
     <div
       data-slot="trial-status"
@@ -48,14 +51,16 @@ export function TrialStatus({
           className="flex flex-wrap items-center gap-2.5"
         >
           <Text variant="large-semibold" as="h2">
-            {trial.active ? "Your trial" : "Your trial has ended"}
+            {trial.active
+              ? t("billing3.trialStatus.titleActive")
+              : t("billing3.trialStatus.titleEnded")}
           </Text>
           <Badge variant="info" size="small">
             {trial.status === "canceled"
-              ? "Canceled"
+              ? t("billing3.trialStatus.badgeCanceled")
               : trial.active
-                ? "Free trial"
-                : "Ended"}
+                ? t("billing3.trialStatus.badgeFreeTrial")
+                : t("billing3.trialStatus.badgeEnded")}
           </Badge>
         </div>
         <Text
@@ -64,16 +69,19 @@ export function TrialStatus({
           className="max-w-[560px] leading-5"
         >
           {trial.status === "canceled"
-            ? "Cancellation confirmed. Trial access has ended and your trial will not convert to a paid plan."
+            ? t("billing3.trialStatus.bodyCanceled")
             : trial.cancel_at_period_end
-              ? `Cancellation confirmed. Your trial will not convert to a paid plan. Trial access ends ${end}.`
+              ? t("billing3.trialStatus.bodyCanceling", { end })
               : trial.active
-                ? `Your trial ends ${end}. Your saved card will then be charged ${formatTrialPrice(trial.offer)}, plus applicable tax.`
-                : "Paid access requires a successful payment. Review your payment method and plan below."}
+                ? t("billing3.trialStatus.bodyActive", {
+                  end,
+                  price: formatTrialPrice(trial.offer, locale),
+                })
+                : t("billing3.trialStatus.bodyEnded")}
         </Text>
         {trial.active && (
           <Text variant="small" tone="secondary" className="text-xs">
-            Cancel before your trial ends to avoid a charge.
+                        {t("billing3.trialStatus.cancelNote")}
           </Text>
         )}
       </div>

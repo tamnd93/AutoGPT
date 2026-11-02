@@ -8,6 +8,7 @@ import {
   formatTrialEndDate,
   trialPlanLabels,
 } from "./helpers";
+import { useLocale, useT } from "@/lib/i18n";
 import { TrialTitle } from "./TrialTitle/TrialTitle";
 
 interface Props {
@@ -23,13 +24,15 @@ export function TrialCancelPending({
   isResuming,
   onResume,
 }: Props) {
+  const t = useT();
+    const locale = useLocale();
   return (
     <div data-slot="trial-cancel-pending" className="flex flex-col gap-3">
       <div
         data-slot="trial-cancel-pending-header"
         className="flex flex-wrap items-center gap-2"
       >
-        <TrialTitle>Your trial</TrialTitle>
+        <TrialTitle>{t("billing3.trialStatus.titleActive")}</TrialTitle>
         <span
           data-slot="trial-cancel-pending-status"
           className="inline-flex items-center gap-1.5 rounded-full bg-surface-hover px-2 py-0.5 text-xs text-foreground-body"
@@ -40,25 +43,28 @@ export function TrialCancelPending({
             data-slot="trial-cancel-pending-status-dot"
             className="size-1.5 rounded-full bg-zinc-400"
           />
-          Cancellation pending
+                    {t("billing3.cancelPending.status")}
         </span>
       </div>
       <Text variant="body" className="!text-foreground-emphasis">
-        Cancellation confirmed. Your trial will not convert to a paid plan and
-        your card won&apos;t be charged. Trial access ends{" "}
+        {t("billing3.cancelPending.body")}{" "}
         <strong
           data-slot="trial-cancel-pending-end-date"
           className="font-semibold"
         >
-          {formatTrialEnd(trial.ends_at)}
+          {formatTrialEnd(trial.ends_at, locale)}
         </strong>
         .
       </Text>
       {trial.ends_at ? (
         <Text variant="small" tone="muted">
-          Resume to keep the trial and start {trialPlanLabels[offer.tier]} on{" "}
-          {formatTrialEndDate(trial.ends_at)} at {formatPlanPrice(offer)}, plus
-          applicable tax.
+          {t("billing3.cancelPending.resumeNote", {
+            plan: trialPlanLabels[offer.tier],
+            date: trial.ends_at ? formatTrialEndDate(trial.ends_at, locale) : "",
+            price: formatPlanPrice(offer, locale),
+          })}
+          
+          
         </Text>
       ) : null}
       <div data-slot="trial-cancel-pending-actions" className="mt-1">
@@ -69,7 +75,7 @@ export function TrialCancelPending({
           disabled={isResuming}
           onClick={onResume}
         >
-          Resume trial
+                    {t("billing3.cancelPending.resume")}
         </Button>
       </div>
     </div>

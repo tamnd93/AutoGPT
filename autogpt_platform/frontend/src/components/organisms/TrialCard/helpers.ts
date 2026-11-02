@@ -1,4 +1,7 @@
 import type { TrialOfferResponse } from "@/app/api/__generated__/models/trialOfferResponse";
+import type { Locale } from "@/lib/i18n/locale";
+import { getMessage } from "@/lib/i18n/translate";
+
 
 export const trialPlanLabels: Record<TrialOfferResponse["tier"], string> = {
   BASIC: "Basic",
@@ -13,17 +16,23 @@ export const SUBSCRIBE_NOW_PARAM = "subscribe";
 export const SUBSCRIBE_NOW_VALUE = "trial-plan";
 export const BILLING_PATH = "/settings/billing";
 
-export function formatTrialPrice(offer: TrialOfferResponse) {
+export function formatTrialPrice(
+  offer: TrialOfferResponse,
+  locale: Locale = "en",
+) {
   const amount = currencyFormatter(offer.currency).format(
     getTrialChargeAmount(offer),
   );
-  return `${amount} / ${getTrialCadence(offer)}`;
+  return `${amount} / ${cadenceLabel(offer, locale)}`;
 }
 
 // The cancel-pending screens drop the cents of a whole price ("$50 / month")
 // and keep them otherwise ("$19.99 / month").
-export function formatPlanPrice(offer: TrialOfferResponse) {
-  return `${formatPlanAmount(offer)} / ${getTrialCadence(offer)}`;
+export function formatPlanPrice(
+  offer: TrialOfferResponse,
+  locale: Locale = "en",
+) {
+  return `${formatPlanAmount(offer)} / ${cadenceLabel(offer, locale)}`;
 }
 
 export function formatPlanAmount(offer: TrialOfferResponse) {
@@ -38,8 +47,13 @@ export function formatWholeMoney(amount: number, currency: string) {
   }).format(amount);
 }
 
-function getTrialCadence(offer: TrialOfferResponse) {
-  return offer.billing_cycle === "yearly" ? "year" : "month";
+function cadenceLabel(offer: TrialOfferResponse, locale: Locale) {
+  return getMessage(
+    locale,
+    offer.billing_cycle === "yearly"
+      ? "billing3.trial.cadence.year"
+      : "billing3.trial.cadence.month",
+  );
 }
 
 // What Stripe charges per billing cycle once the trial ends, in major units.
@@ -55,23 +69,35 @@ function currencyFormatter(currency: string) {
   return new Intl.NumberFormat("en-US", { style: "currency", currency });
 }
 
-export function formatTrialEnd(value: Date | string | null | undefined) {
-  if (!value) return "the end of your trial";
-  return new Date(value).toLocaleString(undefined, {
+export function formatTrialEnd(
+  value: Date | string | null | undefined,
+  locale: Locale = "en",
+) {
+  if (!value) return getMessage(locale, "billing3.trial.endFallback");
+  return new Date(value).toLocaleString(locale === "vi" ? "vi-VN" : undefined, {
     dateStyle: "medium",
     timeStyle: "short",
   });
 }
 
-export function formatTrialEndDate(value: Date | string) {
-  return new Date(value).toLocaleDateString(undefined, {
-    month: "short",
-    day: "numeric",
-  });
+export function formatTrialEndDate(
+  value: Date | string,
+  locale: Locale = "en",
+) {
+  return new Date(value).toLocaleDateString(
+    locale === "vi" ? "vi-VN" : undefined,
+    {
+      month: "short",
+      day: "numeric",
+    },
+  );
 }
 
-export function formatTrialEndTime(value: Date | string) {
-  return new Date(value).toLocaleTimeString(undefined, { timeStyle: "short" });
+export function formatTrialEndTime(value: Date | string, locale: Locale = "en") {
+  return new Date(value).toLocaleTimeString(
+    locale === "vi" ? "vi-VN" : undefined,
+    { timeStyle: "short" },
+  );
 }
 
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -84,19 +110,27 @@ export function getTrialDaysLeft(
   return Math.max(0, Math.ceil((new Date(endsAt).getTime() - now) / DAY_MS));
 }
 
-export function formatTrialDays(days: number) {
-  return `${days} ${days === 1 ? "day" : "days"}`;
+export function formatTrialDays(days: number, locale: Locale = "en") {
+  return getMessage(
+    locale,
+    days === 1 ? "billing3.trial.dayOne" : "billing3.trial.dayMany",
+    { count: days },
+  );
 }
 
 // Under a day the count would always read "1 day", so name the clock time,
 // but only for today or tomorrow: a DST day can put an end under 24 hours
 // away two dates out, and that keeps the dated form.
-export function describeTrialTimeLeft(endsAt: Date | string, now = new Date()) {
+export function describeTrialTimeLeft(
+  endsAt: Date | string,
+  now = new Date(),
+  locale: Locale = "en",
+) {
   const end = new Date(endsAt);
   const left = end.getTime() - now.getTime();
   if (left <= 0) return { kind: "ended" as const };
   const day = left < DAY_MS ? getNearDay(end, now) : null;
-  if (day) return { kind: day, time: formatTrialEndTime(end) };
+  if (day) return { kind: day, time: formatTrialEndTime(end, locale) };
   return {
     kind: "days" as const,
     days: getTrialDaysLeft(end, now.getTime()),

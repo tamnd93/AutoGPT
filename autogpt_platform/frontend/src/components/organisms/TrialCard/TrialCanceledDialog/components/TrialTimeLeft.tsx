@@ -1,4 +1,5 @@
 import type { TrialStatusResponse } from "@/app/api/__generated__/models/trialStatusResponse";
+import { useLocale, useT } from "@/lib/i18n";
 import {
   describeTrialTimeLeft,
   formatTrialDays,
@@ -10,36 +11,39 @@ interface Props {
 }
 
 export function TrialTimeLeft({ endsAt }: Props) {
+  const t = useT();
+  const locale = useLocale();
   if (!endsAt)
     return (
       <>
-        You still have full access until your trial ends. Nothing changes until
-        then.
+                {t("billing3.timeLeft.noEnd")}
+        
       </>
     );
   const left = describeTrialTimeLeft(endsAt);
-  if (left.kind === "ended") return <>Your trial access has ended.</>;
+  if (left.kind === "ended")
+    return <>{t("billing3.timeLeft.ended")}</>;
   if (left.kind !== "days")
     return (
       <>
-        You still have full access until{" "}
+                {t("billing3.timeLeft.until")}{" "}
         <strong data-slot="trial-time-left-end" className="font-semibold">
-          {left.time} {left.kind}
+          {left.time} {t(left.kind === "today" ? "billing3.timeLeft.today" : "billing3.timeLeft.tomorrow")}
         </strong>
-        . Nothing changes until then.
+                {t("billing3.timeLeft.tail")}
       </>
     );
   return (
     <>
-      You still have{" "}
+            {t("billing3.timeLeft.youStillHave")}{" "}
       <strong data-slot="trial-time-left-days" className="font-semibold">
-        {formatTrialDays(left.days)}
+                {formatTrialDays(left.days, locale)}
       </strong>{" "}
-      of full access, until{" "}
+            {t("billing3.timeLeft.ofFullAccess")}{" "}
       <strong data-slot="trial-time-left-end" className="font-semibold">
-        {formatTrialEnd(endsAt)}
+                {formatTrialEnd(endsAt, locale)}
       </strong>
-      . Nothing changes until then.
+            {t("billing3.timeLeft.tail")}
     </>
   );
 }

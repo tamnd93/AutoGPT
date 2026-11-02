@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it } from "vitest";
 import {
   describeTrialTimeLeft,
   formatTrialDays,
+  formatTrialEnd,
   formatTrialEndTime,
   getTrialDaysLeft,
 } from "../helpers";
@@ -41,6 +42,22 @@ describe("formatTrialDays", () => {
     [5, "5 days"],
   ])("reads %i as %s", (days, label) => {
     expect(formatTrialDays(days)).toBe(label);
+  });
+});
+
+describe("Vietnamese trial copy", () => {
+  it.each([
+    [1, "1 ngày"],
+    [2, "2 ngày"],
+    [5, "5 ngày"],
+  ])("reads %i days in Vietnamese", (days, label) => {
+    expect(formatTrialDays(days, "vi")).toBe(label);
+  });
+
+  it("names the end of an unknown trial in Vietnamese", () => {
+    expect(formatTrialEnd(null, "vi")).toBe(
+      "thời điểm kết thúc bản dùng thử",
+    );
   });
 });
 

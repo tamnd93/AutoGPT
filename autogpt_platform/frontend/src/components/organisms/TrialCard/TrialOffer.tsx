@@ -1,7 +1,8 @@
 import type { TrialStatusResponse } from "@/app/api/__generated__/models/trialStatusResponse";
 import { Button } from "@/components/atoms/Button/Button";
 import { Text } from "@/components/atoms/Text/Text";
-import { formatTrialPrice, trialPlanLabels } from "./helpers";
+import { useLocale, useT } from "@/lib/i18n";
+import { formatTrialPrice } from "./helpers";
 import { TrialTitle } from "./TrialTitle/TrialTitle";
 
 interface Props {
@@ -12,6 +13,8 @@ interface Props {
 }
 
 export function TrialOffer({ trial, isStarting, isBlocked, onStart }: Props) {
+  const t = useT();
+  const locale = useLocale();
   const offer = trial.offer;
   if (!offer) return null;
   return (
@@ -28,7 +31,7 @@ export function TrialOffer({ trial, isStarting, isBlocked, onStart }: Props) {
           className="flex flex-wrap items-center gap-2"
         >
           <TrialTitle>
-            Try AutoGPT {trialPlanLabels[offer.tier]} for {offer.duration_days}{" "}
+            
             days
           </TrialTitle>
           <span
@@ -37,17 +40,16 @@ export function TrialOffer({ trial, isStarting, isBlocked, onStart }: Props) {
             // text.
             className="inline-flex items-center rounded-full bg-purple-100 px-2 py-0.5 text-tiny font-medium leading-inherit text-purple-700"
           >
-            No charge today
+                        {t("billing3.trialOffer.noChargePill")}
           </span>
         </div>
         <Text variant="body" className="!text-foreground-emphasis">
-          Card required. No subscription charge today. Then{" "}
-          {formatTrialPrice(offer)}, plus applicable tax, unless you cancel
-          before the trial ends.
+          {t("billing3.trialOffer.bodyPrefix")}{" "}
+          {formatTrialPrice(offer, locale)}, {t("billing3.trialOffer.bodySuffix")}
+          
         </Text>
         <Text variant="small" tone="muted">
-          Trial usage is limited. If you cancel, you keep access until the trial
-          ends. You can manage your plan in billing.
+          {t("billing3.trialOffer.note")}
         </Text>
       </div>
       <Button
@@ -58,7 +60,7 @@ export function TrialOffer({ trial, isStarting, isBlocked, onStart }: Props) {
         disabled={isStarting || isBlocked}
         className="w-full shrink-0 md:w-auto md:min-w-[11rem]"
       >
-        Start {offer.duration_days}-day trial
+                {t("billing3.trialOffer.start", { days: offer.duration_days })}
       </Button>
     </div>
   );

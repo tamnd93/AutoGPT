@@ -3,13 +3,15 @@
 import { Text } from "@/components/atoms/Text/Text";
 import { ErrorCard } from "@/components/molecules/ErrorCard/ErrorCard";
 import { useTrialCheckoutReturn } from "@/services/trials/useTrialCheckoutReturn";
+import { useT } from "@/lib/i18n";
 
 export function TrialCheckoutConfirmation() {
+  const t = useT();
   const confirmation = useTrialCheckoutReturn();
   if (confirmation.error)
     return (
       <ErrorCard
-        context="your trial"
+        context={t("billing3.checkout.errorContext")}
         responseError={{ message: confirmation.error }}
         onRetry={confirmation.retry}
       />
@@ -17,7 +19,7 @@ export function TrialCheckoutConfirmation() {
   if (!confirmation.ready)
     return (
       <Text variant="body" role="status">
-        Confirming your trial and card setup…
+                {t("billing3.checkout.confirming")}
       </Text>
     );
   return null;

@@ -9,6 +9,7 @@ import { TrialCanceledDialog } from "./TrialCanceledDialog/TrialCanceledDialog";
 import { TrialOffer } from "./TrialOffer";
 import { TrialStatus } from "./TrialStatus";
 import { useTrialCard } from "./useTrialCard";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   returnTo?: "onboarding" | "billing";
@@ -23,6 +24,7 @@ export function TrialCardContent({
   returnTo = "billing",
   controller,
 }: Props & { controller: ReturnType<typeof useTrialCard> }) {
+  const t = useT();
   const {
     userID,
     trial,
@@ -53,7 +55,7 @@ export function TrialCardContent({
       />
     );
   if (queryError)
-    return <ErrorCard context="trial information" onRetry={retry} />;
+    <ErrorCard context={t("billing3.trialCard.errorContext")} onRetry={retry} />
   if (
     !trial?.offer ||
     trial.converted ||
@@ -101,13 +103,15 @@ export function TrialCardContent({
   if (isBilling)
     return (
       <section
-        aria-label="AutoGPT trial"
+                aria-label={t("billing3.trialCard.aria")}
         data-slot="trial-card-content"
         className="flex w-full flex-col gap-2 py-4"
       >
         <div data-slot="trial-card-content-heading" className="sr-only">
           <Text variant="body-medium" as="span" className="text-textBlack">
-            {trial.eligible ? "Free trial" : "Your plan"}
+            {trial.eligible
+              ? t("billing3.trialCard.freeTrial")
+              : t("billing3.trialCard.yourPlan")}
           </Text>
         </div>
         <div data-slot="trial-card-content-body" className="w-full">
@@ -122,7 +126,10 @@ export function TrialCardContent({
       density="roomy"
       className="w-full"
     >
-      <section aria-label="AutoGPT trial" data-slot="trial-card-content">
+            <section
+        aria-label={t("billing3.trialCard.aria")}
+        data-slot="trial-card-content"
+      >
         {body}
       </section>
     </AttentionCard.Root>

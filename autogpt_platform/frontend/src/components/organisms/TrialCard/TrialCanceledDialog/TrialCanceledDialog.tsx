@@ -3,6 +3,7 @@ import { Button } from "@/components/atoms/Button/Button";
 import { Text } from "@/components/atoms/Text/Text";
 import { Dialog } from "@/components/molecules/Dialog/Dialog";
 import { TrialTimeLeft } from "./components/TrialTimeLeft";
+  import { useT } from "@/lib/i18n";
 import { WorthDoingPanel } from "./components/WorthDoingPanel";
 
 interface Props {
@@ -22,10 +23,11 @@ export function TrialCanceledDialog({
   onSubscribe,
   onClose,
 }: Props) {
+  const t = useT();
   if (!trial.offer) return null;
   return (
     <Dialog
-      title="Cancellation confirmed"
+      title={t("billing3.canceled.title")}
       styling={{ maxWidth: "29rem", minWidth: "auto" }}
       controlled={{
         isOpen,
@@ -40,7 +42,7 @@ export function TrialCanceledDialog({
           className="flex flex-col gap-4"
         >
           <Text variant="body" className="!text-foreground-emphasis">
-            Your card won&apos;t be charged.{" "}
+            {t("billing3.canceled.noCharge")}{" "}
             <TrialTimeLeft endsAt={trial.ends_at} />
           </Text>
           <WorthDoingPanel offer={trial.offer} endsAt={trial.ends_at} />
@@ -52,10 +54,10 @@ export function TrialCanceledDialog({
             loading={isResuming}
             disabled={isResuming}
           >
-            Resume trial
+                        {t("billing3.canceled.resume")}
           </Button>
           <Button variant="primary" onClick={onSubscribe}>
-            Subscribe now
+                        {t("billing3.canceled.subscribe")}
           </Button>
         </Dialog.Footer>
       </Dialog.Content>

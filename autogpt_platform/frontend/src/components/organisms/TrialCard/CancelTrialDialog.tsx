@@ -3,6 +3,7 @@ import type { TrialStatusResponse } from "@/app/api/__generated__/models/trialSt
 import { Button } from "@/components/atoms/Button/Button";
 import { Text } from "@/components/atoms/Text/Text";
 import { Dialog } from "@/components/molecules/Dialog/Dialog";
+import { useLocale, useT } from "@/lib/i18n";
 import { formatTrialEnd } from "./helpers";
 
 interface Props {
@@ -12,6 +13,8 @@ interface Props {
 }
 
 export function CancelTrialDialog({ trial, isCanceling, onCancel }: Props) {
+  const t = useT();
+  const locale = useLocale();
   const [isOpen, setIsOpen] = useState(false);
 
   function confirmCancellation() {
@@ -21,7 +24,7 @@ export function CancelTrialDialog({ trial, isCanceling, onCancel }: Props) {
 
   return (
     <Dialog
-      title="Cancel your trial?"
+      title={t("billing3.cancelTrial.title")}
       styling={{ maxWidth: "28rem", minWidth: "auto" }}
       controlled={{ isOpen, set: setIsOpen }}
     >
@@ -32,7 +35,7 @@ export function CancelTrialDialog({ trial, isCanceling, onCancel }: Props) {
           loading={isCanceling}
           disabled={isCanceling}
         >
-          Cancel trial
+          {t("billing3.cancelTrial.button")}
         </Button>
       </Dialog.Trigger>
       <Dialog.Content>
@@ -41,30 +44,29 @@ export function CancelTrialDialog({ trial, isCanceling, onCancel }: Props) {
           className="flex flex-col gap-3"
         >
           <Text variant="body" className="!text-foreground-emphasis">
-            Your trial won&apos;t convert to a paid plan and your card
-            won&apos;t be charged.
+            {t("billing3.cancelTrial.body")}
           </Text>
           <Text variant="body" className="!text-foreground-emphasis">
-            You keep full access until{" "}
+            {t("billing3.cancelTrial.keepAccess")}{" "}
             <strong
               data-slot="cancel-trial-dialog-end-date"
               className="font-semibold"
             >
-              {formatTrialEnd(trial.ends_at)}
+              {formatTrialEnd(trial.ends_at, locale)}
             </strong>
-            , and you can resume your trial any time before then.
+            {t("billing3.cancelTrial.keepAccessSuffix")}
           </Text>
         </div>
         <Dialog.Footer>
           <Button variant="outline" onClick={() => setIsOpen(false)}>
-            Keep trial
+                        {t("billing3.cancelTrial.keep")}
           </Button>
           <Button
             variant="primary"
             onClick={confirmCancellation}
             disabled={isCanceling}
           >
-            Cancel trial
+            {t("billing3.cancelTrial.button")}
           </Button>
         </Dialog.Footer>
       </Dialog.Content>

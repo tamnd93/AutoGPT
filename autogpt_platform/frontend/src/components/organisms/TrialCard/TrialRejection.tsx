@@ -1,33 +1,30 @@
 import type { TrialRejectionReason } from "@/app/api/__generated__/models/trialRejectionReason";
-import { Text } from "@/components/atoms/Text/Text";
 import { Button } from "@/components/atoms/Button/Button";
+import { Text } from "@/components/atoms/Text/Text";
 import { TrialTitle } from "./TrialTitle/TrialTitle";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   reason: TrialRejectionReason;
 }
 
 export function TrialRejection({ reason }: Props) {
+  const t = useT();
   const alreadyUsed = reason === "intro_offer_already_used";
   return (
-    <div
-      role="status"
-      data-slot="trial-rejection"
-      className="flex flex-col gap-3"
-    >
+    <div role="status" data-slot="trial-rejection" className="flex flex-col gap-3">
       <TrialTitle>
         {alreadyUsed
-          ? "This introductory offer has already been used"
-          : "We couldn’t verify your card for this trial"}
+          ? t("billing3.rejection.usedTitle")
+          : t("billing3.rejection.verifyTitle")}
       </TrialTitle>
       <Text variant="body" className="!text-foreground-emphasis">
         {alreadyUsed
-          ? "This card or account has already redeemed an introductory offer. Each card and account can use one introductory offer."
-          : "Your card could not be verified for trial eligibility, so this trial was not activated."}
+          ? t("billing3.rejection.usedBody")
+          : t("billing3.rejection.verifyBody")}
       </Text>
       <Text variant="body" className="!text-foreground-emphasis">
-        This trial will not convert to a paid subscription. You can choose a
-        paid plan below. If you think this is a mistake, contact support.
+        {t("billing3.rejection.footnote")}
       </Text>
       <Button
         as="NextLink"
@@ -38,7 +35,7 @@ export function TrialRejection({ reason }: Props) {
         size="small"
         className="self-start"
       >
-        Contact support
+        {t("billing3.rejection.contactSupport")}
       </Button>
     </div>
   );
