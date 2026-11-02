@@ -3,6 +3,8 @@ import type { ErrorResponse } from "@/app/api/__generated__/models/errorResponse
 import type { NoResultsResponse } from "@/app/api/__generated__/models/noResultsResponse";
 import { ResponseType } from "@/app/api/__generated__/models/responseType";
 import type { ToolUIPart } from "ai";
+import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/locale";
+import { getMessage } from "@/lib/i18n/translate";
 import { ComputerIcon, EyeIcon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
 
@@ -81,10 +83,16 @@ export function getViewAgentOutputToolOutput(
 
 function getAgentIdentifierText(
   input: ViewAgentOutputInput | undefined,
+  locale: Locale,
 ): string | null {
   if (!input) return null;
   const libraryId = input.library_agent_id?.trim();
-  if (libraryId) return `Library workflow ${libraryId}`;
+  if (libraryId)
+    return getMessage(
+      locale,
+      "chatTools5.viewAgentOutput.identifier.libraryWorkflow",
+      { id: libraryId },
+    );
   const slug = input.store_slug?.trim();
   if (slug) return slug;
   const name = input.agent_name?.trim();
@@ -92,34 +100,58 @@ function getAgentIdentifierText(
   return null;
 }
 
-export function getAnimationText(part: {
-  state: ToolUIPart["state"];
-  input?: unknown;
-  output?: unknown;
-}): string {
+export function getAnimationText(
+  part: {
+    state: ToolUIPart["state"];
+    input?: unknown;
+    output?: unknown;
+  },
+  locale: Locale = DEFAULT_LOCALE,
+): string {
   const input = part.input as ViewAgentOutputInput | undefined;
-  const agent = getAgentIdentifierText(input);
-  const agentText = agent ? ` "${agent}"` : "";
+  const agent = getAgentIdentifierText(input, locale);
+  const retrieving = () =>
+    agent
+      ? getMessage(
+          locale,
+          "chatTools5.viewAgentOutput.animation.retrievingNamed",
+          { name: agent },
+        )
+      : getMessage(locale, "chatTools5.viewAgentOutput.animation.retrieving");
 
   switch (part.state) {
     case "input-streaming":
     case "input-available":
-      return `Retrieving workflow output${agentText}`;
+      return retrieving();
     case "output-available": {
       const output = parseOutput(part.output);
-      if (!output) return `Retrieving workflow output${agentText}`;
+      if (!output) return retrieving();
       if (isAgentOutputResponse(output)) {
         if (output.execution)
-          return `Retrieved output (${output.execution.status})`;
-        return "Retrieved workflow output";
+          return getMessage(
+            locale,
+            "chatTools5.viewAgentOutput.animation.retrievedWithStatus",
+            { status: output.execution.status },
+          );
+        return getMessage(
+          locale,
+          "chatTools5.viewAgentOutput.animation.retrieved",
+        );
       }
-      if (isNoResultsResponse(output)) return "No outputs found";
-      return "Error loading workflow output";
+      if (isNoResultsResponse(output))
+        return getMessage(
+          locale,
+          "chatTools5.viewAgentOutput.animation.noOutputs",
+        );
+      return getMessage(locale, "chatTools5.viewAgentOutput.animation.error");
     }
     case "output-error":
-      return "Error loading workflow output";
+      return getMessage(locale, "chatTools5.viewAgentOutput.animation.error");
     default:
-      return "Retrieving workflow output";
+      return getMessage(
+        locale,
+        "chatTools5.viewAgentOutput.animation.retrieving",
+      );
   }
 }
 

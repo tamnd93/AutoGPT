@@ -3,6 +3,8 @@ import type { NeedLoginResponse } from "@/app/api/__generated__/models/needLogin
 import { ResponseType } from "@/app/api/__generated__/models/responseType";
 import type { SetupRequirementsResponse } from "@/app/api/__generated__/models/setupRequirementsResponse";
 import type { ToolUIPart } from "ai";
+import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/locale";
+import { getMessage } from "@/lib/i18n/translate";
 import { ScaleLoader } from "../../components/ScaleLoader/ScaleLoader";
 import { AlertDiamondIcon, WebhookIcon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
@@ -109,31 +111,54 @@ export function getSetupTriggerToolOutput(
   return parseOutput((part as { output?: unknown }).output);
 }
 
-export function getAnimationText(part: {
-  state: ToolUIPart["state"];
-  output?: unknown;
-}): string {
+export function getAnimationText(
+  part: {
+    state: ToolUIPart["state"];
+    output?: unknown;
+  },
+  locale: Locale = DEFAULT_LOCALE,
+): string {
+  const settingUp = () =>
+    getMessage(locale, "chatTools5.setupTrigger.animation.settingUp");
   switch (part.state) {
     case "input-streaming":
     case "input-available":
-      return "Setting up the trigger";
+      return settingUp();
     case "output-available": {
       const output = parseOutput(part.output);
-      if (!output) return "Setting up the trigger";
+      if (!output) return settingUp();
       if (isTriggerSetupOutput(output))
-        return `Trigger "${output.name}" set up`;
+        return getMessage(
+          locale,
+          "chatTools5.setupTrigger.animation.triggerSetUp",
+          {
+            name: output.name,
+          },
+        );
       if (isSetupTriggerSetupRequirementsOutput(output))
-        return `Setup needed for "${output.setup_info.agent_name}"`;
+        return getMessage(
+          locale,
+          "chatTools5.setupTrigger.animation.setupNeeded",
+          {
+            name: output.setup_info.agent_name,
+          },
+        );
       if (isTriggerConfigRequiredOutput(output))
-        return "Trigger configuration needed";
+        return getMessage(
+          locale,
+          "chatTools5.setupTrigger.animation.configNeeded",
+        );
       if (isSetupTriggerNeedLoginOutput(output))
-        return "Sign in required to set up the trigger";
-      return "Something went wrong";
+        return getMessage(
+          locale,
+          "chatTools5.setupTrigger.animation.signInRequired",
+        );
+      return getMessage(locale, "chatTools5.setupTrigger.animation.wentWrong");
     }
     case "output-error":
-      return "Something went wrong";
+      return getMessage(locale, "chatTools5.setupTrigger.animation.wentWrong");
     default:
-      return "Setting up the trigger";
+      return settingUp();
   }
 }
 

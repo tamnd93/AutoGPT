@@ -17,6 +17,7 @@ import {
   ToolIcon,
   type TriggerSetupOutput,
 } from "./helpers";
+import { useLocale, useT } from "@/lib/i18n";
 import { Copy01Icon, Tick02Icon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
 
@@ -30,7 +31,9 @@ interface Props {
 }
 
 export function SetupTriggerTool({ part }: Props) {
-  const text = getAnimationText(part);
+  const locale = useLocale();
+  const t = useT();
+  const text = getAnimationText(part, locale);
   const isStreaming =
     part.state === "input-streaming" || part.state === "input-available";
 
@@ -75,7 +78,7 @@ export function SetupTriggerTool({ part }: Props) {
           <SetupRequirementsCard
             output={setupRequirementsOutput}
             inputsMode="trigger"
-            credentialsLabel="Account"
+            credentialsLabel={t("chatTools5.setupTrigger.credentialsLabel")}
           />
         </div>
       )}
@@ -103,6 +106,7 @@ export function SetupTriggerTool({ part }: Props) {
 
 function TriggerSetupSuccessCard({ output }: { output: TriggerSetupOutput }) {
   const [copied, setCopied] = useState(false);
+  const t = useT();
 
   async function handleCopy() {
     if (!output.webhook_url) return;
@@ -128,7 +132,11 @@ function TriggerSetupSuccessCard({ output }: { output: TriggerSetupOutput }) {
             variant="ghost"
             size="small"
             onClick={handleCopy}
-            aria-label={copied ? "Copied" : "Copy webhook URL"}
+            aria-label={
+              copied
+                ? t("chatTools5.setupTrigger.copied")
+                : t("chatTools5.setupTrigger.copyWebhookUrl")
+            }
           >
             {copied ? (
               <Icon icon={Tick02Icon} size={14} />

@@ -6,6 +6,7 @@ import {
   waitFor,
 } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { LocaleProvider } from "@/lib/i18n";
 import { SetupTriggerTool } from "../SetupTrigger";
 import { buildTriggerSetupMessage } from "../../../components/SetupRequirementsCard/helpers";
 import { useConnectedProvidersStore } from "../../../connectedProvidersStore";
@@ -83,6 +84,29 @@ describe("SetupTriggerTool", () => {
     expect(screen.getByTestId("credentials-grouped-view")).toBeDefined();
     // Trigger mode labels the credentials section "Account".
     expect(screen.getByText("Account")).toBeDefined();
+  });
+
+  it("labels the copy button in vietnamese", () => {
+    render(
+      <LocaleProvider locale="vi">
+        <SetupTriggerTool
+          part={part({
+            type: "trigger_setup",
+            message: "Webhook trigger ready.",
+            preset_id: "p1",
+            library_agent_id: "lib-1",
+            library_agent_link: "/library/agents/lib-1",
+            name: "My Trigger",
+            is_active: true,
+            provider: "generic_webhook",
+            manual_setup_required: true,
+            webhook_url: "https://example.test/hook",
+          })}
+        />
+      </LocaleProvider>,
+    );
+
+    expect(screen.getByLabelText("Sao chép URL webhook")).toBeDefined();
   });
 
   it("renders the webhook URL with a copy button for a trigger_setup output", () => {

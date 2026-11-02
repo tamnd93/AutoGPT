@@ -51,3 +51,20 @@ describe("ViewAgentOutput getAnimationText", () => {
     );
   });
 });
+
+describe("ViewAgentOutput getAnimationText (vi)", () => {
+  it("speaks vietnamese while the output loads", () => {
+    expect(
+      getAnimationText(
+        { state: "input-available", input: { agent_name: "Digest" } },
+        "vi",
+      ),
+    ).toBe('Đang lấy kết quả workflow "Digest"');
+  });
+
+  it("speaks vietnamese for the error state", () => {
+    expect(getAnimationText({ state: "output-error" }, "vi")).toBe(
+      "Lỗi khi tải kết quả workflow",
+    );
+  });
+});

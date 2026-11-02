@@ -7,6 +7,7 @@ import {
   OutputItem,
 } from "@/components/contextual/OutputRenderers";
 import type { OutputMetadata } from "@/components/contextual/OutputRenderers";
+import { useLocale, useT } from "@/lib/i18n";
 import { isWorkspaceURI, parseWorkspaceURI } from "@/lib/workspace-uri";
 import { MorphingTextAnimation } from "../../components/MorphingTextAnimation/MorphingTextAnimation";
 import { ToolAccordion } from "../../components/ToolAccordion/ToolAccordion";
@@ -88,7 +89,10 @@ function RenderOutputValue({ value }: { value: unknown }) {
   return null;
 }
 
-function getAccordionMeta(output: ViewAgentOutputToolOutput): {
+function getAccordionMeta(
+  output: ViewAgentOutputToolOutput,
+  t: ReturnType<typeof useT>,
+): {
   icon: React.ReactNode;
   title: string;
   description?: string;
@@ -100,17 +104,21 @@ function getAccordionMeta(output: ViewAgentOutputToolOutput): {
     return {
       icon,
       title: output.agent_name,
-      description: status ? `Status: ${status}` : output.message,
+      description: status
+        ? t("chatTools5.viewAgentOutput.status", { status })
+        : output.message,
     };
   }
   if (isNoResultsResponse(output)) {
-    return { icon, title: "No results" };
+    return { icon, title: t("chatTools5.viewAgentOutput.noResults") };
   }
-  return { icon, title: "Error" };
+  return { icon, title: t("chatTools5.viewAgentOutput.errorTitle") };
 }
 
 export function ViewAgentOutputTool({ part }: Props) {
-  const text = getAnimationText(part);
+  const locale = useLocale();
+  const t = useT();
+  const text = getAnimationText(part, locale);
   const isStreaming =
     part.state === "input-streaming" || part.state === "input-available";
 
@@ -135,7 +143,7 @@ export function ViewAgentOutputTool({ part }: Props) {
       </div>
 
       {hasExpandableContent && output && (
-        <ToolAccordion {...getAccordionMeta(output)}>
+        <ToolAccordion {...getAccordionMeta(output, t)}>
           {isAgentOutputResponse(output) && (
             <ContentGrid>
               <ContentCardHeader
@@ -143,7 +151,7 @@ export function ViewAgentOutputTool({ part }: Props) {
                 action={
                   output.library_agent_link ? (
                     <ContentLink href={output.library_agent_link}>
-                      Open
+                      {t("chatTools5.viewAgentOutput.open")}
                     </ContentLink>
                   ) : null
                 }
@@ -155,20 +163,22 @@ export function ViewAgentOutputTool({ part }: Props) {
                 <ContentGrid>
                   <ContentCard>
                     <ContentCardTitle className="text-xs">
-                      Execution
+                      {t("chatTools5.viewAgentOutput.execution")}
                     </ContentCardTitle>
                     <ContentCardSubtitle className="mt-1">
                       {output.execution.execution_id}
                     </ContentCardSubtitle>
                     <ContentCardSubtitle className="mt-1">
-                      Status: {output.execution.status}
+                      {t("chatTools5.viewAgentOutput.status", {
+                        status: output.execution.status,
+                      })}
                     </ContentCardSubtitle>
                   </ContentCard>
 
                   {output.execution.inputs_summary && (
                     <ContentCard>
                       <ContentCardTitle className="text-xs">
-                        Inputs summary
+                        {t("chatTools5.viewAgentOutput.inputsSummary")}
                       </ContentCardTitle>
                       <div className="mt-2">
                         <RenderOutputValue
@@ -186,8 +196,12 @@ export function ViewAgentOutputTool({ part }: Props) {
                             {key}
                           </ContentCardTitle>
                           <ContentBadge>
-                            {items.length} item
-                            {items.length === 1 ? "" : "s"}
+                            {t(
+                              items.length === 1
+                                ? "chatTools5.viewAgentOutput.itemOne"
+                                : "chatTools5.viewAgentOutput.itemMany",
+                              { count: items.length },
+                            )}
                           </ContentBadge>
                         </div>
                         <div className="mt-2">
@@ -201,9 +215,11 @@ export function ViewAgentOutputTool({ part }: Props) {
                 </ContentGrid>
               ) : (
                 <ContentCard>
-                  <ContentMessage>No execution selected.</ContentMessage>
+                  <ContentMessage>
+                    {t("chatTools5.viewAgentOutput.noExecutionSelected")}
+                  </ContentMessage>
                   <ContentCardSubtitle className="mt-1">
-                    Try asking for a specific run or execution_id.
+                    {t("chatTools5.viewAgentOutput.noExecutionHint")}
                   </ContentCardSubtitle>
                 </ContentCard>
               )}

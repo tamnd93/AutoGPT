@@ -189,6 +189,23 @@ describe("getAnimationText", () => {
   });
 });
 
+describe("getAnimationText (vi)", () => {
+  it("speaks vietnamese for each output shape", () => {
+    expect(getAnimationText({ state: "input-available" }, "vi")).toBe(
+      "Đang thiết lập trigger",
+    );
+    expect(
+      getAnimationText(
+        { state: "output-available", output: triggerSetup },
+        "vi",
+      ),
+    ).toBe('Đã thiết lập trigger "My Trigger"');
+    expect(
+      getAnimationText({ state: "output-available", output: errorOut }, "vi"),
+    ).toBe("Đã xảy ra lỗi");
+  });
+});
+
 describe("ToolIcon", () => {
   it("renders the error icon when isError", () => {
     const { container } = render(<ToolIcon isError />);
