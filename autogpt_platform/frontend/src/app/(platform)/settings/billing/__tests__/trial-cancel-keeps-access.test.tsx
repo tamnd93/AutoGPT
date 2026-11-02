@@ -5,6 +5,7 @@ import {
 import { COUNTRIES } from "@/components/molecules/PlanCard/countries";
 import { PLANS } from "@/components/molecules/PlanCard/plans";
 import { SubscriptionPlans } from "@/components/organisms/SubscriptionPlans/SubscriptionPlans";
+import { LocaleProvider } from "@/lib/i18n";
 import {
   formatTrialEnd,
   formatTrialEndDate,
@@ -176,5 +177,35 @@ describe("trial terms before the trial starts", () => {
         "Trial usage is limited. If you cancel, you keep access until the trial ends. You can manage or cancel your plan in billing.",
       ),
     ).toBeDefined();
+  });
+});
+
+describe("subscription plans in Vietnamese", () => {
+  it("reads the plan chrome in Vietnamese", () => {
+    render(
+      <LocaleProvider locale="vi">
+        <SubscriptionPlans
+          plans={PLANS}
+          country={COUNTRIES[0]}
+          billing="monthly"
+          onBillingChange={vi.fn()}
+          trialOffer={trialOffer}
+          onStartTrial={vi.fn()}
+          onSelectPlan={vi.fn()}
+          isUpdatingTier={false}
+          isStartingTrial={false}
+          trialError={null}
+        />
+      </LocaleProvider>,
+    );
+
+    expect(screen.getByLabelText("Chọn gói AutoGPT của bạn")).toBeDefined();
+    expect(
+      screen.getByRole("group", { name: "Chu kỳ thanh toán" }),
+    ).toBeDefined();
+    expect(
+      screen.getByRole("button", { name: /Thanh toán hàng tháng/ }),
+    ).toBeDefined();
+    expect(screen.getByRole("button", { name: "So sánh gói" })).toBeDefined();
   });
 });

@@ -3,6 +3,7 @@ import { AutoGPTLogo } from "@/components/atoms/AutoGPTLogo/AutoGPTLogo";
 import { Text } from "@/components/atoms/Text/Text";
 import type { SubscriptionPlansProps } from "../helpers";
 import { BillingToggle } from "./BillingToggle";
+import { useT } from "@/lib/i18n";
 
 type Props = Pick<SubscriptionPlansProps, "billing" | "onBillingChange"> & {
   // A surface with its own title (the platform paywall modal) passes its
@@ -24,22 +25,23 @@ export function PlanHeader({ header, ...billing }: Props) {
 }
 
 function DefaultHeading() {
+  const t = useT();
+
   return (
     <>
       <AutoGPTLogo hideText className="relative right-5 mb-2 h-8 w-20" />
       <Text variant="h3" as="h1" className="leading-9">
-        Choose the plan that&apos;s right for{" "}
+        {t("billing3.plans.headerBefore")}
         <span
           data-slot="plan-header-heading-accent"
           // TODO(tokens): no role for the indigo-500 gradient stop.
           className="bg-gradient-to-r from-brand to-indigo-500 bg-clip-text text-transparent"
         >
-          you
+          {t("billing3.plans.headerAccent")}
         </span>
       </Text>
       <Text variant="body" tone="muted" className="mt-1">
-        Upgrade, downgrade, or change plans anytime. All plans include core
-        features to get you started.
+        {t("billing3.plans.headerBody")}
       </Text>
     </>
   );

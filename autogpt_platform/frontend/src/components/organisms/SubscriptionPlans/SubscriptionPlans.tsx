@@ -6,6 +6,7 @@ import { PlanFooter } from "./components/PlanFooter";
 import { PlanHeader } from "./components/PlanHeader";
 import { SubscriptionOffer } from "./components/SubscriptionOffer";
 import type { SubscriptionPlansProps } from "./helpers";
+import { useT } from "@/lib/i18n";
 import { useSubscriptionPlans } from "./useSubscriptionPlans";
 
 export function SubscriptionPlans({
@@ -16,6 +17,7 @@ export function SubscriptionPlans({
   trialStatus?: ReactNode;
   header?: ReactNode;
 }) {
+  const t = useT();
   const { dialog, setDialog, setDialogOpen } = useSubscriptionPlans();
   return (
     <div
@@ -24,7 +26,7 @@ export function SubscriptionPlans({
     >
       <section
         data-slot="subscription-plans-section"
-        aria-label="Choose your AutoGPT plan"
+        aria-label={t("billing3.plans.aria")}
       >
         <PlanHeader {...props} header={header} />
         <div

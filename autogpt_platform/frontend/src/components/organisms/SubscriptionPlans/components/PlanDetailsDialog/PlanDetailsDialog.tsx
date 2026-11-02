@@ -4,6 +4,7 @@ import type { PlanDef } from "@/components/molecules/PlanCard/plans";
 import type { PlanDialog } from "../../helpers";
 import { PlanComparison } from "./components/PlanComparison";
 import { TrialDetails } from "./components/TrialDetails";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   kind: PlanDialog;
@@ -13,9 +14,15 @@ interface Props {
 }
 
 export function PlanDetailsDialog({ kind, setOpen, trialOffer, plans }: Props) {
+  const t = useT();
+
   return (
     <Dialog
-      title={kind === "compare" ? "Compare plans" : "Your trial. No surprises."}
+      title={
+        kind === "compare"
+          ? t("billing3.plans.compareTitle")
+          : t("billing3.plans.trialTitle")
+      }
       variant="compact"
       controlled={{ isOpen: kind !== null, set: setOpen }}
       className="max-w-2xl"

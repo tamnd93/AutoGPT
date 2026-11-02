@@ -1,11 +1,14 @@
 import { Text } from "@/components/atoms/Text/Text";
 import type { PlanDef } from "@/components/molecules/PlanCard/plans";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   plans: PlanDef[];
 }
 
 export function PlanComparison({ plans }: Props) {
+  const t = useT();
+
   return (
     <div data-slot="plan-comparison" className="space-y-4">
       <table
@@ -22,7 +25,8 @@ export function PlanComparison({ plans }: Props) {
                 className="pb-3 pr-3 font-medium"
               >
                 {plan.name}
-                {plan.usage && ` · ${plan.usage} usage`}
+                {plan.usage &&
+                  ` · ${t("billing3.plans.usage", { usage: plan.usage })}`}
               </th>
             ))}
           </tr>
@@ -51,7 +55,7 @@ export function PlanComparison({ plans }: Props) {
         </tbody>
       </table>
       <Text variant="small" tone="secondary">
-        Trial usage is limited. Paid plan allowances apply after the trial.
+        {t("billing3.plans.trialUsageNote")}
       </Text>
     </div>
   );

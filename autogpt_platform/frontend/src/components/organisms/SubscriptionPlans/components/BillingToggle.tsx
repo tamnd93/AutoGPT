@@ -1,14 +1,17 @@
 import { Button } from "@/components/atoms/Button/Button";
 import { cn } from "@/lib/utils";
 import type { SubscriptionPlansProps } from "../helpers";
+import { useT } from "@/lib/i18n";
 
 type Props = Pick<SubscriptionPlansProps, "billing" | "onBillingChange">;
 
 export function BillingToggle({ billing, onBillingChange }: Props) {
+  const t = useT();
+
   return (
     <div
       role="group"
-      aria-label="Billing period"
+      aria-label={t("billing3.plans.billingAria")}
       data-slot="billing-toggle"
       className="mt-3 flex rounded-full border border-border-base bg-surface-hover p-1"
     >
@@ -27,14 +30,16 @@ export function BillingToggle({ billing, onBillingChange }: Props) {
               : "text-foreground-tertiary",
           )}
         >
-          {cycle === "monthly" ? "Monthly billing" : "Yearly billing"}
+          {cycle === "monthly"
+            ? t("billing3.plans.monthly")
+            : t("billing3.plans.yearly")}
           {cycle === "yearly" && (
             <span
               data-slot="billing-toggle-savings"
               // TODO(tokens): no role for emerald-600; success is green-600.
               className="text-xs text-emerald-600"
             >
-              Save 15%
+              {t("billing3.plans.save")}
             </span>
           )}
         </Button>

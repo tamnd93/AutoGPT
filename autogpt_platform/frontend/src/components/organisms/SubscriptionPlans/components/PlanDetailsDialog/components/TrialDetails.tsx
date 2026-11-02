@@ -2,16 +2,21 @@ import type { TrialOfferResponse } from "@/app/api/__generated__/models/trialOff
 import { Text } from "@/components/atoms/Text/Text";
 import { formatTrialPrice } from "@/components/organisms/TrialCard/helpers";
 import { formatPlanAmount } from "../../../helpers";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   offer: TrialOfferResponse;
 }
 
 export function TrialDetails({ offer }: Props) {
+  const t = useT();
+
   return (
     <div data-slot="trial-details" className="space-y-5">
       <Text variant="body" tone="secondary">
-        {offer.duration_days} days to put AutoGPT to work.
+        {t("billing3.plans.trialDaysIntro", {
+          days: offer.duration_days,
+        })}
       </Text>
       <dl
         data-slot="trial-details-list"
@@ -22,7 +27,7 @@ export function TrialDetails({ offer }: Props) {
           className="flex justify-between gap-4 py-4"
         >
           <Text as="dt" variant="body">
-            Today
+            {t("billing3.plans.today")}
           </Text>
           <Text as="dd" variant="lead-medium">
             {formatPlanAmount(0, offer.currency)}
@@ -33,7 +38,9 @@ export function TrialDetails({ offer }: Props) {
           className="flex justify-between gap-4 py-4"
         >
           <Text as="dt" variant="body">
-            After {offer.duration_days} days
+            {t("billing3.plans.afterDays", {
+              days: offer.duration_days,
+            })}
           </Text>
           <Text as="dd" variant="lead-medium">
             {formatTrialPrice(offer)}
@@ -41,13 +48,10 @@ export function TrialDetails({ offer }: Props) {
         </div>
       </dl>
       <Text variant="body" tone="secondary">
-        Card required. No subscription charge today. Your paid subscription
-        starts automatically after the trial, plus applicable tax, unless you
-        cancel before it ends.
+        {t("billing3.plans.trialChargeNote")}
       </Text>
       <Text variant="body" tone="secondary">
-        Trial usage is limited. If you cancel, you keep access until the trial
-        ends. You can manage or cancel your plan in billing.
+        {t("billing3.plans.trialLimitNote")}
       </Text>
     </div>
   );

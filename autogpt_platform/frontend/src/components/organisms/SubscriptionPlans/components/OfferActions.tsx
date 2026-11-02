@@ -2,6 +2,7 @@ import { Button } from "@/components/atoms/Button/Button";
 import { Text } from "@/components/atoms/Text/Text";
 import type { PlanDef } from "@/components/molecules/PlanCard/plans";
 import { formatTrialPrice } from "@/components/organisms/TrialCard/helpers";
+import { useT } from "@/lib/i18n";
 import {
   getPlanPresentation,
   isTeamPlan,
@@ -14,6 +15,7 @@ interface Props extends SubscriptionPlansProps {
 }
 
 export function OfferActions(props: Props) {
+  const t = useT();
   const { trial, offer, action } = getPlanPresentation(props.plan, props);
   return (
     <div data-slot="offer-actions" className="mt-auto space-y-2">
@@ -40,8 +42,8 @@ export function OfferActions(props: Props) {
         ) : (
           <Text variant="small" tone="muted">
             {isTeamPlan(props.plan.key)
-              ? "Find the right fit for your team."
-              : "Manage your plan and billing anytime."}
+              ? t("billing3.plans.teamFit")
+              : t("billing3.plans.manageBilling")}
           </Text>
         )}
       </div>
@@ -92,17 +94,18 @@ function PaidPlanAction({
 }
 
 function TrialActionDetails(props: Props) {
+  const t = useT();
   const { paidActionPrice } = getPlanPresentation(props.plan, props);
   return (
     <Text variant="small" tone="muted">
-      Card required. No subscription charge today.{" "}
+      {t("billing3.plans.cardRequired")}{" "}
       <Button
         type="button"
         variant="link"
         className="h-auto min-w-0 p-0 text-xs text-foreground-tertiary"
         onClick={props.onTrialDetails}
       >
-        Trial details
+        {t("billing3.plans.trialDetails")}
       </Button>
       {" · "}
       <PaidPlanAction {...props} inline price={paidActionPrice} />
@@ -118,6 +121,8 @@ function AlternativeTrial({
 }: Props & {
   offer: NonNullable<SubscriptionPlansProps["trialOffer"]>;
 }) {
+  const t = useT();
+
   function handleSwitchCycle() {
     onBillingChange(offer.billing_cycle);
   }
@@ -131,10 +136,15 @@ function AlternativeTrial({
         disabled={isStartingTrial}
         onClick={handleSwitchCycle}
       >
-        Try {plan.name} for {offer.duration_days} days instead
+        {t("billing3.plans.tryInstead", {
+          plan: plan.name,
+          days: offer.duration_days,
+        })}
       </Button>
       <Text variant="small" tone="muted">
-        Renews at {formatTrialPrice(offer)} + applicable tax.
+        {t("billing3.plans.renewsAt", {
+          price: formatTrialPrice(offer),
+        })}
       </Text>
     </div>
   );
