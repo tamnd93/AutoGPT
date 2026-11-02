@@ -14,15 +14,14 @@ import * as Sentry from "@sentry/nextjs";
 import { useQueryClient } from "@tanstack/react-query";
 import { CancelCircleIcon, HourglassIcon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   sessionID: string | null;
 }
 
-const QUEUED_TOOLTIP =
-  "Will start automatically when one of your current tasks finishes.";
-
 export function QueueBadge({ sessionID }: Props) {
+  const t = useT();
   const queryClient = useQueryClient();
   const { mutate: cancelTask, isPending: isCancelling } =
     usePostV2CancelSessionTask({
@@ -50,8 +49,8 @@ export function QueueBadge({ sessionID }: Props) {
           Sentry.captureException(error);
           toast({
             variant: "destructive",
-            title: "Could not cancel queued task",
-            description: "Please try again.",
+            title: t("chatRuntime1.queue.cancelFailedTitle"),
+            description: t("chatRuntime1.queue.cancelFailedDescription"),
           });
         },
       },
@@ -72,11 +71,11 @@ export function QueueBadge({ sessionID }: Props) {
             data-testid="queue-badge-queued"
           >
             <Icon icon={HourglassIcon} size={12} />
-            Queued
+            {t("chatRuntime1.queue.queued")}
           </span>
         </TooltipTrigger>
         <TooltipContent side="top" className="max-w-xs whitespace-normal">
-          {QUEUED_TOOLTIP}
+          {t("chatRuntime1.queue.queuedTooltip")}
         </TooltipContent>
       </Tooltip>
       {sessionID ? (
@@ -86,7 +85,7 @@ export function QueueBadge({ sessionID }: Props) {
               type="button"
               onClick={handleCancel}
               disabled={isCancelling}
-              aria-label="Cancel queued task"
+              aria-label={t("chatRuntime1.queue.cancelAria")}
               data-testid="queue-cancel-button"
               // TODO(tokens): no exact role for text-neutral-500; no fitting role for hover:text-red-600 #D93636; #D93636 is error-hover (a fill and line colour)
               className="inline-flex h-4 w-4 items-center justify-center rounded-full text-neutral-500 transition-colors hover:text-red-600 disabled:opacity-50"
@@ -94,7 +93,9 @@ export function QueueBadge({ sessionID }: Props) {
               <Icon icon={CancelCircleIcon} size={14} />
             </button>
           </TooltipTrigger>
-          <TooltipContent side="top">Cancel queued task</TooltipContent>
+          <TooltipContent side="top">
+            {t("chatRuntime1.queue.cancelAria")}
+          </TooltipContent>
         </Tooltip>
       ) : null}
     </span>

@@ -3,6 +3,7 @@ import { formatElapsed } from "../../JobStatsBar/formatElapsed";
 import { getElapsedSeconds } from "../../JobStatsBar/useElapsedTimer";
 import { DrawnLineLoader } from "../../DrawnLineLoader/DrawnLineLoader";
 import { SwapText } from "../../ToolChain/SwapText";
+import { useT } from "@/lib/i18n";
 
 /** Only show elapsed time after this many seconds. */
 const SHOW_TIME_AFTER_SECONDS = 20;
@@ -32,6 +33,7 @@ export function ThinkingIndicator({
   elapsedSeconds = 0,
   statusMessage,
 }: Props) {
+  const t = useT();
   const hasClock = startedAtMs !== null && startedAtMs !== undefined;
   const nowMs = useNowSecond(active && hasClock);
   const seconds = hasClock
@@ -47,7 +49,7 @@ export function ThinkingIndicator({
     >
       <DrawnLineLoader className="text-foreground-secondary" size={16} />
       <SwapText
-        text={statusMessage ?? "Thinking…"}
+        text={statusMessage ?? t("chatRuntime1.thinking.default")}
         shimmer
         className="text-sm"
       />

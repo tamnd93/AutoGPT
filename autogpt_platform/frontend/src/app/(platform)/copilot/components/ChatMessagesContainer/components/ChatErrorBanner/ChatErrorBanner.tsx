@@ -1,4 +1,5 @@
 import { Button } from "@/components/atoms/Button/Button";
+import { useLocale, useT, type MessageKey } from "@/lib/i18n";
 import { useIsBillingEnabled } from "@/hooks/useIsBillingEnabled";
 
 import {
@@ -11,7 +12,9 @@ interface Props {
 }
 
 export function ChatErrorBanner({ error }: Props) {
-  const guidance = describeChatError(error);
+  const locale = useLocale();
+  const t = useT();
+  const guidance = describeChatError(error, locale);
   const isBillingEnabled = useIsBillingEnabled();
   // Without billing (most self-hosted installs) there are no plans to pick
   // and /settings/billing is a 404, so point at whoever runs the server.
@@ -19,7 +22,7 @@ export function ChatErrorBanner({ error }: Props) {
   const { title } = guidance;
   const action = noPlans ? null : guidance.action;
   const note = noPlans
-    ? "Ask whoever runs this server to set one up."
+    ? t("chatRuntime1.chatErrorBanner.askAdmin")
     : guidance.note;
   return (
     <div
@@ -46,17 +49,17 @@ export function ChatErrorBanner({ error }: Props) {
           size="small"
           className="mt-3"
         >
-          {ACTION_LABELS[action]}
+          {t(ACTION_LABELS[action])}
         </Button>
       ) : null}
     </div>
   );
 }
 
-const ACTION_LABELS: Record<ChatErrorAction, string> = {
-  "sign-in": "Sign in",
-  "new-chat": "Start a new chat",
-  plans: "See plans",
+const ACTION_LABELS: Record<ChatErrorAction, MessageKey> = {
+  "sign-in": "chatRuntime1.chatErrorBanner.signIn",
+  "new-chat": "chatRuntime1.chatErrorBanner.newChat",
+  plans: "chatRuntime1.chatErrorBanner.seePlans",
 };
 
 function hrefFor(action: ChatErrorAction) {

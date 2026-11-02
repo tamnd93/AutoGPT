@@ -5,6 +5,7 @@ import { useEffect, useInsertionEffect, useRef, useState } from "react";
 import { useTextToSpeech } from "@/components/contextual/Chat/components/ChatMessage/useTextToSpeech";
 import { useToast } from "@/components/molecules/Toast/use-toast";
 import { Flag, useGetFlag } from "@/services/feature-flags/use-get-flag";
+import { useT } from "@/lib/i18n";
 
 import { synthesizeSpeech } from "../../../voice/speechApi";
 import { takeSpeakableChunks } from "../../../voice/speechChunker";
@@ -40,6 +41,7 @@ export function useTTSButton({ text, sessionID }: Args) {
 }
 
 function useServerSpeech(text: string, sessionID: string | null) {
+  const t = useT();
   const { toast } = useToast();
   const [isPlaying, setIsPlaying] = useState(false);
   const playerRef = useRef<SpeechPlayer | null>(null);
@@ -94,9 +96,11 @@ function useServerSpeech(text: string, sessionID: string | null) {
     setIsPlaying(false);
     console.error("[Read aloud]", error);
     toast({
-      title: "Read aloud",
+      title: t("chatRuntime1.tts.readAloud"),
       description:
-        error instanceof Error ? error.message : "Something went wrong.",
+        error instanceof Error
+          ? error.message
+          : t("chatRuntime1.tts.somethingWrong"),
       variant: "destructive",
     });
   }

@@ -5,6 +5,7 @@ import { Button } from "@/components/atoms/Button/Button";
 import { Dialog } from "@/components/molecules/Dialog/Dialog";
 import { Input } from "@/components/atoms/Input/Input";
 import { useState } from "react";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   isOpen: boolean;
@@ -13,6 +14,7 @@ interface Props {
 }
 
 export function FeedbackModal({ isOpen, onSubmit, onCancel }: Props) {
+  const t = useT();
   const [comment, setComment] = useState("");
 
   function handleSubmit() {
@@ -28,7 +30,7 @@ export function FeedbackModal({ isOpen, onSubmit, onCancel }: Props) {
 
   return (
     <Dialog
-      title="What could have been better?"
+      title={t("chatRuntime1.feedbackModal.title")}
       controlled={{
         isOpen,
         set: (open) => {
@@ -39,12 +41,12 @@ export function FeedbackModal({ isOpen, onSubmit, onCancel }: Props) {
       <Dialog.Content>
         <div className="mx-auto w-[95%] space-y-4">
           <Text variant="body-tight" as="p" className="text-muted-foreground">
-            Your feedback helps us improve. Share details below.
+            {t("chatRuntime1.feedbackModal.intro")}
           </Text>
           <Input
             bare
             type="textarea"
-            placeholder="Tell us what went wrong or could be improved..."
+            placeholder={t("chatRuntime1.feedbackModal.placeholder")}
             value={comment}
             onChange={(e) => setComment(e.target.value)}
             rows={4}
@@ -61,14 +63,14 @@ export function FeedbackModal({ isOpen, onSubmit, onCancel }: Props) {
             </Text>
             <div className="flex gap-2">
               <Button variant="outline" size="small" onClick={handleClose}>
-                Cancel
+                {t("chatRuntime1.feedbackModal.cancel")}
               </Button>
               <Button
                 size="small"
                 onClick={handleSubmit}
                 disabled={!comment.trim()}
               >
-                Submit feedback
+                {t("chatRuntime1.feedbackModal.submit")}
               </Button>
             </div>
           </div>

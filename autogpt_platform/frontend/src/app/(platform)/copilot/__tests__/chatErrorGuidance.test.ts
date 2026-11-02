@@ -10,6 +10,22 @@ import {
 
 const RESEND = /send (it|your message) again|try sending/i;
 
+describe("describeChatError (vi)", () => {
+  it("explains a signed-out send in vietnamese", () => {
+    expect(describeChatError(new CopilotAuthError(), "vi")).toEqual({
+      title: "Bạn đã đăng xuất. Hãy đăng nhập lại để tiếp tục chat.",
+      action: "sign-in",
+    });
+  });
+
+  it("explains a gone chat in vietnamese", () => {
+    expect(describeChatError(new ChatUnavailableError(), "vi")).toEqual({
+      title: "Chat này không còn tồn tại. Hãy bắt đầu chat mới để tiếp tục.",
+      action: "new-chat",
+    });
+  });
+});
+
 describe("describeChatError", () => {
   it("a message over the length limit says to shorten it", () => {
     const guidance = describeChatError(

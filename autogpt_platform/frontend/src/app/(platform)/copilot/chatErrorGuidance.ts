@@ -1,4 +1,6 @@
 import { CopilotAuthError } from "./helpers";
+import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/locale";
+import { getMessage } from "@/lib/i18n/translate";
 import {
   ChatUnavailableError,
   isUnexpectedRefusal,
@@ -16,65 +18,65 @@ export interface ChatErrorGuidance {
 }
 
 /** Guidance for a failed send or stream; it promises a resend only where one can succeed. */
-export function describeChatError(error: Error): ChatErrorGuidance {
+export function describeChatError(
+  error: Error,
+  locale: Locale = DEFAULT_LOCALE,
+): ChatErrorGuidance {
   const status = statusOf(error);
+  const m = (key: Parameters<typeof getMessage>[1]) => getMessage(locale, key);
   if (
     error instanceof CopilotAuthError ||
     status === 401 ||
     /authentication failed|not authenticated/i.test(error.message)
   )
     return {
-      title: "You're signed out. Sign in again to keep chatting.",
+      title: m("chatRuntime1.chatError.signedOut"),
       action: "sign-in",
     };
   if (error instanceof ChatUnavailableError || status === 404)
     return {
-      title: "This chat no longer exists. Start a new chat to keep going.",
+      title: m("chatRuntime1.chatError.chatGone"),
       action: "new-chat",
     };
   if (error instanceof MessageTooLongError)
     return {
-      title: "Your message is too long. Shorten it and send again.",
+      title: m("chatRuntime1.chatError.messageTooLong"),
       action: null,
     };
   if (/prompt is too long/i.test(error.message))
     return {
-      title:
-        "This conversation is too long to continue. Start a new chat to keep going.",
+      title: m("chatRuntime1.chatError.conversationTooLong"),
       action: "new-chat",
     };
   if (status === 402)
     return {
-      title: "Sending needs an active plan, so this message wasn't sent.",
+      title: m("chatRuntime1.chatError.needsPlan"),
       action: "plans",
     };
   if (status === 429 || /usage limit/i.test(error.message))
     return {
-      title: "You've reached a usage limit, so this message wasn't sent.",
+      title: m("chatRuntime1.chatError.usageLimit"),
       action: null,
     };
   // The app only sends what the server accepts, so this is our bug.
   if (status !== null && isUnexpectedRefusal(status))
     return {
-      title:
-        "The request was refused. Reload the page and try again; if it keeps happening, contact support.",
+      title: m("chatRuntime1.chatError.refused"),
       action: null,
-      note: "The system maintainer has been notified of the issue",
+      note: m("chatRuntime1.chatError.refusedNote"),
     };
   if (status !== null && status >= 500)
     return {
-      title:
-        "The server had a problem. Please try sending your message again in a moment.",
+      title: m("chatRuntime1.chatError.serverProblem"),
       action: null,
     };
   if (error.name === "TypeError")
     return {
-      title:
-        "The connection dropped before your message was sent. Check your connection and send it again.",
+      title: m("chatRuntime1.chatError.connectionDropped"),
       action: null,
     };
   return {
-    title: "Something went wrong. Please try sending your message again.",
+    title: m("chatRuntime1.chatError.generic"),
     action: null,
   };
 }

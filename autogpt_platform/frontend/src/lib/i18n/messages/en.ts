@@ -10,6 +10,7 @@ import { chatFiles2En } from "./chat-files-2.en";
 import { chatInput1En } from "./chat-input-1.en";
 import { chatInput2En } from "./chat-input-2.en";
 import { chatInput3En } from "./chat-input-3.en";
+import { chatRuntime1En } from "./chat-runtime-1.en";
 import { chatTools1En } from "./chat-tools-1.en";
 import { chatTools2En } from "./chat-tools-2.en";
 import { chatTools3En } from "./chat-tools-3.en";
@@ -52,6 +53,7 @@ export const en = {
   ...chatInput1En,
   ...chatInput2En,
   ...chatInput3En,
+  ...chatRuntime1En,
   ...chatTools1En,
   ...chatTools2En,
   ...chatTools3En,

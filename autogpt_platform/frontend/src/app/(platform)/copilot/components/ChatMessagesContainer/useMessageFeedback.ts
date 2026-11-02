@@ -5,6 +5,7 @@ import * as Sentry from "@sentry/nextjs";
 import type { UIDataTypes, UIMessage, UITools } from "ai";
 import { useState } from "react";
 import { extractDbSequence } from "../../helpers/convertChatSessionToUiMessages";
+import { useT } from "@/lib/i18n";
 
 type Rating = "upvote" | "downvote";
 
@@ -14,6 +15,7 @@ interface Args {
 }
 
 export function useMessageFeedback({ sessionID, message }: Args) {
+  const t = useT();
   const [feedback, setFeedback] = useState<Rating | null>(null);
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
   const { mutateAsync: submitFeedback } = usePostV2SubmitMessageFeedback();
@@ -45,14 +47,14 @@ export function useMessageFeedback({ sessionID, message }: Args) {
     if (!saved) {
       setFeedback(null);
       toast({
-        title: "Couldn't save your feedback",
-        description: "Please try again.",
+        title: t("chatRuntime1.feedback.saveFailedTitle"),
+        description: t("chatRuntime1.feedback.saveFailedDescription"),
         variant: "destructive",
       });
       return;
     }
     toast({
-      title: "Thank you for your feedback!",
+      title: t("chatRuntime1.feedback.thanks"),
       variant: "success",
       duration: 3000,
     });
@@ -61,10 +63,14 @@ export function useMessageFeedback({ sessionID, message }: Args) {
   async function handleCopy(text: string) {
     try {
       await navigator.clipboard.writeText(text);
-      toast({ title: "Copied!", variant: "success", duration: 2000 });
+      toast({
+        title: t("chatRuntime1.feedback.copied"),
+        variant: "success",
+        duration: 2000,
+      });
     } catch {
       toast({
-        title: "Failed to copy",
+        title: t("chatRuntime1.feedback.copyFailed"),
         variant: "destructive",
         duration: 2000,
       });
