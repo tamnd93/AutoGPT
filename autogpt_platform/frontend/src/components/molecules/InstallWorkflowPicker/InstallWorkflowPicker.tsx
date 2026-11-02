@@ -12,6 +12,7 @@ import { Dialog } from "@/components/molecules/Dialog/Dialog";
 import { WorkflowTile } from "./components/WorkflowTile";
 import { INSTALL_WORKFLOW_SOURCES, workflowSubtitle } from "./helpers";
 import { useInstallWorkflowPicker } from "./useInstallWorkflowPicker";
+import { useLocale, useT } from "@/lib/i18n";
 
 interface Props {
   mode: "pick-expert" | "pick-workflow";
@@ -28,6 +29,8 @@ export function InstallWorkflowPicker({
   open,
   onClose,
 }: Props) {
+  const t = useT();
+  const locale = useLocale();
   const {
     title,
     hiredExperts,
@@ -78,7 +81,7 @@ export function InstallWorkflowPicker({
               data-slot="install-workflow-picker-empty"
               className="text-foreground-tertiary"
             >
-              No hired experts yet.
+              {t("shared6.install.noExperts")}
             </Text>
           ) : (
             <div
@@ -132,7 +135,7 @@ export function InstallWorkflowPicker({
                     loading={pendingKey === expert.id}
                     onClick={() => installOnExpert(expert)}
                   >
-                    Install
+                    {t("shared6.install.install")}
                   </Button>
                 </div>
               ))}
@@ -147,7 +150,7 @@ export function InstallWorkflowPicker({
               data-slot="install-workflow-picker-sources"
               className="flex gap-2"
               role="group"
-              aria-label="Workflow source"
+              aria-label={t("shared6.install.sourceAria")}
             >
               {INSTALL_WORKFLOW_SOURCES.map((option) => (
                 <Button
@@ -159,19 +162,19 @@ export function InstallWorkflowPicker({
                   aria-pressed={source === option.id}
                   onClick={() => setSource(option.id)}
                 >
-                  {option.label}
+                  {t(option.labelKey)}
                 </Button>
               ))}
             </div>
             <Input
               id="install-workflow-search"
               size="small"
-              label="Search workflows"
+              label={t("shared6.install.searchLabel")}
               hideLabel
               placeholder={
                 source === "library"
-                  ? "Search your workflows"
-                  : "Search the marketplace"
+                  ? t("shared6.install.searchLibrary")
+                  : t("shared6.install.searchMarketplace")
               }
               value={searchQuery}
               onChange={(event) => setSearchQuery(event.target.value)}
@@ -184,7 +187,7 @@ export function InstallWorkflowPicker({
                 data-slot="install-workflow-picker-status"
                 className="py-2 text-center !text-foreground-tertiary"
               >
-                Searching…
+                {t("shared6.install.searching")}
               </Text>
             ) : isEmpty ? (
               <Text
@@ -193,8 +196,8 @@ export function InstallWorkflowPicker({
                 className="py-2 text-center !text-foreground-tertiary"
               >
                 {source === "library"
-                  ? "No workflows in your library."
-                  : "No workflows found."}
+                  ? t("shared6.install.emptyLibrary")
+                  : t("shared6.install.emptyMarketplace")}
               </Text>
             ) : (
               <div
@@ -226,7 +229,7 @@ export function InstallWorkflowPicker({
                             data-slot="install-workflow-picker-option-subtitle"
                             className="truncate !text-foreground-tertiary"
                           >
-                            {workflowSubtitle(agent.description)}
+                            {workflowSubtitle(agent.description, locale)}
                           </Text>
                         </div>
                         <Button
@@ -236,7 +239,7 @@ export function InstallWorkflowPicker({
                           loading={pendingKey === agent.id}
                           onClick={() => installLibraryAgent(agent)}
                         >
-                          Install
+                          {t("shared6.install.install")}
                         </Button>
                       </div>
                     ))
@@ -264,7 +267,7 @@ export function InstallWorkflowPicker({
                             data-slot="install-workflow-picker-option-subtitle"
                             className="!text-foreground-tertiary"
                           >
-                            by {agent.creator}
+                            {t("shared6.install.by", { name: agent.creator })}
                           </Text>
                         </div>
                         <Button
@@ -274,7 +277,7 @@ export function InstallWorkflowPicker({
                           loading={pendingKey === agent.agent_graph_id}
                           onClick={() => installFromListing(agent)}
                         >
-                          Install
+                          {t("shared6.install.install")}
                         </Button>
                       </div>
                     ))}
@@ -288,7 +291,7 @@ export function InstallWorkflowPicker({
                 data-slot="install-workflow-picker-load-more"
                 onClick={() => loadMoreLibraryResults()}
               >
-                Load more workflows
+                {t("shared6.install.loadMore")}
               </Button>
             ) : null}
           </div>

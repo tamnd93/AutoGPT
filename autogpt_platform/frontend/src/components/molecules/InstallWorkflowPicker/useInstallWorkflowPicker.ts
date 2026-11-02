@@ -18,6 +18,8 @@ import { StoreAgent } from "@/app/api/__generated__/models/storeAgent";
 import { StoreAgentsResponse } from "@/app/api/__generated__/models/storeAgentsResponse";
 import { toast } from "@/components/molecules/Toast/use-toast";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
+import { useLocale } from "@/lib/i18n";
+import { getMessage } from "@/lib/i18n/translate";
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { InstallWorkflowSource, WorkflowInstallData } from "./helpers";
@@ -40,6 +42,9 @@ export function useInstallWorkflowPicker({
   open,
   onClose,
 }: Args) {
+  const locale = useLocale();
+  const t = (key: string, values?: Record<string, string | number>) =>
+    getMessage(locale, key, values);
   const queryClient = useQueryClient();
   const [source, setSource] = useState<InstallWorkflowSource>("library");
   const [searchQuery, setSearchQuery] = useState("");
@@ -159,8 +164,10 @@ export function useInstallWorkflowPicker({
       });
     } catch {
       toast({
-        title: `Couldn't install on ${targetExpert.name}`,
-        description: "Something went wrong. Please try again.",
+        title: t("shared6.install.installFailed", {
+          name: targetExpert.name,
+        }),
+        description: t("shared6.install.genericFailed"),
         variant: "destructive",
       });
     } finally {
@@ -171,7 +178,7 @@ export function useInstallWorkflowPicker({
   async function install(expert: Expert, data: WorkflowInstallData) {
     if (isAlreadyInstalled(expert, data)) {
       toast({
-        title: `Already installed on ${expert.name}`,
+        title: t("shared6.install.alreadyInstalled", { name: expert.name }),
         variant: "success",
       });
       onClose();
@@ -187,12 +194,15 @@ export function useInstallWorkflowPicker({
           queryKey: getGetExpertQueryKey(expert.id),
         }),
       ]);
-      toast({ title: `Installed on ${expert.name}`, variant: "success" });
+      toast({
+        title: t("shared6.install.installed", { name: expert.name }),
+        variant: "success",
+      });
       onClose();
     } catch {
       toast({
-        title: `Couldn't install on ${expert.name}`,
-        description: "Something went wrong. Please try again.",
+        title: t("shared6.install.installFailed", { name: expert.name }),
+        description: t("shared6.install.genericFailed"),
         variant: "destructive",
       });
     }
@@ -200,8 +210,10 @@ export function useInstallWorkflowPicker({
 
   const title =
     mode === "pick-expert"
-      ? "Install on an expert"
-      : `Install a workflow${targetExpert ? ` on ${targetExpert.name}` : ""}`;
+      ? t("shared6.install.titlePickExpert")
+      : targetExpert
+        ? t("shared6.install.titleWorkflowOn", { name: targetExpert.name })
+        : t("shared6.install.titleWorkflow");
 
   const resultsQuery =
     source === "library" ? libraryResultsQuery : marketplaceResultsQuery;

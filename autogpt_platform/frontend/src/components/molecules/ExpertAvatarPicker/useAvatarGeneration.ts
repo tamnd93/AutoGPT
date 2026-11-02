@@ -3,9 +3,12 @@ import {
   useGetExpertAvatarGeneration,
 } from "@/app/api/__generated__/endpoints/experts/experts";
 import type { ExpertAvatarRequest } from "@/app/api/__generated__/models/expertAvatarRequest";
+import { useLocale } from "@/lib/i18n";
+import { getMessage } from "@/lib/i18n/translate";
 import { useRef, useState } from "react";
 
 export function useAvatarGeneration() {
+  const locale = useLocale();
   const [jobID, setJobID] = useState("");
   const requestVersion = useRef(0);
   const mutation = useGenerateExpertAvatar<Error>({
@@ -32,7 +35,7 @@ export function useAvatarGeneration() {
   const error =
     mutation.error?.message ??
     (query.isError
-      ? "Could not check generation. Try again or regenerate."
+      ? getMessage(locale, "shared6.avatar.generationFailed")
       : job?.error);
 
   function generate(request: ExpertAvatarRequest) {

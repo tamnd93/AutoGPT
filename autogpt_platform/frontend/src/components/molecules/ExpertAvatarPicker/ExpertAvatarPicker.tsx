@@ -5,6 +5,7 @@ import { Button } from "@/components/atoms/Button/Button";
 import { RefreshIcon } from "@hugeicons/core-free-icons";
 import { ExpertAvatar } from "../ExpertAvatar/ExpertAvatar";
 import { ACCEPTED_AVATAR_TYPES } from "./helpers";
+import { useT } from "@/lib/i18n";
 import { useExpertAvatarPicker } from "./useExpertAvatarPicker";
 
 interface Props {
@@ -15,6 +16,7 @@ interface Props {
 }
 
 export function ExpertAvatarPicker({ name, ...props }: Props) {
+  const t = useT();
   const picker = useExpertAvatarPicker({ name, ...props });
   return (
     <div
@@ -22,7 +24,7 @@ export function ExpertAvatarPicker({ name, ...props }: Props) {
       className="flex w-full flex-col items-center gap-4 rounded-2xl border border-border bg-background p-5"
     >
       <ExpertAvatar
-        name={name || "Your expert"}
+        name={name || t("shared6.avatar.yourExpert")}
         avatarUrl={picker.selectedUrl}
         size={144}
         className={picker.isGenerating ? "animate-pulse" : undefined}
@@ -33,8 +35,7 @@ export function ExpertAvatarPicker({ name, ...props }: Props) {
           data-slot="expert-avatar-picker-status"
           className="text-body leading-5 text-muted-foreground"
         >
-          Creating another avatar. You can keep this one or upload a picture
-          while you wait.
+          {t("shared6.avatar.creatingStatus")}
         </p>
       )}
       {picker.error && (
@@ -51,7 +52,7 @@ export function ExpertAvatarPicker({ name, ...props }: Props) {
         type="file"
         disabled={picker.isUploading}
         accept={ACCEPTED_AVATAR_TYPES}
-        aria-label="Upload avatar"
+        aria-label={t("shared6.avatar.uploadAria")}
         data-slot="expert-avatar-picker-file-input"
         className="sr-only"
         tabIndex={-1}
@@ -72,7 +73,7 @@ export function ExpertAvatarPicker({ name, ...props }: Props) {
           disabled={picker.isUploading}
           data-slot="expert-avatar-picker-upload"
         >
-          Upload a picture
+          {t("shared6.avatar.upload")}
         </Button>
         <Button
           variant="secondary"
@@ -83,7 +84,7 @@ export function ExpertAvatarPicker({ name, ...props }: Props) {
           disabled={picker.isBusy}
           data-slot="expert-avatar-picker-regenerate"
         >
-          Regenerate
+          {t("shared6.avatar.regenerate")}
         </Button>
         <Button
           size="small"
@@ -91,7 +92,7 @@ export function ExpertAvatarPicker({ name, ...props }: Props) {
           disabled={picker.isUploading}
           data-slot="expert-avatar-picker-confirm"
         >
-          Use this avatar
+          {t("shared6.avatar.use")}
         </Button>
       </div>
     </div>

@@ -1,5 +1,6 @@
 import { Text } from "@/components/atoms/Text/Text";
 import { getExpertRoleLabel } from "@/services/experts/expert-role-label";
+import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import type { ReactNode } from "react";
 
@@ -30,6 +31,7 @@ export function ExpertIdentityDetails({
   areaClassName,
   areaColor,
 }: Props) {
+  const t = useT();
   const compact = size === "compact";
   const Container = compact ? "span" : "div";
   const area = jobTitle || (role ? getExpertRoleLabel(role) : null);
@@ -119,7 +121,9 @@ export function ExpertIdentityDetails({
           tone="muted"
           data-slot="expert-identity-subtitle"
         >
-          {isOtto ? "Your personal Head of AI" : "AI Expert"}
+          {isOtto
+            ? t("shared6.identity.headOfAi")
+            : t("shared6.identity.aiExpert")}
         </Text>
       ) : null}
       {compact && area ? (

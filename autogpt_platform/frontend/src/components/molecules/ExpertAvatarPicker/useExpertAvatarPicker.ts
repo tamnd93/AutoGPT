@@ -4,6 +4,8 @@ import {
   SUBMISSION_MEDIA_MAX_SIZE_MB,
   uploadSubmissionMediaDirect,
 } from "@/lib/direct-upload";
+import { useLocale } from "@/lib/i18n";
+import { getMessage } from "@/lib/i18n/translate";
 import { useMutation } from "@tanstack/react-query";
 import { useRef, useState } from "react";
 import { resolveExpertAvatarUrl } from "../ExpertAvatar/helpers";
@@ -27,13 +29,15 @@ export function useExpertAvatarPicker({
   avatarUrl,
   onPick,
 }: Args) {
+  const locale = useLocale();
+  const t = (key: string) => getMessage(locale, key);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [uploadError, setUploadError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const generation = useAvatarGeneration();
   const upload = useMutation({
     mutationFn: (file: File) =>
-      uploadSubmissionMediaDirect(file, "expert-avatar"),
+      uploadSubmissionMediaDirect(file, "expert-avatar", locale),
   });
 
   const generatedUrl =
@@ -53,9 +57,13 @@ export function useExpertAvatarPicker({
 
   async function uploadFile(file: File | undefined) {
     if (!file) return;
-    const sizeError = getFileSizeError(file, SUBMISSION_MEDIA_MAX_SIZE_MB);
+    const sizeError = getFileSizeError(
+      file,
+      SUBMISSION_MEDIA_MAX_SIZE_MB,
+      locale,
+    );
     if (!ACCEPTED_AVATAR_TYPES.split(",").includes(file.type) || sizeError) {
-      setUploadError(sizeError ?? "Choose a PNG, JPEG, or WEBP.");
+      setUploadError(sizeError ?? t("shared6.avatar.chooseType"));
       return;
     }
     setUploadError(null);
@@ -67,7 +75,7 @@ export function useExpertAvatarPicker({
         throw new Error("No image URL");
       setPreviewUrl(response.trim());
     } catch {
-      setUploadError("Could not upload that picture. Try again or regenerate.");
+      setUploadError(t("shared6.avatar.uploadFailed"));
     }
   }
 
