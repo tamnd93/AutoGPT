@@ -11,12 +11,14 @@ import { Input } from "@/components/atoms/Input/Input";
 import { Text } from "@/components/atoms/Text/Text";
 import type { User } from "@/lib/auth/types";
 import { useEmailForm } from "./useEmailForm";
+import { useT } from "@/lib/i18n";
 
 type EmailFormProps = {
   user: User;
 };
 
 export function EmailForm({ user }: EmailFormProps) {
+  const t = useT();
   const { form, onSubmit, isLoading, currentEmail } = useEmailForm({ user });
 
   const hasError = Object.keys(form.formState.errors).length > 0;
@@ -25,7 +27,7 @@ export function EmailForm({ user }: EmailFormProps) {
   return (
     <div>
       <Text variant="h3" size="large-semibold">
-        Security & Access
+        {t("profile2.email.securityTitle")}
       </Text>
       <FormProvider {...form}>
         <form
@@ -40,7 +42,7 @@ export function EmailForm({ user }: EmailFormProps) {
                 <FormControl>
                   <Input
                     id={field.name}
-                    label="Email"
+                    label={t("profile2.email.label")}
                     placeholder="m@example.com"
                     type="text"
                     autoComplete="off"
@@ -61,7 +63,7 @@ export function EmailForm({ user }: EmailFormProps) {
               className="min-w-[10rem]"
               size="small"
             >
-              Reset password
+              {t("profile2.email.resetPassword")}
             </Button>
             <Button
               type="submit"
@@ -70,7 +72,9 @@ export function EmailForm({ user }: EmailFormProps) {
               className="min-w-[10rem]"
               size="small"
             >
-              {isLoading ? "Saving..." : "Update email"}
+              {isLoading
+                ? t("profile2.email.saving")
+                : t("profile2.email.update")}
             </Button>
           </div>
         </form>

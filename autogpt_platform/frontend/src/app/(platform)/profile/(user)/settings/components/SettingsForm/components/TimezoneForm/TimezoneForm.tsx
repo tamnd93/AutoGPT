@@ -28,6 +28,7 @@ import type { User } from "@/lib/auth/types";
 import * as React from "react";
 import { TIMEZONES } from "./helpers";
 import { useTimezoneForm } from "./useTimezoneForm";
+import { useT } from "@/lib/i18n";
 
 type Props = {
   user: User;
@@ -35,6 +36,7 @@ type Props = {
 };
 
 export function TimezoneForm({ user, currentTimezone = "not-set" }: Props) {
+  const t = useT();
   // If timezone is not set, try to detect it from the browser
   const effectiveTimezone = React.useMemo(() => {
     if (currentTimezone === "not-set") {
@@ -56,7 +58,7 @@ export function TimezoneForm({ user, currentTimezone = "not-set" }: Props) {
   return (
     <Card variant="outlined">
       <CardHeader>
-        <CardTitle>Timezone</CardTitle>
+        <CardTitle>{t("profile2.timezone.title")}</CardTitle>
       </CardHeader>
       <CardContent>
         <FormProvider {...form}>
@@ -78,7 +80,7 @@ export function TimezoneForm({ user, currentTimezone = "not-set" }: Props) {
                       as="span"
                       tone="inherit"
                     >
-                      Select your timezone
+                      {t("profile2.timezone.selectLabel")}
                     </Text>
                   </FormLabel>
                   <Select
@@ -87,7 +89,9 @@ export function TimezoneForm({ user, currentTimezone = "not-set" }: Props) {
                   >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select a timezone" />
+                        <SelectValue
+                          placeholder={t("profile2.timezone.placeholder")}
+                        />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -107,7 +111,9 @@ export function TimezoneForm({ user, currentTimezone = "not-set" }: Props) {
               )}
             />
             <Button type="submit" disabled={isLoading} size="small">
-              {isLoading ? "Saving..." : "Save timezone"}
+              {isLoading
+                ? t("profile2.timezone.saving")
+                : t("profile2.timezone.save")}
             </Button>
           </form>
         </FormProvider>

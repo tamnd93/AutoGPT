@@ -8,6 +8,7 @@ import type { ReactNode } from "react";
 import type { User } from "@/lib/auth/types";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { EmailForm } from "../EmailForm";
+import { LocaleProvider } from "@/lib/i18n";
 
 const mockToast = vi.hoisted(() => vi.fn());
 
@@ -178,5 +179,23 @@ describe("EmailForm", () => {
 
     fireEvent.click(screen.getByRole("button", { name: "Update email" }));
     expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe("EmailForm (vi)", () => {
+  test("speaks vietnamese for the form chrome", () => {
+    render(
+      <LocaleProvider locale="vi">
+        <EmailForm user={testUser} />
+      </LocaleProvider>,
+    );
+
+    expect(screen.getByText("Bảo mật & truy cập")).toBeDefined();
+    expect(
+      screen.getByRole("button", { name: "Cập nhật email" }),
+    ).toBeDefined();
+    expect(
+      screen.getByRole("link", { name: "Đặt lại mật khẩu" }),
+    ).toBeDefined();
   });
 });

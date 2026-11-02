@@ -1,0 +1,31 @@
+export const Profile2En = {
+  "profile2.nav.profile": "Profile",
+  "profile2.nav.creatorDashboard": "Creator Dashboard",
+  "profile2.nav.billing": "Billing",
+  "profile2.nav.integrations": "Integrations",
+  "profile2.nav.settings": "Settings",
+  "profile2.nav.apiKeys": "API Keys",
+  "profile2.nav.oauthApps": "OAuth Apps",
+
+  "profile2.email.securityTitle": "Security & Access",
+  "profile2.email.label": "Email",
+  "profile2.email.resetPassword": "Reset password",
+  "profile2.email.saving": "Saving...",
+  "profile2.email.update": "Update email",
+  "profile2.email.validationRequired": "Email is required",
+  "profile2.email.validationInvalid": "Please enter a valid email address",
+  "profile2.email.confirmTitle": "Confirm your new email",
+  "profile2.email.confirmDescription":
+    "We sent a confirmation link to your current email address. Your email changes once you click it.",
+  "profile2.email.updatedTitle": "Email updated",
+  "profile2.email.updatedDescription": "Your email is now {email}.",
+  "profile2.email.errorTitle": "Error updating email",
+  "profile2.email.failedUpdate": "Failed to update email",
+  "profile2.email.somethingWrong": "Something went wrong",
+
+  "profile2.timezone.title": "Timezone",
+  "profile2.timezone.selectLabel": "Select your timezone",
+  "profile2.timezone.placeholder": "Select a timezone",
+  "profile2.timezone.saving": "Saving...",
+  "profile2.timezone.save": "Save timezone",
+} as const;

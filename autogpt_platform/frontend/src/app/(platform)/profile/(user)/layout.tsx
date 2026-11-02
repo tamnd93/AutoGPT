@@ -14,8 +14,10 @@ import {
 } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { useNewSettingsRedirect } from "./useNewSettingsRedirect";
+import { useT } from "@/lib/i18n";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
+  const t = useT();
   const isPaymentEnabled = useGetFlag(Flag.ENABLE_PLATFORM_PAYMENT);
   const { isRedirecting } = useNewSettingsRedirect();
 
@@ -23,41 +25,41 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     {
       links: [
         {
-          text: "Profile",
+          text: t("profile2.nav.profile"),
           href: "/profile",
           icon: <Icon icon={UserCircleIcon} className="size-5" />,
         },
         {
-          text: "Creator Dashboard",
+          text: t("profile2.nav.creatorDashboard"),
           href: "/profile/dashboard",
           icon: <Icon icon={Store01Icon} className="size-5" />,
         },
         ...(isPaymentEnabled
           ? [
               {
-                text: "Billing",
+                text: t("profile2.nav.billing"),
                 href: "/profile/credits",
                 icon: <Icon icon={Coins01Icon} className="size-5" />,
               },
             ]
           : []),
         {
-          text: "Integrations",
+          text: t("profile2.nav.integrations"),
           href: "/profile/integrations",
           icon: <Icon icon={ElectricPlugsIcon} className="size-5" />,
         },
         {
-          text: "Settings",
+          text: t("profile2.nav.settings"),
           href: "/profile/settings",
           icon: <Icon icon={SlidersHorizontalIcon} className="size-5" />,
         },
         {
-          text: "API Keys",
+          text: t("profile2.nav.apiKeys"),
           href: "/profile/api-keys",
           icon: <Icon icon={Key01Icon} className="size-5" />,
         },
         {
-          text: "OAuth Apps",
+          text: t("profile2.nav.oauthApps"),
           href: "/profile/oauth-apps",
           icon: <Icon icon={AppWindowIcon} className="size-5" />,
         },
