@@ -2,6 +2,7 @@ import { render, screen } from "@/tests/integrations/test-utils";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
+import { LocaleProvider } from "@/lib/i18n";
 import { PaginationControls } from "../PaginationControls";
 
 const { push, searchParams } = vi.hoisted(() => ({
@@ -24,6 +25,18 @@ describe("PaginationControls", () => {
   it("shows the current page out of the total", () => {
     render(<PaginationControls currentPage={2} totalPages={5} />);
     expect(screen.getByText("Page 2 of 5")).toBeDefined();
+  });
+
+  it("reads the pager chrome in Vietnamese", () => {
+    render(
+      <LocaleProvider locale="vi">
+        <PaginationControls currentPage={2} totalPages={5} />
+      </LocaleProvider>,
+    );
+
+    expect(screen.getByText("Trang 2 / 5")).toBeDefined();
+    expect(screen.getByRole("button", { name: "Trước" })).toBeDefined();
+    expect(screen.getByRole("button", { name: "Tiếp" })).toBeDefined();
   });
 
   it("moves to the next and previous page, keeping the other query params", async () => {

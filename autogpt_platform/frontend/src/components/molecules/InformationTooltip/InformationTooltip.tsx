@@ -6,6 +6,7 @@ import {
 } from "@/components/atoms/Tooltip/BaseTooltip";
 import { Info } from "lucide-react";
 import ReactMarkdown from "react-markdown";
+import { useT } from "@/lib/i18n";
 
 type Props = {
   description?: string;
@@ -13,6 +14,7 @@ type Props = {
 };
 
 export function InformationTooltip({ description, iconSize = 24 }: Props) {
+  const t = useT();
   if (!description) return null;
 
   return (
@@ -27,7 +29,7 @@ export function InformationTooltip({ description, iconSize = 24 }: Props) {
           {/* TODO(tokens): no role for slate-50 (#F7F8F9). */}
           <button
             type="button"
-            aria-label="More information"
+            aria-label={t("shared3.tooltip.moreInfo")}
             onClick={(event) => event.preventDefault()}
             data-slot="information-tooltip-trigger"
             className="inline-flex flex-none items-center justify-center rounded-full p-1 text-current hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-strong"

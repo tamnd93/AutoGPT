@@ -1,0 +1,43 @@
+import { Shared3En } from "./shared-3.en";
+
+export const Shared3Vi: Partial<Record<keyof typeof Shared3En, string>> = {
+  "shared3.pagination.previous": "Trước",
+  "shared3.pagination.next": "Tiếp",
+  "shared3.pagination.page": "Trang {current} / {total}",
+
+  "shared3.errorCard.title": "Đã xảy ra lỗi",
+  "shared3.errorCard.unknown": "Lỗi không xác định",
+  "shared3.errorCard.unknownShort": "Lỗi không xác định",
+  "shared3.errorCard.http500":
+    "Máy chủ gặp sự cố. Vui lòng thử lại sau vài phút.",
+  "shared3.errorCard.http404":
+    "Không tìm thấy tài nguyên. Kiểm tra URL và thử lại.",
+  "shared3.errorCard.http403":
+    "Bạn không có quyền truy cập tài nguyên này. Kiểm tra quyền hoặc đăng nhập lại.",
+  "shared3.errorCard.http429":
+    "Có quá nhiều yêu cầu. Vui lòng chờ một chút rồi thử lại.",
+  "shared3.errorCard.http400":
+    "Không xử lý được yêu cầu. Kiểm tra dữ liệu nhập và thử lại.",
+  "shared3.errorCard.unexpected":
+    "Đã xảy ra lỗi không mong muốn. Đội ngũ của chúng tôi đã được thông báo và đang khắc phục.",
+  "shared3.errorCard.reportSuccess": "Đã báo lỗi",
+  "shared3.errorCard.reportSuccessBody":
+    "Cảm ơn bạn đã giúp cải thiện sản phẩm! Đội ngũ đã được thông báo.",
+  "shared3.errorCard.reportFailed": "Không báo được lỗi",
+  "shared3.errorCard.reportFailedBody":
+    "Vui lòng thử lại hoặc liên hệ hỗ trợ trực tiếp.",
+
+  "shared3.tooltip.moreInfo": "Xem thêm thông tin",
+
+  "shared3.runStatus.completed": "Hoàn thành",
+  "shared3.runStatus.failed": "Thất bại",
+  "shared3.runStatus.running": "Đang chạy",
+  "shared3.runStatus.queued": "Đang xếp hàng",
+  "shared3.runStatus.waitingForReview": "Chờ duyệt",
+  "shared3.runStatus.stopped": "Đã dừng",
+  "shared3.runStatus.incomplete": "Chưa hoàn đủ",
+
+  "shared3.searchInput.placeholder": "Tìm kiếm",
+  "shared3.searchInput.searching": "Đang tìm",
+  "shared3.searchInput.clear": "Xoá tìm kiếm",
+};

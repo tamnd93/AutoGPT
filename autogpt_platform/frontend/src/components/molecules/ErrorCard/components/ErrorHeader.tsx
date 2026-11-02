@@ -2,8 +2,11 @@ import React from "react";
 import { Text } from "@/components/atoms/Text/Text";
 import { Alert01Icon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 
 export function ErrorHeader() {
+  const t = useT();
+
   return (
     <div data-slot="error-card-header" className="flex items-center gap-3">
       <div data-slot="error-card-icon-wrap" className="flex-shrink-0">
@@ -21,7 +24,7 @@ export function ErrorHeader() {
           data-slot="error-card-title"
           className="text-foreground-emphasis"
         >
-          Something went wrong
+          {t("shared3.errorCard.title")}
         </Text>
       </div>
     </div>

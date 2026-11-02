@@ -3,6 +3,7 @@
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { Button } from "@/components/atoms/Button/Button";
 import { Text } from "@/components/atoms/Text/Text";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   currentPage: number;
@@ -15,6 +16,7 @@ export function PaginationControls({
   totalPages,
   pathParam = "page",
 }: Props) {
+  const t = useT();
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -40,7 +42,7 @@ export function PaginationControls({
         onClick={() => handlePageChange(currentPage - 1)}
         disabled={currentPage <= 1}
       >
-        Previous
+        {t("shared3.pagination.previous")}
       </Button>
       <Text
         variant="body-tight"
@@ -48,7 +50,10 @@ export function PaginationControls({
         tone="inherit"
         data-slot="pagination-controls-label"
       >
-        Page {currentPage} of {totalPages}
+        {t("shared3.pagination.page", {
+          current: currentPage,
+          total: totalPages,
+        })}
       </Text>
       <Button
         variant="legacy-outline"
@@ -56,7 +61,7 @@ export function PaginationControls({
         onClick={() => handlePageChange(currentPage + 1)}
         disabled={currentPage >= totalPages}
       >
-        Next
+        {t("shared3.pagination.next")}
       </Button>
     </div>
   );

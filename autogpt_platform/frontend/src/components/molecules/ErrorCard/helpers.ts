@@ -1,9 +1,12 @@
 import { ErrorCardProps } from "./ErrorCard";
+import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/locale";
+import { getMessage } from "@/lib/i18n/translate";
 
 export function getErrorMessage(
   error: ErrorCardProps["responseError"],
+  locale: Locale = DEFAULT_LOCALE,
 ): string {
-  if (!error) return "Unknown error occurred";
+  if (!error) return getMessage(locale, "shared3.errorCard.unknown");
 
   if (typeof error.detail === "string") return error.detail;
   if (Array.isArray(error.detail) && error.detail.length > 0) {
@@ -11,40 +14,45 @@ export function getErrorMessage(
   }
   if (error.message) return error.message;
 
-  return "Unknown error occurred";
+  return getMessage(locale, "shared3.errorCard.unknown");
 }
 
 export function getHttpErrorMessage(
   httpError: ErrorCardProps["httpError"],
+  locale: Locale = DEFAULT_LOCALE,
 ): string {
   if (!httpError) return "";
 
   const status = httpError.status || 0;
 
   if (httpError.message || httpError.statusText)
-    return httpError.message || httpError.statusText || "Unknown error";
+    return (
+      httpError.message ||
+      httpError.statusText ||
+      getMessage(locale, "shared3.errorCard.unknownShort")
+    );
 
   if (status >= 500) {
-    return "An internal server error has occurred. Please try again in a few minutes.";
+    return getMessage(locale, "shared3.errorCard.http500");
   }
 
   if (status === 404) {
-    return "The requested resource could not be found. Please verify the URL and try again.";
+    return getMessage(locale, "shared3.errorCard.http404");
   }
 
   if (status === 403) {
-    return "Access to this resource is forbidden. Please check your permissions or sign in again.";
+    return getMessage(locale, "shared3.errorCard.http403");
   }
 
   if (status === 429) {
-    return "Too many requests have been made. Please wait a moment before trying again.";
+    return getMessage(locale, "shared3.errorCard.http429");
   }
 
   if (status >= 400) {
-    return "The request could not be processed. Please review your input and try again.";
+    return getMessage(locale, "shared3.errorCard.http400");
   }
 
-  return "An unexpected error has occurred. Our team has been notified and is working to resolve the issue.";
+  return getMessage(locale, "shared3.errorCard.unexpected");
 }
 
 export function shouldShowError(
@@ -59,6 +67,7 @@ export function handleReportError(
   responseError?: ErrorCardProps["responseError"],
   httpError?: ErrorCardProps["httpError"],
   context?: string,
+  locale: Locale = DEFAULT_LOCALE,
 ): void {
   try {
     // Import Sentry dynamically to avoid SSR issues
@@ -78,7 +87,7 @@ export function handleReportError(
       const errorMessage = httpError
         ? `HTTP ${httpError.status} - ${httpError.statusText || "Error"}`
         : responseError
-          ? `Response Error - ${getErrorMessage(responseError)}`
+          ? `Response Error - ${getErrorMessage(responseError, locale)}`
           : "Unknown Error";
 
       const error = new Error(
@@ -103,9 +112,11 @@ export function handleReportError(
 
       // Show success toast notification after pressing the report error button
       import("sonner").then(({ toast }) => {
-        toast.success("Error reported successfully", {
-          description:
-            "Thank you for helping us improve! Our team has been notified.",
+        toast.success(getMessage(locale, "shared3.errorCard.reportSuccess"), {
+          description: getMessage(
+            locale,
+            "shared3.errorCard.reportSuccessBody",
+          ),
           duration: 4000,
         });
       });
@@ -114,8 +125,11 @@ export function handleReportError(
     console.error("Failed to report error to Sentry:", error);
     // Fallback toast notification
     import("sonner").then(({ toast }) => {
-      toast.error("Failed to report error", {
-        description: "Please try again or contact support directly.",
+      toast.error(getMessage(locale, "shared3.errorCard.reportFailed"), {
+        description: getMessage(
+          locale,
+          "shared3.errorCard.reportFailedBody",
+        ),
         duration: 4000,
       });
     });
