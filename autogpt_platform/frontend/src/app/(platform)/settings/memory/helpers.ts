@@ -57,11 +57,11 @@ export function learningSheetScope(
 }
 
 export function formatWhen(
-  createdAt: string | null | undefined,
+  createdAt: string | Date | null | undefined,
   locale: Locale = "en",
 ) {
   if (!createdAt) return "";
-  const parsed = new Date(createdAt);
+  const parsed = createdAt instanceof Date ? createdAt : new Date(createdAt);
   if (Number.isNaN(parsed.getTime())) return "";
   return formatDistanceToNow(parsed, {
     addSuffix: true,
