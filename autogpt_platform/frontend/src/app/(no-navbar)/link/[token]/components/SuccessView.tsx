@@ -8,6 +8,7 @@ import {
   CheckmarkCircle02Icon,
 } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   linkType: LinkType;
@@ -24,15 +25,21 @@ export function SuccessView({
   serverNoun,
   returnUrl,
 }: Props) {
+  const t = useT();
   const forUser = isUserLink(linkType);
   const label =
-    forUser || !serverName ? `your ${platform} account` : serverName;
+    forUser || !serverName
+      ? t("sharing1.link.successContextUser", { platform })
+      : serverName;
   const detail = forUser
-    ? `You can now chat with AutoGPT in your ${platform} DMs.`
-    : `Everyone in the ${serverNoun} can start using AutoGPT right away.`;
+    ? t("sharing1.link.successDetailUser", { platform })
+    : t("sharing1.link.successDetailServer", { noun: serverNoun });
 
   return (
-    <AuthCard title="AutoGPT is ready!" className="max-w-[38rem] gap-6 p-8">
+    <AuthCard
+      title={t("sharing1.link.successTitle")}
+      className="max-w-[38rem] gap-6 p-8"
+    >
       <div className="flex w-full flex-col items-center gap-7">
         <div
           // TODO(tokens): no exact role for bg-green-100 (#B7E2C7)
@@ -47,14 +54,14 @@ export function SuccessView({
 
         <div className="w-full rounded-xl bg-muted px-6 py-5 text-center">
           <Text variant="body-medium" className="text-muted-foreground">
-            <strong>{label}</strong> is now connected to your AutoGPT account.
+            <strong>{label}</strong>
+            {t("sharing1.link.successConnected")}
             <br />
             {detail}
           </Text>
           {returnUrl && forUser ? (
             <Text variant="small" className="mt-3 block text-muted-foreground">
-              Try it now — &ldquo;research a topic&rdquo;, &ldquo;build me a
-              workflow&rdquo;, or &ldquo;draft a doc&rdquo;.
+              {t("sharing1.link.successTryNow")}
             </Text>
           ) : null}
         </div>
@@ -67,7 +74,7 @@ export function SuccessView({
               size="small"
               leftIcon={<Icon icon={ArrowTurnBackwardIcon} size={16} />}
             >
-              Return to {platform}
+              {t("sharing1.link.returnTo", { platform })}
             </Button>
           ) : null}
           <Button
@@ -76,13 +83,13 @@ export function SuccessView({
             variant="outline"
             size="small"
           >
-            Manage bots
+            {t("sharing1.link.manageBots")}
           </Button>
         </div>
 
         {returnUrl ? null : (
           <Text variant="small" className="text-center text-muted-foreground">
-            You can close this page and go back to your chat.
+            {t("sharing1.link.closePage")}
           </Text>
         )}
       </div>

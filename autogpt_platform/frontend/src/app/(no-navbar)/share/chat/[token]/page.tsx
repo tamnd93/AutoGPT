@@ -15,6 +15,7 @@ import { useSharedChatPage } from "./useSharedChatPage";
 import { SharedChatErrorState } from "./components/SharedChatErrorState";
 import { SharedChatLoadingState } from "./components/SharedChatLoadingState";
 import { useSharedChatArtifacts } from "./useSharedChatArtifacts";
+import { useT } from "@/lib/i18n";
 
 // Wraps every chat-share state — loading, error, success — in the
 // branded shell so a viewer never sees a raw card without the logo
@@ -66,6 +67,7 @@ const ArtifactPanel = dynamic(
 async function noopSend() {}
 
 export default function SharedChatPage() {
+  const t = useT();
   const params = useParams();
   const token = params.token as string;
   const isMobile = useIsMobile();
@@ -134,7 +136,7 @@ export default function SharedChatPage() {
     );
   }
 
-  const title = session.title || "Shared chat";
+  const title = session.title || t("sharing1.shareChat.defaultTitle");
   // ``shared_at`` is when the owner enabled sharing — that's what
   // belongs in the "Shared {date}" subtitle.  Falling back to
   // ``created_at`` only when ``shared_at`` is missing keeps already-
@@ -146,7 +148,10 @@ export default function SharedChatPage() {
   ).toLocaleDateString();
 
   return (
-    <SharedChatChrome title={title} subtitle={`Shared ${sharedOn}`}>
+    <SharedChatChrome
+      title={title}
+      subtitle={t("sharing1.shareChat.subtitle", { date: sharedOn })}
+    >
       <div
         // TODO(tokens): no exact role for bg-[#f8f8f9] (#F8F8F9)
         className="relative flex min-w-0 flex-1 flex-col overflow-hidden bg-[#f8f8f9]"
@@ -160,20 +165,21 @@ export default function SharedChatPage() {
             // TODO(tokens): no exact role for text-amber-900 (#78350F)
             className="flex shrink-0 items-center justify-between gap-3 border-b border-warning-border bg-warning-surface px-4 py-2 text-xs text-amber-900"
           >
-            <span>Couldn&apos;t load messages. The share link is valid.</span>
+            <span>{t("sharing1.shareChat.messagesError")}</span>
             <button
               onClick={retry}
               // TODO(tokens): no exact role for border-amber-300 (#FCD34D), hover:bg-amber-100 (#FEF3C7)
               className="rounded border border-amber-300 bg-surface px-2 py-0.5 font-medium hover:bg-amber-100"
             >
-              Try again
+              {t("sharing1.shareChat.tryAgain")}
             </button>
           </div>
         )}
         {hasMore && (
           <div className="shrink-0 border-b border-border-base bg-surface-muted px-4 py-2 text-center text-xs text-foreground-secondary">
-            Showing the most recent {uiMessages.length} messages — older history
-            is not visible in this shared view.
+            {t("sharing1.shareChat.recentLimit", {
+              count: uiMessages.length,
+            })}
           </div>
         )}
         <div

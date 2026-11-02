@@ -15,6 +15,7 @@ import {
   screen,
   waitFor,
 } from "@/tests/integrations/test-utils";
+import { LocaleProvider } from "@/lib/i18n";
 import PlatformLinkPage from "../page";
 
 const mockUseParams = vi.hoisted(() => vi.fn());
@@ -120,6 +121,28 @@ describe("PlatformLinkPage", () => {
       screen.getByRole("link", { name: /^sign in$/i }).getAttribute("href"),
     ).toBe("/login?next=%2Flink%2Ftoken-123");
     expect(infoHandler).not.toHaveBeenCalled();
+  });
+
+  test("reads the sign-in step in Vietnamese when the app is set to Vietnamese", () => {
+    mockUseAuth.mockReturnValue({
+      user: null,
+      isLoggedIn: false,
+      isUserLoading: false,
+      logOut: mockLogOut,
+    });
+
+    render(
+      <LocaleProvider locale="vi">
+        <PlatformLinkPage />
+      </LocaleProvider>,
+    );
+
+    expect(
+      screen.getByRole("heading", { name: "Đăng nhập để tiếp tục" }),
+    ).toBeDefined();
+    expect(
+      screen.getByText(/Đăng nhập tài khoản AutoGPT của bạn/),
+    ).toBeDefined();
   });
 
   test("loads server link details and confirms the server link", async () => {

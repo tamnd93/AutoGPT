@@ -3,6 +3,7 @@ import { Text } from "@/components/atoms/Text/Text";
 import { AuthCard } from "@/components/auth/AuthCard";
 import { LinkType } from "@/app/api/__generated__/models/linkType";
 import { isUserLink } from "../helpers";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   linkType: LinkType;
@@ -25,38 +26,41 @@ export function ReadyView({
   onLink,
   onSwitchAccount,
 }: Props) {
+  const t = useT();
   const forUser = isUserLink(linkType);
-  const title = buildTitle({ forUser, platform, serverName, serverNoun });
+  const title = buildTitle({ forUser, platform, serverName, serverNoun }, t);
   const contextLabel = forUser
-    ? `your ${platform} DMs`
-    : (serverName ?? `this ${platform} ${serverNoun}`);
+    ? t("sharing1.link.contextUser", { platform })
+    : (serverName ??
+      t("sharing1.link.contextServer", { platform, noun: serverNoun }));
 
   return (
     <AuthCard title={title} className="max-w-[38rem] gap-6 p-8">
       <div className="flex w-full flex-col items-center gap-6">
         <div className="w-full rounded-xl bg-muted px-6 py-5 text-left">
           <Text variant="body-medium" className="font-medium">
-            What happens when you confirm:
+            {t("sharing1.link.whatHappens")}
           </Text>
           {forUser ? (
             <ul className="mt-4 space-y-2.5 text-sm leading-relaxed text-muted-foreground">
-              <li>{contextLabel} will be linked to your AutoGPT account</li>
-              <li>DMs with the bot run as your own private AutoGPT chat</li>
-              <li>All usage from those DMs is billed to your account</li>
+              <li>
+                {t("sharing1.link.userLinked", { context: contextLabel })}
+              </li>
+              <li>{t("sharing1.link.userDmPrivate")}</li>
+              <li>{t("sharing1.link.userUsageBilled")}</li>
             </ul>
           ) : (
             <ul className="mt-4 space-y-2.5 text-sm leading-relaxed text-muted-foreground">
-              <li>{contextLabel} will be connected to your AutoGPT account</li>
-              <li>Anyone in the {serverNoun} can give AutoGPT tasks</li>
               <li>
-                Conversations in a shared {serverNoun} are visible to everyone
-                there — for private 1:1 work, DM the bot and link your own
-                AutoGPT account
+                {t("sharing1.link.serverConnected", {
+                  context: contextLabel,
+                })}
               </li>
+              <li>{t("sharing1.link.anyoneTasks", { noun: serverNoun })}</li>
               <li>
-                Uses the tools and integrations connected to your AutoGPT
-                account
+                {t("sharing1.link.sharedVisible", { noun: serverNoun })}
               </li>
+              <li>{t("sharing1.link.usesTools")}</li>
             </ul>
           )}
         </div>
@@ -66,8 +70,7 @@ export function ReadyView({
             variant="small"
             className="leading-relaxed text-muted-foreground"
           >
-            Usage from {contextLabel} is billed to your AutoGPT account. You can
-            unlink at any time in Settings → Bots.
+            {t("sharing1.link.billedNote", { context: contextLabel })}
           </Text>
         </div>
 
@@ -78,14 +81,14 @@ export function ReadyView({
           className="w-full sm:w-auto sm:min-w-[16rem]"
         >
           {forUser
-            ? `Connect my ${platform} DMs`
-            : `Connect ${platform} to AutoGPT`}
+            ? t("sharing1.link.connectDms", { platform })
+            : t("sharing1.link.connectPlatform", { platform })}
         </Button>
 
         {userEmail && (
           <div className="flex w-full items-center justify-between">
             <Text variant="small" className="text-muted-foreground">
-              Signed in as {userEmail}
+              {t("sharing1.link.signedInAs", { email: userEmail })}
             </Text>
             <Button
               variant="ghost"
@@ -93,7 +96,7 @@ export function ReadyView({
               onClick={onSwitchAccount}
               className="text-xs text-muted-foreground underline underline-offset-2"
             >
-              Not you? Sign out
+              {t("sharing1.link.notYou")}
             </Button>
           </div>
         )}
@@ -102,13 +105,23 @@ export function ReadyView({
   );
 }
 
-function buildTitle(args: {
-  forUser: boolean;
-  platform: string;
-  serverName: string | null;
-  serverNoun: string;
-}): string {
-  if (args.forUser) return `Link your ${args.platform} DMs`;
-  if (args.serverName) return `Set up AutoGPT for ${args.serverName}`;
-  return `Set up AutoGPT for this ${args.platform} ${args.serverNoun}`;
+function buildTitle(
+  args: {
+    forUser: boolean;
+    platform: string;
+    serverName: string | null;
+    serverNoun: string;
+  },
+  t: ReturnType<typeof useT>,
+): string {
+  if (args.forUser) {
+    return t("sharing1.link.readyTitleUser", { platform: args.platform });
+  }
+  if (args.serverName) {
+    return t("sharing1.link.readyTitleServer", { server: args.serverName });
+  }
+  return t("sharing1.link.readyTitleServerNoName", {
+    platform: args.platform,
+    noun: args.serverNoun,
+  });
 }

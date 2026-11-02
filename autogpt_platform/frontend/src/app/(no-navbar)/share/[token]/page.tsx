@@ -15,6 +15,7 @@ import { InfoIcon } from "lucide-react";
 import { useParams } from "next/navigation";
 import { ShareActions } from "../components/ShareHeader/ShareActions";
 import { ShareHeader } from "../components/ShareHeader/ShareHeader";
+import { useT } from "@/lib/i18n";
 
 // Wraps the page in the shared header + a scrollable container.
 // Header is the same component used by the chat share viewer so the
@@ -38,6 +39,7 @@ function ExecutionShareChrome({
 }
 
 export default function SharePage() {
+  const t = useT();
   const params = useParams();
   const token = params.token as string;
 
@@ -55,7 +57,9 @@ export default function SharePage() {
         <div className="flex items-center justify-center py-16">
           <div className="text-center">
             <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2 border-primary"></div>
-            <p className="text-muted-foreground">Loading shared execution...</p>
+            <p className="text-muted-foreground">
+              {t("sharing1.shareExec.loading")}
+            </p>
           </div>
         </div>
       </ExecutionShareChrome>
@@ -75,12 +79,14 @@ export default function SharePage() {
                   </div>
                   <div className="space-y-2">
                     <h3 className="text-lg font-semibold">
-                      {is404 ? "Share Link Not Found" : "Unable to Load"}
+                      {is404
+                        ? t("sharing1.shareExec.notFoundTitle")
+                        : t("sharing1.shareExec.errorTitle")}
                     </h3>
                     <p className="text-sm text-muted-foreground">
                       {is404
-                        ? "This shared link is invalid or has been disabled by the owner. Please check with the person who shared this link."
-                        : "There was an error loading this shared execution. Please try refreshing the page."}
+                        ? t("sharing1.shareExec.notFoundBody")
+                        : t("sharing1.shareExec.errorBody")}
                     </p>
                   </div>
                   <div className="pt-2">
@@ -88,14 +94,14 @@ export default function SharePage() {
                       onClick={() => window.location.reload()}
                       className="text-sm text-primary hover:underline"
                     >
-                      Try again
+                      {t("sharing1.shareExec.tryAgain")}
                     </button>
                   </div>
                 </div>
               </CardContent>
             </Card>
             <div className="mt-8 text-center text-xs text-muted-foreground">
-              <p>Powered by AutoGPT Platform</p>
+              <p>{t("sharing1.shareError.poweredBy")}</p>
             </div>
           </div>
         </div>
@@ -110,8 +116,7 @@ export default function SharePage() {
           <Alert>
             <InfoIcon className="h-4 w-4" />
             <AlertDescription>
-              This is a publicly shared workflow run result. The person who
-              shared this link can disable access at any time.
+              {t("sharing1.shareExec.publicNotice")}
             </AlertDescription>
           </Alert>
         </div>
@@ -130,13 +135,17 @@ export default function SharePage() {
           <CardContent>
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
-                <span className="font-medium">Status:</span>
+                <span className="font-medium">
+                  {t("sharing1.shareExec.status")}
+                </span>
                 <span className="ml-2 capitalize">
                   {executionData.status.toLowerCase()}
                 </span>
               </div>
               <div>
-                <span className="font-medium">Created:</span>
+                <span className="font-medium">
+                  {t("sharing1.shareExec.created")}
+                </span>
                 <span className="ml-2">
                   {new Date(executionData.created_at).toLocaleString()}
                 </span>
@@ -147,7 +156,7 @@ export default function SharePage() {
 
         <Card variant="outlined">
           <CardHeader>
-            <CardTitle>Output</CardTitle>
+            <CardTitle>{t("sharing1.shareExec.output")}</CardTitle>
           </CardHeader>
           <CardContent>
             <RunOutputs outputs={executionData.outputs} shareToken={token} />
@@ -155,7 +164,7 @@ export default function SharePage() {
         </Card>
 
         <div className="mt-8 text-center text-sm text-muted-foreground">
-          <p>Powered by AutoGPT Platform</p>
+          <p>{t("sharing1.shareError.poweredBy")}</p>
         </div>
       </div>
     </ExecutionShareChrome>

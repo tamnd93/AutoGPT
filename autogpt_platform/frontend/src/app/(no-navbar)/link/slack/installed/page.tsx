@@ -4,13 +4,18 @@ import { Button } from "@/components/atoms/Button/Button";
 import { Text } from "@/components/atoms/Text/Text";
 import { AuthCard } from "@/components/auth/AuthCard";
 import { useSlackInstalledHandoff } from "./useSlackInstalledHandoff";
+import { useT } from "@/lib/i18n";
 
 export default function SlackInstalledPage() {
+  const t = useT();
   const { openSlackHref, openSlack } = useSlackInstalledHandoff();
 
   return (
     <div className="flex h-full min-h-[85vh] flex-col items-center justify-center py-10">
-      <AuthCard title="Slack connected" className="max-w-[38rem] gap-6 p-8">
+      <AuthCard
+        title={t("sharing1.slack.title")}
+        className="max-w-[38rem] gap-6 p-8"
+      >
         <div className="flex w-full flex-col items-center gap-7">
           <div className="w-full rounded-xl bg-muted px-6 py-5 text-center">
             {/* The page navigates on its own, so announce it rather than
@@ -21,15 +26,15 @@ export default function SlackInstalledPage() {
               role="status"
               aria-live="polite"
             >
-              Opening Slack so you can finish linking your account.
+              {t("sharing1.slack.opening")}
               <br />
-              You&apos;ll be taken back to your bot settings in a moment.
+              {t("sharing1.slack.returning")}
             </Text>
           </div>
 
           <div className="flex w-full flex-col items-stretch gap-3 sm:flex-row sm:justify-center sm:gap-4">
             <Button size="small" onClick={openSlack}>
-              Open Slack
+              {t("sharing1.slack.open")}
             </Button>
             <Button
               as="NextLink"
@@ -37,7 +42,7 @@ export default function SlackInstalledPage() {
               variant="outline"
               size="small"
             >
-              Open Slack in browser
+              {t("sharing1.slack.openBrowser")}
             </Button>
           </div>
         </div>

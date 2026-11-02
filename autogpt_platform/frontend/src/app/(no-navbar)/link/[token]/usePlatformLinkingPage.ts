@@ -7,6 +7,7 @@ import { ConfirmLinkResponse } from "@/app/api/__generated__/models/confirmLinkR
 import { ConfirmUserLinkResponse } from "@/app/api/__generated__/models/confirmUserLinkResponse";
 import { LinkType } from "@/app/api/__generated__/models/linkType";
 import { useAuth } from "@/lib/auth/hooks/useAuth";
+import { useLocale, useT } from "@/lib/i18n";
 import { useParams, useSearchParams } from "next/navigation";
 import {
   getLoginRedirect,
@@ -32,11 +33,16 @@ interface ViewData {
 }
 
 export function usePlatformLinkingPage() {
+  const t = useT();
+  const locale = useLocale();
   const params = useParams();
   const searchParams = useSearchParams();
   const rawToken = (params.token as string | undefined) ?? "";
   const token = TOKEN_PATTERN.test(rawToken) ? rawToken : null;
-  const platformFromUrl = getPlatformDisplayName(searchParams.get("platform"));
+  const platformFromUrl = getPlatformDisplayName(
+    searchParams.get("platform"),
+    locale,
+  );
   const { user, isUserLoading, logOut } = useAuth();
 
   const {
@@ -94,16 +100,19 @@ export function usePlatformLinkingPage() {
     token,
     loginRedirect: getLoginRedirect(token),
     userEmail: user?.email ?? null,
-    viewData: buildViewData({ info, platformFromUrl }),
+    viewData: buildViewData({ info, platformFromUrl, locale, t }),
     successData: buildSuccessData({
       confirmResponse,
       fallbackPlatform: platformFromUrl,
-      serverNoun: info?.server_noun ?? "server",
+      serverNoun: info?.server_noun ?? t("sharing1.link.serverNounFallback"),
+      locale,
+      t,
     }),
     errorMessage: buildErrorMessage({
       hasToken: Boolean(token),
       isInfoError,
       mutation,
+      t,
     }),
     handleLink,
     handleSwitchAccount,
@@ -132,6 +141,8 @@ function resolveStatus(args: {
 }
 
 function buildViewData(args: {
+  locale: ReturnType<typeof useLocale>;
+  t: ReturnType<typeof useT>;
   info:
     | {
         link_type: LinkType;
@@ -146,13 +157,16 @@ function buildViewData(args: {
   return {
     linkType: args.info.link_type,
     platform:
-      getPlatformDisplayName(args.info.platform) || args.platformFromUrl,
+      getPlatformDisplayName(args.info.platform, args.locale) ||
+      args.platformFromUrl,
     serverName: args.info.server_name ?? null,
-    serverNoun: args.info.server_noun ?? "server",
+    serverNoun: args.info.server_noun ?? args.t("sharing1.link.serverNounFallback"),
   };
 }
 
 function buildSuccessData(args: {
+  locale: ReturnType<typeof useLocale>;
+  t: ReturnType<typeof useT>;
   confirmResponse: ConfirmLinkResponse | ConfirmUserLinkResponse | undefined;
   fallbackPlatform: string;
   serverNoun: string;
@@ -165,7 +179,7 @@ function buildSuccessData(args: {
   return {
     linkType: args.confirmResponse.link_type ?? LinkType.SERVER,
     platform:
-      getPlatformDisplayName(args.confirmResponse.platform) ||
+      getPlatformDisplayName(args.confirmResponse.platform, args.locale) ||
       args.fallbackPlatform,
     serverName,
     // From the token info — the confirm response carries no noun.
@@ -178,21 +192,20 @@ function buildErrorMessage(args: {
   hasToken: boolean;
   isInfoError: boolean;
   mutation: { error: unknown };
+  t: ReturnType<typeof useT>;
 }): string {
+  const defaultError = args.t("sharing1.link.errorCompleteFailed");
   if (!args.hasToken) {
-    return "This setup link is malformed. Ask the bot for a new one.";
+    return args.t("sharing1.link.errorMalformed");
   }
   if (args.mutation.error) {
-    return extractDetail(args.mutation.error) ?? DEFAULT_MUTATION_ERROR;
+    return extractDetail(args.mutation.error) ?? defaultError;
   }
   if (args.isInfoError) {
-    return "Couldn't load setup details. The link may have expired.";
+    return args.t("sharing1.link.errorLoadDetails");
   }
-  return DEFAULT_MUTATION_ERROR;
+  return defaultError;
 }
-
-const DEFAULT_MUTATION_ERROR =
-  "Failed to complete setup. The link may have expired.";
 
 function extractDetail(error: unknown): string | undefined {
   if (!error || typeof error !== "object") return undefined;

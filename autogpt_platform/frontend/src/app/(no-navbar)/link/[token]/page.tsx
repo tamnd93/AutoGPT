@@ -7,8 +7,10 @@ import { NotAuthenticatedView } from "./components/NotAuthenticatedView";
 import { ReadyView } from "./components/ReadyView";
 import { SuccessView } from "./components/SuccessView";
 import { usePlatformLinkingPage } from "./usePlatformLinkingPage";
+import { useT } from "@/lib/i18n";
 
 export default function PlatformLinkPage() {
+  const t = useT();
   const page = usePlatformLinkingPage();
 
   return (
@@ -61,7 +63,7 @@ export default function PlatformLinkPage() {
       {page.status === "error" && <ErrorView message={page.errorMessage} />}
 
       <div className="mt-8 text-center text-xs text-muted-foreground">
-        <p>Powered by AutoGPT Platform</p>
+        <p>{t("sharing1.shareError.poweredBy")}</p>
       </div>
       <CookieSettingsLink className="mt-2" />
     </div>

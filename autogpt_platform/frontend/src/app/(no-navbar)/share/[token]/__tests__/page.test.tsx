@@ -10,6 +10,7 @@ import {
   removeCookiebot,
 } from "@/tests/integrations/cookiebot";
 import { fireEvent, render, screen } from "@/tests/integrations/test-utils";
+import { LocaleProvider } from "@/lib/i18n";
 import SharePage from "../page";
 
 const TOKEN = "550e8400-e29b-41d4-a716-446655440000";
@@ -40,6 +41,35 @@ vi.mock(
 
 beforeEach(() => {
   vi.clearAllMocks();
+});
+
+describe("SharePage in Vietnamese", () => {
+  test("reads the public notice in Vietnamese when the app is set to Vietnamese", async () => {
+    server.use(
+      getGetV1GetSharedExecutionMockHandler200(
+        (): SharedExecutionResponse => ({
+          id: "exec-1",
+          graph_name: "Weather Agent",
+          graph_description: "Reports the weather",
+          status: "COMPLETED",
+          created_at: new Date("2026-05-12T00:00:00Z"),
+          outputs: {},
+        }),
+      ),
+    );
+
+    render(
+      <LocaleProvider locale="vi">
+        <SharePage />
+      </LocaleProvider>,
+    );
+
+    expect(
+      await screen.findByText(/kết quả lượt chạy workflow được chia sẻ công khai/),
+    ).toBeDefined();
+    expect(screen.getByText("Trạng thái:")).toBeDefined();
+    expect(screen.getByText("Đầu ra")).toBeDefined();
+  });
 });
 
 describe("SharePage (execution share viewer)", () => {

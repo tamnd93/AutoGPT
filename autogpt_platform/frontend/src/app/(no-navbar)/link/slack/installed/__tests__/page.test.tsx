@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 import { fireEvent, render, screen } from "@/tests/integrations/test-utils";
+import { LocaleProvider } from "@/lib/i18n";
 import SlackInstalledPage from "../page";
 
 const mockUseSearchParams = vi.hoisted(() => vi.fn());
@@ -35,6 +36,21 @@ beforeEach(() => {
 
 afterEach(() => {
   vi.useRealTimers();
+});
+
+describe("SlackInstalledPage in Vietnamese", () => {
+  test("reads the handoff copy in Vietnamese when the app is set to Vietnamese", () => {
+    render(
+      <LocaleProvider locale="vi">
+        <SlackInstalledPage />
+      </LocaleProvider>,
+    );
+
+    expect(screen.getByText("Đã kết nối Slack")).toBeDefined();
+    expect(
+      screen.getByRole("button", { name: "Mở Slack" }),
+    ).toBeDefined();
+  });
 });
 
 describe("SlackInstalledPage", () => {

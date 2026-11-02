@@ -1,4 +1,6 @@
 import { LinkType } from "@/app/api/__generated__/models/linkType";
+import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/locale";
+import { getMessage } from "@/lib/i18n/translate";
 
 export const PLATFORM_NAMES: Record<string, string> = {
   DISCORD: "Discord",
@@ -14,8 +16,11 @@ export const PLATFORM_NAMES: Record<string, string> = {
 // characters, bounded length. Keeps malformed params out of proxy fetches.
 export const TOKEN_PATTERN = /^[A-Za-z0-9_-]{1,64}$/;
 
-export function getPlatformDisplayName(raw: string | null | undefined): string {
-  if (!raw) return "chat platform";
+export function getPlatformDisplayName(
+  raw: string | null | undefined,
+  locale: Locale = DEFAULT_LOCALE,
+): string {
+  if (!raw) return getMessage(locale, "sharing1.link.fallbackPlatform");
   return PLATFORM_NAMES[raw.toUpperCase()] ?? raw;
 }
 
