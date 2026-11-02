@@ -17,6 +17,8 @@ import type { UpdateTimezoneRequestTimezone } from "@/app/api/__generated__/mode
 import { okData } from "@/app/api/helpers";
 import { toast } from "@/components/molecules/Toast/use-toast";
 import { useAuth } from "@/lib/auth/hooks/useAuth";
+import { useLocale, useT } from "@/lib/i18n";
+import { getMessage } from "@/lib/i18n/translate";
 
 import {
   detectBrowserTimezone,
@@ -37,6 +39,8 @@ const DEFAULT_SETTINGS: NotificationSettings = {
 };
 
 export function usePreferencesPage() {
+  const t = useT();
+  const locale = useLocale();
   const { user } = useAuth();
   const queryClient = useQueryClient();
   // The Briefing footer's volume knob links here with
@@ -174,20 +178,22 @@ export function usePreferencesPage() {
       applyFooterChoice(footerChoice, footerToken, chosen)
         .then(() => {
           toast({
-            title: describeFooterChoice(footerChoice),
+            title: describeFooterChoice(footerChoice, (key, values) =>
+              getMessage(locale, key, values),
+            ),
             variant: "success",
           });
         })
         .catch(() => {
           // Leave the choice in the form so the reader can still hit Save.
           toast({
-            title: "Couldn't update your email frequency",
-            description: "Your choice is selected below — press Save to retry.",
+            title: getMessage(locale, "account1.prefs.footerFailedTitle"),
+            description: getMessage(locale, "account1.prefs.footerFailedBody"),
             variant: "destructive",
           });
         });
     },
-    [footerChoice, footerToken, initialSettings, pathname, router],
+    [footerChoice, footerToken, initialSettings, pathname, router, locale],
   );
 
   const dirty = isFormDirty(savedState, formState);
@@ -250,7 +256,12 @@ export function usePreferencesPage() {
         timezoneSaved = true;
       } catch (err) {
         failures.push(
-          `Time zone: ${err instanceof Error ? err.message : "unknown error"}`,
+          t("account1.prefs.saveFailedTz", {
+            detail:
+              err instanceof Error
+                ? err.message
+                : t("account1.prefs.unknownError"),
+          }),
         );
       }
     }
@@ -261,7 +272,12 @@ export function usePreferencesPage() {
         notificationsSaved = true;
       } catch (err) {
         failures.push(
-          `Notifications: ${err instanceof Error ? err.message : "unknown error"}`,
+          t("account1.prefs.saveFailedNotifications", {
+            detail:
+              err instanceof Error
+                ? err.message
+                : t("account1.prefs.unknownError"),
+          }),
         );
       }
     }
@@ -269,16 +285,16 @@ export function usePreferencesPage() {
     setIsSaving(false);
 
     if (failures.length === 0) {
-      toast({ title: "Preferences saved", variant: "success" });
+      toast({ title: t("account1.prefs.saved"), variant: "success" });
     } else if (timezoneSaved || notificationsSaved) {
       toast({
-        title: "Preferences partially saved",
+        title: t("account1.prefs.partial"),
         description: failures.join("; "),
         variant: "destructive",
       });
     } else {
       toast({
-        title: "Couldn't save preferences",
+        title: t("account1.prefs.saveFailed"),
         description: failures.join("; "),
         variant: "destructive",
       });

@@ -3,6 +3,8 @@
 import { useEffect } from "react";
 
 import { ErrorCard } from "@/components/molecules/ErrorCard/ErrorCard";
+import { useLocale, useT } from "@/lib/i18n";
+import { getMessage } from "@/lib/i18n/translate";
 import { isConsentManagerConfigured } from "@/services/consent/consent";
 import { Flag, useGetFlag } from "@/services/feature-flags/use-get-flag";
 
@@ -18,9 +20,12 @@ import { TimezoneCard } from "./components/TimezoneCard/TimezoneCard";
 import { usePreferencesPage } from "./usePreferencesPage";
 
 export default function SettingsPreferencesPage() {
+  const t = useT();
+  const locale = useLocale();
+
   useEffect(() => {
-    document.title = "Account – AutoGPT Platform";
-  }, []);
+    document.title = getMessage(locale, "account1.page.title");
+  }, [locale]);
 
   const {
     user,
@@ -45,7 +50,7 @@ export default function SettingsPreferencesPage() {
   if (isError) {
     return (
       <ErrorCard
-        context="settings"
+        context={t("account1.page.errorContext")}
         responseError={
           error ? { detail: (error as { detail?: string }).detail } : undefined
         }

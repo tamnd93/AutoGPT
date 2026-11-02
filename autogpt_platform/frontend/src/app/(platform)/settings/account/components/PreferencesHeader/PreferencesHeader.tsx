@@ -3,10 +3,12 @@
 import { motion, useReducedMotion } from "framer-motion";
 
 import { Text } from "@/components/atoms/Text/Text";
+import { useT } from "@/lib/i18n";
 
 import { EASE_OUT } from "../../helpers";
 
 export function PreferencesHeader() {
+  const t = useT();
   const reduceMotion = useReducedMotion();
 
   return (
@@ -17,10 +19,10 @@ export function PreferencesHeader() {
       className="flex min-w-0 flex-col pb-2 pl-4"
     >
       <Text variant="h4" as="h1" className="leading-7 text-textBlack">
-        Account
+        {t("account1.header.title")}
       </Text>
       <Text variant="body" className="mt-4 max-w-[600px] text-foreground-body">
-        Tune your account and time zone.
+        {t("account1.header.body")}
       </Text>
     </motion.header>
   );

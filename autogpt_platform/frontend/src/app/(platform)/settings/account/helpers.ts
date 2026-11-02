@@ -1,4 +1,6 @@
 import type { NotificationPreference } from "@/app/api/__generated__/models/notificationPreference";
+import { getMessage } from "@/lib/i18n/translate";
+import type { MessageKey } from "@/lib/i18n/messages/en";
 
 export const EASE_OUT = [0.16, 1, 0.3, 1] as const;
 export const EASE_IOS = [0.32, 0.72, 0, 1] as const;
@@ -22,11 +24,21 @@ export interface PreferencesFormState {
   notifications: NotificationSettings;
 }
 
-export const BRIEFING_OPTIONS: { value: BriefingFrequency; label: string }[] = [
-  { value: "DAILY", label: "Daily" },
-  { value: "WEEKLY", label: "Weekly" },
-  { value: "MONTHLY", label: "Monthly" },
-  { value: "OFF", label: "Off" },
+export type Translate = (
+  key: MessageKey,
+  values?: Record<string, string | number>,
+) => string;
+
+const english: Translate = (key, values) => getMessage("en", key, values);
+
+export const BRIEFING_OPTIONS: {
+  value: BriefingFrequency;
+  labelKey: MessageKey;
+}[] = [
+  { value: "DAILY", labelKey: "account1.helpers.briefing.daily" },
+  { value: "WEEKLY", labelKey: "account1.helpers.briefing.weekly" },
+  { value: "MONTHLY", labelKey: "account1.helpers.briefing.monthly" },
+  { value: "OFF", labelKey: "account1.helpers.briefing.off" },
 ];
 
 /**
@@ -168,19 +180,22 @@ export function findTimezoneLabel(value: string): string {
  * than prompts — the whole point of the volume knob is that one click is the
  * entire interaction.
  */
-export function describeFooterChoice(value: string | null): string {
+export function describeFooterChoice(
+  value: string | null,
+  t: Translate = english,
+): string {
   switch (value) {
     case "daily":
-      return "You'll get a briefing every day";
+      return t("account1.helpers.footer.daily");
     case "weekly":
-      return "You'll get a briefing every week";
+      return t("account1.helpers.footer.weekly");
     case "monthly":
-      return "You'll get a briefing every month";
+      return t("account1.helpers.footer.monthly");
     case "alerts":
-      return "Briefings paused — you'll still get alerts";
+      return t("account1.helpers.footer.alerts");
     case "off":
-      return "Briefings and alerts paused";
+      return t("account1.helpers.footer.off");
     default:
-      return "Preferences updated";
+      return t("account1.helpers.footer.default");
   }
 }

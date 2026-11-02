@@ -7,33 +7,36 @@ import { z } from "zod";
 
 import { useState } from "react";
 import { toast } from "@/components/molecules/Toast/use-toast";
+import { useT } from "@/lib/i18n";
 
-const emailSchema = z.object({
-  email: z
-    .string()
-    .min(1, "Email is required")
-    .email("Enter a valid email address"),
-});
-
-type EmailFormValues = z.infer<typeof emailSchema>;
-
-async function updateEmailViaAuthAPI(email: string) {
-  const response = await fetch("/api/auth/user", {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email }),
-  });
-
-  if (!response.ok) {
-    const error = await response.json().catch(() => ({}));
-    throw new Error(error.error ?? "Failed to update email");
-  }
-
-  return response.json();
-}
+type EmailFormValues = { email: string };
 
 export function useAccountCard({ user }: { user: User }) {
+  const t = useT();
   const currentEmail = user.email ?? "";
+  const emailSchema = z.object({
+    email: z
+      .string()
+      .min(1, t("account1.accountCard.emailRequired"))
+      .email(t("account1.accountCard.emailInvalid")),
+  });
+
+  async function updateEmailViaAuthAPI(email: string) {
+    const response = await fetch("/api/auth/user", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email }),
+    });
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({}));
+      throw new Error(
+        error.error ?? t("account1.accountCard.updateFailedFallback"),
+      );
+    }
+
+    return response.json();
+  }
 
   const emailForm = useForm<EmailFormValues>({
     resolver: zodResolver(emailSchema),
@@ -63,21 +66,22 @@ export function useAccountCard({ user }: { user: User }) {
       toast(
         user.email_verified
           ? {
-              title: "Confirm your new email",
-              description:
-                "We sent a confirmation link to your current email address. Your email changes once you click it.",
+              title: t("account1.accountCard.toastConfirmTitle"),
+              description: t("account1.accountCard.toastConfirmBody"),
               variant: "success",
             }
           : {
-              title: "Email updated",
-              description: `Your email is now ${values.email}.`,
+              title: t("account1.accountCard.toastUpdatedTitle"),
+              description: t("account1.accountCard.toastUpdatedBody", {
+                email: values.email,
+              }),
               variant: "success",
             },
       );
       return true;
     } catch (err) {
       toast({
-        title: "Couldn't update email",
+        title: t("account1.accountCard.toastFailedTitle"),
         description: err instanceof Error ? err.message : undefined,
         variant: "destructive",
       });

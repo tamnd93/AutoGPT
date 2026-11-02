@@ -1,3 +1,4 @@
+import { LocaleProvider } from "@/lib/i18n";
 import { describe, expect, test, vi } from "vitest";
 
 import { fireEvent, render, screen } from "@/tests/integrations/test-utils";
@@ -33,5 +34,30 @@ describe("NotificationsCard", () => {
     expect(onBriefingFrequencyChange).toHaveBeenCalledWith("MONTHLY");
     expect(onAlertsChange).toHaveBeenCalledWith(false);
     expect(onStoreVerdictsChange).toHaveBeenCalledWith(true);
+  });
+
+  test("reads its labels and descriptions in Vietnamese", () => {
+    render(
+      <LocaleProvider locale="vi">
+        <NotificationsCard
+          values={{
+            briefingFrequency: "WEEKLY",
+            alertsEnabled: true,
+            storeVerdictsEnabled: false,
+          }}
+          onBriefingFrequencyChange={vi.fn()}
+          onAlertsChange={vi.fn()}
+          onStoreVerdictsChange={vi.fn()}
+        />
+      </LocaleProvider>,
+    );
+
+    expect(screen.getByRole("combobox", { name: "Thông báo" })).toBeDefined();
+    expect(screen.getByRole("switch", { name: "Cảnh báo" })).toBeDefined();
+    expect(
+      screen.getByRole("switch", { name: "Đánh giá Marketplace" }),
+    ).toBeDefined();
+    expect(screen.getByText(/luôn được gửi/)).toBeDefined();
+    expect(screen.getByText(/Tối đa hai lần một ngày/)).toBeDefined();
   });
 });

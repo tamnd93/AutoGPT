@@ -1,3 +1,4 @@
+import { getMessage } from "@/lib/i18n/translate";
 import { describe, expect, it, test } from "vitest";
 
 import type { NotificationPreference } from "@/app/api/__generated__/models/notificationPreference";
@@ -187,5 +188,19 @@ describe("the volume knob's footer links", () => {
     expect(describeFooterChoice("alerts")).toMatch(/still get alerts/i);
     expect(describeFooterChoice("off")).toMatch(/paused/i);
     expect(describeFooterChoice(null)).toBe("Preferences updated");
+  });
+
+  it("confirms the choice in Vietnamese", () => {
+    const tVi = (key: string, values?: Record<string, string | number>) =>
+      getMessage("vi", key, values);
+
+    expect(describeFooterChoice("daily", tVi)).toBe(
+      "Bạn sẽ nhận bản tóm tắt mỗi ngày",
+    );
+    expect(describeFooterChoice("alerts", tVi)).toMatch(/vẫn nhận cảnh báo/);
+    expect(describeFooterChoice("off", tVi)).toBe(
+      "Bản tóm tắt và cảnh báo đã tạm dừng",
+    );
+    expect(describeFooterChoice(null, tVi)).toBe("Đã cập nhật tuỳ chọn");
   });
 });

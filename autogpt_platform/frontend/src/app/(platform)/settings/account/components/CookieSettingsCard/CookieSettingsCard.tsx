@@ -4,6 +4,7 @@ import { motion, useReducedMotion } from "framer-motion";
 
 import { Button } from "@/components/atoms/Button/Button";
 import { Text } from "@/components/atoms/Text/Text";
+import { useT } from "@/lib/i18n";
 import { openConsentSettings } from "@/services/consent/consent";
 import { useConsentManagerStatus } from "@/services/consent/useConsent";
 
@@ -14,6 +15,7 @@ interface Props {
 }
 
 export function CookieSettingsCard({ index = 0 }: Props) {
+  const t = useT();
   const reduceMotion = useReducedMotion();
   const status = useConsentManagerStatus();
 
@@ -35,10 +37,10 @@ export function CookieSettingsCard({ index = 0 }: Props) {
       <div className="flex items-center justify-between gap-4 rounded-[18px] border border-border-base bg-surface px-4 py-4 shadow-[0_1px_2px_rgba(15,15,20,0.04)]">
         <div className="flex min-w-0 flex-col gap-0.5">
           <Text variant="body-medium" as="span" className="text-textBlack">
-            Cookies
+            {t("account1.cookie.title")}
           </Text>
           <Text variant="small" as="span" className="text-foreground-tertiary">
-            Choose which optional cookies AutoGPT may use.
+            {t("account1.cookie.body")}
           </Text>
         </div>
 
@@ -49,8 +51,7 @@ export function CookieSettingsCard({ index = 0 }: Props) {
             role="status"
             className="max-w-64 text-right text-foreground-tertiary"
           >
-            Cookie settings couldn&apos;t load. A content blocker may be
-            stopping them.
+            {t("account1.cookie.unavailable")}
           </Text>
         ) : (
           <Button
@@ -60,7 +61,7 @@ export function CookieSettingsCard({ index = 0 }: Props) {
             disabled={status !== "ready"}
             onClick={openConsentSettings}
           >
-            Cookie settings
+            {t("account1.cookie.button")}
           </Button>
         )}
       </div>

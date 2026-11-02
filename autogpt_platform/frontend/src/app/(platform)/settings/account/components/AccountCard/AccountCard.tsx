@@ -15,6 +15,7 @@ import {
   FormItem,
 } from "@/components/molecules/Form/Form";
 
+import { useT } from "@/lib/i18n";
 import { EASE_OUT } from "../../helpers";
 import { useAccountCard } from "./useAccountCard";
 import { PencilIcon } from "@hugeicons/core-free-icons";
@@ -26,6 +27,7 @@ interface Props {
 }
 
 export function AccountCard({ user, index = 0 }: Props) {
+  const t = useT();
   const reduceMotion = useReducedMotion();
   const [emailDialogOpen, setEmailDialogOpen] = useState(false);
   const { emailForm, onSubmitEmail, isUpdatingEmail, currentEmail } =
@@ -62,7 +64,7 @@ export function AccountCard({ user, index = 0 }: Props) {
       <div className="flex flex-col divide-y divide-border-base rounded-[18px] border border-border-base bg-surface shadow-[0_1px_2px_rgba(15,15,20,0.04)]">
         <div className="flex items-center justify-between gap-4 px-4 py-4">
           <Text variant="body-medium" as="span" className="text-textBlack">
-            Email
+            {t("account1.accountCard.email")}
           </Text>
 
           <div className="flex min-w-0 items-center gap-3">
@@ -75,7 +77,7 @@ export function AccountCard({ user, index = 0 }: Props) {
             </Text>
 
             <Dialog
-              title="Update email"
+              title={t("account1.accountCard.updateTitle")}
               styling={{ maxWidth: "420px" }}
               controlled={{
                 isOpen: emailDialogOpen,
@@ -89,7 +91,7 @@ export function AccountCard({ user, index = 0 }: Props) {
                 <Button
                   variant="secondary"
                   size="small"
-                  aria-label="Edit email"
+                  aria-label={t("account1.accountCard.editAria")}
                   className="h-7 min-w-0 px-1.5 py-0.5"
                 >
                   <Icon icon={PencilIcon} size={14} />
@@ -103,8 +105,7 @@ export function AccountCard({ user, index = 0 }: Props) {
                       as="span"
                       className="text-foreground-tertiary"
                     >
-                      We&apos;ll send a confirmation link to verify your new
-                      address.
+                      {t("account1.accountCard.confirmNote")}
                     </Text>
                     <FormField
                       control={emailForm.control}
@@ -114,7 +115,7 @@ export function AccountCard({ user, index = 0 }: Props) {
                           <FormControl>
                             <Input
                               id={field.name}
-                              label="Email"
+                              label={t("account1.accountCard.emailLabel")}
                               type="email"
                               autoComplete="email"
                               size="medium"
@@ -135,7 +136,7 @@ export function AccountCard({ user, index = 0 }: Props) {
                       size="small"
                       onClick={() => setEmailDialogOpen(false)}
                     >
-                      Cancel
+                      {t("account1.accountCard.cancel")}
                     </Button>
                     <Button
                       type="submit"
@@ -143,7 +144,9 @@ export function AccountCard({ user, index = 0 }: Props) {
                       disabled={disableEmailSubmit}
                       loading={isUpdatingEmail}
                     >
-                      {isUpdatingEmail ? "Saving" : "Update email"}
+                      {isUpdatingEmail
+                        ? t("account1.accountCard.saving")
+                        : t("account1.accountCard.update")}
                     </Button>
                   </Dialog.Footer>
                 </Form>
@@ -154,7 +157,7 @@ export function AccountCard({ user, index = 0 }: Props) {
 
         <div className="flex items-center justify-between gap-4 px-4 py-4">
           <Text variant="body-medium" as="span" className="text-textBlack">
-            Password
+            {t("account1.accountCard.password")}
           </Text>
 
           <Button
@@ -163,7 +166,7 @@ export function AccountCard({ user, index = 0 }: Props) {
             size="small"
             variant="secondary"
           >
-            Reset password
+            {t("account1.accountCard.reset")}
           </Button>
         </div>
       </div>

@@ -5,6 +5,7 @@ import { motion, useReducedMotion } from "framer-motion";
 import { Select } from "@/components/atoms/Select/Select";
 import { Switch } from "@/components/atoms/Switch/Switch";
 import { Text } from "@/components/atoms/Text/Text";
+import { useT } from "@/lib/i18n";
 
 import {
   BRIEFING_OPTIONS,
@@ -28,6 +29,7 @@ export function NotificationsCard({
   onStoreVerdictsChange,
   index = 0,
 }: Props) {
+  const t = useT();
   const reduceMotion = useReducedMotion();
 
   return (
@@ -44,71 +46,68 @@ export function NotificationsCard({
       <div className="flex h-fit flex-col gap-4 rounded-[18px] border border-border-base bg-surface px-4 py-3 shadow-[0_1px_2px_rgba(15,15,20,0.04)]">
         <div className="flex flex-col gap-1">
           <Text variant="body-medium" as="span" className="text-textBlack">
-            Email
+            {t("account1.notif.emailTitle")}
           </Text>
           <Text variant="small" as="span" className="text-foreground-tertiary">
-            Billing and account messages are always sent — they are about your
-            account, not a promotion.
+            {t("account1.notif.billingNote")}
           </Text>
         </div>
 
         <div className="flex flex-col gap-2">
           <Select
             id="briefing-frequency"
-            label="Briefing"
+            label={t("account1.notif.briefingLabel")}
             value={values.briefingFrequency}
             options={BRIEFING_OPTIONS.map((option) => ({
               value: option.value,
-              label: option.label,
+              label: t(option.labelKey),
             }))}
             onValueChange={(value) =>
               onBriefingFrequencyChange(value as BriefingFrequency)
             }
           />
           <Text variant="small" as="span" className="text-foreground-tertiary">
-            What your workflows got done, at around 07:30 your time. Never sent
-            when nothing ran.
+            {t("account1.notif.briefingBody")}
           </Text>
         </div>
 
         <div className="flex items-center justify-between gap-4">
           <div className="flex flex-col">
             <Text variant="body-medium" as="span" className="text-textBlack">
-              Alerts
+              {t("account1.notif.alertsTitle")}
             </Text>
             <Text
               variant="small"
               as="span"
               className="text-foreground-tertiary"
             >
-              Only when something is waiting on you — never for a successful
-              run. At most two a day.
+              {t("account1.notif.alertsBody")}
             </Text>
           </div>
           <Switch
             checked={values.alertsEnabled}
             onCheckedChange={onAlertsChange}
-            aria-label="Alerts"
+            aria-label={t("account1.notif.alertsTitle")}
           />
         </div>
 
         <div className="flex items-center justify-between gap-4">
           <div className="flex flex-col">
             <Text variant="body-medium" as="span" className="text-textBlack">
-              Marketplace reviews
+              {t("account1.notif.storeTitle")}
             </Text>
             <Text
               variant="small"
               as="span"
               className="text-foreground-tertiary"
             >
-              When a workflow you submitted is approved or needs changes.
+              {t("account1.notif.storeBody")}
             </Text>
           </div>
           <Switch
             checked={values.storeVerdictsEnabled}
             onCheckedChange={onStoreVerdictsChange}
-            aria-label="Marketplace reviews"
+            aria-label={t("account1.notif.storeTitle")}
           />
         </div>
       </div>

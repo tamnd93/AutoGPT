@@ -7,6 +7,7 @@ import { Text } from "@/components/atoms/Text/Text";
 import {
   isLocale,
   useLocale,
+  useT,
   writeLocaleCookie,
   type Locale,
 } from "@/lib/i18n";
@@ -23,6 +24,7 @@ interface Props {
 }
 
 export function LanguageCard({ index = 0 }: Props) {
+  const t = useT();
   const reduceMotion = useReducedMotion();
   const locale = useLocale();
 
@@ -50,12 +52,12 @@ export function LanguageCard({ index = 0 }: Props) {
       <div className="flex h-fit flex-col justify-center gap-3 rounded-[18px] border border-border-base bg-surface px-4 py-3 shadow-[0_1px_2px_rgba(15,15,20,0.04)]">
         <div className="flex items-center justify-between gap-4">
           <Text variant="body-medium" as="span" className="text-textBlack">
-            Language
+            {t("account1.language.title")}
           </Text>
 
           <Select
             id="language"
-            label="Language"
+            label={t("account1.language.selectLabel")}
             hideLabel
             value={locale}
             onValueChange={handleChange}

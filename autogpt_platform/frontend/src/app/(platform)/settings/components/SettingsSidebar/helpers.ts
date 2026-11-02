@@ -9,35 +9,52 @@ import {
   UserIcon,
 } from "@hugeicons/core-free-icons";
 import type { IconSvgElement } from "@hugeicons/react";
+import type { MessageKey } from "@/lib/i18n/messages/en";
 
 export interface SettingsNavItem {
-  label: string;
+  labelKey: MessageKey;
   href: string;
   Icon: IconSvgElement;
 }
 
 export const settingsNavItems: SettingsNavItem[] = [
-  { label: "Profile", href: "/settings/profile", Icon: UserIcon },
   {
-    label: "Account",
+    labelKey: "account1.nav.profile",
+    href: "/settings/profile",
+    Icon: UserIcon,
+  },
+  {
+    labelKey: "account1.nav.account",
     href: "/settings/account",
     Icon: SlidersHorizontalIcon,
   },
   {
-    label: "Memory",
+    labelKey: "account1.nav.memory",
     href: "/settings/memory",
     Icon: BrainIcon,
   },
-  { label: "Billing", href: "/settings/billing", Icon: CreditCardIcon },
   {
-    label: "Integrations",
+    labelKey: "account1.nav.billing",
+    href: "/settings/billing",
+    Icon: CreditCardIcon,
+  },
+  {
+    labelKey: "account1.nav.integrations",
     href: "/settings/integrations",
     Icon: PlugSocketIcon,
   },
-  { label: "Bots", href: "/settings/bots", Icon: MessageMultiple01Icon },
-  { label: "AutoGPT API Keys", href: "/settings/api-keys", Icon: Key01Icon },
   {
-    label: "Creator Dashboard",
+    labelKey: "account1.nav.bots",
+    href: "/settings/bots",
+    Icon: MessageMultiple01Icon,
+  },
+  {
+    labelKey: "account1.nav.apiKeys",
+    href: "/settings/api-keys",
+    Icon: Key01Icon,
+  },
+  {
+    labelKey: "account1.nav.creator",
     href: "/settings/creator-dashboard",
     Icon: ChartIncreaseIcon,
   },

@@ -1,8 +1,11 @@
 "use client";
 
 import { Text } from "@/components/atoms/Text/Text";
+import { useT } from "@/lib/i18n";
 
 export default function SettingsOAuthAppsPage() {
+  const t = useT();
+
   return (
     <>
       <Text
@@ -10,10 +13,10 @@ export default function SettingsOAuthAppsPage() {
         variant="h4"
         className="text-[#1F1F20]"
       >
-        OAuth Apps
+        {t("account1.oauthApps.title")}
       </Text>
       <Text variant="large" className="mt-2 text-foreground-secondary">
-        Coming soon.
+        {t("account1.oauthApps.comingSoon")}
       </Text>
     </>
   );

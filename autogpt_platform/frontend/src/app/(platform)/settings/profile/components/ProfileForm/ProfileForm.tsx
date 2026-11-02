@@ -7,6 +7,8 @@ import remarkGfm from "remark-gfm";
 
 import { Input } from "@/components/atoms/Input/Input";
 import { Text } from "@/components/atoms/Text/Text";
+import { useT } from "@/lib/i18n";
+import type { MessageKey } from "@/lib/i18n/messages/en";
 import { cn } from "@/lib/utils";
 
 import {
@@ -37,54 +39,55 @@ interface Props {
 const EASE_OUT = [0.16, 1, 0.3, 1] as const;
 
 interface MarkdownAction {
-  label: string;
+  labelKey: MessageKey;
   icon: ReactNode;
   before: string;
   after: string;
-  placeholder: string;
+  placeholderKey: MessageKey;
   block?: boolean;
 }
 
 const ACTIONS: ReadonlyArray<MarkdownAction> = [
   {
-    label: "Bold",
+    labelKey: "account1.profile.actionBold",
     icon: <Icon icon={TextBoldIcon} size={16} />,
     before: "**",
     after: "**",
-    placeholder: "bold text",
+    placeholderKey: "account1.profile.phBold",
   },
   {
-    label: "Italic",
+    labelKey: "account1.profile.actionItalic",
     icon: <Icon icon={TextItalicIcon} size={16} />,
     before: "*",
     after: "*",
-    placeholder: "italic text",
+    placeholderKey: "account1.profile.phItalic",
   },
   {
-    label: "Strikethrough",
+    labelKey: "account1.profile.actionStrike",
     icon: <Icon icon={TextStrikethroughIcon} size={16} />,
     before: "~~",
     after: "~~",
-    placeholder: "strikethrough",
+    placeholderKey: "account1.profile.phStrike",
   },
   {
-    label: "Link",
+    labelKey: "account1.profile.actionLink",
     icon: <Icon icon={Link01Icon} size={16} />,
     before: "[",
     after: "](https://)",
-    placeholder: "link text",
+    placeholderKey: "account1.profile.phLink",
   },
   {
-    label: "Bulleted list",
+    labelKey: "account1.profile.actionList",
     icon: <Icon icon={LeftToRightListBulletIcon} size={16} />,
     before: "- ",
     after: "",
-    placeholder: "list item",
+    placeholderKey: "account1.profile.phList",
     block: true,
   },
 ];
 
 export function ProfileForm({ formState, errors, onChange }: Props) {
+  const t = useT();
   const reduceMotion = useReducedMotion();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [isPreview, setIsPreview] = useState(false);
@@ -130,7 +133,7 @@ export function ProfileForm({ formState, errors, onChange }: Props) {
         cursorEnd = end + action.before.length;
       }
     } else {
-      const insertText = selected || action.placeholder;
+      const insertText = selected || t(action.placeholderKey);
       newValue =
         value.substring(0, start) +
         action.before +
@@ -165,14 +168,14 @@ export function ProfileForm({ formState, errors, onChange }: Props) {
     >
       <div className="flex items-center justify-between px-4">
         <Text variant="body-medium" as="span" className="text-foreground-base">
-          Bio
+          {t("account1.profile.bio")}
         </Text>
         <Text
           variant="small"
           as="span"
           className={`tabular-nums transition-colors duration-150 ${counterColor}`}
         >
-          {Math.max(remaining, 0)} left
+          {t("account1.profile.left", { count: Math.max(remaining, 0) })}
         </Text>
       </div>
       <div className="flex items-center gap-1 px-2">
@@ -185,10 +188,10 @@ export function ProfileForm({ formState, errors, onChange }: Props) {
         >
           {ACTIONS.map((action) => (
             <button
-              key={action.label}
+              key={action.labelKey}
               type="button"
-              aria-label={action.label}
-              title={action.label}
+              aria-label={t(action.labelKey)}
+              title={t(action.labelKey)}
               onMouseDown={(e) => e.preventDefault()}
               onClick={() => applyAction(action)}
               disabled={isPreview}
@@ -209,7 +212,9 @@ export function ProfileForm({ formState, errors, onChange }: Props) {
           ) : (
             <Icon icon={EyeIcon} size={14} />
           )}
-          {isPreview ? "Edit" : "Preview"}
+          {isPreview
+            ? t("account1.profile.edit")
+            : t("account1.profile.preview")}
         </button>
       </div>
       {isPreview ? (
@@ -247,7 +252,7 @@ export function ProfileForm({ formState, errors, onChange }: Props) {
             </div>
           ) : (
             <Text variant="body" as="span" className="text-foreground-subtle">
-              Nothing to preview yet.
+              {t("account1.profile.emptyPreview")}
             </Text>
           )}
         </div>
@@ -255,11 +260,11 @@ export function ProfileForm({ formState, errors, onChange }: Props) {
         <Input
           ref={textareaRef}
           id="profile-bio"
-          label="Bio"
+          label={t("account1.profile.bioLabel")}
           hideLabel
           type="textarea"
           rows={5}
-          placeholder="Tell people what you build, the workflows you ship, and what you care about."
+          placeholder={t("account1.profile.bioPlaceholder")}
           value={formState.description}
           error={errors.description}
           onChange={(e) => onChange("description", e.target.value)}

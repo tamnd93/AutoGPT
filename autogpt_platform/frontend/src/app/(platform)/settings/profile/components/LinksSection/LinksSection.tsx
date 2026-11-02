@@ -4,6 +4,7 @@ import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { Button } from "@/components/atoms/Button/Button";
 import { Text } from "@/components/atoms/Text/Text";
 
+import { useT } from "@/lib/i18n";
 import { type LinkRow, MAX_LINKS } from "../../helpers";
 import {
   Delete02Icon,
@@ -22,6 +23,7 @@ interface Props {
 const EASE_OUT = [0.16, 1, 0.3, 1] as const;
 
 export function LinksSection({ links, onChange, onAdd, onRemove }: Props) {
+  const t = useT();
   const reduceMotion = useReducedMotion();
   const canAdd = links.length < MAX_LINKS;
 
@@ -34,11 +36,10 @@ export function LinksSection({ links, onChange, onAdd, onRemove }: Props) {
     >
       <div className="flex flex-col gap-1 px-4">
         <Text variant="body-medium" as="span" className="text-foreground-base">
-          Your links
+          {t("account1.links.title")}
         </Text>
         <Text variant="small" className="text-foreground-tertiary">
-          Add up to {MAX_LINKS} links. Site, GitHub, X, anything you want
-          visible.
+          {t("account1.links.body", { max: MAX_LINKS })}
         </Text>
       </div>
 
@@ -72,7 +73,9 @@ export function LinksSection({ links, onChange, onAdd, onRemove }: Props) {
                       type="url"
                       value={link.value}
                       placeholder="https://"
-                      aria-label={`Link ${index + 1}`}
+                      aria-label={t("account1.links.linkAria", {
+                        index: index + 1,
+                      })}
                       onChange={(e) => onChange(index, e.target.value)}
                       className="h-[2.875rem] w-full border-none bg-transparent text-sm text-foreground-base placeholder:text-foreground-subtle focus:outline-none"
                     />
@@ -80,7 +83,9 @@ export function LinksSection({ links, onChange, onAdd, onRemove }: Props) {
                   <Button
                     variant="icon"
                     size="icon"
-                    aria-label={`Remove link ${index + 1}`}
+                    aria-label={t("account1.links.removeAria", {
+                      index: index + 1,
+                    })}
                     onClick={() => onRemove(index)}
                   >
                     <Icon icon={Delete02Icon} size={16} />
@@ -93,7 +98,7 @@ export function LinksSection({ links, onChange, onAdd, onRemove }: Props) {
 
         {links.length === 0 ? (
           <Text variant="small" className="px-4 text-foreground-subtle">
-            No links yet.
+            {t("account1.links.empty")}
           </Text>
         ) : null}
 
@@ -105,7 +110,9 @@ export function LinksSection({ links, onChange, onAdd, onRemove }: Props) {
             onClick={onAdd}
             disabled={!canAdd}
           >
-            {canAdd ? "Add link" : `Limit of ${MAX_LINKS} reached`}
+            {canAdd
+              ? t("account1.links.add")
+              : t("account1.links.limit", { max: MAX_LINKS })}
           </Button>
         </div>
       </div>

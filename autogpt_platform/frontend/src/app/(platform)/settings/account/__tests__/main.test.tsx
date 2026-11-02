@@ -1,3 +1,4 @@
+import { LocaleProvider } from "@/lib/i18n";
 import type { ReactNode } from "react";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -140,6 +141,25 @@ describe("SettingsPreferencesPage", () => {
 
     const resetLink = screen.getByRole("link", { name: "Reset password" });
     expect(resetLink.getAttribute("href")).toBe("/reset-password");
+  });
+
+  test("reads the page chrome in Vietnamese", async () => {
+    setupBaseHandlers();
+
+    render(
+      <LocaleProvider locale="vi">
+        <SettingsPreferencesPage />
+      </LocaleProvider>,
+    );
+
+    expect(await screen.findByText("Tài khoản")).toBeDefined();
+    expect(
+      screen.getByText("Điều chỉnh tài khoản và múi giờ của bạn."),
+    ).toBeDefined();
+    expect(screen.getByText("Múi giờ")).toBeDefined();
+    expect(screen.getByText("Ngôn ngữ")).toBeDefined();
+    expect(screen.getByRole("button", { name: "Lưu thay đổi" })).toBeDefined();
+    expect(screen.getByRole("button", { name: "Bỏ thay đổi" })).toBeDefined();
   });
 
   test("opens email update dialog and closes on Cancel", async () => {
