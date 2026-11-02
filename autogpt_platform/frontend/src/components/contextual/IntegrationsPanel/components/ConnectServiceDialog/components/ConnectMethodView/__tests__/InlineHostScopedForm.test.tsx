@@ -10,6 +10,7 @@ vi.mock("@/components/molecules/Toast/use-toast", () => ({
   useToastOnFail: () => () => {},
 }));
 
+import { LocaleProvider } from "@/lib/i18n";
 import { InlineHostScopedForm } from "../InlineHostScopedForm";
 
 const CREATE_CREDENTIALS_URL =
@@ -33,6 +34,28 @@ async function fillOneHeader() {
     "Bearer t",
   );
 }
+
+describe("InlineHostScopedForm in Vietnamese", () => {
+  it("reads the host form chrome in Vietnamese", async () => {
+    render(
+      <LocaleProvider locale="vi">
+        <InlineHostScopedForm
+          provider="http"
+          host={PREFILLED_HOST}
+          onSuccess={vi.fn()}
+        />
+      </LocaleProvider>,
+    );
+
+    expect(await screen.findByLabelText("Máy chủ")).toBeDefined();
+    expect(screen.getByText("Lấy từ URL mà block này gọi.")).toBeDefined();
+    expect(screen.getByText("Header")).toBeDefined();
+    expect(screen.getByLabelText("Tên header")).toBeDefined();
+    expect(screen.getByLabelText("Giá trị header")).toBeDefined();
+    expect(screen.getByRole("button", { name: "Thêm header" })).toBeDefined();
+    expect(screen.getByRole("button", { name: "Kết nối" })).toBeDefined();
+  });
+});
 
 describe("InlineHostScopedForm with a prefilled host", () => {
   it("shows the host the block calls, port included, and locks it", async () => {

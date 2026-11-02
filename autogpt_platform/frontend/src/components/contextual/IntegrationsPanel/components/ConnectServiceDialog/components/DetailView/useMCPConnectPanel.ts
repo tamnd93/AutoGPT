@@ -11,6 +11,7 @@ import { invalidateConnectionQueries } from "@/lib/react-query/invalidateConnect
 import { connectMCPOAuth } from "@/lib/mcp-oauth";
 import { storeMCPToken } from "./storeMCPToken";
 import { useMCPManualAuth } from "./useMCPManualAuth";
+import { useT } from "@/lib/i18n";
 
 interface Args {
   onSuccess: (credential?: CredentialsMetaResponse) => void;
@@ -27,6 +28,7 @@ export function useMCPConnectPanel({
   oauthScopes,
   oauthWriteScopes = [],
 }: Args) {
+  const t = useT();
   const queryClient = useQueryClient();
   const [serverURL, setServerURL] = useState(initialServerURL);
   const initialPhase =
@@ -89,8 +91,8 @@ export function useMCPConnectPanel({
         setError(
           reason ??
             (manualSchemes.length
-              ? "This server doesn't support OAuth sign-in. Choose how its API credential should be sent."
-              : "Sign-in is unavailable for this connection. Check its setup instructions and try again."),
+              ? t("connectServices1.mcp.noOAuth")
+              : t("connectServices1.mcp.signInUnavailable")),
         );
         return;
       }
@@ -103,7 +105,7 @@ export function useMCPConnectPanel({
       if (message === OAUTH_ERROR_FLOW_CANCELED) return;
       setError(
         message === "OAuth flow timed out"
-          ? "OAuth sign-in timed out. Please try again."
+          ? t("connectServices1.mcp.timedOut")
           : message,
       );
     } finally {

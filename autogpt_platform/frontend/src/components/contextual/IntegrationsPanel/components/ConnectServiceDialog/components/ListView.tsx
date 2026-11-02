@@ -7,6 +7,7 @@ import type { ConnectableProvider } from "../helpers";
 import { ProviderRow } from "./ProviderRow";
 import { Plug01Icon, Search01Icon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   query: string;
@@ -23,6 +24,8 @@ export function ListView({
   onSelect,
   description,
 }: Props) {
+  const t = useT();
+
   return (
     <div className="flex flex-col gap-4">
       <Text variant="body" className="text-foreground-body">
@@ -39,8 +42,8 @@ export function ListView({
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search services..."
-          aria-label="Search services"
+          placeholder={t("connectServices1.list.searchPlaceholder")}
+          aria-label={t("connectServices1.list.searchAria")}
           // TODO(tokens): no exact role for focus:border-purple-400 #925cf7, focus:ring-purple-400 #925cf7, text-[#1F1F20]
           className="h-[46px] w-full rounded-3xl border border-border-base bg-surface pl-12 pr-4 text-body text-[#1F1F20] placeholder:text-placeholder focus:border-purple-400 focus:outline-none focus:ring-1 focus:ring-purple-400"
         />
@@ -55,8 +58,8 @@ export function ListView({
           />
           <Text variant="body" className="text-foreground-body">
             {query.trim()
-              ? `No services match "${query.trim()}"`
-              : "No services available"}
+              ? t("connectServices1.list.noMatch", { query: query.trim() })
+              : t("connectServices1.list.noServices")}
           </Text>
         </div>
       ) : (

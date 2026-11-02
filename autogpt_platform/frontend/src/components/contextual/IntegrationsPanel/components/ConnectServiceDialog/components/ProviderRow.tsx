@@ -7,6 +7,7 @@ import { PlusSignIcon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { Badge } from "@/components/atoms/Badge/Badge";
 import { integrationIconSrc } from "@/components/molecules/IntegrationLogo/helpers";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   provider: ConnectableProvider;
@@ -14,6 +15,7 @@ interface Props {
 }
 
 export function ProviderRow({ provider, onSelect }: Props) {
+  const t = useT();
   const src = integrationIconSrc(provider.iconId ?? provider.id);
   const [brokenSrc, setBrokenSrc] = useState<string | null>(null);
 
@@ -48,7 +50,7 @@ export function ProviderRow({ provider, onSelect }: Props) {
           {provider.mcpServer &&
             provider.mcpServer.connection_mode !== "hosted" && (
               <Badge variant="warning" size="small">
-                Setup required
+                {t("connectServices1.row.setupRequired")}
               </Badge>
             )}
         </span>

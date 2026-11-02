@@ -11,6 +11,7 @@ import {
   TabsLineTrigger,
   TabsLineContent,
 } from "@/components/molecules/TabsLine/TabsLine";
+import { useT } from "@/lib/i18n";
 import { McpConnectPanel } from "./McpConnectPanel";
 import { PublicMCPPanel } from "./PublicMCPPanel";
 
@@ -18,12 +19,14 @@ type AuthMethod = NonNullable<
   ProviderMetadata["mcp_server"]
 >["auth_methods"][number];
 
-const METHOD_LABELS: Record<AuthMethod, string> = {
-  none: "No sign-in",
-  oauth: "Sign in",
-  bearer: "API token",
-  basic: "Basic authentication",
-};
+function getMethodLabels(t: ReturnType<typeof useT>): Record<AuthMethod, string> {
+  return {
+    none: t("connectServices1.mcpPreset.none"),
+    oauth: t("connectServices1.mcpPreset.oauth"),
+    bearer: t("connectServices1.mcpPreset.bearer"),
+    basic: t("connectServices1.mcpPreset.basic"),
+  };
+}
 
 interface Props {
   server: NonNullable<ProviderMetadata["mcp_server"]>;
@@ -33,6 +36,8 @@ interface Props {
 }
 
 export function MCPPresetPanel({ server, onSuccess, actions }: Props) {
+  const t = useT();
+  const METHOD_LABELS = getMethodLabels(t);
   const methods = server.auth_methods;
   return (
     <div className="flex flex-col gap-4">
@@ -40,7 +45,7 @@ export function MCPPresetPanel({ server, onSuccess, actions }: Props) {
         {server.setup_instructions}
       </Text>
       <Link href={server.documentation_url} isExternal variant="secondary">
-        Official documentation
+        {t("connectServices1.mcpPreset.docs")}
       </Link>
       {methods.length === 1 ? (
         <PresetMethod
@@ -51,7 +56,9 @@ export function MCPPresetPanel({ server, onSuccess, actions }: Props) {
         />
       ) : (
         <TabsLine defaultValue={methods[0]}>
-          <TabsLineList aria-label="Connection method">
+          <TabsLineList
+            aria-label={t("connectServices1.mcpPreset.connectionMethod")}
+          >
             {methods.map((method) => (
               <TabsLineTrigger key={method} value={method}>
                 {METHOD_LABELS[method]}

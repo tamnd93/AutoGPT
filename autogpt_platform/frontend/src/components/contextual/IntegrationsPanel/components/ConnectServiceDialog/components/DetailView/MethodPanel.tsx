@@ -14,14 +14,17 @@ import { InlineHostScopedForm } from "../ConnectMethodView/InlineHostScopedForm"
 import { InlineUserPasswordForm } from "../ConnectMethodView/InlineUserPasswordForm";
 import { OAuthConnectButton } from "./OAuthConnectButton";
 import { UnsupportedNotice } from "./UnsupportedNotice";
+import { useT } from "@/lib/i18n";
 
-const TAB_LABEL: Record<AuthMethod, string> = {
-  [AuthType.oauth2]: "OAuth",
-  [AuthType.api_key]: "API key", // pragma: allowlist secret
-  [AuthType.user_password]: "User / password", // pragma: allowlist secret
-  [AuthType.host_scoped]: "Host",
-  [AuthType.device_code]: "Device auth",
-};
+function getTabLabels(t: ReturnType<typeof useT>): Record<AuthMethod, string> {
+  return {
+    [AuthType.oauth2]: t("connectServices1.tab.oauth"),
+    [AuthType.api_key]: t("connectServices1.tab.apiKey"), // pragma: allowlist secret
+    [AuthType.user_password]: t("connectServices1.tab.userPassword"), // pragma: allowlist secret
+    [AuthType.host_scoped]: t("connectServices1.tab.host"),
+    [AuthType.device_code]: t("connectServices1.tab.deviceAuth"),
+  };
+}
 
 interface Props {
   method: AuthMethod;
@@ -30,6 +33,8 @@ interface Props {
 }
 
 export function MethodPanel({ method, provider, onSuccess }: Props) {
+  const t = useT();
+  const TAB_LABEL = getTabLabels(t);
   const authProvider = getAuthProvider(provider, method);
   if (method === AuthType.oauth2) {
     const isChatGPT = authProvider === "codex";
@@ -39,7 +44,9 @@ export function MethodPanel({ method, provider, onSuccess }: Props) {
         <OAuthConnectButton
           provider={authProvider}
           providerName={isChatGPT ? "ChatGPT" : provider.name}
-          buttonLabel={isChatGPT ? "Sign in with ChatGPT" : undefined}
+          buttonLabel={
+            isChatGPT ? t("connectServices1.tab.signInChatGpt") : undefined
+          }
           termsNotice={isChatGPT ? "OpenAI" : undefined}
           onSuccess={onSuccess}
         />
@@ -81,7 +88,10 @@ export function MethodPanel({ method, provider, onSuccess }: Props) {
   return (
     <UnsupportedNotice
       providerName={provider.name}
-      detail={`${TAB_LABEL[method]} sign-in for ${provider.name} is not yet wired up in this dialog.`}
+      detail={t("connectServices1.tab.notWired", {
+        method: TAB_LABEL[method],
+        provider: provider.name,
+      })}
     />
   );
 }
@@ -96,14 +106,13 @@ export function getAuthProvider(
 export function getAuthMethodLabel(
   provider: ConnectableProvider,
   method: AuthMethod,
+  t: ReturnType<typeof useT>,
 ): string {
   if (
     method === AuthType.oauth2 &&
     getAuthProvider(provider, method) === "codex"
   ) {
-    return "ChatGPT";
+    return t("connectServices1.tab.chatgpt");
   }
-  return TAB_LABEL[method];
+  return getTabLabels(t)[method];
 }
-
-export { TAB_LABEL };

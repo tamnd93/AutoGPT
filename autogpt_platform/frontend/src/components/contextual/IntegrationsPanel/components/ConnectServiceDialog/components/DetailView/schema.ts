@@ -1,13 +1,15 @@
 import { z } from "zod";
+import { useT } from "@/lib/i18n";
 
-export const apiKeyConnectSchema = z
+export function apiKeyConnectSchemaFactory(t: ReturnType<typeof useT>) {
+  return z
   .object({
     title: z
       .string()
       .trim()
-      .min(1, "Name is required")
-      .max(100, "Name must be 100 characters or less"),
-    apiKey: z.string().trim().min(1, "API key is required"),
+      .min(1, t("connectServices1.apiKeyForm.nameRequired"))
+      .max(100, t("connectServices1.apiKeyForm.nameMax")),
+    apiKey: z.string().trim().min(1, t("connectServices1.apiKeyForm.keyRequired")),
     expiresAt: z
       .string()
       .trim()
@@ -18,18 +20,21 @@ export const apiKeyConnectSchema = z
         if (Number.isNaN(parsed)) {
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
-            message: "Pick a valid date",
+            message: t("connectServices1.apiKeyForm.dateInvalid"),
           });
           return;
         }
         if (parsed <= Date.now()) {
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
-            message: "Expiry must be in the future",
+            message: t("connectServices1.apiKeyForm.dateFuture"),
           });
         }
       }),
   })
   .strict();
+}
 
-export type ApiKeyConnectFormValues = z.infer<typeof apiKeyConnectSchema>;
+export type ApiKeyConnectFormValues = z.infer<
+  ReturnType<typeof apiKeyConnectSchemaFactory>
+>;

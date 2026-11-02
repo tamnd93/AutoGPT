@@ -9,6 +9,7 @@ import type { CredentialsMetaResponse } from "@/app/api/__generated__/models/cre
 import { toast } from "@/components/molecules/Toast/use-toast";
 import { invalidateConnectionQueries } from "@/lib/react-query/invalidateConnections";
 import { CredentialsActionsContext } from "@/providers/agent-credentials/credentials-provider";
+import { useT } from "@/lib/i18n";
 
 interface Args {
   provider: string;
@@ -26,6 +27,7 @@ export function useInlineConnectForm({
   onSuccess,
 }: Args) {
   const queryClient = useQueryClient();
+  const t = useT();
   const credentialsActions = useContext(CredentialsActionsContext);
   const [isPending, setIsPending] = useState(false);
 
@@ -45,13 +47,15 @@ export function useInlineConnectForm({
       onSuccess("id" in created.data ? created.data : undefined);
     } catch (error) {
       if (
-        toastIfPlanRequired(error, "Connecting a service needs an active plan")
+        toastIfPlanRequired(error, t("connectServices1.form.planNeeded"))
       )
         return;
       toast({
         title: failureTitle,
         description:
-          error instanceof Error ? error.message : "Unexpected error",
+          error instanceof Error
+            ? error.message
+            : t("connectServices1.form.unexpected"),
         variant: "destructive",
       });
     } finally {

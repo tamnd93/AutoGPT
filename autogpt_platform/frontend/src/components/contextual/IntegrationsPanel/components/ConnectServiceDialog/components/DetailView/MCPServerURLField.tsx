@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Input } from "@/components/atoms/Input/Input";
 import { Select } from "@/components/atoms/Select/Select";
 import { noPasswordManager } from "./helpers";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   serverURL: string;
@@ -18,6 +19,7 @@ export function MCPServerURLField({
   disabled,
   options = [],
 }: Props) {
+  const t = useT();
   const [customSelected, setCustomSelected] = useState(false);
   const matched = options.find((option) => option.url === serverURL);
   const selection = customSelected ? "custom" : (matched?.url ?? "");
@@ -37,8 +39,8 @@ export function MCPServerURLField({
       {!readOnly && options.length > 0 && (
         <Select
           id="mcp-server-region"
-          label="Server region"
-          placeholder="Choose your account's region"
+          label={t("connectServices1.mcpUrl.region")}
+          placeholder={t("connectServices1.mcpUrl.chooseRegion")}
           value={selection}
           onValueChange={selectURL}
           disabled={disabled}
@@ -47,13 +49,13 @@ export function MCPServerURLField({
               label: option.label,
               value: option.url,
             })),
-            { label: "Custom URL", value: "custom" },
+            { label: t("connectServices1.mcpUrl.custom"), value: "custom" },
           ]}
         />
       )}
       <Input
         id="mcp-server-url"
-        label="Server URL"
+        label={t("connectServices1.mcpUrl.serverUrl")}
         type="url"
         placeholder="https://mcp.example.com"
         value={serverURL}

@@ -6,6 +6,7 @@ import { Button } from "@/components/atoms/Button/Button";
 import { MoreHorizontalCircle01Icon } from "@hugeicons/core-free-icons";
 import { withoutDuplicateKeyMethod, type AuthMethod } from "../../helpers";
 import { MCPPresetPanel } from "./MCPPresetPanel";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   server: NonNullable<ProviderMetadata["mcp_server"]>;
@@ -26,6 +27,8 @@ export function McpFirstPanel({
   onSuccess,
   onBack,
 }: Props) {
+  const t = useT();
+
   return (
     <MCPPresetPanel
       server={withoutDuplicateKeyMethod(server, nativeMethods)}
@@ -40,12 +43,12 @@ export function McpFirstPanel({
               leadingIcon={MoreHorizontalCircle01Icon}
               onClick={onUseNative}
             >
-              More ways to connect
+              {t("connectServices1.mcpFirst.moreWays")}
             </Button>
           ) : null}
           {onBack ? (
             <Button variant="secondary" size="small" onClick={onBack}>
-              Back
+              {t("connectServices1.mcpFirst.back")}
             </Button>
           ) : null}
         </>

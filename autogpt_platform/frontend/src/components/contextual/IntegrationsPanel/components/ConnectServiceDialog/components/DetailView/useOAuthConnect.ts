@@ -19,6 +19,7 @@ import {
 import { CredentialsActionsContext } from "@/providers/agent-credentials/credentials-provider";
 
 import { getOAuthErrorMessage } from "./helpers";
+import { useLocale, useT } from "@/lib/i18n";
 
 interface Args {
   provider: string;
@@ -38,6 +39,8 @@ export function useOAuthConnect({
   credentialID,
 }: Args) {
   const queryClient = useQueryClient();
+  const t = useT();
+  const locale = useLocale();
   const credentialsActions = useContext(CredentialsActionsContext);
   const [isPending, setIsPending] = useState(false);
   const isPendingRef = useRef(false);
@@ -124,7 +127,7 @@ export function useOAuthConnect({
       // message — showing both would contradict each other.
       if (popupBlocked && !fallbackBlocked) {
         toast({
-          title: "Popup blocked",
+          title: t("connectServices1.oauth.popupBlocked"),
           description: OAUTH_ERROR_POPUP_BLOCKED,
         });
       }
@@ -137,7 +140,7 @@ export function useOAuthConnect({
         state_token: state,
       });
 
-      toast({ title: "Connected via OAuth", variant: "success" });
+      toast({ title: t("connectServices1.oauth.connected"), variant: "success" });
       await invalidateConnectionQueries(queryClient);
       // The provider's in-memory list only reloads off a React Query cache
       // event, which invalidation never emits unless something already
@@ -159,12 +162,12 @@ export function useOAuthConnect({
       }
       if (isUnmountedRef.current) return;
       if (
-        toastIfPlanRequired(error, "Connecting a service needs an active plan")
+        toastIfPlanRequired(error, t("connectServices1.form.planNeeded"))
       )
         return;
       toast({
-        title: "OAuth connection failed",
-        description: getOAuthErrorMessage(error),
+        title: t("connectServices1.oauth.failed"),
+        description: getOAuthErrorMessage(error, locale),
         variant: "destructive",
       });
     } finally {

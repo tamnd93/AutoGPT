@@ -16,20 +16,30 @@ import {
 } from "@/components/molecules/Form/Form";
 
 import { useInlineConnectForm } from "./useInlineConnectForm";
+import { useT } from "@/lib/i18n";
 
-const userPasswordConnectSchema = z
-  .object({
-    title: z
-      .string()
-      .trim()
-      .min(1, "Name is required")
-      .max(100, "Name must be 100 characters or less"),
-    username: z.string().trim().min(1, "Username is required"),
-    password: z.string().min(1, "Password is required"),
-  })
-  .strict();
+function makeUserPasswordSchema(t: ReturnType<typeof useT>) {
+  return z
+    .object({
+      title: z
+        .string()
+        .trim()
+        .min(1, t("connectServices1.userPassword.nameRequired"))
+        .max(100, t("connectServices1.userPassword.nameMax")),
+      username: z
+        .string()
+        .trim()
+        .min(1, t("connectServices1.userPassword.usernameRequired")),
+      password: z
+        .string()
+        .min(1, t("connectServices1.userPassword.passwordRequired")),
+    })
+    .strict();
+}
 
-type UserPasswordConnectFormValues = z.infer<typeof userPasswordConnectSchema>;
+type UserPasswordConnectFormValues = z.infer<
+  ReturnType<typeof makeUserPasswordSchema>
+>;
 
 interface Props {
   provider: string;
@@ -44,10 +54,12 @@ export function InlineUserPasswordForm({
   providerName,
   onSuccess,
 }: Props) {
+  const t = useT();
+  const userPasswordConnectSchema = makeUserPasswordSchema(t);
   const { submit, isPending } = useInlineConnectForm({
     provider,
-    successTitle: "Credentials saved",
-    failureTitle: "Couldn't save credentials",
+    successTitle: t("connectServices1.userPassword.savedTitle"),
+    failureTitle: t("connectServices1.userPassword.saveFailed"),
     onSuccess,
   });
 
@@ -79,10 +91,13 @@ export function InlineUserPasswordForm({
                 {...field}
                 id={field.name}
                 autoComplete="off"
-                label="Name"
+                label={t("connectServices1.userPassword.name")}
                 labelVariant="small-medium"
                 size="small"
-                placeholder={`My ${providerName} account`}
+                placeholder={t(
+                  "connectServices1.userPassword.accountPlaceholder",
+                  { provider: providerName },
+                )}
                 wrapperClassName="!mb-0"
               />
             </FormControl>
@@ -102,7 +117,7 @@ export function InlineUserPasswordForm({
                 id={field.name}
                 autoComplete="off"
                 spellCheck={false}
-                label="Username"
+                label={t("connectServices1.userPassword.username")}
                 labelVariant="small-medium"
                 size="small"
                 wrapperClassName="!mb-0"
@@ -124,7 +139,7 @@ export function InlineUserPasswordForm({
                 id={field.name}
                 type="password"
                 autoComplete="new-password"
-                label="Password"
+                label={t("connectServices1.userPassword.password")}
                 labelVariant="small-medium"
                 size="small"
                 wrapperClassName="!mb-0"
@@ -143,7 +158,9 @@ export function InlineUserPasswordForm({
         disabled={!form.formState.isValid}
         loading={isPending}
       >
-        {isPending ? "Connecting…" : "Connect"}
+        {isPending
+          ? t("connectServices1.hostScoped.connecting")
+          : t("connectServices1.hostScoped.connect")}
       </Button>
     </Form>
   );

@@ -29,6 +29,7 @@ import {
 } from "@hugeicons/core-free-icons";
 import type { IconSvgElement } from "@hugeicons/react";
 import { AnimatePresence, domAnimation, LazyMotion, m } from "framer-motion";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   provider: ConnectableProvider;
@@ -58,7 +59,7 @@ export const METHOD_ORDER: AuthMethod[] = [
   AuthType.host_scoped,
 ];
 
-const METHOD_COPY: Record<
+function getMethodCopy(t: ReturnType<typeof useT>): Record<
   AuthMethod,
   {
     label: string;
@@ -66,34 +67,36 @@ const METHOD_COPY: Record<
     icon: IconSvgElement;
     recommended?: boolean;
   }
-> = {
-  [AuthType.oauth2]: {
-    label: "OAuth",
-    description: "One-click secure access.",
-    icon: SecurityCheckIcon,
-    recommended: true,
-  },
-  [AuthType.api_key]: {
-    label: "API Key",
-    description: "Paste your token for a custom setup.",
-    icon: Key01Icon,
-  },
-  [AuthType.user_password]: {
-    label: "Username & password",
-    description: "Sign in with account credentials.",
-    icon: UserIcon,
-  },
-  [AuthType.host_scoped]: {
-    label: "Website access",
-    description: "Paste a key or headers used only for one website.",
-    icon: GlobeIcon,
-  },
-  [AuthType.device_code]: {
-    label: "Device auth",
-    description: "Approve on your phone with a short code.",
-    icon: SmartPhone01Icon,
-  },
-};
+> {
+  return {
+    [AuthType.oauth2]: {
+      label: t("connectServices1.methodView.oauthLabel"),
+      description: t("connectServices1.methodView.oauthDesc"),
+      icon: SecurityCheckIcon,
+      recommended: true,
+    },
+    [AuthType.api_key]: {
+      label: t("connectServices1.methodView.apiKeyLabel"),
+      description: t("connectServices1.methodView.apiKeyDesc"),
+      icon: Key01Icon,
+    },
+    [AuthType.user_password]: {
+      label: t("connectServices1.methodView.userPasswordLabel"),
+      description: t("connectServices1.methodView.userPasswordDesc"),
+      icon: UserIcon,
+    },
+    [AuthType.host_scoped]: {
+      label: t("connectServices1.methodView.hostScopedLabel"),
+      description: t("connectServices1.methodView.hostScopedDesc"),
+      icon: GlobeIcon,
+    },
+    [AuthType.device_code]: {
+      label: t("connectServices1.methodView.deviceCodeLabel"),
+      description: t("connectServices1.methodView.deviceCodeDesc"),
+      icon: SmartPhone01Icon,
+    },
+  };
+}
 
 // The connect step behind a provider click: logo pair, "Connect AutoGPT
 // to X", method radio cards. Form methods expand their inputs inline as
@@ -108,6 +111,8 @@ export function ConnectMethodView({
   onInlineConnectSuccess,
   mcpSignIn,
 }: Props) {
+  const t = useT();
+  const methodCopy = getMethodCopy(t);
   const methods = METHOD_ORDER.filter((method) =>
     provider.supportedAuthTypes.includes(method),
   );
@@ -154,13 +159,18 @@ export function ConnectMethodView({
             className="!text-lead !leading-10 text-foreground-strong"
           >
             {showMcp
-              ? `Connect ${provider.name}`
-              : `Connect AutoGPT to ${provider.name}`}
+              ? t("connectServices1.methodView.connectProvider", {
+                  provider: provider.name,
+                })
+              : t("connectServices1.methodView.connectAutoGpt", {
+                  provider: provider.name,
+                })}
           </Text>
           {showMcp ? null : (
             <Text variant="body" className="!text-foreground-tertiary">
-              Choose how you&apos;d like to connect your {provider.name}{" "}
-              account.
+              {t("connectServices1.methodView.chooseHow", {
+                provider: provider.name,
+              })}
             </Text>
           )}
         </div>
@@ -180,7 +190,7 @@ export function ConnectMethodView({
               className="flex flex-col gap-1 rounded-2xl bg-neutral-100 p-1.5"
             >
               {methods.map((method) => {
-                const copy = METHOD_COPY[method];
+                const copy = methodCopy[method];
                 const isSelected = selectedMethod === method;
                 const hasInlineForm = method !== AuthType.oauth2;
                 return (
@@ -216,7 +226,7 @@ export function ConnectMethodView({
                               // TODO(tokens): no exact role for bg-violet-100 #ede9fe
                               className="rounded-md bg-violet-100 px-1.5 py-0.5 text-tiny font-semibold leading-inherit tracking-wide text-accent-strong"
                             >
-                              RECOMMENDED
+                              {t("connectServices1.methodView.recommended")}
                             </span>
                           )}
                         </span>

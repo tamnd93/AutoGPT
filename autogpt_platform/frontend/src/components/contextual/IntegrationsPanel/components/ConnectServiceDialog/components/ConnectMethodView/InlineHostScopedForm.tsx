@@ -27,24 +27,28 @@ import {
 } from "@/components/contextual/CredentialsInput/helpers";
 
 import { useInlineConnectForm } from "./useInlineConnectForm";
+import { useT } from "@/lib/i18n";
 
-const hostScopedConnectSchema = z
-  .object({
-    host: z
-      .string()
-      .trim()
-      .min(1, "Host is required")
-      .refine((value) => !/^[a-zA-Z][a-zA-Z\d+\-.]*:\/\//.test(value), {
-        message: "Enter only the host (e.g. api.example.com), not a full URL",
-      })
-      .refine((value) => !value.includes("/"), {
-        message:
-          "Enter only the host, without a trailing path. A port is allowed.",
-      }),
-  })
-  .strict();
+function makeHostScopedSchema(t: ReturnType<typeof useT>) {
+  return z
+    .object({
+      host: z
+        .string()
+        .trim()
+        .min(1, t("connectServices1.hostScoped.hostRequired"))
+        .refine((value) => !/^[a-zA-Z][a-zA-Z\d+\-.]*:\/\//.test(value), {
+          message: t("connectServices1.hostScoped.hostNoUrl"),
+        })
+        .refine((value) => !value.includes("/"), {
+          message: t("connectServices1.hostScoped.hostNoPath"),
+        }),
+    })
+    .strict();
+}
 
-type HostScopedConnectFormValues = z.infer<typeof hostScopedConnectSchema>;
+type HostScopedConnectFormValues = z.infer<
+  ReturnType<typeof makeHostScopedSchema>
+>;
 
 interface Props {
   provider: string;
@@ -57,13 +61,15 @@ interface Props {
 // Host pattern plus the headers to attach to requests matching it. Carries its
 // own submit, because the panel footer's Continue only drives OAuth and API key.
 export function InlineHostScopedForm({ provider, host, onSuccess }: Props) {
+  const t = useT();
+  const hostScopedConnectSchema = makeHostScopedSchema(t);
   const [headerPairs, setHeaderPairs] = useState<HeaderPair[]>([
     { key: "", value: "" },
   ]);
   const { submit, isPending } = useInlineConnectForm({
     provider,
-    successTitle: "Host credentials saved",
-    failureTitle: "Couldn't save host credentials",
+    successTitle: t("connectServices1.hostScoped.savedTitle"),
+    failureTitle: t("connectServices1.hostScoped.saveFailed"),
     onSuccess,
   });
 
@@ -106,7 +112,7 @@ export function InlineHostScopedForm({ provider, host, onSuccess }: Props) {
                 id="host"
                 autoComplete="off"
                 spellCheck={false}
-                label="Host"
+                label={t("connectServices1.hostScoped.host")}
                 labelVariant="small-medium"
                 size="small"
                 readOnly={Boolean(host)}
@@ -116,8 +122,8 @@ export function InlineHostScopedForm({ provider, host, onSuccess }: Props) {
             </FormControl>
             <Text variant="small" className="!text-foreground-tertiary">
               {host
-                ? "Taken from the URL this block calls."
-                : "The host of the URL this block will call."}
+                ? t("connectServices1.hostScoped.takenFromUrl")
+                : t("connectServices1.hostScoped.hostFromUrl")}
             </Text>
             <FormMessage />
           </FormItem>
@@ -126,17 +132,17 @@ export function InlineHostScopedForm({ provider, host, onSuccess }: Props) {
 
       <div className="space-y-2">
         <Text variant="small-medium" className="text-foreground-strong">
-          Headers
+          {t("connectServices1.hostScoped.headers")}
         </Text>
         <Text variant="small" className="!text-foreground-tertiary">
-          Sent with every request to this host, such as Authorization.
+          {t("connectServices1.hostScoped.headersBody")}
         </Text>
 
         {headerPairs.map((pair, index) => (
           <div key={index} className="flex items-end gap-2">
             <Input
               id={`header-${index}-key`}
-              label="Header name"
+              label={t("connectServices1.hostScoped.headerName")}
               hideLabel
               size="small"
               className="flex-1"
@@ -149,7 +155,7 @@ export function InlineHostScopedForm({ provider, host, onSuccess }: Props) {
             />
             <Input
               id={`header-${index}-value`}
-              label="Header value"
+              label={t("connectServices1.hostScoped.headerValue")}
               hideLabel
               type="password"
               autoComplete="new-password"
@@ -166,7 +172,9 @@ export function InlineHostScopedForm({ provider, host, onSuccess }: Props) {
               type="button"
               variant="icon"
               size="icon"
-              aria-label={`Remove header ${index + 1}`}
+              aria-label={t("connectServices1.hostScoped.removeHeader", {
+                index: index + 1,
+              })}
               disabled={headerPairs.length === 1}
               onClick={() => removeHeaderPair(index)}
             >
@@ -181,7 +189,8 @@ export function InlineHostScopedForm({ provider, host, onSuccess }: Props) {
           size="small"
           onClick={addHeaderPair}
         >
-          <Icon icon={PlusSignIcon} size={16} /> Add header
+          <Icon icon={PlusSignIcon} size={16} />{" "}
+          {t("connectServices1.hostScoped.addHeader")}
         </Button>
       </div>
 
@@ -193,7 +202,9 @@ export function InlineHostScopedForm({ provider, host, onSuccess }: Props) {
         disabled={!canSubmit}
         loading={isPending}
       >
-        {isPending ? "Connecting…" : "Connect"}
+        {isPending
+          ? t("connectServices1.hostScoped.connecting")
+          : t("connectServices1.hostScoped.connect")}
       </Button>
     </Form>
   );

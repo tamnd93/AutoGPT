@@ -13,6 +13,7 @@ import { Icon } from "@/components/atoms/Icon/Icon";
 import { Text } from "@/components/atoms/Text/Text";
 
 import { chatgptModelsSentence } from "./helpers";
+import { useT } from "@/lib/i18n";
 
 interface Point {
   icon: IconSvgElement;
@@ -34,32 +35,37 @@ interface Point {
  * made this connection, so it is absent from their offers -- which is what
  * the provider-tiers endpoint exists for.
  */
-const POINTS: Point[] = [
-  {
-    icon: ArrowDataTransferHorizontalIcon,
-    title: "What it does.",
-    body: "Chats routed to ChatGPT run on your ChatGPT plan instead of AutoGPT credits. Every new chat starts on the connection you choose in Settings, and you can change it per conversation — nothing switches on its own.",
-  },
-  {
-    icon: Target02Icon,
-    title: "What it costs.",
-    body: "Usage counts toward your ChatGPT plan's own limits. Those runs spend zero AutoGPT credits, and AutoGPT never adds a charge on top.",
-  },
-  {
-    icon: SparklesIcon,
-    title: "What you get.",
-    body: "The models your ChatGPT plan already includes, at no extra cost from AutoGPT.",
-    /** Replaced with the named models when the catalog can supply them. */
-    withModels: (models: string) => `${models}, at no extra cost from AutoGPT.`,
-  },
-  {
-    icon: ShieldKeyIcon,
-    title: "Stay in control.",
-    body: "A chat stays on the connection it started with, so a run is never moved onto your AutoGPT credits without asking. Disconnect any time in Settings.",
-  },
-];
+function getPoints(t: ReturnType<typeof useT>): Point[] {
+  return [
+    {
+      icon: ArrowDataTransferHorizontalIcon,
+      title: t("connectServices1.gpt.what"),
+      body: t("connectServices1.gpt.whatBody"),
+    },
+    {
+      icon: Target02Icon,
+      title: t("connectServices1.gpt.cost"),
+      body: t("connectServices1.gpt.costBody"),
+    },
+    {
+      icon: SparklesIcon,
+      title: t("connectServices1.gpt.get"),
+      body: t("connectServices1.gpt.getBody"),
+      /** Replaced with the named models when the catalog can supply them. */
+      withModels: (models: string) =>
+        t("connectServices1.gpt.getBodyModels", { models }),
+    },
+    {
+      icon: ShieldKeyIcon,
+      title: t("connectServices1.gpt.control"),
+      body: t("connectServices1.gpt.controlBody"),
+    },
+  ];
+}
 
 export function ChatGPTConnectExplainer() {
+  const t = useT();
+  const points = getPoints(t);
   const { data } = useGetV2ListProviderModelTiers({
     query: { refetchOnWindowFocus: false },
   });
@@ -71,7 +77,7 @@ export function ChatGPTConnectExplainer() {
       // TODO(tokens): no exact role for bg-[#FBFBFC]
       className="divide-y divide-border-base rounded-2xl border border-border-base bg-[#FBFBFC]"
     >
-      {POINTS.map((point) => (
+      {points.map((point) => (
         <div key={point.title} className="flex items-start gap-3 p-4">
           <span
             aria-hidden

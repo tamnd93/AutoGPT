@@ -10,6 +10,7 @@ import {
 } from "@/components/molecules/Form/Form";
 import type { ApiKeyConnectFormValues } from "@/components/contextual/IntegrationsPanel/components/ConnectServiceDialog/components/DetailView/schema";
 import type { UseFormReturn } from "react-hook-form";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   form: UseFormReturn<ApiKeyConnectFormValues>;
@@ -21,6 +22,8 @@ interface Props {
 // small text, and no submit button of its own — the panel footer's
 // Continue drives the same submit (Enter still works via the form).
 export function InlineApiKeyForm({ form, providerName, onSubmit }: Props) {
+  const t = useT();
+
   return (
     <Form form={form} onSubmit={onSubmit} className="space-y-2.5">
       <FormField
@@ -33,10 +36,12 @@ export function InlineApiKeyForm({ form, providerName, onSubmit }: Props) {
                 {...field}
                 id={field.name}
                 autoComplete="off"
-                label="Name"
+                label={t("connectServices1.inlineApiKey.name")}
                 labelVariant="small-medium"
                 size="small"
-                placeholder={`My ${providerName} key`}
+                placeholder={t("connectServices1.inlineApiKey.keyPlaceholder", {
+                  provider: providerName,
+                })}
                 wrapperClassName="!mb-0"
               />
             </FormControl>
@@ -57,7 +62,7 @@ export function InlineApiKeyForm({ form, providerName, onSubmit }: Props) {
                 type="password"
                 autoComplete="new-password"
                 spellCheck={false}
-                label="API key"
+                label={t("connectServices1.inlineApiKey.apiKey")}
                 labelVariant="small-medium"
                 size="small"
                 placeholder="sk-..."
@@ -80,7 +85,7 @@ export function InlineApiKeyForm({ form, providerName, onSubmit }: Props) {
                 value={field.value ?? ""}
                 id={field.name}
                 type="date"
-                label="Expires (optional)"
+                label={t("connectServices1.inlineApiKey.expires")}
                 labelVariant="small-medium"
                 size="small"
                 wrapperClassName="!mb-0"

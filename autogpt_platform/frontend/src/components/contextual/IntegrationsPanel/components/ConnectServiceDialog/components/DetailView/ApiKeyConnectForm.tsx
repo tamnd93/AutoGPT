@@ -13,6 +13,7 @@ import {
 import type { CredentialsMetaResponse } from "@/app/api/__generated__/models/credentialsMetaResponse";
 
 import { useApiKeyConnectForm } from "./useApiKeyConnectForm";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   provider: string;
@@ -25,6 +26,7 @@ export function ApiKeyConnectForm({
   providerName,
   onSuccess,
 }: Props) {
+  const t = useT();
   const { form, handleSubmit, isPending } = useApiKeyConnectForm({
     provider,
     onSuccess,
@@ -42,8 +44,10 @@ export function ApiKeyConnectForm({
                 {...field}
                 id={field.name}
                 autoComplete="off"
-                label="Name"
-                placeholder={`My ${providerName} key`}
+                label={t("connectServices1.apiKeyForm.name")}
+                placeholder={t("connectServices1.apiKeyForm.keyPlaceholder", {
+                  provider: providerName,
+                })}
                 wrapperClassName="!mb-0"
               />
             </FormControl>
@@ -64,7 +68,7 @@ export function ApiKeyConnectForm({
                 type="password"
                 autoComplete="new-password"
                 spellCheck={false}
-                label="API key"
+                label={t("connectServices1.apiKeyForm.apiKey")}
                 placeholder="sk-..."
                 wrapperClassName="!mb-0"
               />
@@ -85,8 +89,8 @@ export function ApiKeyConnectForm({
                 value={field.value ?? ""}
                 id={field.name}
                 type="date"
-                label="Expires (optional)"
-                hint="Leave blank to keep the key indefinitely"
+                label={t("connectServices1.apiKeyForm.expires")}
+                hint={t("connectServices1.apiKeyForm.expiresHint")}
                 wrapperClassName="!mb-0"
               />
             </FormControl>
@@ -102,7 +106,7 @@ export function ApiKeyConnectForm({
         disabled={!form.formState.isValid || isPending}
         loading={isPending}
       >
-        Save API key
+        {t("connectServices1.apiKeyForm.save")}
       </Button>
     </Form>
   );

@@ -24,6 +24,7 @@ import { McpFirstPanel } from "./McpFirstPanel";
 import { getAuthMethodLabel, MethodPanel } from "./MethodPanel";
 import { ProviderAvatar } from "./ProviderAvatar";
 import { UnsupportedNotice } from "./UnsupportedNotice";
+import { useT } from "@/lib/i18n";
 import { ArrowLeft02Icon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
 
@@ -57,6 +58,7 @@ export function DetailView({
   onSuccess,
   preferMcp = false,
 }: Props) {
+  const t = useT();
   const description = provider.description;
   const reduceMotion = useReducedMotion();
   const tabs = TAB_PRIORITY.filter((method) =>
@@ -77,7 +79,7 @@ export function DetailView({
           variant="icon"
           size="icon"
           onClick={onBack}
-          aria-label="Back to services"
+          aria-label={t("connectServices1.detail.back")}
           className="size-9"
           withTooltip={false}
         >
@@ -135,7 +137,7 @@ export function DetailView({
               <TabsLineList>
                 {tabs.map((method) => (
                   <TabsLineTrigger key={method} value={method}>
-                    {getAuthMethodLabel(provider, method)}
+                    {getAuthMethodLabel(provider, method, t)}
                   </TabsLineTrigger>
                 ))}
               </TabsLineList>

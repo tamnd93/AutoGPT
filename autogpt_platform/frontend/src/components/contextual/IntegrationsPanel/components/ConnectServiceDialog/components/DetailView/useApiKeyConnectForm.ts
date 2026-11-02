@@ -12,7 +12,8 @@ import { toast } from "@/components/molecules/Toast/use-toast";
 import { invalidateConnectionQueries } from "@/lib/react-query/invalidateConnections";
 import { CredentialsActionsContext } from "@/providers/agent-credentials/credentials-provider";
 
-import { apiKeyConnectSchema, type ApiKeyConnectFormValues } from "./schema";
+import { apiKeyConnectSchemaFactory, type ApiKeyConnectFormValues } from "./schema";
+import { useT } from "@/lib/i18n";
 
 interface Args {
   provider: string;
@@ -28,6 +29,8 @@ function toUnixSeconds(value: string | undefined): number | undefined {
 
 export function useApiKeyConnectForm({ provider, onSuccess }: Args) {
   const queryClient = useQueryClient();
+  const t = useT();
+  const apiKeyConnectSchema = apiKeyConnectSchemaFactory(t);
   const credentialsActions = useContext(CredentialsActionsContext);
   const [isPending, setIsPending] = useState(false);
 
@@ -52,7 +55,7 @@ export function useApiKeyConnectForm({ provider, onSuccess }: Args) {
         expires_at: toUnixSeconds(values.expiresAt),
       });
 
-      toast({ title: "API key saved", variant: "success" });
+      toast({ title: t("connectServices1.apiKeyForm.saved"), variant: "success" });
       await invalidateConnectionQueries(queryClient);
       // Invalidation emits no cache event unless something already
       // subscribed to the credentials query.
@@ -62,13 +65,15 @@ export function useApiKeyConnectForm({ provider, onSuccess }: Args) {
       onSuccess("id" in created.data ? created.data : undefined);
     } catch (error) {
       if (
-        toastIfPlanRequired(error, "Connecting a service needs an active plan")
+        toastIfPlanRequired(error, t("connectServices1.form.planNeeded"))
       )
         return;
       toast({
-        title: "Couldn't save API key",
+        title: t("connectServices1.apiKeyForm.saveFailed"),
         description:
-          error instanceof Error ? error.message : "Unexpected error",
+          error instanceof Error
+            ? error.message
+            : t("connectServices1.form.unexpected"),
         variant: "destructive",
       });
     } finally {

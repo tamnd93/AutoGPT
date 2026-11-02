@@ -1,4 +1,6 @@
 import type { ProviderTiers } from "@/app/api/__generated__/models/providerTiers";
+import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/locale";
+import { getMessage } from "@/lib/i18n/translate";
 
 type ValidationDetailItem = { msg?: unknown };
 
@@ -35,7 +37,10 @@ function readDetail(value: unknown): string | null {
 // returns a non-string `detail` (FastAPI 422 array, or a dict), `error.message`
 // is coerced to the useless string "[object Object]". Prefer the structured
 // `response.detail` and only fall back to `error.message` when it's usable.
-export function getOAuthErrorMessage(error: unknown): string {
+export function getOAuthErrorMessage(
+  error: unknown,
+  locale: Locale = DEFAULT_LOCALE,
+): string {
   if (typeof error === "object" && error !== null) {
     const fromResponse = readDetail((error as { response?: unknown }).response);
     if (fromResponse) return fromResponse;
@@ -52,7 +57,7 @@ export function getOAuthErrorMessage(error: unknown): string {
     return error.message;
   }
 
-  return "Something went wrong. Please try again.";
+  return getMessage(locale, "connectServices1.error.generic");
 }
 
 /**

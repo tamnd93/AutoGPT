@@ -16,6 +16,7 @@ import type { MCPAuthScheme } from "@/lib/mcp-auth";
 import { MCPServerURLField } from "./MCPServerURLField";
 import { noPasswordManager } from "./helpers";
 import type { ReactNode } from "react";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   onSuccess: (credential?: CredentialsMetaResponse) => void;
@@ -39,6 +40,7 @@ export function McpConnectPanel({
   serverURLOptions,
   actions,
 }: Props) {
+  const t = useT();
   const state = useMCPConnectPanel({
     onSuccess,
     initialServerURL,
@@ -51,7 +53,7 @@ export function McpConnectPanel({
     <div className="flex flex-col gap-4">
       {!lockServerURL && (
         <Text variant="body" className="text-foreground-secondary">
-          Enter the server URL from the service&apos;s setup instructions.
+          {t("connectServices1.mcp.enterUrl")}
         </Text>
       )}
       <MCPServerURLField
@@ -71,10 +73,10 @@ export function McpConnectPanel({
           />
           <span className="flex flex-col">
             <Text variant="body-medium" as="span">
-              Allow changes
+              {t("connectServices1.mcp.allowChanges")}
             </Text>
             <Text variant="small" as="span" tone="muted">
-              Without this it can only read, not create or edit.
+              {t("connectServices1.mcp.readOnly")}
             </Text>
           </span>
         </label>
@@ -83,8 +85,8 @@ export function McpConnectPanel({
         <>
           <Text variant="small" className="text-foreground-secondary">
             {allowedAuthMethods
-              ? "Use the credential described in the setup instructions above."
-              : "Use an API credential only if this server supports it. Follow the server's documentation for the correct authentication type."}
+              ? t("connectServices1.mcp.useCredential")
+              : t("connectServices1.mcp.useApiCredential")}
           </Text>
           {state.manualSchemes.length > 1 && (
             <MCPAuthSchemeField
@@ -128,7 +130,7 @@ export function McpConnectPanel({
             size="small"
             onClick={state.handleSwitchToToken}
           >
-            Use an API token instead
+            {t("connectServices1.mcp.useApiToken")}
           </Button>
         )}
         {state.phase === "manual-token" && state.canUseOAuth && (
@@ -138,7 +140,7 @@ export function McpConnectPanel({
             onClick={state.handleSwitchToOAuth}
             disabled={state.isSubmitting}
           >
-            Try OAuth
+            {t("connectServices1.mcp.tryOAuth")}
           </Button>
         )}
         <Button
@@ -154,7 +156,9 @@ export function McpConnectPanel({
           }
           loading={state.isSubmitting}
         >
-          {state.phase === "form" ? "Connect" : "Save token"}
+          {state.phase === "form"
+            ? t("connectServices1.mcp.connect")
+            : t("connectServices1.mcp.saveToken")}
         </Button>
       </div>
     </div>

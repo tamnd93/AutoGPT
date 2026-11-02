@@ -13,6 +13,7 @@ import { ErrorCard } from "@/components/molecules/ErrorCard/ErrorCard";
 
 import { ListLoading, ListView } from "./components/ListView";
 import { DetailView } from "./components/DetailView/DetailView";
+import { useT } from "@/lib/i18n";
 import { useConnectServiceDialog } from "./useConnectServiceDialog";
 import { useMeasuredHeight } from "./useMeasuredHeight";
 
@@ -25,10 +26,6 @@ interface Props {
   initialProviderId?: string | null;
   preferMcp?: boolean;
 }
-
-const DEFAULT_TITLE = "Connect a service";
-const DEFAULT_DESCRIPTION =
-  "Choose a service to connect your account or view its setup instructions.";
 
 const TRANSITION = { duration: 0.15, ease: [0, 0, 0.2, 1] as const };
 const HEIGHT_TRANSITION = {
@@ -51,12 +48,13 @@ const reducedVariants = {
 export function ConnectServiceDialog({
   open,
   onOpenChange,
-  title = DEFAULT_TITLE,
-  description = DEFAULT_DESCRIPTION,
+  title,
+  description,
   onConnected,
   initialProviderId,
   preferMcp,
 }: Props) {
+  const t = useT();
   const {
     query,
     setQuery,
@@ -84,7 +82,7 @@ export function ConnectServiceDialog({
 
   return (
     <Dialog
-      title={title}
+      title={title ?? t("connectServices1.dialog.title")}
       styling={{ maxWidth: "40rem" }}
       controlled={{
         isOpen: open,
@@ -127,7 +125,9 @@ export function ConnectServiceDialog({
                         setQuery={setQuery}
                         providers={providers}
                         onSelect={handleSelect}
-                        description={description}
+                        description={
+                          description ?? t("connectServices1.dialog.description")
+                        }
                       />
                     )}
                   </motion.div>

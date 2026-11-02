@@ -5,6 +5,7 @@ import { Input } from "@/components/atoms/Input/Input";
 import { Text } from "@/components/atoms/Text/Text";
 import type { ReactNode } from "react";
 import { useCheckMCPConnection } from "./useCheckMCPConnection";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   serverURL: string;
@@ -12,31 +13,35 @@ interface Props {
 }
 
 export function PublicMCPPanel({ serverURL, actions }: Props) {
+  const t = useT();
   const { check, isPending, toolCount, error } =
     useCheckMCPConnection(serverURL);
   return (
     <div className="flex flex-col gap-4">
       <Input
         id="public-mcp-server-url"
-        label="Server URL"
+        label={t("connectServices1.mcpUrl.serverUrl")}
         type="url"
         value={serverURL}
         readOnly
       />
       <Text variant="small" className="text-foreground-secondary">
-        This server can be used without connecting an account.
+        {t("connectServices1.publicMCP.noAccount")}
       </Text>
       {toolCount !== null && (
         <Text variant="body" role="status">
           {toolCount === 0
-            ? "Connected, but this server returned no tools."
-            : `${toolCount} ${toolCount === 1 ? "tool" : "tools"} available.`}
+            ? t("connectServices1.publicMCP.noTools")
+            : toolCount === 1
+              ? t("connectServices1.publicMCP.toolsOne")
+              : t("connectServices1.publicMCP.tools", {
+                  count: toolCount.toLocaleString(),
+                })}
         </Text>
       )}
       {toolCount !== null && (
         <Text variant="small" className="text-foreground-secondary">
-          This service needs no sign-in, so nothing was saved. Add it to a
-          workflow or ask an expert to use it.
+          {t("connectServices1.publicMCP.nothingSaved")}
         </Text>
       )}
       {error && (
@@ -52,7 +57,7 @@ export function PublicMCPPanel({ serverURL, actions }: Props) {
           onClick={check}
           loading={isPending}
         >
-          Check connection
+          {t("connectServices1.publicMCP.checkConnection")}
         </Button>
       </div>
     </div>
