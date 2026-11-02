@@ -2,6 +2,7 @@
 
 import { LivePausedCard } from "./components/LivePausedCard/LivePausedCard";
 import { PausedLine } from "./components/PausedLine";
+import { useLocale } from "@/lib/i18n";
 import { pauseTitle } from "./helpers";
 import { useTurnPausedCard } from "./useTurnPausedCard";
 
@@ -18,6 +19,7 @@ interface Props {
  * any other reads as a one-line record of what happened.
  */
 export function TurnPausedCard({ data, pauseKey, isStoredRow }: Props) {
+  const locale = useLocale();
   const card = useTurnPausedCard({ data, pauseKey, isStoredRow });
   if (!card.pause) return null;
   if (card.isLive && card.sessionId) {
@@ -31,5 +33,7 @@ export function TurnPausedCard({ data, pauseKey, isStoredRow }: Props) {
       />
     );
   }
-  return <PausedLine title={pauseTitle(card.pause)} note={card.note} />;
+  return (
+    <PausedLine title={pauseTitle(card.pause, locale)} note={card.note} />
+  );
 }

@@ -9,6 +9,7 @@ import {
   usePostV2ScheduleTurnAtBudgetReset,
 } from "@/app/api/__generated__/endpoints/chat/chat";
 import { toast } from "@/components/molecules/Toast/use-toast";
+import { useLocale, useT } from "@/lib/i18n";
 
 import { atResetOutcome } from "./helpers";
 
@@ -20,6 +21,8 @@ interface Args {
 }
 
 export function useResumeAtReset({ sessionId, enabled, onBudgetBack }: Args) {
+  const t = useT();
+  const locale = useLocale();
   const queryClient = useQueryClient();
   const jobs = useGetV2ListTurnsAtBudgetReset(sessionId, {
     query: {
@@ -46,7 +49,7 @@ export function useResumeAtReset({ sessionId, enabled, onBudgetBack }: Args) {
         data: { kind: "resume", message: null },
       });
     } catch (error) {
-      const outcome = atResetOutcome(error);
+      const outcome = atResetOutcome(error, locale);
       if (outcome.kind === "budget_back") {
         onBudgetBack();
         return;
@@ -64,8 +67,8 @@ export function useResumeAtReset({ sessionId, enabled, onBudgetBack }: Args) {
       await cancel.mutateAsync({ sessionId, kind: "resume" });
     } catch {
       toast({
-        title: "Couldn't cancel the resume",
-        description: "Try again in a moment.",
+        title: t("chatStates3.pause.couldntCancelResume"),
+        description: t("chatStates3.pause.tryAgain"),
         variant: "destructive",
       });
     }

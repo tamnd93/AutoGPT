@@ -1,5 +1,6 @@
 import { delay, http, HttpResponse } from "msw";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { LocaleProvider } from "@/lib/i18n";
 
 import {
   getGetV2ListChatConnectionsMockHandler200,
@@ -370,6 +371,24 @@ describe("TurnPausedCard — what it says and offers", () => {
       "Resume at 1:00 AM",
       "Continue on ChatGPT",
     ]);
+  });
+  it("reads the pause card in Vietnamese", async () => {
+    backend();
+    render(
+      <LocaleProvider locale="vi">
+        {cardTree(pause(), {}, vi.fn())}
+      </LocaleProvider>,
+    );
+
+    const card = await screen.findByRole("region", {
+      name: "Tạm dừng · hết ngân sách hôm nay",
+    });
+    expect(
+      within(card).getByText(/Otto đã lưu tiến độ ở trên/),
+    ).toBeDefined();
+    expect(
+      within(card).getByRole("button", { name: /chạy tiếp/i }),
+    ).toBeDefined();
   });
 });
 

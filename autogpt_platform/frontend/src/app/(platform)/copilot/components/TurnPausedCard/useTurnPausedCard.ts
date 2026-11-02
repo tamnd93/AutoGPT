@@ -2,6 +2,8 @@
 
 import { useContext, useState } from "react";
 
+import { useT } from "@/lib/i18n";
+
 import { parseTurnPause } from "../../turnPause";
 import { CopilotChatActionsContext } from "../CopilotChatActionsProvider/useCopilotChatActions";
 import { CurrentPauseContext } from "./CurrentPauseContext";
@@ -20,6 +22,7 @@ export function useTurnPausedCard({ data, pauseKey, isStoredRow }: Args) {
   const current = useContext(CurrentPauseContext);
   const pause = parseTurnPause(data);
   const sessionId = actions?.sessionId ?? null;
+  const t = useT();
   const [isPickedUp, setIsPickedUp] = useState(false);
   const isTracked = current !== undefined;
   const isCurrent = data != null && data === current;
@@ -45,9 +48,9 @@ export function useTurnPausedCard({ data, pauseKey, isStoredRow }: Args) {
     assistantName: actions?.assistantName ?? "Otto",
     isLive: isCurrent && canAct && !isStopped && !isPickedUp,
     note: isStopped
-      ? "Stopped here"
+      ? t("chatStates3.pause.noteStopped")
       : isPickedUp || (isTracked && !isCurrent)
-        ? "Picked back up"
+        ? t("chatStates3.pause.notePickedBackUp")
         : null,
     stop,
     followTurn,

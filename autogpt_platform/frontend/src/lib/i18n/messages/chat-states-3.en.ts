@@ -34,4 +34,62 @@ export const ChatStates3En = {
     "The share link is no longer accessible.",
   "chatStates3.sharing.toastFailedDisable": "Failed to disable sharing",
   "chatStates3.sharing.toastFailedCopy": "Failed to copy link",
+
+  "chatStates3.pause.paused": "Paused",
+  "chatStates3.pause.notStarted": "Not started",
+  "chatStates3.pause.budgetToday": "today's budget",
+  "chatStates3.pause.budgetWeek": "this week's budget",
+  "chatStates3.pause.titleOutOfBudget": "{lead} · out of budget",
+  "chatStates3.pause.titleOutOfBudgetNamed": "{lead} · out of {budget}",
+  "chatStates3.pause.titleTrial": "{lead} · trial allowance used",
+  "chatStates3.pause.titleSizeLimit":
+    "Paused · this task reached its size limit",
+  "chatStates3.pause.titleLongRun": "Paused · checking in after a long run",
+  "chatStates3.pause.saved": "{name} saved its progress above.",
+  "chatStates3.pause.stopped":
+    "{name} was stopped before it could summarize its progress.",
+  "chatStates3.pause.budgetReset": "{saved} Your budget has reset.",
+  "chatStates3.pause.budgetResets": "{saved} Your budget resets {reset}.",
+  "chatStates3.pause.stepsDone": "has taken {steps} steps on this",
+  "chatStates3.pause.stepsWhile": "has been at this a while",
+  "chatStates3.pause.stepsSaved":
+    "{name} {done} and summarized its progress above.",
+  "chatStates3.pause.stepsStopped":
+    "{name} {done} and was stopped before it could summarize its progress.",
+  "chatStates3.pause.notStartedTrial":
+    "{name} didn't start this because you're out of your trial allowance.",
+  "chatStates3.pause.notStartedGeneric": "{name} didn't start this.",
+  "chatStates3.pause.notStartedNoBudget":
+    "{name} didn't start this because you're out of budget.",
+  "chatStates3.pause.notStartedBudgetBack":
+    "{name} didn't start this because you were out of {budget}. It has reset since.",
+  "chatStates3.pause.notStartedBudgetLead":
+    "{name} didn't start this because you're out of {budget}.",
+  "chatStates3.pause.resetSuffix": "{lead} It resets {reset}.",
+  "chatStates3.pause.resetAtTime": "at {time}",
+  "chatStates3.pause.resetAtDay": "{day} at {time}",
+  "chatStates3.pause.resetInMinutes": "in {minutes} min",
+  "chatStates3.pause.resetInHours": "in {hours} h",
+  "chatStates3.pause.resetInHoursMin": "in {hours} h {rest} min",
+  "chatStates3.pause.resetInDay": "in 1 day",
+  "chatStates3.pause.resetInDays": "in {days} days",
+  "chatStates3.pause.resumeAt": "Resume {at}",
+  "chatStates3.pause.resumeAtReset": "Resume at reset",
+  "chatStates3.pause.noteStopped": "Stopped here",
+  "chatStates3.pause.notePickedBackUp": "Picked back up",
+  "chatStates3.pause.keepGoing": "Keep going",
+  "chatStates3.pause.stopHere": "Stop here",
+  "chatStates3.pause.upgrade": "Upgrade",
+  "chatStates3.pause.continueOn": "Continue on {name}",
+  "chatStates3.pause.resumes": "Resumes {at}",
+  "chatStates3.pause.continueUnsupported":
+    "This chat now runs on Microsoft 365 Copilot, which can't pick up a paused task. Switch its connection back to keep going.",
+  "chatStates3.pause.choosePlan": "Choose a plan to keep going.",
+  "chatStates3.pause.tryAgain": "Try again in a moment.",
+  "chatStates3.pause.allowanceDoesntReset": "This allowance doesn't reset",
+  "chatStates3.pause.upgradeToKeepGoing": "Upgrade to keep going.",
+  "chatStates3.pause.couldntCheckBudget": "Couldn't check your budget",
+  "chatStates3.pause.couldntSetResume": "Couldn't set the resume",
+  "chatStates3.pause.couldntPickBackUp": "Couldn't pick this back up",
+  "chatStates3.pause.couldntCancelResume": "Couldn't cancel the resume",
 } as const;

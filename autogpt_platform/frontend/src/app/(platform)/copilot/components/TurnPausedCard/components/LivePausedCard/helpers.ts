@@ -1,4 +1,6 @@
 import type { AIConnectionOffer } from "@/app/api/__generated__/models/aIConnectionOffer";
+import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/locale";
+import { getMessage } from "@/lib/i18n/translate";
 
 import {
   parseProviderFailure,
@@ -69,13 +71,18 @@ export type ContinueOutcome =
   | { kind: "out_of_budget"; resetsAt: string | null }
   | { kind: "failed"; description: string };
 
-export function continueOutcome(error: unknown): ContinueOutcome {
+export function continueOutcome(
+  error: unknown,
+  locale: Locale = DEFAULT_LOCALE,
+): ContinueOutcome {
   const failure = apiFailureOf(error);
   if (failure?.status === 409 && failure.detail === "unsupported_connection") {
     return {
       kind: "failed",
-      description:
-        "This chat now runs on Microsoft 365 Copilot, which can't pick up a paused task. Switch its connection back to keep going.",
+      description: getMessage(
+        locale,
+        "chatStates3.pause.continueUnsupported",
+      ),
     };
   }
   // One turn per chat: the one already running is the one to follow.
@@ -92,20 +99,29 @@ export function continueOutcome(error: unknown): ContinueOutcome {
     };
   }
   if (failure?.status === 402) {
-    return { kind: "failed", description: "Choose a plan to keep going." };
+    return {
+      kind: "failed",
+      description: getMessage(locale, "chatStates3.pause.choosePlan"),
+    };
   }
   // The running-turn cap explains itself.
   if (failure?.status === 429 && typeof failure.detail === "string") {
     return { kind: "failed", description: failure.detail };
   }
-  return { kind: "failed", description: "Try again in a moment." };
+  return {
+    kind: "failed",
+    description: getMessage(locale, "chatStates3.pause.tryAgain"),
+  };
 }
 
 export type AtResetOutcome =
   | { kind: "budget_back" }
   | { kind: "failed"; title: string; description: string };
 
-export function atResetOutcome(error: unknown): AtResetOutcome {
+export function atResetOutcome(
+  error: unknown,
+  locale: Locale = DEFAULT_LOCALE,
+): AtResetOutcome {
   const failure = apiFailureOf(error);
   if (failure?.status === 409 && failure.detail === "not_out_of_budget") {
     return { kind: "budget_back" };
@@ -113,17 +129,17 @@ export function atResetOutcome(error: unknown): AtResetOutcome {
   if (failure?.status === 409 && failure.detail === "no_reset") {
     return {
       kind: "failed",
-      title: "This allowance doesn't reset",
-      description: "Upgrade to keep going.",
+      title: getMessage(locale, "chatStates3.pause.allowanceDoesntReset"),
+      description: getMessage(locale, "chatStates3.pause.upgradeToKeepGoing"),
     };
   }
   return {
     kind: "failed",
     title:
       failure?.status === 503
-        ? "Couldn't check your budget"
-        : "Couldn't set the resume",
-    description: "Try again in a moment.",
+        ? getMessage(locale, "chatStates3.pause.couldntCheckBudget")
+        : getMessage(locale, "chatStates3.pause.couldntSetResume"),
+    description: getMessage(locale, "chatStates3.pause.tryAgain"),
   };
 }
 

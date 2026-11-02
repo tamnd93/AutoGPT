@@ -7,6 +7,7 @@ import {
   usePostV2ContinueSession,
 } from "@/app/api/__generated__/endpoints/chat/chat";
 import { toast } from "@/components/molecules/Toast/use-toast";
+import { useLocale, useT } from "@/lib/i18n";
 
 import { useCopilotUIStore } from "../../../../store";
 import { continueOutcome } from "./helpers";
@@ -20,6 +21,8 @@ interface Args {
 }
 
 export function useKeepGoing({ sessionId, onFollow, onOutOfBudget }: Args) {
+  const t = useT();
+  const locale = useLocale();
   const queryClient = useQueryClient();
   // The composer's model choice, as a message sent now would carry it.
   const model = useCopilotUIStore((state) => state.copilotLlmModel);
@@ -30,7 +33,7 @@ export function useKeepGoing({ sessionId, onFollow, onOutOfBudget }: Args) {
       await mutateAsync({ sessionId, data: { model } });
       onFollow();
     } catch (error) {
-      const outcome = continueOutcome(error);
+      const outcome = continueOutcome(error, locale);
       if (outcome.kind === "running") {
         onFollow();
         return;
@@ -43,7 +46,7 @@ export function useKeepGoing({ sessionId, onFollow, onOutOfBudget }: Args) {
         return;
       }
       toast({
-        title: "Couldn't pick this back up",
+        title: t("chatStates3.pause.couldntPickBackUp"),
         description: outcome.description,
         variant: "destructive",
       });
