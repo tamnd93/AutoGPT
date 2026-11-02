@@ -17,6 +17,8 @@ import { Button } from "@/components/atoms/Button/Button";
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { Skeleton } from "@/components/atoms/Skeleton/Skeleton";
 import { ExpertAvatar } from "@/components/molecules/ExpertAvatar/ExpertAvatar";
+import { useT } from "@/lib/i18n";
+import type { MessageKey } from "@/lib/i18n/messages/en";
 import { cn } from "@/lib/utils";
 import { GenericTool } from "../../tools/GenericTool/GenericTool";
 import { type ArtifactRef, useCopilotUIStore } from "../../store";
@@ -63,6 +65,8 @@ interface Props {
 
 export type StepDirection = "forward" | "back";
 
+type Translate = ReturnType<typeof useT>;
+
 export type Decision = "approved" | "declined";
 
 // Same shell as the chain's action card (connect / inputs / questions) so
@@ -84,27 +88,27 @@ function kindOf(output: Record<string, unknown>): ExpertKind | null {
 function headerFor(
   kind: ExpertKind | null,
   applied: boolean,
-): { icon: IconSvgElement; title: string } {
+): { icon: IconSvgElement; titleKey: MessageKey } {
   const icon = kind === "update" ? PencilEdit02Icon : UserAdd01Icon;
   if (applied) {
     return {
       icon,
-      title:
+      titleKey:
         kind === "hire"
-          ? "Expert hired"
+          ? "chatTools2.expert.hired"
           : kind === "update"
-            ? "Expert updated"
-            : "Expert created",
+            ? "chatTools2.expert.updated"
+            : "chatTools2.expert.created",
     };
   }
   return {
     icon,
-    title:
+    titleKey:
       kind === "hire"
-        ? "Hire an expert"
+        ? "chatTools2.expert.hireTitle"
         : kind === "update"
-          ? "Update an expert"
-          : "Create an Expert",
+          ? "chatTools2.expert.updateTitle"
+          : "chatTools2.expert.createTitle",
   };
 }
 
@@ -117,13 +121,13 @@ interface Proposal {
   handoff: { confirmationId: string; subject: string; title: string } | null;
 }
 
-function isOpenExpertProposal(part: ToolUIPart) {
-  const kind = proposalOf(part)?.kind;
+function isOpenExpertProposal(part: ToolUIPart, t: Translate) {
+  const kind = proposalOf(part, t)?.kind;
   return kind === "hire" || kind === "raise";
 }
 
 /** A hire/raise/Soul preview the user can still say yes or no to. */
-function proposalOf(part: ToolUIPart): Proposal | null {
+function proposalOf(part: ToolUIPart, t: Translate): Proposal | null {
   const output = asObject(part.output);
   if (!output || output.applied === true) return null;
   const confirmationId = str(output, "confirmation_id");
@@ -131,14 +135,14 @@ function proposalOf(part: ToolUIPart): Proposal | null {
     return {
       toolCallId: part.toolCallId,
       kind: "soul",
-      name: "your Soul",
+      name: t("chatTools2.expert.yourSoul"),
       confirmationId,
       handoff: null,
     };
   }
   const preview = asObject(output.preview);
   if (!confirmationId || !preview) return null;
-  const name = str(preview, "name") ?? "this expert";
+  const name = str(preview, "name") ?? t("chatTools2.expert.thisExpert");
   const task = handoffTaskOf(output);
   const handoffConfirmationId = str(output, "handoff_confirmation_id");
   return {
@@ -200,8 +204,9 @@ function toExpertArtifact(
   expert: Record<string, unknown>,
   output: Record<string, unknown>,
   artifactId: string,
+  t: Translate,
 ): ArtifactRef {
-  const name = str(expert, "name") ?? "New expert";
+  const name = str(expert, "name") ?? t("chatTools2.expert.newExpert");
   return {
     id: `expert:${artifactId}`,
     title: name,
@@ -246,6 +251,7 @@ export function ExpertChangeCard({
   waiting = false,
   onSend,
 }: Props) {
+  const t = useT();
   const [showCharter, setShowCharter] = useState(false);
   const openArtifact = useCopilotUIStore((s) => s.openArtifact);
   const panelAvailable = !!artifactId;
@@ -254,13 +260,13 @@ export function ExpertChangeCard({
 
   function handleShowMore() {
     if (panelAvailable && expert && artifactId) {
-      openArtifact(toExpertArtifact(expert, output, artifactId));
+      openArtifact(toExpertArtifact(expert, output, artifactId, t));
       return;
     }
     setShowCharter(!showCharter);
   }
 
-  const name = str(expert, "name") ?? "New expert";
+  const name = str(expert, "name") ?? t("chatTools2.expert.newExpert");
   const role = str(expert, "role");
   const tagline = str(expert, "tagline");
   const about = str(expert, "about");
@@ -338,8 +344,8 @@ export function ExpertChangeCard({
             chosen={
               decision
                 ? decision === "approved"
-                  ? "Hire and start chosen"
-                  : "Not now chosen"
+                  ? t("chatTools2.expert.chosenHire")
+                  : t("chatTools2.expert.chosenNotNow")
                 : undefined
             }
           />
@@ -353,7 +359,7 @@ export function ExpertChangeCard({
       <div className={HEADER}>
         <Icon icon={header.icon} size={18} className="text-foreground-subtle" />
         <span className="min-w-0 flex-1 truncate text-sm font-medium text-foreground-strong">
-          {header.title}
+          {t(header.titleKey)}
         </span>
       </div>
       <div className="px-4 py-3">
@@ -390,7 +396,9 @@ export function ExpertChangeCard({
               leftIcon={<Icon icon={InformationCircleIcon} size={16} />}
               className="h-8 !min-w-0 shrink-0 px-3"
             >
-              {showCharter ? "Hide details" : "Details"}
+              {showCharter
+                ? t("chatTools2.expert.hideDetails")
+                : t("chatTools2.expert.details")}
             </Button>
           )}
         </div>
@@ -415,7 +423,7 @@ export function ExpertChangeCard({
             )}
             {boundaries && (
               <p className="text-sm text-foreground-subtle">
-                Stops at: {boundaries}
+                {t("chatTools2.expert.stopsAt", { boundaries })}
               </p>
             )}
           </div>
@@ -435,10 +443,10 @@ export function ExpertChangeCard({
   );
 }
 
-const SOUL_LABELS: Record<string, string> = {
-  identity: "Identity and personality",
-  voice_preferences: "Voice",
-  boundaries: "Boundaries",
+const SOUL_LABELS: Record<string, MessageKey> = {
+  identity: "chatTools2.expert.soulIdentity",
+  voice_preferences: "chatTools2.expert.soulVoice",
+  boundaries: "chatTools2.expert.soulBoundaries",
 };
 
 /** A Soul edit the expert proposes for itself, or the one it just saved:
@@ -453,6 +461,7 @@ function SoulChangeCard({
   action,
   waiting = false,
 }: Props) {
+  const t = useT();
   const showFooter = !!pager || !!onDecide || !!decision || !!action;
   return (
     <div className={SHELL}>
@@ -463,21 +472,25 @@ function SoulChangeCard({
           className="text-foreground-subtle"
         />
         <span className="min-w-0 flex-1 truncate text-sm font-medium text-foreground-strong">
-          {output.applied === true ? "Soul updated" : "Update Soul"}
+          {output.applied === true
+            ? t("chatTools2.expert.soulUpdated")
+            : t("chatTools2.expert.updateSoul")}
         </span>
       </div>
       <div className="flex flex-col gap-3 px-4 py-3">
         {soulChanges(output).map((change) => (
           <section key={change.field} className="flex flex-col gap-0.5">
             <p className="text-xs font-medium text-foreground-body">
-              {SOUL_LABELS[change.field] ?? change.field}
+              {SOUL_LABELS[change.field]
+                ? t(SOUL_LABELS[change.field])
+                : change.field}
             </p>
             <p className="whitespace-pre-line text-sm text-foreground-body">
-              {change.after || "Empty"}
+              {change.after || t("chatTools2.expert.empty")}
             </p>
             {change.before && (
               <p className="line-clamp-2 text-xs text-foreground-subtle">
-                Was: {change.before}
+                {t("chatTools2.expert.was", { before: change.before })}
               </p>
             )}
           </section>
@@ -514,6 +527,7 @@ function DecisionFooter({
   waiting = false,
   chosen,
 }: FooterProps) {
+  const t = useT();
   return (
     <div className={FOOTER}>
       <div className="min-w-0">{pager}</div>
@@ -530,10 +544,10 @@ function DecisionFooter({
             className="h-8 !min-w-0 px-3"
           >
             {chosen
-              ? "Change"
+              ? t("chatTools2.expert.change")
               : decision === "approved"
-                ? "Unapprove"
-                : "Undo decline"}
+                ? t("chatTools2.expert.unapprove")
+                : t("chatTools2.expert.undoDecline")}
           </Button>
         )}
         {!decision && onDecide && (
@@ -545,7 +559,7 @@ function DecisionFooter({
               onClick={() => onDecide("declined")}
               className="h-8 !min-w-0 px-3"
             >
-              Decline
+              {t("chatTools2.expert.decline")}
             </Button>
             <Button
               variant="primary"
@@ -554,7 +568,7 @@ function DecisionFooter({
               onClick={() => onDecide("approved")}
               className="h-8 !min-w-0 px-3"
             >
-              Approve
+              {t("chatTools1.approve")}
             </Button>
           </>
         )}
@@ -585,6 +599,7 @@ function soulChanges(output: Record<string, unknown>) {
 }
 
 export function ExpertChangeCardSkeleton() {
+  const t = useT();
   return (
     <div className={SHELL}>
       <div className={HEADER}>
@@ -594,7 +609,7 @@ export function ExpertChangeCardSkeleton() {
           className="text-foreground-subtle"
         />
         <span className="text-sm font-medium text-foreground-strong">
-          Create an Expert
+          {t("chatTools2.expert.createTitle")}
         </span>
       </div>
       <div className="px-4 py-3">
@@ -696,6 +711,7 @@ export function ExpertChangeGroup({
   isCurrentlyStreaming = false,
   readOnly = false,
 }: GroupProps) {
+  const t = useT();
   const [step, setStep] = useState(0);
   const [direction, setDirection] = useState<StepDirection | undefined>();
   const [decisions, setDecisions] = useState<Record<string, Decision>>({});
@@ -707,7 +723,8 @@ export function ExpertChangeGroup({
   // Otto proposing an expert is the moment to say experts can own tasks.
   // Only live: a decided proposal still reads as open in an old chat.
   useLiveTipMoment("first-expert", {
-    happened: !readOnly && visible.some(isOpenExpertProposal),
+    happened:
+      !readOnly && visible.some((part) => isOpenExpertProposal(part, t)),
     isLive: isCurrentlyStreaming,
   });
   if (visible.length === 0) return null;
@@ -716,12 +733,12 @@ export function ExpertChangeGroup({
   const part = visible[current];
   const isLast = current === visible.length - 1;
   const proposals = visible
-    .map(proposalOf)
+    .map((part) => proposalOf(part, t))
     .filter((proposal): proposal is Proposal => proposal !== null);
   const allDecided =
     proposals.length > 0 &&
     proposals.every((proposal) => decisions[proposal.toolCallId]);
-  const currentProposal = readOnly ? null : proposalOf(part);
+  const currentProposal = readOnly ? null : proposalOf(part, t);
   // While the turn is still streaming another proposal part can land in
   // this group, so the send waits for the stream to settle.
   const sendable = !readOnly && !!actions && !isCurrentlyStreaming;
@@ -741,11 +758,10 @@ export function ExpertChangeGroup({
     // needs saying.
     void Promise.resolve(actions.onSend(message)).catch((error: unknown) =>
       toastSendFailure({
-        title: "Couldn't send message",
+        title: t("chatInput2.send.failedTitle"),
         error,
-        recovery: "it is still in the thread, use Retry to send it again",
-        paywallRecovery:
-          "it is still in the thread, use Retry once you have a plan",
+        recovery: t("chatTools2.chain.sendFailedRecovery"),
+        paywallRecovery: t("chatTools2.chain.sendFailedPaywallRecovery"),
       }),
     );
   }
@@ -782,7 +798,7 @@ export function ExpertChangeGroup({
     <div className="flex items-center gap-2">
       <button
         type="button"
-        aria-label="Previous expert"
+        aria-label={t("chatTools2.expert.prevExpert")}
         disabled={current === 0}
         onClick={() => goTo(current - 1)}
         className="flex size-6 items-center justify-center rounded-lg text-foreground-subtle transition-colors enabled:hover:bg-surface-hover enabled:hover:text-foreground-secondary disabled:opacity-35"
@@ -794,7 +810,7 @@ export function ExpertChangeGroup({
           <button
             key={toolCallId}
             type="button"
-            aria-label={`Go to expert ${i + 1}`}
+            aria-label={t("chatTools2.expert.goToExpert", { number: i + 1 })}
             aria-current={i === current ? "step" : undefined}
             data-decision={decisions[toolCallId]}
             onClick={() => goTo(i)}
@@ -816,7 +832,7 @@ export function ExpertChangeGroup({
       </span>
       <button
         type="button"
-        aria-label="Next expert"
+        aria-label={t("chatTools2.expert.nextExpert")}
         disabled={isLast}
         onClick={() => goTo(current + 1)}
         className="flex size-6 items-center justify-center rounded-lg text-foreground-subtle transition-colors enabled:hover:bg-surface-hover enabled:hover:text-foreground-secondary disabled:opacity-35"
@@ -824,7 +840,10 @@ export function ExpertChangeGroup({
         <Icon icon={ArrowRight01Icon} size={14} />
       </button>
       <span className="text-xs text-foreground-subtle">
-        {current + 1} of {visible.length}
+        {t("chatTools2.expert.position", {
+          current: current + 1,
+          total: visible.length,
+        })}
       </span>
     </div>
   );
@@ -833,13 +852,13 @@ export function ExpertChangeGroup({
   const action = sent ? (
     <span className="flex items-center gap-1 text-xs text-foreground-subtle">
       <Icon icon={Tick02Icon} size={14} />
-      Sent
+      {t("chatTools2.expert.sent")}
     </span>
   ) : canSend ? (
     <Button
       variant="primary"
       size="icon"
-      aria-label="Send decisions"
+      aria-label={t("chatTools2.expert.sendDecisions")}
       onClick={() => send(decisions)}
       className="size-8 p-0"
     >
@@ -854,7 +873,7 @@ export function ExpertChangeGroup({
     return (
       <div className="my-2">
         <HandoffReceipt>
-          {receiptFor(proposals[0], decisions[proposals[0].toolCallId])}
+          {receiptFor(proposals[0], decisions[proposals[0].toolCallId], t)}
         </HandoffReceipt>
       </div>
     );
@@ -884,9 +903,16 @@ export function ExpertChangeGroup({
 /** The record of the choice, worded as the choice: the confirm runs after
  *  the send and can still fail, and the expert's own card says what came of
  *  it. Only a hire proposed for a task shrinks to a receipt. */
-function receiptFor(proposal: Proposal, decision: Decision | undefined) {
+function receiptFor(
+  proposal: Proposal,
+  decision: Decision | undefined,
+  t: Translate,
+) {
   if (decision === "approved" && proposal.handoff) {
-    return `You chose to hire ${proposal.name} to take on ${proposal.handoff.title}.`;
+    return t("chatTools2.handoff.receiptHire", {
+      name: proposal.name,
+      task: proposal.handoff.title,
+    });
   }
-  return `You chose not to hire ${proposal.name} for now.`;
+  return t("chatTools2.handoff.receiptNoHire", { name: proposal.name });
 }

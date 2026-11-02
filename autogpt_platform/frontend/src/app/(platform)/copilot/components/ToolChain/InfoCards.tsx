@@ -9,6 +9,7 @@ import {
   MessageQuestionIcon,
 } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 import { useContext } from "react";
 import { CopilotChatActionsContext } from "../CopilotChatActionsProvider/useCopilotChatActions";
 import { CardProviderIcon } from "./BlockCards";
@@ -117,13 +118,16 @@ function strList(value: unknown): string[] {
 }
 
 export function ValidationCard({ output }: OutputProps) {
+  const t = useT();
   const errors = strList(output.errors);
-  if (output.valid === true) return <StatusCard ok label="Workflow is valid" />;
+  if (output.valid === true)
+    return <StatusCard ok label={t("chatTools2.info.workflowValid")} />;
   if (errors.length > 0) return <ErrorList errors={errors} />;
-  return <StatusCard ok={false} label="Workflow has errors" />;
+  return <StatusCard ok={false} label={t("chatTools2.info.workflowErrors")} />;
 }
 
 export function FixResultCard({ output }: OutputProps) {
+  const t = useT();
   const fixes = strList(output.fixes_applied);
   const remaining = strList(output.remaining_errors);
   return (
@@ -132,8 +136,18 @@ export function FixResultCard({ output }: OutputProps) {
         ok={output.valid_after_fix === true}
         label={
           output.valid_after_fix === true
-            ? `Fixed — applied ${fixes.length} fix${fixes.length === 1 ? "" : "es"}`
-            : `${remaining.length} error${remaining.length === 1 ? "" : "s"} remaining`
+            ? t(
+                fixes.length === 1
+                  ? "chatTools2.info.fixedOne"
+                  : "chatTools2.info.fixedMany",
+                { count: fixes.length },
+              )
+            : t(
+                remaining.length === 1
+                  ? "chatTools2.info.errorOne"
+                  : "chatTools2.info.errorMany",
+                { count: remaining.length },
+              )
         }
       />
       {remaining.length > 0 && <ErrorList errors={remaining} />}
@@ -142,6 +156,7 @@ export function FixResultCard({ output }: OutputProps) {
 }
 
 export function QuestionsCard({ questions }: QuestionsCardProps) {
+  const t = useT();
   return (
     <div className={`${CARD} ${HALF} flex flex-col gap-2 p-2.5`}>
       {questions.map((entry, i) => (
@@ -157,7 +172,9 @@ export function QuestionsCard({ questions }: QuestionsCardProps) {
             </p>
             {str(entry, "example") && (
               <p className="truncate text-xs text-foreground-subtle">
-                e.g. {str(entry, "example")}
+                {t("chatTools1.questions.example", {
+                  example: str(entry, "example") ?? "",
+                })}
               </p>
             )}
           </div>
@@ -168,6 +185,7 @@ export function QuestionsCard({ questions }: QuestionsCardProps) {
 }
 
 export function SetupCard({ output, provider }: SetupCardProps) {
+  const t = useT();
   const setupInfo = asObject(output.setup_info);
   const name = setupInfo ? str(setupInfo, "agent_name") : null;
   if (!name) return null;
@@ -190,7 +208,7 @@ export function SetupCard({ output, provider }: SetupCardProps) {
           {name}
         </p>
         <p className="truncate text-xs text-foreground-tertiary">
-          Connection required
+          {t("chatTools2.info.connectionRequired")}
         </p>
       </div>
     </div>
@@ -230,6 +248,7 @@ export function SkillCard({ output }: OutputProps) {
 }
 
 export function SuggestedGoalCard({ output }: OutputProps) {
+  const t = useT();
   const actions = useContext(CopilotChatActionsContext);
   const goal = str(output, "suggested_goal");
   if (!goal) return null;
@@ -253,7 +272,7 @@ export function SuggestedGoalCard({ output }: OutputProps) {
             actions.onSend(`Please create a workflow with this goal: ${goal}`)
           }
         >
-          Use this goal
+          {t("chatTools2.info.useGoal")}
         </button>
       )}
     </div>
@@ -261,6 +280,7 @@ export function SuggestedGoalCard({ output }: OutputProps) {
 }
 
 export function TriggerSetupCard({ output }: OutputProps) {
+  const t = useT();
   const url = str(output, "webhook_url", "ingress_url");
 
   async function handleCopy() {
@@ -275,7 +295,7 @@ export function TriggerSetupCard({ output }: OutputProps) {
   return (
     <div className={`${CARD} ${HALF} flex flex-col gap-2 p-3`}>
       <p className="text-body-sm leading-inherit text-foreground-body">
-        {str(output, "message", "name") ?? "Trigger is ready"}
+        {str(output, "message", "name") ?? t("chatTools2.info.triggerReady")}
       </p>
       {url && (
         <div className="flex items-center gap-2 rounded-lg bg-surface-muted p-2 ring-1 ring-border-base/70">
@@ -287,7 +307,7 @@ export function TriggerSetupCard({ output }: OutputProps) {
             onClick={handleCopy}
             className="shrink-0 rounded-md px-2 py-1 text-xs font-medium text-foreground-secondary transition-colors hover:bg-surface-active"
           >
-            Copy
+            {t("chatTools2.info.copy")}
           </button>
         </div>
       )}

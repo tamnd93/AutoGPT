@@ -2,6 +2,7 @@ import { http, HttpResponse } from "msw";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type { SetupRequirementsResponse } from "@/app/api/__generated__/models/setupRequirementsResponse";
 import type { AirtableBaseAccess } from "@/app/api/__generated__/models/airtableBaseAccess";
+import { LocaleProvider } from "@/lib/i18n";
 import { server } from "@/mocks/mock-server";
 import {
   fireEvent,
@@ -86,6 +87,22 @@ afterEach(() => {
 });
 
 describe("Airtable base picker in the setup card", () => {
+  it("words the setup card's own chrome in Vietnamese", async () => {
+    serveBases([{ id: "app1", name: "Wholesale prices", access: "read" }]);
+    render(
+      <LocaleProvider locale="vi">
+        <SetupRequirementsCard output={pickerCard()} />
+      </LocaleProvider>,
+    );
+
+    const proceed = await screen.findByRole("button", { name: "Tiếp tục" });
+    expect(proceed.hasAttribute("disabled")).toBe(true);
+    // The base picker itself belongs to the renderers' own task: its copy stays.
+    expect(
+      await screen.findByRole("combobox", { name: "Choose an Airtable base" }),
+    ).toBeDefined();
+  });
+
   it("lists the account's bases by name and sends the one picked", async () => {
     serveBases([
       { id: "app2", name: "Shop orders", access: "create" },

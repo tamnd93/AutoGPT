@@ -8,6 +8,7 @@ import {
   ImageIcon,
 } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 import { useLayoutEffect, useRef, useState } from "react";
 import type { ChainRow } from "./helpers";
 import { CARD, HALF } from "./ResultCards";
@@ -139,6 +140,7 @@ export function SearchResults({ items, answer }: SearchResultsProps) {
 }
 
 export function Terminal({ row }: RowProps) {
+  const t = useT();
   const input = asObject(row.input);
   const output = asObject(row.output);
   const command = input ? str(input, "command") : null;
@@ -165,7 +167,7 @@ export function Terminal({ row }: RowProps) {
           // TODO(tokens): no exact role for text-red-400
           className="mt-1.5 text-red-400"
         >
-          exit {exitCode}
+          {t("chatTools2.view.exitCode", { code: exitCode })}
         </p>
       )}
     </div>
@@ -261,12 +263,14 @@ export function FileCard({ row }: RowProps) {
 }
 
 export function OutputList({ items }: ItemsProps) {
+  const t = useT();
   return (
     <div className={`${CARD} ${HALF} divide-y divide-separator`}>
       {items.map((item, i) => (
         <div key={resultItemKey(item, i)} className="p-2.5">
           <p className="text-caption-sm uppercase leading-inherit tracking-wide text-foreground-subtle">
-            {str(item, "name", "key", "label") ?? `Output ${i + 1}`}
+            {str(item, "name", "key", "label") ??
+              t("chatTools2.view.outputItem", { number: i + 1 })}
           </p>
           <p className="mt-0.5 whitespace-pre-wrap break-words text-body-sm leading-inherit text-foreground-emphasis">
             {displayValue(item.value ?? item)}
@@ -278,6 +282,7 @@ export function OutputList({ items }: ItemsProps) {
 }
 
 export function KeyValueList({ value }: ValueProps) {
+  const t = useT();
   if (isBlankOutput(value)) return <KeyValueList value={NOTHING_FOUND} />;
   const obj = asObject(value);
   if (!obj || Object.keys(obj).length === 0) {
@@ -295,8 +300,9 @@ export function KeyValueList({ value }: ValueProps) {
         </div>
         {truncated && (
           <p className="mt-2 text-caption-sm leading-inherit text-foreground-subtle">
-            Preview of {truncated.totalChars.toLocaleString()} characters — full
-            output saved to the workspace
+            {t("chatTools2.view.previewOf", {
+              count: truncated.totalChars.toLocaleString(),
+            })}
           </p>
         )}
       </div>

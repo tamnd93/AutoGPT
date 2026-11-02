@@ -11,6 +11,7 @@ import {
 } from "@hugeicons/core-free-icons";
 import Link from "next/link";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 import { CARD, HALF, RESULT_GRID } from "./ResultCards";
 import {
   formatBytes,
@@ -70,6 +71,7 @@ export function FeatureRequestList({ results }: ResultsProps) {
 }
 
 export function ScheduleList({ schedules }: SchedulesProps) {
+  const t = useT();
   return (
     <div className={RESULT_GRID}>
       {schedules.map((schedule, i) => {
@@ -100,7 +102,9 @@ export function ScheduleList({ schedules }: SchedulesProps) {
             </div>
             {str(schedule, "kind") && (
               <span className="shrink-0 rounded-full bg-surface-hover px-2 py-0.5 text-caption-sm leading-inherit text-foreground-tertiary">
-                {str(schedule, "kind") === "copilot_turn" ? "chat" : "workflow"}
+                {str(schedule, "kind") === "copilot_turn"
+                  ? t("chatTools2.list.chatKind")
+                  : t("chatTools2.list.workflowKind")}
               </span>
             )}
           </div>
@@ -111,6 +115,7 @@ export function ScheduleList({ schedules }: SchedulesProps) {
 }
 
 export function ScheduleCreatedCard({ output }: OutputProps) {
+  const t = useT();
   const next = str(output, "next_run_time");
   return (
     <div className={`${CARD} ${HALF} flex items-center gap-2.5 p-2.5`}>
@@ -123,7 +128,7 @@ export function ScheduleCreatedCard({ output }: OutputProps) {
       </div>
       <div className="min-w-0 flex-1">
         <p className="truncate text-body-sm font-medium leading-inherit text-foreground-emphasis">
-          Follow-up scheduled
+          {t("chatTools2.list.followUpScheduled")}
         </p>
         {next && (
           <p className="flex items-center gap-1 text-xs text-foreground-tertiary">
@@ -139,6 +144,7 @@ export function ScheduleCreatedCard({ output }: OutputProps) {
 }
 
 export function FolderList({ folders }: FoldersProps) {
+  const t = useT();
   return (
     <div className={RESULT_GRID}>
       {folders.map((folder, i) => {
@@ -161,7 +167,9 @@ export function FolderList({ folders }: FoldersProps) {
             </p>
             {count !== null && (
               <span className="shrink-0 text-xs text-foreground-subtle">
-                {count} workflow{count === 1 ? "" : "s"}
+                {count === 1
+                  ? t("chatTools2.list.workflowOne", { count })
+                  : t("chatTools2.list.workflowMany", { count })}
               </span>
             )}
           </div>
@@ -205,6 +213,7 @@ export function FileList({ files }: FilesProps) {
 }
 
 export function DocsList({ results }: ResultsProps) {
+  const t = useT();
   return (
     <div className={RESULT_GRID}>
       {results.map((doc, i) => {
@@ -244,7 +253,7 @@ export function DocsList({ results }: ResultsProps) {
                 href={docUrl}
                 target="_blank"
                 rel="noreferrer"
-                aria-label="Open doc"
+                aria-label={t("chatTools2.list.openDoc")}
                 className="shrink-0 rounded-full p-1 text-foreground-subtle transition-colors hover:bg-surface-hover hover:text-foreground-body"
               >
                 <Icon icon={LinkSquare01Icon} size={14} />

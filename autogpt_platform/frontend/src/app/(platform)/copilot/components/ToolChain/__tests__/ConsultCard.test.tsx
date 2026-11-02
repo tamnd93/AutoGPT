@@ -1,5 +1,6 @@
 import { render, screen } from "@/tests/integrations/test-utils";
 import { describe, expect, it } from "vitest";
+import { LocaleProvider } from "@/lib/i18n";
 import type { ChainRow } from "../helpers";
 import { ToolResult } from "../ToolResult";
 
@@ -184,5 +185,26 @@ describe("consult_teammate verdict card", () => {
     );
 
     expect(container.textContent).toBe("");
+  });
+
+  it("words the verdict and the reviewer's fallback line in Vietnamese", () => {
+    render(
+      <LocaleProvider locale="vi">
+        <ToolResult
+          row={row("consult_teammate", {
+            type: "team_consult",
+            verdict: "block",
+            reason: "Two commitments are not covered.",
+            quotes: [],
+            reviewer: { id: "exp-ada", name: "Ada", avatar_url: null },
+          })}
+        />
+      </LocaleProvider>,
+    );
+
+    expect(screen.getByText("Bị chặn")).toBeDefined();
+    expect(screen.getByText("đã xem xét nội dung này")).toBeDefined();
+    // The ruling itself is the auditor's own words, never translated.
+    expect(screen.getByText("Two commitments are not covered.")).toBeDefined();
   });
 });

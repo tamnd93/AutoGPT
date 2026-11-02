@@ -1,5 +1,6 @@
 import { render, screen } from "@/tests/integrations/test-utils";
 import { cleanup } from "@testing-library/react";
+import { LocaleProvider } from "@/lib/i18n";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { PendingQuestionsContext } from "../../QuestionDock/PendingQuestionsContext";
 import type { ChainRow } from "../helpers";
@@ -1426,5 +1427,61 @@ describe("ToolResult deferred platform tools", () => {
     );
 
     expect(screen.getByText("mcp-setup-card")).toBeDefined();
+  });
+});
+
+describe("ToolResult in Vietnamese", () => {
+  afterEach(cleanup);
+
+  it("words the status label and a boolean result in Vietnamese", () => {
+    render(
+      <LocaleProvider locale="vi">
+        <ToolResult row={row({ status: "running" }, "some_tool")} />
+      </LocaleProvider>,
+    );
+    expect(screen.getByText("Trạng thái")).toBeDefined();
+
+    cleanup();
+    render(
+      <LocaleProvider locale="vi">
+        <ToolResult row={row({ ok: true }, "some_tool")} />
+      </LocaleProvider>,
+    );
+    expect(screen.getByText("Xong")).toBeDefined();
+  });
+
+  it("words the credential labels in Vietnamese but leaves the message to Otto in English", () => {
+    render(
+      <LocaleProvider locale="vi">
+        <ToolResult
+          row={row(
+            {
+              message: "Connect an account",
+              setup_info: { agent_id: "agent-1" },
+            },
+            "connect_integration",
+          )}
+        />
+      </LocaleProvider>,
+    );
+
+    // The integration name is missing, so the frontend's own fallback is used.
+    expect(screen.getByText("Thông tin kết nối của dịch vụ")).toBeDefined();
+  });
+
+  it("words a capability's category chip in Vietnamese", () => {
+    render(
+      <LocaleProvider locale="vi">
+        <ToolResult
+          row={row(
+            { capabilities: [{ name: "Tracker", kind: "mcp_server" }] },
+            "find_capability",
+          )}
+        />
+      </LocaleProvider>,
+    );
+
+    expect(screen.getByText("Tracker")).toBeDefined();
+    expect(screen.getByText("tích hợp")).toBeDefined();
   });
 });

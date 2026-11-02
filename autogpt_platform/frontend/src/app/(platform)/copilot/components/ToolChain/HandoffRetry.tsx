@@ -4,7 +4,7 @@ import { ArrowUpRight01Icon } from "@hugeicons/core-free-icons";
 import NextLink from "next/link";
 import { Button } from "@/components/atoms/Button/Button";
 import { Icon } from "@/components/atoms/Icon/Icon";
-import { possessive } from "./expertHandoff";
+import { useT } from "@/lib/i18n";
 import { useHandoffRetry } from "./useHandoffRetry";
 
 interface Props {
@@ -18,11 +18,12 @@ interface Props {
  *  while nothing has reached the expert since: one copy of the task, never
  *  two. */
 export function HandoffRetry({ title, name, expertId, onSend }: Props) {
+  const t = useT();
   const { asked, markAsked, known, threadId } = useHandoffRetry(expertId);
   if (asked) {
     return (
       <span className="text-sm text-foreground-tertiary">
-        Asked Otto to try again.
+        {t("chatTools2.handoff.askedRetry")}
       </span>
     );
   }
@@ -33,7 +34,7 @@ export function HandoffRetry({ title, name, expertId, onSend }: Props) {
         href={`/copilot?sessionId=${encodeURIComponent(threadId)}`}
         className="inline-flex shrink-0 items-center gap-1 rounded text-sm font-medium text-foreground-emphasis underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-focus"
       >
-        Open {possessive(name)} chat
+        {t("chatTools2.handoff.openChat", { name })}
         <Icon
           icon={ArrowUpRight01Icon}
           size={14}
@@ -53,7 +54,7 @@ export function HandoffRetry({ title, name, expertId, onSend }: Props) {
       }}
       className="h-8 !min-w-0 px-3"
     >
-      Try again
+      {t("chatInput3.card.tryAgain")}
     </Button>
   );
 }

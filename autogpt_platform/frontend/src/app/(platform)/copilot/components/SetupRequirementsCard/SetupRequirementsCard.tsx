@@ -7,6 +7,7 @@ import { Text } from "@/components/atoms/Text/Text";
 import { CredentialsGroupedView } from "@/components/contextual/CredentialsInput/components/CredentialsGroupedView/CredentialsGroupedView";
 import { FormRenderer } from "@/components/renderers/InputRenderer/FormRenderer";
 import type { CredentialsMetaInput } from "@/lib/autogpt-server-api/types";
+import { useT } from "@/lib/i18n";
 import { useContext, useEffect, useId, useState } from "react";
 import {
   ChainActionsContext,
@@ -73,6 +74,7 @@ export function SetupRequirementsCard({
   inputsMode = "edit",
   onComplete,
 }: Props) {
+  const t = useT();
   const { onSend } = useCopilotChatActions();
   const chainActions = useContext(ChainActionsContext);
   const actionId = useId();
@@ -322,7 +324,11 @@ export function SetupRequirementsCard({
   ]);
 
   if (hasSent || (!chainActions && canAutoDismiss)) {
-    return <ContentMessage>Connected. Continuing…</ContentMessage>;
+    return (
+      <ContentMessage>
+        {t("chatTools2.setup.connectedContinuing")}
+      </ContentMessage>
+    );
   }
 
   return (
@@ -340,7 +346,9 @@ export function SetupRequirementsCard({
             className="w-fit border-b text-foreground-tertiary"
           >
             {credentialsLabel ??
-              (isEditMode ? "Credentials" : "Workflow credentials")}
+              (isEditMode
+                ? t("chatTools2.setup.credentials")
+                : t("chatTools2.setup.workflowCredentials"))}
           </Text>
           <div className="mt-6">
             <CredentialsGroupedView
@@ -362,7 +370,7 @@ export function SetupRequirementsCard({
             variant="small"
             className="w-fit border-b text-foreground-tertiary"
           >
-            Inputs
+            {t("chatTools2.setup.inputs")}
           </Text>
           {inputSchema && (
             <FormRenderer
@@ -387,7 +395,9 @@ export function SetupRequirementsCard({
               className="text-xs text-muted-foreground underline"
               onClick={() => setShowAdvanced((v) => !v)}
             >
-              {showAdvanced ? "Hide advanced fields" : "Show advanced fields"}
+              {showAdvanced
+                ? t("chatTools1.inputs.hideAdvanced")
+                : t("chatTools1.inputs.showAdvanced")}
             </button>
           )}
         </div>
@@ -396,7 +406,7 @@ export function SetupRequirementsCard({
       {!isEditMode && expectedInputs.length > 0 && (
         <div className="rounded-2xl border bg-background p-3">
           <ContentCardTitle className="text-xs">
-            Expected inputs
+            {t("chatTools2.setup.expectedInputs")}
           </ContentCardTitle>
           <div className="mt-2 grid gap-2">
             {expectedInputs.map((input) => (
@@ -406,7 +416,9 @@ export function SetupRequirementsCard({
                     {input.title}
                   </ContentCardTitle>
                   <ContentBadge>
-                    {input.required ? "Required" : "Optional"}
+                    {input.required
+                      ? t("chatTools2.setup.required")
+                      : t("chatTools2.setup.optional")}
                   </ContentBadge>
                 </div>
                 {input.description && (
@@ -428,7 +440,7 @@ export function SetupRequirementsCard({
           disabled={!canRun}
           onClick={handleRun}
         >
-          Proceed
+          {t("chatTools1.chain.proceed")}
         </Button>
       )}
     </div>

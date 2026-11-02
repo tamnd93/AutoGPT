@@ -3,6 +3,7 @@
 import { ArrowUpRight01Icon } from "@hugeicons/core-free-icons";
 import NextLink from "next/link";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 import {
   frozenStatusOf,
   type HandoffOutcome,
@@ -38,6 +39,7 @@ export function HandoffStatus({
   color,
   onSend,
 }: Props) {
+  const t = useT();
   const live = useSubSessionEffectiveStatus(
     outcome.subSessionId,
     frozenStatusOf(outcome),
@@ -64,7 +66,7 @@ export function HandoffStatus({
           </p>
           {unknown && (
             <span className="inline-flex shrink-0 items-center rounded-full bg-surface-hover px-2 py-0.5 text-caption-sm font-medium leading-inherit text-foreground-tertiary">
-              Status unknown
+              {t("chatTools2.handoff.statusUnknown")}
             </span>
           )}
           {outcome.link && (
@@ -72,7 +74,7 @@ export function HandoffStatus({
               href={outcome.link}
               className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-border-base bg-surface px-3 py-1.5 text-sm font-medium text-foreground-emphasis shadow-sm transition-colors hover:border-border-strong hover:bg-surface-muted focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-focus"
             >
-              Open {possessive(name)} chat
+              {t("chatTools2.handoff.openChat", { name })}
               <Icon
                 icon={ArrowUpRight01Icon}
                 size={14}
@@ -133,51 +135,27 @@ interface SentenceProps {
 }
 
 function HandoffSentence({ outcome, name, state }: SentenceProps) {
-  const who = (
-    <span className="font-medium text-foreground-emphasis">{name}</span>
-  );
+  const t = useT();
+  const task = outcome.title;
   switch (state) {
     case "failed":
-      return (
-        <>
-          {who} is hired, but {outcome.title} didn&apos;t start.
-        </>
-      );
+      return <>{t("chatTools2.handoff.sentenceFailed", { name, task })}</>;
     case "unconfirmed":
       return (
         <>
-          {outcome.title} may have started in {possessive(name)} chat. Open it
-          to check.
+          {t("chatTools2.handoff.sentenceUnconfirmed", { name, task })}
         </>
       );
     // An idle thread holds a result, a question for the user or an error;
     // the poll can't tell which, so the line doesn't guess.
     case "stopped":
-      return (
-        <>
-          {who} stopped working on {outcome.title}. Their chat has the result,
-          or a question for you.
-        </>
-      );
+      return <>{t("chatTools2.handoff.sentenceStopped", { name, task })}</>;
     case "waiting":
-      return (
-        <>
-          {who} starts on {outcome.title} as soon as one of your other tasks
-          finishes.
-        </>
-      );
+      return <>{t("chatTools2.handoff.sentenceWaiting", { name, task })}</>;
     case "working":
-      return (
-        <>
-          {who} is working on {outcome.title}.
-        </>
-      );
+      return <>{t("chatTools2.handoff.sentenceWorking", { name, task })}</>;
     // The live status can't be read: say only what is known.
     case "unknown":
-      return (
-        <>
-          Sent {outcome.title} to {who}. Open their chat to see where it stands.
-        </>
-      );
+      return <>{t("chatTools2.handoff.sentenceUnknown", { name, task })}</>;
   }
 }

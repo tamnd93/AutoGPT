@@ -10,6 +10,7 @@ import {
 import Link from "next/link";
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { ExpertAvatar } from "@/components/molecules/ExpertAvatar/ExpertAvatar";
+import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { CARD, HALF, RESULT_GRID, StatusPill } from "./ResultCards";
 import { asObject, inline, resultItemKey, str } from "./resultHelpers";
@@ -51,6 +52,7 @@ function CardLink({ href, label }: CardLinkProps) {
 }
 
 export function AgentListCard({ agents }: AgentListCardProps) {
+  const t = useT();
   return (
     <div className={RESULT_GRID}>
       {agents.map((agent, i) => {
@@ -77,7 +79,9 @@ export function AgentListCard({ agents }: AgentListCardProps) {
                 </p>
                 {str(agent, "creator") && (
                   <span className="shrink-0 truncate text-caption-sm leading-inherit text-foreground-subtle">
-                    by {str(agent, "creator")}
+                    {t("chatTools2.agent.by", {
+                      creator: str(agent, "creator") ?? "",
+                    })}
                   </span>
                 )}
               </div>
@@ -91,7 +95,9 @@ export function AgentListCard({ agents }: AgentListCardProps) {
                   {runs !== null && (
                     <span className="flex items-center gap-1">
                       <Icon icon={PlayIcon} size={10} />
-                      {runs.toLocaleString()} runs
+                      {t("chatTools2.agent.runs", {
+                        count: runs.toLocaleString(),
+                      })}
                     </span>
                   )}
                   {rating !== null && (
@@ -108,7 +114,12 @@ export function AgentListCard({ agents }: AgentListCardProps) {
                 </div>
               )}
             </div>
-            {href && <CardLink href={href} label="Open workflow" />}
+            {href && (
+              <CardLink
+                href={href}
+                label={t("chatTools2.agent.openWorkflow")}
+              />
+            )}
           </div>
         );
       })}
@@ -117,7 +128,10 @@ export function AgentListCard({ agents }: AgentListCardProps) {
 }
 
 export function AgentSavedCard({ output }: OutputCardProps) {
-  const name = str(output, "agent_name", "name", "graph_name") ?? "Workflow";
+  const t = useT();
+  const name =
+    str(output, "agent_name", "name", "graph_name") ??
+    t("chatTools2.agent.workflow");
   const version = output.graph_version;
   const libraryLink =
     str(output, "library_agent_link") ??
@@ -145,19 +159,26 @@ export function AgentSavedCard({ output }: OutputCardProps) {
       {builderLink && (
         <Link
           href={builderLink}
-          aria-label="Open in builder"
+          aria-label={t("chatTools2.agent.openInBuilder")}
           className="shrink-0 rounded-full p-1 text-foreground-subtle transition-colors hover:bg-surface-hover hover:text-foreground-body"
         >
           <Icon icon={WrenchIcon} size={14} />
         </Link>
       )}
-      {libraryLink && <CardLink href={libraryLink} label="Open in library" />}
+      {libraryLink && (
+        <CardLink
+          href={libraryLink}
+          label={t("chatTools2.agent.openInLibrary")}
+        />
+      )}
     </div>
   );
 }
 
 export function AgentPreviewCard({ output }: OutputCardProps) {
-  const name = str(output, "agent_name", "name") ?? "Workflow preview";
+  const t = useT();
+  const name =
+    str(output, "agent_name", "name") ?? t("chatTools2.agent.previewTitle");
   const count =
     typeof output.node_count === "number" ? output.node_count : null;
   return (
@@ -181,7 +202,9 @@ export function AgentPreviewCard({ output }: OutputCardProps) {
       </div>
       {count !== null && (
         <span className="shrink-0 rounded-full bg-surface-hover px-2 py-0.5 text-caption-sm leading-inherit text-foreground-tertiary">
-          {count} block{count === 1 ? "" : "s"}
+          {count === 1
+            ? t("chatTools2.agent.blockOne", { count })
+            : t("chatTools2.agent.blockMany", { count })}
         </span>
       )}
     </div>
@@ -196,6 +219,7 @@ export function SubSessionCard({
   output,
   minimal = false,
 }: SubSessionCardProps) {
+  const t = useT();
   const frozenStatus = str(output, "status");
   const response = str(output, "response");
   const link = str(output, "sub_autopilot_session_link");
@@ -206,7 +230,7 @@ export function SubSessionCard({
   const expert = asObject(output.expert);
   const avatarUrl = expert && str(expert, "avatar_url");
   const role = expert && str(expert, "role");
-  const name = (expert && str(expert, "name")) ?? "Expert";
+  const name = (expert && str(expert, "name")) ?? t("chatTools2.agent.expert");
   return (
     <div className={cn(CARD, "w-full rounded-2xl p-2.5")}>
       <div className="flex items-center gap-2.5">
@@ -227,7 +251,12 @@ export function SubSessionCard({
           </span>
         )}
         {status && <StatusPill status={status} />}
-        {link && <CardLink href={link} label="Open sub-session" />}
+        {link && (
+          <CardLink
+            href={link}
+            label={t("chatTools2.agent.openSubSession")}
+          />
+        )}
       </div>
       {!minimal && response && (
         <p className="mt-1.5 line-clamp-2 pl-9 text-xs text-foreground-tertiary">

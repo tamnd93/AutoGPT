@@ -1,5 +1,6 @@
 "use client";
 
+import { useLocale, useT } from "@/lib/i18n";
 import { useStableCallback } from "@/hooks/useStableCallback";
 import {
   ArrowDown01Icon,
@@ -84,6 +85,8 @@ interface Props {
 }
 
 export function ToolChain({ parts, isStreaming, readOnly = false }: Props) {
+  const t = useT();
+  const locale = useLocale();
   const [manualExpanded, setManualExpanded] = useState<boolean | null>(null);
   const panelId = useId();
   const reducedMotion = useReducedMotion();
@@ -183,11 +186,10 @@ export function ToolChain({ parts, isStreaming, readOnly = false }: Props) {
   function sendReply(message: string) {
     void Promise.resolve(onSend(message)).catch((error: unknown) =>
       toastSendFailure({
-        title: "Couldn't send message",
+        title: t("chatInput2.send.failedTitle"),
         error,
-        recovery: "it is still in the thread, use Retry to send it again",
-        paywallRecovery:
-          "it is still in the thread, use Retry once you have a plan",
+        recovery: t("chatTools2.chain.sendFailedRecovery"),
+        paywallRecovery: t("chatTools2.chain.sendFailedPaywallRecovery"),
       }),
     );
   }
@@ -225,7 +227,7 @@ export function ToolChain({ parts, isStreaming, readOnly = false }: Props) {
     () =>
       markSupersededSubSessionRows(
         parts
-          .map((part, i) => toChainRow(part, i))
+          .map((part, i) => toChainRow(part, i, locale))
           .filter((row): row is ChainRow => row !== null)
           .map((row) => applyHeldOutcome(row, heldOutcomes, heldAnswers))
           // Unanswered clarifying questions and setup cards render their work
@@ -238,7 +240,7 @@ export function ToolChain({ parts, isStreaming, readOnly = false }: Props) {
                 : row,
           ),
       ),
-    [parts, pendingQuestions, heldOutcomes, heldAnswers],
+    [parts, pendingQuestions, heldOutcomes, heldAnswers, locale],
   );
   if (rows.length === 0) return null;
 
@@ -264,7 +266,7 @@ export function ToolChain({ parts, isStreaming, readOnly = false }: Props) {
   const liftedRows = rows.filter((row) => row.lifted);
 
   const expanded = manualExpanded === true;
-  const heading = getChainHeading(rows, isStreaming && !expanded);
+  const heading = getChainHeading(rows, isStreaming && !expanded, locale);
   const hasError = rows.some((row) => row.state === "error");
   const hasRequiredAction = shownRows.some((row) => row.requiresAction);
   // Auto-open only while streaming; once the chain finishes (or on reload)
@@ -424,7 +426,7 @@ export function ToolChain({ parts, isStreaming, readOnly = false }: Props) {
                         />
                       </div>
                       <div className="flex h-7 items-center text-sm text-foreground-secondary">
-                        Done
+                        {t("chatTools2.chain.done")}
                       </div>
                     </div>
                   )}
@@ -483,8 +485,8 @@ export function ToolChain({ parts, isStreaming, readOnly = false }: Props) {
                 className="text-foreground-subtle"
               />
               {allActionsReady
-                ? "Everything's filled in"
-                : "Complete the steps above to continue"}
+                ? t("chatTools2.chain.allFilled")
+                : t("chatTools2.chain.completeSteps")}
             </span>
             <Button
               variant="primary"
@@ -492,7 +494,7 @@ export function ToolChain({ parts, isStreaming, readOnly = false }: Props) {
               disabled={!allActionsReady}
               onClick={handleProceed}
             >
-              Proceed
+              {t("chatTools1.chain.proceed")}
             </Button>
           </div>
         )}

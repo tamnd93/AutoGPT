@@ -2,6 +2,7 @@ import { cleanup, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import type { UIDataTypes, UIMessage, UITools } from "ai";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { LocaleProvider } from "@/lib/i18n";
 import { CopilotChatActionsProvider } from "../../CopilotChatActionsProvider/CopilotChatActionsProvider";
 import { QuestionDock } from "../QuestionDock";
 
@@ -34,6 +35,31 @@ describe("QuestionDock", () => {
     );
     return onSend;
   }
+
+  it("words its heading, actions and placeholder in Vietnamese", () => {
+    render(
+      <LocaleProvider locale="vi">
+        <CopilotChatActionsProvider onSend={vi.fn()}>
+          <QuestionDock
+            messages={[
+              questionMessage([
+                {
+                  question: "Which region?",
+                  keyword: "region",
+                  example: "Europe",
+                },
+              ]),
+            ]}
+          />
+        </CopilotChatActionsProvider>
+      </LocaleProvider>,
+    );
+
+    expect(screen.getByText("Câu hỏi nhanh")).toBeDefined();
+    expect(screen.getByRole("button", { name: "Bỏ qua" })).toBeDefined();
+    expect(screen.getByRole("button", { name: "Trả lời" })).toBeDefined();
+    expect(screen.getByPlaceholderText("ví dụ: Europe")).toBeDefined();
+  });
 
   it("renders nothing when the last message is from the user", () => {
     renderDock([

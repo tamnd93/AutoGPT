@@ -8,6 +8,7 @@ import userEvent from "@testing-library/user-event";
 import type { ToolUIPart } from "ai";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { toast } from "@/components/molecules/Toast/use-toast";
+import { LocaleProvider } from "@/lib/i18n";
 import { useCopilotUIStore } from "../../../store";
 import { CopilotChatActionsProvider } from "../../CopilotChatActionsProvider/CopilotChatActionsProvider";
 import {
@@ -599,5 +600,59 @@ describe("expert approval", () => {
     expect(card).not.toBeNull();
     expect(card?.textContent).toContain("1 of 2");
     expect(card?.textContent).toContain("Approve");
+  });
+
+  it("words its card header, details and decisions in Vietnamese", async () => {
+    const user = userEvent.setup();
+    render(
+      <LocaleProvider locale="vi">
+        <CopilotChatActionsProvider onSend={onSend}>
+          <ExpertChangeCard
+            onDecide={() => {}}
+            output={{
+              type: "expert_change_proposed",
+              applied: false,
+              preview: {
+                kind: "raise",
+                name: "Otto",
+                role: "Inbox triage",
+                tagline: "Sorts your morning inbox.",
+                about: "You group the morning inbox.",
+              },
+            }}
+          />
+        </CopilotChatActionsProvider>
+      </LocaleProvider>,
+    );
+
+    expect(screen.getByText("Tạo một chuyên gia")).toBeDefined();
+    expect(screen.getByRole("button", { name: "Chi tiết" })).toBeDefined();
+    expect(screen.getByRole("button", { name: "Từ chối" })).toBeDefined();
+    expect(screen.getByRole("button", { name: "Duyệt" })).toBeDefined();
+
+    await user.click(screen.getByRole("button", { name: "Chi tiết" }));
+    expect(screen.getByRole("button", { name: "Ẩn chi tiết" })).toBeDefined();
+  });
+
+  it("words the decision footer and pager in Vietnamese", () => {
+    render(
+      <LocaleProvider locale="vi">
+        <CopilotChatActionsProvider onSend={onSend}>
+          <ExpertChangeGroup
+            parts={[proposal("Fiona", "a"), proposal("Bhaskar", "b")]}
+          />
+        </CopilotChatActionsProvider>
+      </LocaleProvider>,
+    );
+
+    expect(screen.getByText("1/2")).toBeDefined();
+    expect(
+      screen.getByRole("button", { name: "Chuyên gia tiếp theo" }),
+    ).toBeDefined();
+    expect(
+      screen.getByRole("button", { name: "Chuyên gia trước" }),
+    ).toBeDefined();
+    expect(screen.getByRole("button", { name: "Duyệt" })).toBeDefined();
+    expect(screen.getByRole("button", { name: "Từ chối" })).toBeDefined();
   });
 });

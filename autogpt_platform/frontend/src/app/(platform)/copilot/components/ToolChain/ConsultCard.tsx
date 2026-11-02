@@ -9,6 +9,8 @@ import type { IconSvgElement } from "@hugeicons/react";
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { Text } from "@/components/atoms/Text/Text";
 import { ExpertAvatar } from "@/components/molecules/ExpertAvatar/ExpertAvatar";
+import { useT } from "@/lib/i18n";
+import type { MessageKey } from "@/lib/i18n/messages/en";
 import { cn } from "@/lib/utils";
 import { CARD } from "./ResultCards";
 import { asObject, str, unescapePromptTags } from "./resultHelpers";
@@ -18,25 +20,25 @@ interface Props {
 }
 
 interface VerdictStyle {
-  label: string;
+  labelKey: MessageKey;
   icon: IconSvgElement;
   chip: string;
 }
 
 const VERDICTS: Record<string, VerdictStyle> = {
   pass: {
-    label: "No objection",
+    labelKey: "chatTools2.consult.noObjection",
     icon: CheckmarkCircle02Icon,
     chip: "bg-success-surface text-success-foreground",
   },
   block: {
-    label: "Blocked",
+    labelKey: "chatTools2.consult.blocked",
     icon: Alert02Icon,
     // TODO(tokens): no fitting role for text-red-600 #D93636; #D93636 is error-hover (a fill and line colour)
     chip: "bg-error-surface text-red-600",
   },
   insufficient: {
-    label: "Not checked",
+    labelKey: "chatTools2.consult.notChecked",
     icon: HelpCircleIcon,
     chip: "bg-warning-surface text-warning-foreground",
   },
@@ -50,6 +52,7 @@ const VERDICTS: Record<string, VerdictStyle> = {
  *  so they render as plain text — never markdown, never HTML. The backend
  *  tag-escapes them for the model; the card shows them as written. */
 export function ConsultVerdictCard({ output }: Props) {
+  const t = useT();
   const verdict = str(output, "verdict") ?? "";
   const style = VERDICTS[verdict];
   const reviewer = asObject(output.reviewer);
@@ -76,10 +79,10 @@ export function ConsultVerdictCard({ output }: Props) {
             variant="body-medium"
             className="truncate text-foreground-emphasis"
           >
-            {str(reviewer, "name") ?? "A teammate"}
+            {str(reviewer, "name") ?? t("chatTools2.consult.teammate")}
           </Text>
           <Text variant="small" className="truncate text-foreground-tertiary">
-            {str(reviewer, "role") ?? "checked this"}
+            {str(reviewer, "role") ?? t("chatTools2.consult.checkedThis")}
           </Text>
         </div>
         <span
@@ -89,7 +92,7 @@ export function ConsultVerdictCard({ output }: Props) {
           )}
         >
           <Icon icon={style.icon} size={14} />
-          <Text variant="small-medium">{style.label}</Text>
+          <Text variant="small-medium">{t(style.labelKey)}</Text>
         </span>
       </div>
       {reason ? (

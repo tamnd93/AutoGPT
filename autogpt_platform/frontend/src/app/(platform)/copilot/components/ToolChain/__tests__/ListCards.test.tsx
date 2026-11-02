@@ -1,5 +1,6 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
+import { LocaleProvider } from "@/lib/i18n";
 import {
   DocsList,
   FeatureRequestList,
@@ -158,5 +159,48 @@ describe("DocsList", () => {
 
     expect(screen.getByText("getting-started.md")).toBeDefined();
     expect(screen.queryByLabelText("Open doc")).toBeNull();
+  });
+});
+
+describe("List cards in Vietnamese", () => {
+  afterEach(cleanup);
+
+  it("words schedule kinds and the follow-up card in Vietnamese", () => {
+    render(
+      <LocaleProvider locale="vi">
+        <ScheduleList
+          schedules={[{ name: "Daily briefing", kind: "copilot_turn" }]}
+        />
+      </LocaleProvider>,
+    );
+    expect(screen.getByText("trò chuyện")).toBeDefined();
+
+    cleanup();
+    render(
+      <LocaleProvider locale="vi">
+        <ScheduleCreatedCard output={{ next_run_time: "2026-08-21T10:00:00Z" }} />
+      </LocaleProvider>,
+    );
+    expect(screen.getByText("Đã lên lịch theo dõi")).toBeDefined();
+
+    cleanup();
+    render(
+      <LocaleProvider locale="vi">
+        <FolderList folders={[{ name: "Marketing", agent_count: 3 }]} />
+      </LocaleProvider>,
+    );
+    expect(screen.getByText("3 workflow")).toBeDefined();
+  });
+
+  it("words the doc link label in Vietnamese", () => {
+    render(
+      <LocaleProvider locale="vi">
+        <DocsList
+          results={[{ title: "Blocks", doc_url: "https://docs.agpt.co/blocks" }]}
+        />
+      </LocaleProvider>,
+    );
+
+    expect(screen.getByLabelText("Mở tài liệu")).toBeDefined();
   });
 });

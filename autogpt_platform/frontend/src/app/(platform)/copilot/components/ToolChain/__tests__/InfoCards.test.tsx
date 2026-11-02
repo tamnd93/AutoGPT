@@ -6,6 +6,7 @@ import {
   waitFor,
 } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { LocaleProvider } from "@/lib/i18n";
 import { CopilotChatActionsContext } from "../../CopilotChatActionsProvider/useCopilotChatActions";
 import {
   FixResultCard,
@@ -269,5 +270,83 @@ describe("TriggerSetupCard", () => {
 
     expect(screen.getByText("Trigger is ready")).toBeDefined();
     expect(screen.queryByRole("button", { name: "Copy" })).toBeNull();
+  });
+});
+
+describe("Info cards in Vietnamese", () => {
+  afterEach(cleanup);
+
+  it("words validation, fix and setup results in Vietnamese", () => {
+    render(
+      <LocaleProvider locale="vi">
+        <ValidationCard output={{ valid: true }} />
+      </LocaleProvider>,
+    );
+    expect(screen.getByText("Workflow hợp lệ")).toBeDefined();
+
+    cleanup();
+    render(
+      <LocaleProvider locale="vi">
+        <FixResultCard
+          output={{ valid_after_fix: false, remaining_errors: ["Still broken"] }}
+        />
+      </LocaleProvider>,
+    );
+    expect(screen.getByText("Còn 1 lỗi")).toBeDefined();
+
+    cleanup();
+    render(
+      <LocaleProvider locale="vi">
+        <SetupCard
+          output={{ setup_info: { agent_name: "Notion" } }}
+          provider={null}
+        />
+        <TriggerSetupCard output={{}} />
+      </LocaleProvider>,
+    );
+    expect(screen.getByText("Cần kết nối")).toBeDefined();
+    expect(screen.getByText("Trigger đã sẵn sàng")).toBeDefined();
+  });
+
+  it("words the question example and the copy button in Vietnamese", () => {
+    render(
+      <LocaleProvider locale="vi">
+        <QuestionsCard
+          questions={[{ question: "Which region?", example: "us-east" }]}
+        />
+      </LocaleProvider>,
+    );
+    expect(screen.getByText("ví dụ: us-east")).toBeDefined();
+
+    cleanup();
+    render(
+      <LocaleProvider locale="vi">
+        <TriggerSetupCard
+          output={{ webhook_url: "https://hooks.example.com/h1" }}
+        />
+      </LocaleProvider>,
+    );
+    expect(screen.getByRole("button", { name: "Sao chép" })).toBeDefined();
+  });
+
+  it("words the goal button but leaves the message it sends to Otto in English", () => {
+    const onSend = vi.fn();
+    render(
+      <LocaleProvider locale="vi">
+        <CopilotChatActionsContext.Provider
+          value={{ onSend, chatSurface: "copilot" }}
+        >
+          <SuggestedGoalCard output={{ suggested_goal: "Build a scraper" }} />
+        </CopilotChatActionsContext.Provider>
+      </LocaleProvider>,
+    );
+
+    fireEvent.click(
+      screen.getByRole("button", { name: "Dùng mục tiêu này" }),
+    );
+
+    expect(onSend).toHaveBeenCalledWith(
+      "Please create a workflow with this goal: Build a scraper",
+    );
   });
 });

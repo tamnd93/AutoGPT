@@ -1,4 +1,7 @@
 import type { ToolUIPart } from "ai";
+import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/locale";
+import type { MessageKey } from "@/lib/i18n/messages/en";
+import { getMessage } from "@/lib/i18n/translate";
 import { getBlockDisplayName } from "../../helpers/toolDisplay";
 import type { MessagePart } from "../ChatMessagesContainer/helpers";
 import { EXPERT_ONBOARDING_PART_TYPE } from "../ExpertOnboardingCard/helpers";
@@ -109,7 +112,11 @@ const BLOCK_ACTION_TOOLS = new Set([
   "resume_capability",
 ]);
 
-function actionLabel(toolName: string, tool: ToolUIPart): string | null {
+function actionLabel(
+  toolName: string,
+  tool: ToolUIPart,
+  locale: Locale,
+): string | null {
   const output = tool.output;
   const data = asObject(output);
   if (!data) return null;
@@ -126,23 +133,26 @@ function actionLabel(toolName: string, tool: ToolUIPart): string | null {
       ? getBlockDisplayName(tool.title, output)
       : setup?.agent_name;
     return typeof name === "string" && name.trim()
-      ? `Connect ${name.trim()} to continue`
-      : "Complete setup to continue";
+      ? getMessage(locale, "chatTools2.chain.connectToContinue", {
+          name: name.trim(),
+        })
+      : getMessage(locale, "chatTools2.chain.completeSetup");
   }
   if (data.type === "review_required") {
     const name = isBlock
       ? getBlockDisplayName(tool.title, output)
       : data.block_name;
     return typeof name === "string" && name.trim()
-      ? `Review ${name.trim()}`
-      : "Review this action";
+      ? getMessage(locale, "chatTools2.chain.reviewName", { name: name.trim() })
+      : getMessage(locale, "chatTools2.chain.reviewAction");
   }
   if (data.type === "approval_required")
     return heldAskText(data, heldToolName(data, toolName));
-  if (data.type === "suggested_goal") return "Review the suggested goal";
+  if (data.type === "suggested_goal")
+    return getMessage(locale, "chatTools2.chain.reviewGoal");
   return typeof data.message === "string" && data.message.trim()
     ? data.message.trim()
-    : "Action required";
+    : getMessage(locale, "chatTools2.chain.actionRequired");
 }
 
 /** Setup-requirements rows whose card registers with the chain and renders
@@ -250,7 +260,11 @@ function getRowCatalogLabel(
   );
 }
 
-export function toChainRow(part: MessagePart, index: number): ChainRow | null {
+export function toChainRow(
+  part: MessagePart,
+  index: number,
+  locale: Locale = DEFAULT_LOCALE,
+): ChainRow | null {
   const narration = narrationText(part);
   if (narration !== null) {
     return {
@@ -270,7 +284,9 @@ export function toChainRow(part: MessagePart, index: number): ChainRow | null {
     return {
       key: `reasoning-${index}`,
       category: "reasoning",
-      text: isStreaming ? "Thinking…" : "Thought",
+      text: isStreaming
+        ? getMessage(locale, "chatTools2.chain.thinking")
+        : getMessage(locale, "chatTools2.chain.thought"),
       state: isStreaming ? "running" : "done",
       reasoningText:
         "text" in part && typeof part.text === "string" ? part.text : undefined,
@@ -298,7 +314,7 @@ export function toChainRow(part: MessagePart, index: number): ChainRow | null {
       : tool;
 
     const providerIconSrc = getProviderIconSrc(stableTool);
-    const requiredActionLabel = actionLabel(toolName, tool);
+    const requiredActionLabel = actionLabel(toolName, tool, locale);
 
     const data = {
       tool: toolName,
@@ -338,39 +354,39 @@ export function toChainRow(part: MessagePart, index: number): ChainRow | null {
   return null;
 }
 
-const CATEGORY_SUMMARY: Record<ChainRow["category"], string> = {
-  reasoning: "thought it through",
-  bash: "ran commands",
-  web: "searched the web",
-  browser: "browsed the web",
-  "file-read": "read files",
-  "file-write": "wrote files",
-  "file-delete": "deleted files",
-  "file-list": "listed files",
-  search: "searched files",
-  edit: "edited files",
-  todo: "updated tasks",
-  compaction: "summarized context",
-  agent: "delegated work",
-  "agent-build": "built workflows",
-  plan: "planned the approach",
-  block: "ran blocks",
-  memory: "managed memory",
-  folder: "organized folders",
-  schedule: "managed schedules",
-  trigger: "managed triggers",
-  preset: "managed presets",
-  chat: "posted updates",
-  mcp: "used MCP tools",
-  docs: "read the docs",
-  skill: "used skills",
-  integration: "connected integrations",
-  feature: "handled feature requests",
-  question: "asked you questions",
-  team: "changed the team",
-  info: "checked your account",
-  narration: "",
-  other: "used tools",
+const CATEGORY_SUMMARY: Record<ChainRow["category"], MessageKey | null> = {
+  reasoning: "chatTools2.summary.reasoning",
+  bash: "chatTools2.summary.bash",
+  web: "chatTools2.summary.web",
+  browser: "chatTools2.summary.browser",
+  "file-read": "chatTools2.summary.fileRead",
+  "file-write": "chatTools2.summary.fileWrite",
+  "file-delete": "chatTools2.summary.fileDelete",
+  "file-list": "chatTools2.summary.fileList",
+  search: "chatTools2.summary.search",
+  edit: "chatTools2.summary.edit",
+  todo: "chatTools2.summary.todo",
+  compaction: "chatTools2.summary.compaction",
+  agent: "chatTools2.summary.agent",
+  "agent-build": "chatTools2.summary.agentBuild",
+  plan: "chatTools2.summary.plan",
+  block: "chatTools2.summary.block",
+  memory: "chatTools2.summary.memory",
+  folder: "chatTools2.summary.folder",
+  schedule: "chatTools2.summary.schedule",
+  trigger: "chatTools2.summary.trigger",
+  preset: "chatTools2.summary.preset",
+  chat: "chatTools2.summary.chat",
+  mcp: "chatTools2.summary.mcp",
+  docs: "chatTools2.summary.docs",
+  skill: "chatTools2.summary.skill",
+  integration: "chatTools2.summary.integration",
+  feature: "chatTools2.summary.feature",
+  question: "chatTools2.summary.question",
+  team: "chatTools2.summary.team",
+  info: "chatTools2.summary.info",
+  narration: null,
+  other: "chatTools2.summary.other",
 };
 
 // Streaming → live label of the running row; settled → verb-chain like
@@ -378,6 +394,7 @@ const CATEGORY_SUMMARY: Record<ChainRow["category"], string> = {
 export function getChainHeading(
   rows: ChainRow[],
   isStreaming: boolean,
+  locale: Locale = DEFAULT_LOCALE,
 ): string {
   if (isStreaming) {
     const running = rows.findLast((r) => r.state === "running");
@@ -393,15 +410,17 @@ export function getChainHeading(
   const phrases: string[] = [];
   const seenPhrases = new Set<string>();
   for (const row of rows) {
-    if (row.category === "narration") continue;
-    const phrase = CATEGORY_SUMMARY[row.category];
+    const summary = CATEGORY_SUMMARY[row.category];
+    if (!summary) continue;
+    const phrase = getMessage(locale, summary);
     if (!seenPhrases.has(phrase)) {
       seenPhrases.add(phrase);
       phrases.push(phrase);
     }
     if (phrases.length === 3) break;
   }
-  const joined = phrases.join(", ") || "Working…";
+  const joined =
+    phrases.join(", ") || getMessage(locale, "chatTools2.chain.working");
   return joined.charAt(0).toUpperCase() + joined.slice(1);
 }
 

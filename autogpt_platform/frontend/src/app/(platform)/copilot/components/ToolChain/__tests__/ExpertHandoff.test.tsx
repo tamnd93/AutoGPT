@@ -2,6 +2,7 @@ import { getGetV2GetSessionMockHandler200 } from "@/app/api/__generated__/endpoi
 import { server } from "@/mocks/mock-server";
 import { render, screen } from "@/tests/integrations/test-utils";
 import userEvent from "@testing-library/user-event";
+import { LocaleProvider } from "@/lib/i18n";
 import type { ToolUIPart } from "ai";
 import { http, HttpResponse } from "msw";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -529,4 +530,56 @@ describe("hand-off parts follow the theme", () => {
       expect(classesIn(container)).toEqual([]);
     },
   );
+});
+
+describe("hand-off parts in Vietnamese", () => {
+  beforeEach(() => onSend.mockClear());
+
+  function renderVietnamese(parts: ToolUIPart[]) {
+    return render(
+      <LocaleProvider locale="vi">
+        <CopilotChatActionsProvider onSend={onSend}>
+          <ExpertChangeGroup parts={parts} />
+        </CopilotChatActionsProvider>
+      </LocaleProvider>,
+    );
+  }
+
+  it("asks the hire question and words its answer in Vietnamese", async () => {
+    const user = userEvent.setup();
+    renderVietnamese([hire("a")]);
+
+    expect(
+      screen.getByText("Tuyển James để đảm nhận " + TITLE + "?"),
+    ).toBeDefined();
+    expect(
+      screen.getByText("James sẽ nhận được gì"),
+    ).toBeDefined();
+
+    await user.click(screen.getByRole("button", { name: "Tuyển và bắt đầu" }));
+
+    // The decision line the backend reads stays English.
+    expect(onSend).toHaveBeenCalledWith(
+      "Approved: hire James to take on " + TITLE + " (confirmation_id: h-a).",
+    );
+    expect(
+      screen.getByText("Bạn đã chọn tuyển James để đảm nhận " + TITLE + "."),
+    ).toBeDefined();
+  });
+
+  it("words the hand-off status sentence and chat link in Vietnamese", async () => {
+    server.use(thread("running"));
+    render(
+      <LocaleProvider locale="vi">
+        <ExpertChangeCard output={appliedOutput("sent")} />
+      </LocaleProvider>,
+    );
+
+    expect(
+      await screen.findByText("James đang làm " + TITLE + "."),
+    ).toBeDefined();
+    expect(
+      screen.getByRole("link", { name: "Mở chat của James" }),
+    ).toBeDefined();
+  });
 });

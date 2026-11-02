@@ -7,6 +7,7 @@ import {
 import type { SessionDetailResponse } from "@/app/api/__generated__/models/sessionDetailResponse";
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { ExpertAvatar } from "@/components/molecules/ExpertAvatar/ExpertAvatar";
+import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { LinkSquare01Icon } from "@hugeicons/core-free-icons";
 import type { ToolUIPart } from "ai";
@@ -51,6 +52,7 @@ interface LiveStep {
  *  once it goes idle, polling stops and the last state stays up as the
  *  delegate's final answer. */
 export function SubSessionLive({ subSessionId, active }: Props) {
+  const t = useT();
   const { session, isError, isPaused } = useLiveSubSession(
     subSessionId,
     active,
@@ -76,7 +78,9 @@ export function SubSessionLive({ subSessionId, active }: Props) {
           {latestText}
         </p>
       )}
-      {notice && <LiveNotice text={notice} subSessionId={subSessionId} />}
+      {notice && (
+        <LiveNotice text={t(notice)} subSessionId={subSessionId} />
+      )}
     </div>
   );
 }
@@ -124,8 +128,8 @@ function getLiveNotice({
   isError: boolean;
   isPaused: boolean;
 }) {
-  if (isError) return "Couldn't load live updates";
-  if (isPaused) return "Live updates paused";
+  if (isError) return "chatTools2.live.loadFailed" as const;
+  if (isPaused) return "chatTools2.live.paused" as const;
   return null;
 }
 
@@ -138,6 +142,7 @@ function LiveNotice({
   text: string;
   subSessionId: string;
 }) {
+  const t = useT();
   return (
     <p className="mt-1.5 flex flex-wrap items-center gap-1.5 text-xs text-foreground-subtle">
       {text}
@@ -145,7 +150,7 @@ function LiveNotice({
         href={`/copilot?sessionId=${subSessionId}`}
         className="underline underline-offset-2 hover:text-foreground-secondary"
       >
-        Open sub-session
+        {t("chatTools2.live.openSubSession")}
       </Link>
     </p>
   );
@@ -262,6 +267,7 @@ export function SubSessionPendingCard({
   input,
   minimal = false,
 }: PendingCardProps) {
+  const t = useT();
   const { expertsById } = useExpertMap();
   const args = asObject(input) ?? {};
   const inputExpertId = str(args, "expert_id");
@@ -284,13 +290,13 @@ export function SubSessionPendingCard({
     <div className={cn(CARD, "w-full rounded-2xl p-2.5")}>
       <div className="flex items-center gap-2.5">
         <ExpertAvatar
-          name={expert?.name ?? "Expert"}
+          name={expert?.name ?? t("chatTools2.agent.expert")}
           avatarUrl={expert?.avatarUrl ?? null}
           color={expert?.color}
           size={28}
         />
         <p className="min-w-0 flex-1 truncate text-sm font-medium text-foreground-emphasis">
-          {expert?.name ?? "Expert"}
+          {expert?.name ?? t("chatTools2.agent.expert")}
           {expert?.role && (
             <span className="ml-1.5 font-normal text-foreground-subtle">
               {expert.role}
@@ -306,7 +312,7 @@ export function SubSessionPendingCard({
         {liveSessionId && (
           <Link
             href={`/copilot?sessionId=${liveSessionId}`}
-            aria-label="Open sub-session"
+            aria-label={t("chatTools2.agent.openSubSession")}
             className="shrink-0 rounded-full p-1 text-foreground-subtle transition-colors hover:bg-surface-hover hover:text-foreground-body"
           >
             <Icon icon={LinkSquare01Icon} size={14} />

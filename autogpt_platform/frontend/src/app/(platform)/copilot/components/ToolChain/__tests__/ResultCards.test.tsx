@@ -1,5 +1,6 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
+import { LocaleProvider } from "@/lib/i18n";
 import {
   ChipList,
   LinkCard,
@@ -94,5 +95,17 @@ describe("LinkCard", () => {
     render(<LinkCard url="not-a-url" />);
 
     expect(screen.getAllByText("not-a-url").length).toBeGreaterThan(0);
+  });
+
+  it("words its open-link label in Vietnamese", () => {
+    render(
+      <LocaleProvider locale="vi">
+        <LinkCard url="https://example.com/page" title="Example page" />
+      </LocaleProvider>,
+    );
+
+    expect(screen.getByLabelText("Mở liên kết").getAttribute("href")).toBe(
+      "https://example.com/page",
+    );
   });
 });

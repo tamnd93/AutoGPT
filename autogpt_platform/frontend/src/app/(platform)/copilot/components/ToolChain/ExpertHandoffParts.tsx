@@ -5,6 +5,7 @@ import { type ReactNode, useId, useState } from "react";
 import { Button } from "@/components/atoms/Button/Button";
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { ExpertAvatar } from "@/components/molecules/ExpertAvatar/ExpertAvatar";
+import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import type { HandoffTask } from "./expertHandoff";
 
@@ -45,6 +46,7 @@ export function HandoffProposal({
   stepClassName,
   stepKey,
 }: ProposalProps) {
+  const t = useT();
   return (
     <div className="flex gap-3 p-4">
       <ExpertAvatar
@@ -57,12 +59,15 @@ export function HandoffProposal({
       <div className="min-w-0 flex-1">
         <div key={stepKey} className={stepClassName}>
           <p className="text-body font-medium leading-snug text-foreground-emphasis [overflow-wrap:anywhere]">
-            Hire {name} to take on {task.title}?
+            {t("chatTools2.handoff.hireQuestion", {
+              name,
+              task: task.title,
+            })}
           </p>
           <p className="mt-0.5 text-sm text-foreground-tertiary [overflow-wrap:anywhere]">
             {role
-              ? `${role} · works on it in their own chat`
-              : "Works on it in their own chat"}
+              ? t("chatTools2.handoff.roleLine", { role })
+              : t("chatTools2.handoff.worksAlone")}
           </p>
         </div>
         {actions && (
@@ -74,7 +79,7 @@ export function HandoffProposal({
               onClick={actions.onStart}
               className="h-8 !min-w-0 px-3.5"
             >
-              Hire and start
+              {t("chatTools2.handoff.hireAndStart")}
             </Button>
             <Button
               variant="ghost"
@@ -83,7 +88,7 @@ export function HandoffProposal({
               onClick={actions.onNotNow}
               className="h-8 !min-w-0 px-3"
             >
-              Not now
+              {t("chatTools2.handoff.notNow")}
             </Button>
           </div>
         )}
@@ -106,6 +111,7 @@ interface DetailsProps {
 }
 
 function HandoffDetails({ name, about, task, onShowProfile }: DetailsProps) {
+  const t = useT();
   const [open, setOpen] = useState(false);
   const panelId = useId();
   return (
@@ -117,7 +123,7 @@ function HandoffDetails({ name, about, task, onShowProfile }: DetailsProps) {
         onClick={() => setOpen(!open)}
         className="inline-flex items-center gap-1 rounded text-xs font-medium text-foreground-secondary underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-focus"
       >
-        What {name} will get
+        {t("chatTools2.handoff.whatTheyGet", { name })}
         <Icon
           icon={ArrowDown01Icon}
           size={12}
@@ -138,7 +144,7 @@ function HandoffDetails({ name, about, task, onShowProfile }: DetailsProps) {
         </p>
         {about && (
           <p className="text-xs text-foreground-subtle [overflow-wrap:anywhere]">
-            About {name}: {about}
+            {t("chatTools2.handoff.about", { name, about })}
           </p>
         )}
         {onShowProfile && (
@@ -147,7 +153,7 @@ function HandoffDetails({ name, about, task, onShowProfile }: DetailsProps) {
             onClick={onShowProfile}
             className="self-start rounded text-xs font-medium text-foreground-secondary underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-focus"
           >
-            See {name}&apos;s full profile
+            {t("chatTools2.handoff.fullProfile", { name })}
           </button>
         )}
       </div>

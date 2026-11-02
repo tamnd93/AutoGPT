@@ -1,5 +1,6 @@
 import { render, screen } from "@/tests/integrations/test-utils";
 import { cleanup } from "@testing-library/react";
+import { LocaleProvider } from "@/lib/i18n";
 import { afterEach, describe, expect, it } from "vitest";
 import {
   AgentListCard,
@@ -196,5 +197,75 @@ describe("SubSessionCard", () => {
     expect(screen.getByText("running")).toBeDefined();
     expect(screen.getByText("45s")).toBeDefined();
     expect(screen.queryByLabelText("Open sub-session")).toBeNull();
+  });
+});
+
+describe("Agent cards in Vietnamese", () => {
+  afterEach(cleanup);
+
+  it("words the agent list, its links and its counts in Vietnamese", () => {
+    render(
+      <LocaleProvider locale="vi">
+        <AgentListCard
+          agents={[
+            {
+              id: "creator/scraper",
+              name: "Scraper",
+              creator: "creator",
+              runs: 1200,
+            },
+          ]}
+        />
+      </LocaleProvider>,
+    );
+
+    expect(screen.getByText("bởi creator")).toBeDefined();
+    expect(screen.getByText("1,200 lượt chạy")).toBeDefined();
+    expect(screen.getByLabelText("Mở workflow").getAttribute("href")).toBe(
+      "/marketplace/agent/creator/scraper",
+    );
+  });
+
+  it("words the saved card's links and default name in Vietnamese", () => {
+    render(
+      <LocaleProvider locale="vi">
+        <AgentSavedCard
+          output={{
+            agent_page_link: "/build?flowID=g1",
+            library_agent_link: "/library/agents/lib-1",
+          }}
+        />
+      </LocaleProvider>,
+    );
+
+    expect(screen.getByText("Workflow")).toBeDefined();
+    expect(screen.getByLabelText("Mở trong Builder")).toBeDefined();
+    expect(screen.getByLabelText("Mở trong Thư viện")).toBeDefined();
+  });
+
+  it("words the preview card and a sub-session card in Vietnamese", () => {
+    render(
+      <LocaleProvider locale="vi">
+        <AgentPreviewCard output={{ node_count: 4 }} />
+      </LocaleProvider>,
+    );
+
+    expect(screen.getByText("Xem trước workflow")).toBeDefined();
+    expect(screen.getByText("4 khối")).toBeDefined();
+
+    cleanup();
+    render(
+      <LocaleProvider locale="vi">
+        <SubSessionCard
+          output={{
+            status: "COMPLETED",
+            sub_autopilot_session_link: "/copilot?session=sub-1",
+          }}
+        />
+      </LocaleProvider>,
+    );
+
+    expect(screen.getByText("Chuyên gia")).toBeDefined();
+    expect(screen.getByLabelText("Mở phiên phụ")).toBeDefined();
   });
 });

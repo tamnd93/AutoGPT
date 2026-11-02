@@ -8,6 +8,7 @@ import {
 } from "@hugeicons/core-free-icons";
 import Link from "next/link";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { safeHostname } from "./resultHelpers";
 
@@ -132,6 +133,7 @@ export function ChipList({ label, items }: ChipListProps) {
 }
 
 export function LinkCard({ url, title, meta, secret }: LinkCardProps) {
+  const t = useT();
   const domain = safeHostname(url) ?? url;
 
   return (
@@ -165,7 +167,7 @@ export function LinkCard({ url, title, meta, secret }: LinkCardProps) {
         href={url}
         target="_blank"
         rel="noreferrer"
-        aria-label="Open link"
+        aria-label={t("chatTools2.result.openLink")}
         className="shrink-0 rounded-full p-1 text-foreground-subtle transition-colors hover:bg-surface-hover hover:text-foreground-body"
       >
         <Icon icon={LinkSquare01Icon} size={14} />

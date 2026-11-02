@@ -1,5 +1,6 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
+import { LocaleProvider } from "@/lib/i18n";
 import { SkillLoadedCard } from "../SkillLoadedCard";
 
 describe("SkillLoadedCard", () => {
@@ -53,5 +54,34 @@ describe("SkillLoadedCard", () => {
     expect(
       screen.getByRole("link", { name: "View change" }).getAttribute("href"),
     ).toBe("/settings/memory?skill=deploy-notes");
+  });
+
+  it("words the loaded skill, its note and its link in Vietnamese", () => {
+    render(
+      <LocaleProvider locale="vi">
+        <SkillLoadedCard
+          output={{
+            name: "csv-import-checks",
+            version: 3,
+            version_id: "ver-3",
+            origin_label: "Saved overnight",
+            expert_id: "expert-1",
+          }}
+        />
+      </LocaleProvider>,
+    );
+
+    // The origin label is backend data and stays as the backend wrote it.
+    expect(
+      screen.getByText(
+        "Đã nạp kỹ năng: csv-import-checks v3 · Saved overnight",
+      ),
+    ).toBeDefined();
+    expect(
+      screen.getByText(
+        "Đã nạp cho tác vụ này; nạp không phải là bản ghi thành công.",
+      ),
+    ).toBeDefined();
+    expect(screen.getByRole("link", { name: "Xem thay đổi" })).toBeDefined();
   });
 });

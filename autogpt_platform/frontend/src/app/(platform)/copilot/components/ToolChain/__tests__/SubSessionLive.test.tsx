@@ -2,6 +2,7 @@ import { getGetV2GetSessionMockHandler200 } from "@/app/api/__generated__/endpoi
 import { server } from "@/mocks/mock-server";
 import { render, screen } from "@/tests/integrations/test-utils";
 import { cleanup } from "@testing-library/react";
+import { LocaleProvider } from "@/lib/i18n";
 import { http, HttpResponse } from "msw";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { SubSessionCard } from "../AgentCards";
@@ -479,5 +480,24 @@ describe("SubSessionLive", () => {
 
     expect(await screen.findByText("unknown")).toBeDefined();
     expect(screen.queryByText("running")).toBeNull();
+  });
+
+  it("words the failed live-updates notice and its link in Vietnamese", async () => {
+    server.use(failingSubSession());
+
+    render(
+      <LocaleProvider locale="vi">
+        <SubSessionCard
+          output={{ status: "running", sub_session_id: "sub-1" }}
+        />
+      </LocaleProvider>,
+    );
+
+    expect(
+      await screen.findByText("Không tải được cập nhật trực tiếp"),
+    ).toBeDefined();
+    expect(
+      screen.getByRole("link", { name: "Mở phiên phụ" }).getAttribute("href"),
+    ).toBe("/copilot?sessionId=sub-1");
   });
 });

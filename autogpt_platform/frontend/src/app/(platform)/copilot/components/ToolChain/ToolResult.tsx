@@ -9,6 +9,7 @@ import { QuestionsForm } from "../QuestionDock/QuestionDock";
 import { SetupRequirementsCard } from "../SetupRequirementsCard/SetupRequirementsCard";
 import { MCPSetupCard } from "../../tools/RunMCPTool/components/MCPSetupCard/MCPSetupCard";
 import { desktopStreamRenderer } from "@/components/contextual/OutputRenderers/renderers/DesktopStreamRenderer";
+import { useT } from "@/lib/i18n";
 import { DesktopStreamCard } from "./DesktopStreamCard";
 import {
   AgentListCard,
@@ -73,19 +74,23 @@ import {
   TodoList,
 } from "./ToolResultViews";
 
-const BOOLEAN_LABELS: Record<string, string> = {
-  ok: "Done",
-  success: "Done",
-};
+type Translate = ReturnType<typeof useT>;
 
-function shapeCard(obj: Record<string, unknown>) {
+function shapeCard(obj: Record<string, unknown>, t: Translate) {
   const entries = Object.entries(obj);
   if (entries.length !== 1) return null;
   const [key, value] = entries[0];
 
   if (typeof value === "boolean")
     return (
-      <StatusCard ok={value} label={BOOLEAN_LABELS[key] ?? humanizeKey(key)} />
+      <StatusCard
+        ok={value}
+        label={
+          key === "ok" || key === "success"
+            ? t("chatTools2.chain.done")
+            : humanizeKey(key)
+        }
+      />
     );
 
   if (typeof value === "number")
@@ -101,7 +106,9 @@ function shapeCard(obj: Record<string, unknown>) {
   if (key === "status" && typeof value === "string")
     return (
       <div className={`${CARD} ${HALF} flex items-center gap-2 p-2.5`}>
-        <span className="text-xs text-foreground-subtle">Status</span>
+        <span className="text-xs text-foreground-subtle">
+          {t("chatTools2.toolResult.status")}
+        </span>
         <span className="ml-auto">
           <StatusPill status={value} />
         </span>
@@ -192,21 +199,26 @@ function isMcpCapabilityRow(
 
 function capabilityAsBlockItem(
   item: Record<string, unknown>,
+  t: Translate,
 ): Record<string, unknown> {
   return {
     ...item,
     description: item.purpose,
     categories: [
       item.kind === "mcp_server"
-        ? "integration"
+        ? t("chatTools2.toolResult.categoryIntegration")
         : item.class === "primitive"
-          ? "building block"
+          ? t("chatTools2.toolResult.categoryBlock")
           : String(item.kind ?? ""),
     ],
   };
 }
 
-function setupRequirementsCard(row: ChainRow, output: Record<string, unknown>) {
+function setupRequirementsCard(
+  row: ChainRow,
+  output: Record<string, unknown>,
+  t: Translate,
+) {
   const setupInfo = asObject(output.setup_info);
   if (!setupInfo) return null;
   const setupOutput = output as unknown as SetupRequirementsResponse;
@@ -225,7 +237,7 @@ function setupRequirementsCard(row: ChainRow, output: Record<string, unknown>) {
       <SetupRequirementsCard
         output={setupOutput}
         inputsMode="trigger"
-        credentialsLabel="Account"
+        credentialsLabel={t("chatTools2.toolResult.account")}
       />
     );
   }
@@ -239,7 +251,11 @@ function setupRequirementsCard(row: ChainRow, output: Record<string, unknown>) {
       output={setupOutput}
       credentialsLabel={
         row.tool === "connect_integration"
-          ? `${str(setupInfo, "agent_name") ?? "Integration"} credentials`
+          ? t("chatTools2.toolResult.namedCredentials", {
+              name:
+                str(setupInfo, "agent_name") ??
+                t("chatTools2.toolResult.integrationFallback"),
+            })
           : undefined
       }
       retryInstruction={
@@ -320,11 +336,12 @@ function toolCard(
   row: ChainRow,
   output: Record<string, unknown> | null,
   readOnly: boolean,
+  t: Translate,
 ) {
   const input = asObject(row.input);
 
   if (output) {
-    const setupCard = setupRequirementsCard(row, output);
+    const setupCard = setupRequirementsCard(row, output, t);
     if (setupCard) return setupCard;
     const questions = asItems(output.questions);
     if (questions) return <QuestionsCard questions={questions} />;
@@ -418,7 +435,9 @@ function toolCard(
     case "find_capability": {
       const items = output && asItems(output.capabilities);
       return items ? (
-        <BlockListCard blocks={items.map(capabilityAsBlockItem)} />
+        <BlockListCard
+          blocks={items.map((item) => capabilityAsBlockItem(item, t))}
+        />
       ) : null;
     }
     case "run_block":
@@ -517,12 +536,17 @@ function toolCard(
       return output ? <SkillCard output={output} /> : null;
     case "list_skills": {
       const names = output && chipStrings(output.skills, "name");
-      return names ? <ChipList label="Skills" items={names} /> : null;
+      return names ? (
+        <ChipList label={t("chatTools2.toolResult.skills")} items={names} />
+      ) : null;
     }
     case "list_chat_platform_channels": {
       const names = output && chipStrings(output.channels, "name");
       return names ? (
-        <ChipList label="Channels" items={names.map((name) => `#${name}`)} />
+        <ChipList
+          label={t("chatTools2.toolResult.channels")}
+          items={names.map((name) => `#${name}`)}
+        />
       ) : null;
     }
     case "web_search": {
@@ -602,11 +626,12 @@ export function ToolResult({ row, readOnly = false }: Props) {
 }
 
 function ToolOutput({ row, readOnly }: Required<Props>) {
+  const t = useT();
   const output = asObject(row.output);
   const target = capabilityTargetRow(row);
   const card =
-    toolCard(target, output, readOnly) ??
-    (target === row ? null : toolCard(row, output, readOnly));
+    toolCard(target, output, readOnly, t) ??
+    (target === row ? null : toolCard(row, output, readOnly, t));
   if (card) return card;
 
   if (isBlankOutput(row.output)) return <KeyValueList value={NOTHING_FOUND} />;
@@ -626,6 +651,6 @@ function ToolOutput({ row, readOnly }: Required<Props>) {
 
   return (
     linkCard(data, asObject(target.input)) ??
-    shapeCard(data) ?? <KeyValueList value={data} />
+    shapeCard(data, t) ?? <KeyValueList value={data} />
   );
 }

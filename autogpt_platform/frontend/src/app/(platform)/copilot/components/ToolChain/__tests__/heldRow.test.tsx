@@ -1,6 +1,7 @@
 import { afterEach, expect, test, vi } from "vitest";
 import { act, getDefaultNormalizer } from "@testing-library/react";
 import { fireEvent, render, screen } from "@/tests/integrations/test-utils";
+import { LocaleProvider } from "@/lib/i18n";
 import { CopilotChatActionsProvider } from "../../CopilotChatActionsProvider/CopilotChatActionsProvider";
 import type { MessagePart } from "../../ChatMessagesContainer/helpers";
 import {
@@ -475,4 +476,34 @@ test("a settled call's row words its arguments as its card does", () => {
   openRow(/Didn't run a command in the sandbox/);
   expect(isShown(screen.getByText("Time limit"))).toBe(true);
   expect(isShown(screen.getByText("1 minute"))).toBe(true);
+});
+
+test("a held call's tag is worded in Vietnamese", async () => {
+  render(
+    <LocaleProvider locale="vi">
+      <CopilotChatActionsProvider onSend={vi.fn()}>
+        <HeldOutcomesContext.Provider value={new Map()}>
+          <ToolChain parts={[HELD]} isStreaming={false} />
+        </HeldOutcomesContext.Provider>
+      </CopilotChatActionsProvider>
+    </LocaleProvider>,
+  );
+
+  expect(await screen.findByText("Đang chờ bạn")).toBeDefined();
+});
+
+test("a held call's detail paragraph is worded in Vietnamese", async () => {
+  render(
+    <LocaleProvider locale="vi">
+      <CopilotChatActionsProvider onSend={vi.fn()}>
+        <HeldOutcomesContext.Provider
+          value={new Map([["call-7", { outcome: "rejected", output: "" }]])}
+        >
+          <ToolChain parts={[HELD]} isStreaming={false} />
+        </HeldOutcomesContext.Provider>
+      </CopilotChatActionsProvider>
+    </LocaleProvider>,
+  );
+
+  expect(await screen.findByText("Đã từ chối")).toBeDefined();
 });

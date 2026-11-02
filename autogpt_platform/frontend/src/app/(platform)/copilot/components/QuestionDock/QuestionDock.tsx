@@ -9,6 +9,7 @@ import {
   type QuestionAnswer,
 } from "../../tools/clarifying-questions";
 import { QuestionMultiAnswerField } from "../ChainActionCard/QuestionMultiAnswerField";
+import { useT } from "@/lib/i18n";
 import { CopilotChatActionsContext } from "../CopilotChatActionsProvider/useCopilotChatActions";
 import {
   ChainActionsContext,
@@ -30,6 +31,7 @@ interface FormProps {
 /** The clarifying-question answer form — rendered inline in the tool chain
  *  on the ask_question row (and reused by the legacy QuestionDock). */
 export function QuestionsForm({ dockId, questions }: FormProps) {
+  const t = useT();
   const actions = useContext(CopilotChatActionsContext);
   const chainActions = useContext(ChainActionsContext);
   const [answers, setAnswers] = useState<Record<string, QuestionAnswer>>({});
@@ -91,14 +93,16 @@ export function QuestionsForm({ dockId, questions }: FormProps) {
     >
       <div className="flex items-center justify-between px-0.5 pb-2">
         <span className="text-xs font-medium text-foreground-tertiary">
-          {questions.length === 1 ? "Quick question" : "Quick questions"}
+          {questions.length === 1
+            ? t("chatTools2.dock.quickQuestion")
+            : t("chatTools2.dock.quickQuestions")}
         </span>
         <button
           type="button"
           onClick={() => setDismissedId(dockId)}
           className="rounded-full px-2 py-0.5 text-xs text-foreground-subtle transition-colors hover:bg-surface-hover hover:text-foreground-secondary"
         >
-          Skip
+          {t("chatTools2.dock.skip")}
         </button>
       </div>
       <div className="flex flex-col gap-2.5">
@@ -147,7 +151,9 @@ export function QuestionsForm({ dockId, questions }: FormProps) {
                   if (isKey(e, "Enter")) handleSubmit();
                 }}
                 placeholder={
-                  q.example ? `e.g. ${q.example}` : "Type your answer"
+                  q.example
+                    ? t("chatTools1.questions.example", { example: q.example })
+                    : t("chatTools1.questions.typeAnswer")
                 }
                 // TODO(tokens): no fitting role for focus:ring-zinc-400 #ADADB3; #ADADB3 is foreground-subtle (a text colour)
                 className="rounded-xl bg-surface-muted px-2.5 py-1.5 text-body-sm leading-inherit text-foreground-emphasis ring-1 ring-border-base/70 transition-shadow placeholder:text-foreground-subtle focus:outline-none focus:ring-zinc-400"
@@ -165,7 +171,7 @@ export function QuestionsForm({ dockId, questions }: FormProps) {
             // TODO(tokens): no fitting role for hover:bg-zinc-700 #505057; #505057 is foreground-body (a text colour)
             className="rounded-full bg-action-hover px-3.5 py-1.5 text-xs font-medium text-action-foreground transition-opacity hover:bg-zinc-700 aria-disabled:opacity-40"
           >
-            Answer
+            {t("chatTools2.dock.answer")}
           </button>
         </div>
       )}

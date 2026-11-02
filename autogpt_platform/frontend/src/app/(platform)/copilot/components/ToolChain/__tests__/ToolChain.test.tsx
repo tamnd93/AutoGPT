@@ -13,6 +13,7 @@ import { AnsweredQuestionsContext } from "../../QuestionDock/AnsweredQuestionsCo
 import type { PendingQuestions } from "../../QuestionDock/helpers";
 import { PendingQuestionsContext } from "../../QuestionDock/PendingQuestionsContext";
 import { ToolChain } from "../ToolChain";
+import { LocaleProvider } from "@/lib/i18n";
 import { expectTypingKept } from "@/tests/integrations/typing";
 
 vi.mock("@/components/molecules/Toast/use-toast", () => ({
@@ -672,6 +673,85 @@ describe("ToolChain", () => {
     await user.click(screen.getByRole("button", { name: "Proceed" }));
 
     expect(onSend).not.toHaveBeenCalled();
+  });
+
+  it("words its summary, done step and collapsed hint in Vietnamese", async () => {
+    const user = userEvent.setup();
+    render(
+      <LocaleProvider locale="vi">
+        <ToolChain
+          parts={[
+            reasoningPart("Compare the options first"),
+            toolPart("web_search", "output-available", {
+              input: { query: "copilot" },
+              output: { results: [] },
+            }),
+          ]}
+          isStreaming={false}
+        />
+      </LocaleProvider>,
+    );
+
+    const header = screen.getByRole("button", {
+      name: /đã suy nghĩ kỹ, đã tìm kiếm web/i,
+    });
+    await user.click(header);
+
+    expect(screen.getByText("Xong")).toBeDefined();
+  });
+
+  it("words the proceed step and the missing-steps hint in Vietnamese", () => {
+    render(
+      <LocaleProvider locale="vi">
+        <ToolChain
+          parts={[
+            toolPart("connect_integration", "output-available", {
+              output: {
+                type: "setup_requirements",
+                setup_info: { agent_name: "NotReady" },
+              },
+            }),
+          ]}
+          isStreaming={false}
+        />
+      </LocaleProvider>,
+    );
+
+    expect(screen.getByText("Hoàn tất các bước ở trên để tiếp tục")).toBeDefined();
+    expect(screen.getByRole("button", { name: "Tiếp tục" })).toBeDefined();
+  });
+
+  it("words the ready state and a failed send in Vietnamese", async () => {
+    const user = userEvent.setup();
+    onSend.mockRejectedValueOnce(new Error("boom"));
+    render(
+      <LocaleProvider locale="vi">
+        <ToolChain
+          parts={[
+            toolPart("connect_integration", "output-available", {
+              output: {
+                type: "setup_requirements",
+                setup_info: { agent_name: "GitHub" },
+              },
+            }),
+          ]}
+          isStreaming={false}
+        />
+      </LocaleProvider>,
+    );
+
+    expect(screen.getByText("Đã điền đủ mọi thứ")).toBeDefined();
+    await user.click(screen.getByRole("button", { name: "Tiếp tục" }));
+
+    await waitFor(() =>
+      expect(toast).toHaveBeenCalledWith(
+        expect.objectContaining({
+          title: "Không gửi được tin nhắn",
+          description:
+            "boom — tin nhắn vẫn nằm trong đoạn chat, dùng Thử lại để gửi lại.",
+        }),
+      ),
+    );
   });
 });
 

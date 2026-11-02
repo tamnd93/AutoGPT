@@ -1,5 +1,6 @@
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { LocaleProvider } from "@/lib/i18n";
 import type { ChainRow } from "../helpers";
 import {
   FileCard,
@@ -246,5 +247,46 @@ describe("KeyValueList", () => {
     const { container } = render(<KeyValueList value={undefined} />);
 
     expect(container.firstChild).toBeNull();
+  });
+});
+
+describe("Tool result views in Vietnamese", () => {
+  afterEach(cleanup);
+
+  it("words the exit code and unnamed output labels in Vietnamese", () => {
+    render(
+      <LocaleProvider locale="vi">
+        <Terminal
+          row={row({ stdout: "file.txt", exit_code: 2 }, { command: "ls" })}
+        />
+      </LocaleProvider>,
+    );
+    expect(screen.getByText("mã thoát 2")).toBeDefined();
+
+    cleanup();
+    render(
+      <LocaleProvider locale="vi">
+        <OutputList items={[{ value: "unnamed value" }]} />
+      </LocaleProvider>,
+    );
+    expect(screen.getByText("Đầu ra 1")).toBeDefined();
+  });
+
+  it("words the truncation note in Vietnamese", () => {
+    render(
+      <LocaleProvider locale="vi">
+        <KeyValueList
+          value={
+            "<tool-output-truncated total_chars=1234>\npreview\n</tool-output-truncated>"
+          }
+        />
+      </LocaleProvider>,
+    );
+
+    expect(
+      screen.getByText(
+        "Xem trước 1,234 ký tự — toàn bộ đầu ra đã lưu vào không gian làm việc",
+      ),
+    ).toBeDefined();
   });
 });
