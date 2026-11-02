@@ -145,7 +145,7 @@ export function SummaryView({
             <Text variant="small" tone="danger">
               {t("skills1.summary.blockedBy", {
                 block: version.blocked_pattern_class,
-                step: version.blocked_step,
+                step: version.blocked_step ?? "",
               })}
             </Text>
           ) : null}
