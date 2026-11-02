@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
 import { getScheduledChatNotice } from "../helpers";
+import {
+  changeErrorText,
+  refusalText,
+} from "../components/RunLessOftenDialog/helpers";
+import { ApiError } from "@/lib/autogpt-server-api/helpers";
 
 const NOTICE = {
   kind: "scheduled_chat_notice",
@@ -9,6 +14,20 @@ const NOTICE = {
   body: "“Briefing” didn't run.",
   actions: [{ kind: "link", label: "Upgrade", href: "/settings/billing" }],
 };
+
+describe("RunLessOftenDialog refusal copy (vi)", () => {
+  it("speaks vietnamese for the refusals the API names", () => {
+    expect(refusalText(new ApiError("x", 409, undefined), "vi")).toBe(
+      "Chat này đang tạm dừng. Hãy tiếp tục trước.",
+    );
+    expect(refusalText(new ApiError("x", 404, undefined), "vi")).toBe(
+      "Chat này không còn chạy theo lịch có thể thay đổi được.",
+    );
+    expect(changeErrorText(new ApiError("x", 400, undefined), "vi")).toBe(
+      "Hãy chọn một trong các lựa chọn bên dưới.",
+    );
+  });
+});
 
 describe("getScheduledChatNotice", () => {
   it("reads the note a skipped scheduled chat leaves", () => {
