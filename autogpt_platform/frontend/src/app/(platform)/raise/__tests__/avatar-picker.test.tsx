@@ -6,6 +6,7 @@ import {
   getGetV1OnboardingStateResponseMock200,
 } from "@/app/api/__generated__/endpoints/onboarding/onboarding.msw";
 import { MANAGED_IDENTITIES } from "@/components/molecules/ExpertAvatar/helpers";
+import { LocaleProvider } from "@/lib/i18n";
 import { Toaster } from "@/components/molecules/Toast/toaster";
 import { server } from "@/mocks/mock-server";
 import {
@@ -89,12 +90,19 @@ function seedAtAvatar(category: ExpertAvatarRequestCategory) {
 
 let onboardingRead = false;
 
-async function renderRaise() {
-  render(
+async function renderRaise(locale?: "vi") {
+  const content = (
     <>
       <RaisePage />
       <Toaster />
-    </>,
+    </>
+  );
+  render(
+    locale ? (
+      <LocaleProvider locale={locale}>{content}</LocaleProvider>
+    ) : (
+      content
+    ),
   );
   await waitFor(() => expect(onboardingRead).toBe(true));
 }
@@ -154,6 +162,30 @@ test("the area beat answers the color first and asks for a job title", async () 
     step: "jobTitle",
   });
   expect(requests).toHaveLength(0);
+});
+
+test("words the category and job-title beats in Vietnamese", async () => {
+  saveDraft({ ...EMPTY_DRAFT, hasStarted: true });
+  await renderRaise("vi");
+
+  const categories = await screen.findByRole(
+    "group",
+    { name: "Chuyên gia làm việc về lĩnh vực nào" },
+    { timeout: 5000 },
+  );
+  await userEvent.click(
+    await within(categories).findByRole("button", { name: "Tài chính" }),
+  );
+
+  const titles = await screen.findByRole(
+    "group",
+    { name: "Chức danh gợi ý" },
+    { timeout: 5000 },
+  );
+  // Job-title suggestions are saved data, so they stay in English.
+  expect(
+    within(titles).getByRole("button", { name: "Financial Analyst" }),
+  ).toBeDefined();
 });
 
 test.each([

@@ -1,8 +1,11 @@
-const ABOUT_PLACEHOLDER =
-  "How they should work, what you care about, anything that helps them sound like yours…";
+import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/locale";
+import { getMessage } from "@/lib/i18n/translate";
 
-export function aboutPlaceholderFor(name: string | null) {
+export function aboutPlaceholderFor(
+  name: string | null,
+  locale: Locale = DEFAULT_LOCALE,
+) {
   const trimmed = name?.trim();
-  if (!trimmed) return ABOUT_PLACEHOLDER;
-  return `How ${trimmed} should work, what you care about, anything that helps them sound like yours…`;
+  if (!trimmed) return getMessage(locale, "team1.about.placeholder");
+  return getMessage(locale, "team1.about.placeholderNamed", { name: trimmed });
 }

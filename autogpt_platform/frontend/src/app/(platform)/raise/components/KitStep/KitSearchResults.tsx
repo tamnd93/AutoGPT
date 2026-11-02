@@ -1,6 +1,7 @@
 "use client";
 
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 import { Search01Icon } from "@hugeicons/core-free-icons";
 import { isHitSelected } from "./helpers";
 import { KitResultRow } from "./KitResultRow";
@@ -18,6 +19,7 @@ export function KitSearchResults({
   emptyQueryHint,
   emptyResultsHint,
 }: Props) {
+  const t = useT();
   if (picker.isSearching) {
     return <KitSearchSkeleton />;
   }
@@ -41,7 +43,7 @@ export function KitSearchResults({
   return (
     <div
       role="list"
-      aria-label="Search results"
+      aria-label={t("team1.kit.searchResults")}
       className="w-full max-w-[42rem] overflow-hidden rounded-2xl border border-border bg-background shadow-sm"
     >
       {picker.hits.map((hit, index) => (

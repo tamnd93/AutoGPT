@@ -1,6 +1,7 @@
 "use client";
 
 import type { ExpertAvatarRequestCategory } from "@/app/api/__generated__/models/expertAvatarRequestCategory";
+import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { bubbleClassFor } from "../ColorStep/helpers";
 import { categoryOptionsForSelection } from "./helpers";
@@ -12,12 +13,13 @@ interface Props {
 }
 
 export function CategoryStep({ selectedCategory, color, onPick }: Props) {
+  const t = useT();
   const options = categoryOptionsForSelection(selectedCategory);
 
   return (
     <div
       role="group"
-      aria-label="What the expert works on"
+      aria-label={t("team1.category.aria")}
       className="flex flex-wrap justify-end gap-2.5"
     >
       {options.map((option) => (
@@ -39,7 +41,7 @@ export function CategoryStep({ selectedCategory, color, onPick }: Props) {
             className="size-3 shrink-0 rounded-full"
             style={{ backgroundColor: option.hex }}
           />
-          {option.label}
+          {t(option.labelKey)}
         </button>
       ))}
     </div>

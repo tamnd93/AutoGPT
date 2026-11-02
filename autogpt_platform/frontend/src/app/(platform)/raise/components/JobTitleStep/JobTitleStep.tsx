@@ -3,6 +3,7 @@
 import { Button } from "@/components/atoms/Button/Button";
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { Input } from "@/components/atoms/Input/Input";
+import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { Forward02Icon } from "@hugeicons/core-free-icons";
 import { bubbleClassFor } from "../ColorStep/helpers";
@@ -23,6 +24,7 @@ export function JobTitleStep({
   onSubmit,
   onSkip,
 }: Props) {
+  const t = useT();
   const { custom, setCustom, trimmed, submitCustom } = useJobTitleStep({
     onSubmit,
   });
@@ -37,7 +39,7 @@ export function JobTitleStep({
         )}
       >
         <Icon icon={Forward02Icon} size={16} aria-hidden />
-        Skipped
+        {t("team1.common.skipped")}
       </div>
     );
   }
@@ -49,7 +51,7 @@ export function JobTitleStep({
       {chips.length > 0 ? (
         <div
           role="group"
-          aria-label="Suggested job titles"
+          aria-label={t("team1.jobTitle.suggested")}
           className="flex flex-wrap justify-end gap-2.5"
         >
           {chips.map((chip) => (
@@ -76,7 +78,7 @@ export function JobTitleStep({
           aria-hidden
           className="mr-4 text-xs font-medium uppercase tracking-caps text-muted-foreground"
         >
-          or
+          {t("team1.common.or")}
         </span>
       )}
       {selectedTitle ? null : (
@@ -86,12 +88,12 @@ export function JobTitleStep({
         >
           <Input
             id="raise-job-title"
-            label="Job title"
+            label={t("team1.jobTitle.label")}
             hideLabel
             size="small"
             value={custom}
             onChange={(event) => setCustom(event.target.value)}
-            placeholder="Type a job title…"
+            placeholder={t("team1.jobTitle.placeholder")}
             maxLength={JOB_TITLE_MAX_LENGTH}
             wrapperClassName="mb-0 w-full max-w-[16rem] [&_input]:h-[2.625rem] [&_input]:py-3"
           />
@@ -102,7 +104,7 @@ export function JobTitleStep({
             disabled={!trimmed}
             className="h-[2.625rem] rounded-xl py-3"
           >
-            Add title
+            {t("team1.jobTitle.add")}
           </Button>
           <Button
             type="button"
@@ -111,7 +113,7 @@ export function JobTitleStep({
             onClick={onSkip}
             className="h-[2.625rem] rounded-xl py-3"
           >
-            Skip
+            {t("team1.common.skip")}
           </Button>
         </form>
       )}

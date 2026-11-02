@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/atoms/Button/Button";
+import { useT } from "@/lib/i18n";
 import type { RaiseAttachmentDraft } from "../../helpers";
 import { AttachmentAnswer } from "./AttachmentAnswer";
 import { KitSearchField } from "./KitSearchField";
@@ -38,6 +39,7 @@ export function AttachmentStep({
   onSubmit,
   onSkip,
 }: Props) {
+  const t = useT();
   const picker = useAttachmentPicker({
     scope,
     existingCount,
@@ -89,7 +91,7 @@ export function AttachmentStep({
           disabled={isSubmitting}
           className="h-[2.625rem] rounded-xl py-3"
         >
-          Skip
+          {t("team1.common.skip")}
         </Button>
       </div>
     </div>

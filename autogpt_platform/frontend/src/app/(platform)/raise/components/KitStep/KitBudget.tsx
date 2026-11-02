@@ -1,6 +1,7 @@
 "use client";
 
 import { Input } from "@/components/atoms/Input/Input";
+import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { bubbleClassFor } from "../ColorStep/helpers";
 import { BUDGET_PRESETS } from "./helpers";
@@ -20,11 +21,12 @@ export function KitBudget({
   onSelect,
   onCustomChange,
 }: Props) {
+  const t = useT();
   return (
     <div className="flex w-full max-w-[42rem] flex-col items-end gap-3">
       <div
         role="group"
-        aria-label="Weekly budget"
+        aria-label={t("team1.budget.aria")}
         className="flex flex-wrap justify-end gap-2.5"
       >
         {BUDGET_PRESETS.map((preset) => {
@@ -49,13 +51,13 @@ export function KitBudget({
       </div>
       <Input
         id="raise-kit-custom-budget"
-        label="Custom weekly budget in dollars"
+        label={t("team1.budget.customLabel")}
         hideLabel
         size="small"
         inputMode="decimal"
         value={customAmount}
         onChange={(event) => onCustomChange(event.target.value)}
-        placeholder="Custom amount, e.g. $7.50…"
+        placeholder={t("team1.budget.customPlaceholder")}
         wrapperClassName="mb-0 w-full max-w-[16rem] [&_input]:h-[2.625rem] [&_input]:py-3"
       />
     </div>

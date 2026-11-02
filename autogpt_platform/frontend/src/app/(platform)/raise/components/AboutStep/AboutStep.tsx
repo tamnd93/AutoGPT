@@ -3,6 +3,7 @@
 import { Button } from "@/components/atoms/Button/Button";
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { Input } from "@/components/atoms/Input/Input";
+import { useLocale, useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { Forward02Icon } from "@hugeicons/core-free-icons";
 import { useState } from "react";
@@ -24,6 +25,8 @@ export function AboutStep({
   onSubmit,
   onSkip,
 }: Props) {
+  const t = useT();
+  const locale = useLocale();
   const [value, setValue] = useState("");
   const trimmed = value.trim();
 
@@ -41,7 +44,7 @@ export function AboutStep({
         {isSkipped ? (
           <>
             <Icon icon={Forward02Icon} size={16} aria-hidden />
-            Skipped
+            {t("team1.common.skipped")}
           </>
         ) : (
           submittedAbout
@@ -64,11 +67,11 @@ export function AboutStep({
       <Input
         id="raise-about"
         type="textarea"
-        label="Anything about your expert"
+        label={t("team1.about.label")}
         hideLabel
         value={value}
         onChange={(event) => setValue(event.target.value)}
-        placeholder={aboutPlaceholderFor(name)}
+        placeholder={aboutPlaceholderFor(name, locale)}
         rows={4}
         maxLength={2000}
         wrapperClassName="mb-0 w-full max-w-[42rem]"
@@ -81,7 +84,7 @@ export function AboutStep({
           disabled={!trimmed}
           className="h-[2.625rem] rounded-xl py-3"
         >
-          That&apos;s it
+          {t("team1.common.thatsIt")}
         </Button>
         <Button
           type="button"
@@ -90,7 +93,7 @@ export function AboutStep({
           onClick={onSkip}
           className="h-[2.625rem] rounded-xl py-3"
         >
-          Skip
+          {t("team1.common.skip")}
         </Button>
       </div>
     </form>

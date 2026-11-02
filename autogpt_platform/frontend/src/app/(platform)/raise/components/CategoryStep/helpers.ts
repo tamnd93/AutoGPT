@@ -1,8 +1,9 @@
 import { ExpertAvatarRequestCategory } from "@/app/api/__generated__/models/expertAvatarRequestCategory";
+import type { MessageKey } from "@/lib/i18n/messages/en";
 import { EXPERT_PALETTE } from "@/components/molecules/ExpertAvatar/helpers";
 
 interface CategoryDetails {
-  label: string;
+  labelKey: MessageKey;
   color: string;
   // Saved as the expert's role, so the intro reads "I'm Curie, your Researcher".
   role: string;
@@ -13,7 +14,7 @@ interface CategoryDetails {
 
 const CATEGORY_DETAILS: Record<ExpertAvatarRequestCategory, CategoryDetails> = {
   general: {
-    label: "General",
+    labelKey: "team1.category.general",
     color: "amber-300",
     role: "Assistant",
     nameSuggestions: ["Otto", "Nova", "Juno"],
@@ -21,7 +22,7 @@ const CATEGORY_DETAILS: Record<ExpertAvatarRequestCategory, CategoryDetails> = {
   },
   marketing: {
     color: "orange-300",
-    label: "Marketing",
+    labelKey: "team1.category.marketing",
     role: "Marketer",
     nameSuggestions: ["Echo", "Reach", "Nova"],
     jobTitleSuggestions: [
@@ -32,7 +33,7 @@ const CATEGORY_DETAILS: Record<ExpertAvatarRequestCategory, CategoryDetails> = {
   },
   sales: {
     color: "amber-300",
-    label: "Sales",
+    labelKey: "team1.category.sales",
     role: "Sales",
     nameSuggestions: ["Pitch", "Ace", "Rain"],
     jobTitleSuggestions: [
@@ -43,7 +44,7 @@ const CATEGORY_DETAILS: Record<ExpertAvatarRequestCategory, CategoryDetails> = {
   },
   finance: {
     color: "green-300",
-    label: "Finance",
+    labelKey: "team1.category.finance",
     role: "Analyst",
     nameSuggestions: ["Tally", "Vector", "Sigma"],
     jobTitleSuggestions: [
@@ -54,7 +55,7 @@ const CATEGORY_DETAILS: Record<ExpertAvatarRequestCategory, CategoryDetails> = {
   },
   support: {
     color: "rose-300",
-    label: "Support",
+    labelKey: "team1.category.support",
     role: "Support",
     nameSuggestions: ["Remy", "Aide", "Piper"],
     jobTitleSuggestions: [
@@ -65,7 +66,7 @@ const CATEGORY_DETAILS: Record<ExpertAvatarRequestCategory, CategoryDetails> = {
   },
   operations: {
     color: "sky-300",
-    label: "Operations",
+    labelKey: "team1.category.operations",
     role: "Operations",
     nameSuggestions: ["Cadence", "Clockwork", "Scout"],
     jobTitleSuggestions: [
@@ -76,7 +77,7 @@ const CATEGORY_DETAILS: Record<ExpertAvatarRequestCategory, CategoryDetails> = {
   },
   research: {
     color: "lime-300",
-    label: "Research",
+    labelKey: "team1.category.research",
     role: "Researcher",
     nameSuggestions: ["Kepler", "Curie", "Juno"],
     jobTitleSuggestions: [
@@ -87,14 +88,14 @@ const CATEGORY_DETAILS: Record<ExpertAvatarRequestCategory, CategoryDetails> = {
   },
   content: {
     color: "amber-300",
-    label: "Content",
+    labelKey: "team1.category.content",
     role: "Writer",
     nameSuggestions: ["Quill", "Hemingway", "Ink"],
     jobTitleSuggestions: ["Content Writer", "Copywriter", "Technical Writer"],
   },
   development: {
     color: "blue-300",
-    label: "Development",
+    labelKey: "team1.category.development",
     role: "Developer",
     nameSuggestions: ["Ada", "Turing", "Bit"],
     jobTitleSuggestions: [
@@ -123,7 +124,7 @@ const FALLBACK_NAMES = ["Otto", "Nova", "Juno"];
 
 export interface CategoryOption {
   id: ExpertAvatarRequestCategory;
-  label: string;
+  labelKey: MessageKey;
   hex: string;
 }
 
@@ -133,7 +134,7 @@ export const CATEGORY_OPTIONS: CategoryOption[] = Object.values(
   .filter((id) => id !== "general")
   .map((id) => ({
     id,
-    label: CATEGORY_DETAILS[id].label,
+    labelKey: CATEGORY_DETAILS[id].labelKey,
     hex: EXPERT_PALETTE[id].hex,
   }));
 

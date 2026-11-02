@@ -1,6 +1,7 @@
 "use client";
 
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { Forward02Icon } from "@hugeicons/core-free-icons";
 import type { RaiseAttachmentDraft } from "../../helpers";
@@ -12,6 +13,7 @@ interface Props {
 }
 
 export function AttachmentAnswer({ attachments, color }: Props) {
+  const t = useT();
   const skipped = attachments.length === 0;
   return (
     <div
@@ -24,7 +26,7 @@ export function AttachmentAnswer({ attachments, color }: Props) {
       {skipped ? (
         <>
           <Icon icon={Forward02Icon} size={16} aria-hidden />
-          Skipped
+          {t("team1.common.skipped")}
         </>
       ) : (
         attachments.map((attachment) => attachment.name).join(", ")

@@ -1,4 +1,5 @@
 import { render, screen } from "@/tests/integrations/test-utils";
+import { LocaleProvider } from "@/lib/i18n";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, test, vi } from "vitest";
 import { AboutStep } from "./AboutStep";
@@ -88,5 +89,43 @@ describe("AboutStep", () => {
         "How Nova should work, what you care about, anything that helps them sound like yours…",
       ),
     ).toBeDefined();
+  });
+
+  test("words its label, placeholder, buttons and skip note in Vietnamese", () => {
+    const { unmount } = render(
+      <LocaleProvider locale="vi">
+        <AboutStep
+          submittedAbout={null}
+          name="Nova"
+          color={null}
+          onSubmit={vi.fn()}
+          onSkip={vi.fn()}
+        />
+      </LocaleProvider>,
+    );
+    expect(
+      screen.getByRole("textbox", { name: "Điều gì đó về chuyên gia của bạn" }),
+    ).toBeDefined();
+    expect(
+      screen.getByPlaceholderText(
+        "Cách Nova nên làm việc, điều bạn quan tâm, bất cứ gì giúp họ giống bạn hơn…",
+      ),
+    ).toBeDefined();
+    expect(screen.getByRole("button", { name: "Xong" })).toBeDefined();
+    expect(screen.getByRole("button", { name: "Bỏ qua" })).toBeDefined();
+    unmount();
+
+    render(
+      <LocaleProvider locale="vi">
+        <AboutStep
+          submittedAbout=""
+          name="Nova"
+          color="rose-300"
+          onSubmit={vi.fn()}
+          onSkip={vi.fn()}
+        />
+      </LocaleProvider>,
+    );
+    expect(screen.getByText("Đã bỏ qua")).toBeDefined();
   });
 });

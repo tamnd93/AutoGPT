@@ -1,15 +1,17 @@
 "use client";
 
+import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { MAX_SEARCH_RESULTS } from "./helpers";
 
 // Mirrors KitResultRow's geometry so results drop straight into the
 // skeleton's footprint — no reflow when the query resolves.
 export function KitSearchSkeleton() {
+  const t = useT();
   return (
     <div
       role="status"
-      aria-label="Searching"
+      aria-label={t("team1.kit.searching")}
       className="w-full max-w-[42rem] overflow-hidden rounded-2xl border border-border bg-background duration-200 animate-in fade-in motion-reduce:animate-none"
     >
       {Array.from({ length: MAX_SEARCH_RESULTS }, (_, index) => (

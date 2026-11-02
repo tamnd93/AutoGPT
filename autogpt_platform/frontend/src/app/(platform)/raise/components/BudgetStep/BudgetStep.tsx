@@ -5,7 +5,7 @@ import { Icon } from "@/components/atoms/Icon/Icon";
 import { cn } from "@/lib/utils";
 import { Forward02Icon } from "@hugeicons/core-free-icons";
 import { creditsToUsdLabel } from "@/lib/credits";
-import { useLocale } from "@/lib/i18n";
+import { useLocale, useT } from "@/lib/i18n";
 import { kitBudgetLabel } from "../../helpers";
 import { KitBudget } from "../KitStep/KitBudget";
 import { DEFAULT_BUDGET_CREDITS } from "../KitStep/helpers";
@@ -27,6 +27,7 @@ export function BudgetStep({
 }: Props) {
   const budget = useBudgetStep({ onSubmit });
   const locale = useLocale();
+  const t = useT();
 
   if (submittedBudget !== null) {
     return <BudgetAnswer credits={submittedBudget.credits} color={color} />;
@@ -42,9 +43,9 @@ export function BudgetStep({
         onCustomChange={budget.changeCustomAmount}
       />
       <p className="max-w-[42rem] text-right text-xs text-muted-foreground">
-        Skip to use the default{" "}
-        {creditsToUsdLabel(DEFAULT_BUDGET_CREDITS, locale)} a week. $0 disables
-        the weekly limit.
+        {t("team1.budget.hint", {
+          amount: creditsToUsdLabel(DEFAULT_BUDGET_CREDITS, locale),
+        })}
       </p>
       <div className="flex items-center gap-2">
         {budget.canSubmitCustom ? (
@@ -55,7 +56,7 @@ export function BudgetStep({
             onClick={budget.submitCustom}
             className="h-[2.625rem] rounded-xl py-3"
           >
-            {"That's it"}
+            {t("team1.common.thatsIt")}
           </Button>
         ) : null}
         <Button
@@ -65,7 +66,7 @@ export function BudgetStep({
           onClick={onSkip}
           className="h-[2.625rem] rounded-xl py-3"
         >
-          Skip
+          {t("team1.common.skip")}
         </Button>
       </div>
     </div>
@@ -79,6 +80,7 @@ function BudgetAnswer({
   credits: number | null;
   color: string | null;
 }) {
+  const t = useT();
   const locale = useLocale();
   const label = kitBudgetLabel(
     { weeklyBudget: credits, attachments: [] },
@@ -96,7 +98,7 @@ function BudgetAnswer({
       {skipped ? (
         <>
           <Icon icon={Forward02Icon} size={16} aria-hidden />
-          Skipped
+          {t("team1.common.skipped")}
         </>
       ) : (
         label
