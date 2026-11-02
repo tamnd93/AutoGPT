@@ -1,6 +1,7 @@
 import { render, screen, fireEvent } from "@/tests/integrations/test-utils";
 import { beforeEach, describe, expect, it } from "vitest";
 import { useCopilotUIStore } from "../../../store";
+import { LocaleProvider } from "@/lib/i18n";
 import { WorkspaceFilesTrigger } from "../WorkspaceFilesTrigger";
 
 beforeEach(() => {
@@ -24,6 +25,18 @@ describe("WorkspaceFilesTrigger", () => {
     render(<WorkspaceFilesTrigger />);
     expect(
       screen.getByRole("button", { name: /open workspace files/i }),
+    ).toBeDefined();
+  });
+
+  it("names the button in vietnamese", () => {
+    render(
+      <LocaleProvider locale="vi">
+        <WorkspaceFilesTrigger />
+      </LocaleProvider>,
+    );
+
+    expect(
+      screen.getByRole("button", { name: "Mở tệp trong workspace" }),
     ).toBeDefined();
   });
 
