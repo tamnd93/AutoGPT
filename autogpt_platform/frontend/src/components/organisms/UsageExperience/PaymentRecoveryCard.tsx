@@ -3,6 +3,7 @@ import { Icon } from "@/components/atoms/Icon/Icon";
 import { Text } from "@/components/atoms/Text/Text";
 import type { formatPaymentDue } from "@/services/usageExperience/payment";
 import { PaymentDueAction } from "./PaymentDueAction";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   payment: ReturnType<typeof formatPaymentDue>;
@@ -10,9 +11,11 @@ interface Props {
 }
 
 export function PaymentRecoveryCard({ payment, fallback }: Props) {
+  const t = useT();
+
   return (
     <section
-      aria-label="Payment"
+      aria-label={t("billing4.paymentRecovery.aria")}
       data-slot="payment-recovery-card"
       className="w-full rounded-2xl border border-border-base bg-surface p-6 text-left"
     >
@@ -27,7 +30,7 @@ export function PaymentRecoveryCard({ payment, fallback }: Props) {
           <Icon icon={CreditCardIcon} size={17} />
         </span>
         <Text variant="small-medium" tone="secondary">
-          Payment
+          {t("billing4.paymentRecovery.label")}
         </Text>
       </div>
       <Text
@@ -36,7 +39,7 @@ export function PaymentRecoveryCard({ payment, fallback }: Props) {
         // TODO(tokens): SECRT-3152, the 23px size has no role.
         className="mb-3 mt-4 text-[23px] leading-8 tracking-display"
       >
-        Your payment didn’t go through
+        {t("billing4.paymentRecovery.heading")}
       </Text>
       <Text
         variant="small"

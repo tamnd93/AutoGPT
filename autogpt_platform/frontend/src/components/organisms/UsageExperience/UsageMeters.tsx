@@ -1,5 +1,6 @@
 import { cn } from "@/lib/utils";
 import { UsageMeter } from "./UsageMeter";
+import { useT } from "@/lib/i18n";
 
 interface Reading {
   percent_used: number;
@@ -14,13 +15,31 @@ interface Props {
 }
 
 export function UsageMeters({ daily, weekly, trialPercent, className }: Props) {
+  const t = useT();
   const meters =
     trialPercent != null
-      ? [{ label: "Trial allowance", percent: trialPercent }]
+      ? [
+          {
+            label: t("billing4.usageMeters.trialAllowance"),
+            percent: trialPercent,
+          },
+        ]
       : [
-          ...(daily ? [{ label: "Today", percent: daily.percent_used }] : []),
+          ...(daily
+            ? [
+                {
+                  label: t("billing4.usageMeters.today"),
+                  percent: daily.percent_used,
+                },
+              ]
+            : []),
           ...(weekly
-            ? [{ label: "This week", percent: weekly.percent_used }]
+            ? [
+                {
+                  label: t("billing4.usageMeters.thisWeek"),
+                  percent: weekly.percent_used,
+                },
+              ]
             : []),
         ];
   if (meters.length === 0) return null;

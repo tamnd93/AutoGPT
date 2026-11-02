@@ -111,4 +111,11 @@ export const Billing4Vi: Partial<Record<keyof typeof Billing4En, string>> = {
     "Không tìm thấy thanh toán đang xử lý. Bạn có thể bắt đầu lại.",
   "billing4.activation.refreshing":
     "Thanh toán đã được xác nhận. Chúng tôi đang làm mới gói và hạn mức trước khi bạn tiếp tục.",
+
+  "billing4.usageMeters.trialAllowance": "Hạn mức dùng thử",
+  "billing4.usageMeters.today": "Hôm nay",
+  "billing4.usageMeters.thisWeek": "Tuần này",
+  "billing4.paymentRecovery.aria": "Thanh toán",
+  "billing4.paymentRecovery.label": "Thanh toán",
+  "billing4.paymentRecovery.heading": "Thanh toán của bạn không thành công",
 };

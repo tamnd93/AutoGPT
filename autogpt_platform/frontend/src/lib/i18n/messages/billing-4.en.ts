@@ -108,4 +108,11 @@ export const Billing4En = {
     "We couldn’t find a payment in progress. You can start again.",
   "billing4.activation.refreshing":
     "Your payment is confirmed. We’re refreshing your plan and usage before you continue.",
+
+  "billing4.usageMeters.trialAllowance": "Trial allowance",
+  "billing4.usageMeters.today": "Today",
+  "billing4.usageMeters.thisWeek": "This week",
+  "billing4.paymentRecovery.aria": "Payment",
+  "billing4.paymentRecovery.label": "Payment",
+  "billing4.paymentRecovery.heading": "Your payment didn’t go through",
 } as const;
