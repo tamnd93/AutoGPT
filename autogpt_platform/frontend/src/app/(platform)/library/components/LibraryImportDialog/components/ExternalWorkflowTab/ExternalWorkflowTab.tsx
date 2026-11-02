@@ -5,6 +5,7 @@ import { Input } from "@/components/atoms/Input/Input";
 import { LoadingSpinner } from "@/components/atoms/LoadingSpinner/LoadingSpinner";
 import { TabsLineContent } from "@/components/molecules/TabsLine/TabsLine";
 import { useExternalWorkflowTab } from "./useExternalWorkflowTab";
+import { useT } from "@/lib/i18n";
 
 const N8N_EXAMPLES = [
   { label: "Build Your First AI Agent", url: "https://n8n.io/workflows/6270" },
@@ -18,6 +19,7 @@ type ExternalWorkflowTabProps = {
 export default function ExternalWorkflowTab({
   importWorkflow,
 }: ExternalWorkflowTabProps) {
+  const t = useT();
   return (
     <TabsLineContent value="platform">
       <p
@@ -32,7 +34,7 @@ export default function ExternalWorkflowTab({
         value={importWorkflow.fileValue}
         onChange={importWorkflow.setFileValue}
         accept=".json,application/json"
-        placeholder="Workflow file (n8n, Make.com, Zapier, ...)"
+        placeholder={t("library5.external.filePlaceholder")}
         maxFileSize={10 * 1024 * 1024}
         showStorageNote={false}
         className="mb-4 mt-2"
@@ -47,10 +49,10 @@ export default function ExternalWorkflowTab({
         {importWorkflow.submittingMode === "file" ? (
           <div className="flex items-center gap-2">
             <LoadingSpinner size="small" className="text-action-foreground" />
-            <span>Importing...</span>
+            <span>{t("library5.external.importing")}</span>
           </div>
         ) : (
-          "Import to Otto"
+          t("library5.external.importToOtto")
         )}
       </Button>
 
@@ -89,7 +91,7 @@ export default function ExternalWorkflowTab({
         id="template-url"
         value={importWorkflow.urlValue}
         onChange={(e) => importWorkflow.setUrlValue(e.target.value)}
-        label="Workflow URL"
+        label={t("library5.external.url")}
         placeholder="https://n8n.io/workflows/1234"
         className="mb-4 w-full rounded-[10px]"
       />
@@ -103,10 +105,10 @@ export default function ExternalWorkflowTab({
         {importWorkflow.submittingMode === "url" ? (
           <div className="flex items-center gap-2">
             <LoadingSpinner size="small" className="text-action-foreground" />
-            <span>Importing...</span>
+            <span>{t("library5.external.importing")}</span>
           </div>
         ) : (
-          "Import from URL"
+          t("library5.external.importFromUrl")
         )}
       </Button>
     </TabsLineContent>

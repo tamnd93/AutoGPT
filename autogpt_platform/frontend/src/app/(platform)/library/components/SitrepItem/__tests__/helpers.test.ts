@@ -18,6 +18,16 @@ function makeItem(
 }
 
 describe("buildAutoPilotPrompt", () => {
+  it("writes the Otto prompt in Vietnamese when the app is set to Vietnamese", () => {
+    const prompt = buildAutoPilotPrompt(
+      makeItem("error", { message: "Boom at step 3" }),
+      "vi",
+    );
+    expect(prompt).toContain("Weather Bot");
+    expect(prompt).toContain("Boom at step 3");
+    expect(prompt.toLowerCase()).toContain("nhật ký");
+  });
+
   it("asks to investigate logs and quotes the error message", () => {
     const prompt = buildAutoPilotPrompt(
       makeItem("error", { message: "Boom at step 3" }),

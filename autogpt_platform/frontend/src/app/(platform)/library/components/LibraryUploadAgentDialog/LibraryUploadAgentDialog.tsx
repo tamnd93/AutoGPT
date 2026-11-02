@@ -15,6 +15,7 @@ import { z } from "zod";
 import { useLibraryUploadAgentDialog } from "./useLibraryUploadAgentDialog";
 import { Upload03Icon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 
 export const uploadAgentFormSchema = z.object({
   agentFile: z.string().min(1, "Workflow file is required"),
@@ -23,12 +24,13 @@ export const uploadAgentFormSchema = z.object({
 });
 
 export default function LibraryUploadAgentDialog() {
+  const t = useT();
   const { onSubmit, isUploading, isOpen, setIsOpen, form, agentObject } =
     useLibraryUploadAgentDialog();
 
   return (
     <Dialog
-      title="Upload Workflow"
+      title={t("library5.upload.title")}
       styling={{ maxWidth: "30rem" }}
       controlled={{
         isOpen,
@@ -64,7 +66,7 @@ export default function LibraryUploadAgentDialog() {
                   <Input
                     {...field}
                     id={field.name}
-                    label="Workflow name"
+                    label={t("library5.upload.workflowName")}
                     className="w-full rounded-[10px]"
                   />
                 </FormControl>
@@ -82,7 +84,7 @@ export default function LibraryUploadAgentDialog() {
                   <Input
                     {...field}
                     id={field.name}
-                    label="Workflow description"
+                    label={t("library5.upload.workflowDescription")}
                     type="textarea"
                     className="w-full rounded-[10px]"
                   />
@@ -103,7 +105,7 @@ export default function LibraryUploadAgentDialog() {
                     value={field.value}
                     onChange={field.onChange}
                     accept=".json,application/json"
-                    placeholder="Workflow file"
+                    placeholder={t("library5.upload.workflowFile")}
                     maxFileSize={10 * 1024 * 1024}
                     showStorageNote={false}
                     className="mb-8 mt-4"
@@ -126,10 +128,10 @@ export default function LibraryUploadAgentDialog() {
                   size="small"
                   className="text-action-foreground"
                 />
-                <span>Uploading...</span>
+                <span>{t("library5.upload.uploading")}</span>
               </div>
             ) : (
-              "Upload"
+              t("library5.upload.upload")
             )}
           </Button>
         </Form>

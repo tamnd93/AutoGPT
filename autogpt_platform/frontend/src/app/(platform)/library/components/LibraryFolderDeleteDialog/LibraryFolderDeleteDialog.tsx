@@ -11,6 +11,7 @@ import {
 import { getGetV2ListLibraryAgentsQueryKey } from "@/app/api/__generated__/endpoints/library/library";
 import { useQueryClient } from "@tanstack/react-query";
 import type { LibraryFolder } from "@/app/api/__generated__/models/libraryFolder";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   folder: LibraryFolder;
@@ -25,6 +26,7 @@ export function LibraryFolderDeleteDialog({
   setIsOpen,
   onDeleted,
 }: Props) {
+  const t = useT();
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
@@ -38,16 +40,18 @@ export function LibraryFolderDeleteDialog({
           queryKey: getGetV2ListLibraryAgentsQueryKey(),
         });
         toast({
-          title: "Folder deleted",
-          description: `"${folder.name}" has been deleted.`,
+          title: t("library5.folderDelete.deleted"),
+          description: t("library5.folderDelete.deletedBody", {
+            name: folder.name,
+          }),
         });
         setIsOpen(false);
         onDeleted?.();
       },
       onError: () => {
         toast({
-          title: "Error",
-          description: "Failed to delete folder. Please try again.",
+          title: t("library3.common.error"),
+          description: t("library5.folderDelete.failed"),
           variant: "destructive",
         });
       },
@@ -65,13 +69,12 @@ export function LibraryFolderDeleteDialog({
         set: setIsOpen,
       }}
       styling={{ maxWidth: "32rem" }}
-      title="Delete folder"
+      title={t("library5.folderDelete.title")}
     >
       <Dialog.Content>
         <div>
           <Text variant="large">
-            Are you sure you want to delete &ldquo;{folder.name}&rdquo;?
-            Workflows inside this folder will be moved back to your library.
+            {t("library5.folderDelete.body", { name: folder.name })}
           </Text>
           <Dialog.Footer>
             <Button
@@ -86,7 +89,7 @@ export function LibraryFolderDeleteDialog({
               onClick={handleDelete}
               loading={isPending}
             >
-              Delete Folder
+              {t("library5.folderDelete.confirm")}
             </Button>
           </Dialog.Footer>
         </div>

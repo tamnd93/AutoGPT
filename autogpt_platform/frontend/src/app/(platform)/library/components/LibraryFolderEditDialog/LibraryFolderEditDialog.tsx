@@ -27,6 +27,7 @@ import type { LibraryFolder } from "@/app/api/__generated__/models/libraryFolder
 import type { getV2ListLibraryFoldersResponseSuccess } from "@/app/api/__generated__/endpoints/folders/folders";
 import { ApiError } from "@/lib/autogpt-server-api/helpers";
 import { FOLDER_COLORS } from "../folder-constants";
+import { useT, type MessageKey } from "@/lib/i18n";
 
 const LazyEmojiPicker = dynamic(
   () =>
@@ -52,6 +53,7 @@ interface Props {
 }
 
 export function LibraryFolderEditDialog({ folder, isOpen, setIsOpen }: Props) {
+  const t = useT();
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
@@ -124,22 +126,22 @@ export function LibraryFolderEditDialog({ folder, isOpen, setIsOpen }: Props) {
             detail.toLowerCase().includes("already exists")
           ) {
             form.setError("folderName", {
-              message: "A folder with this name already exists",
+              message: t("library5.folderEdit.exists"),
             });
             return;
           }
         }
         toast({
-          title: "Error",
-          description: "Failed to update folder. Please try again.",
+          title: t("library3.common.error"),
+          description: t("library5.folderEdit.failed"),
           variant: "destructive",
         });
       },
       onSuccess: () => {
         setIsOpen(false);
         toast({
-          title: "Folder updated",
-          description: "Your folder has been updated successfully.",
+          title: t("library5.folderEdit.updated"),
+          description: t("library5.folderEdit.updatedBody"),
         });
       },
       onSettled: () => {
@@ -163,7 +165,7 @@ export function LibraryFolderEditDialog({ folder, isOpen, setIsOpen }: Props) {
 
   return (
     <Dialog
-      title="Edit Folder"
+      title={t("library5.folderEdit.title")}
       styling={{ maxWidth: "30rem" }}
       controlled={{
         isOpen,
@@ -185,8 +187,8 @@ export function LibraryFolderEditDialog({ folder, isOpen, setIsOpen }: Props) {
                   <Input
                     {...field}
                     id={field.name}
-                    label="Folder name"
-                    placeholder="Enter folder name"
+                    label={t("library5.folderCreate.name")}
+                    placeholder={t("library5.folderCreate.namePlaceholder")}
                     className="w-full"
                     wrapperClassName="!mb-0"
                   />
@@ -204,14 +206,14 @@ export function LibraryFolderEditDialog({ folder, isOpen, setIsOpen }: Props) {
                 <FormControl>
                   <Select
                     id="folderColor"
-                    label="Folder color"
-                    placeholder="Select a color"
+                    label={t("library5.folderCreate.color")}
+                    placeholder={t("library5.folderCreate.colorPlaceholder")}
                     value={field.value}
                     onValueChange={field.onChange}
                     wrapperClassName="!mb-0"
                     options={FOLDER_COLORS.map((color) => ({
                       value: color.value,
-                      label: color.label,
+                      label: t(color.label as MessageKey),
                       icon: (
                         <div
                           className="h-4 w-4 rounded-full"

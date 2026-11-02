@@ -12,12 +12,14 @@ import {
 } from "@/components/molecules/Form/Form";
 import { TabsLineContent } from "@/components/molecules/TabsLine/TabsLine";
 import { useLibraryUploadAgentDialog } from "../../../LibraryUploadAgentDialog/useLibraryUploadAgentDialog";
+import { useT } from "@/lib/i18n";
 
 type AgentUploadTabProps = {
   upload: ReturnType<typeof useLibraryUploadAgentDialog>;
 };
 
 export default function AgentUploadTab({ upload }: AgentUploadTabProps) {
+  const t = useT();
   return (
     <TabsLineContent value="agent">
       <p
@@ -40,7 +42,7 @@ export default function AgentUploadTab({ upload }: AgentUploadTabProps) {
                 <Input
                   {...field}
                   id={field.name}
-                  label="Workflow name"
+                  label={t("library5.upload.workflowName")}
                   className="w-full rounded-[10px]"
                 />
               </FormControl>
@@ -57,7 +59,7 @@ export default function AgentUploadTab({ upload }: AgentUploadTabProps) {
                 <Input
                   {...field}
                   id={field.name}
-                  label="Workflow description"
+                  label={t("library5.upload.workflowDescription")}
                   type="textarea"
                   className="w-full rounded-[10px]"
                 />
@@ -77,7 +79,7 @@ export default function AgentUploadTab({ upload }: AgentUploadTabProps) {
                   value={field.value}
                   onChange={field.onChange}
                   accept=".json,application/json"
-                  placeholder="Workflow file"
+                  placeholder={t("library5.upload.workflowFile")}
                   maxFileSize={10 * 1024 * 1024}
                   showStorageNote={false}
                   className="mb-8 mt-4"
@@ -96,10 +98,10 @@ export default function AgentUploadTab({ upload }: AgentUploadTabProps) {
           {upload.isUploading ? (
             <div className="flex items-center gap-2">
               <LoadingSpinner size="small" className="text-action-foreground" />
-              <span>Uploading...</span>
+              <span>{t("library5.upload.uploading")}</span>
             </div>
           ) : (
-            "Upload"
+            t("library5.upload.upload")
           )}
         </Button>
       </Form>

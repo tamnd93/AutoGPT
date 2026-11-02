@@ -2,37 +2,38 @@
 
 import { cn } from "@/lib/utils";
 import type { AgentStatus } from "../../types";
+import { useT, type MessageKey } from "@/lib/i18n";
 
 const STATUS_CONFIG: Record<
   AgentStatus,
   { label: string; bg: string; text: string; pulse: boolean }
 > = {
   running: {
-    label: "Running",
+    label: "library5.status.running",
     bg: "",
     text: "text-info-foreground",
     pulse: true,
   },
   error: {
-    label: "Error",
+    label: "library3.common.error",
     bg: "",
     text: "text-error",
     pulse: false,
   },
   listening: {
-    label: "Listening",
+    label: "library5.status.listening",
     bg: "",
     text: "text-brand",
     pulse: true,
   },
   scheduled: {
-    label: "Scheduled",
+    label: "library4.stats.scheduled",
     bg: "",
     text: "text-yellow-600",
     pulse: false,
   },
   idle: {
-    label: "Idle",
+    label: "library4.stats.idle",
     bg: "",
     text: "text-foreground-tertiary",
     pulse: false,
@@ -45,6 +46,7 @@ interface Props {
 }
 
 export function StatusBadge({ status, className }: Props) {
+  const t = useT();
   const config = STATUS_CONFIG[status];
 
   return (
@@ -63,7 +65,7 @@ export function StatusBadge({ status, className }: Props) {
           statusDotColor(status),
         )}
       />
-      {config.label}
+      {t(config.label as MessageKey)}
     </span>
   );
 }

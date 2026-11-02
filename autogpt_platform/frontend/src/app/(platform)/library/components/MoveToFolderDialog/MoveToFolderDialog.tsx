@@ -15,6 +15,7 @@ import { okData } from "@/app/api/helpers";
 import { useQueryClient } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import type { LibraryFolder } from "@/app/api/__generated__/models/libraryFolder";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   agentId: string;
@@ -31,6 +32,7 @@ export function MoveToFolderDialog({
   isOpen,
   setIsOpen,
 }: Props) {
+  const t = useT();
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const [search, setSearch] = useState("");
@@ -51,14 +53,14 @@ export function MoveToFolderDialog({
         setIsOpen(false);
         setSearch("");
         toast({
-          title: "Workflow moved",
+          title: t("library5.move.moved"),
           description: `"${agentName}" has been moved.`,
         });
       },
       onError: () => {
         toast({
-          title: "Error",
-          description: "Failed to move workflow. Please try again.",
+          title: t("library3.common.error"),
+          description: t("library4.libraryList.moveFailed"),
           variant: "destructive",
         });
       },
@@ -101,7 +103,7 @@ export function MoveToFolderDialog({
     <Dialog
       controlled={{ isOpen, set: setIsOpen }}
       styling={{ maxWidth: "28rem" }}
-      title="Move to folder"
+      title={t("library5.move.title")}
       onClose={() => {
         setSearch("");
       }}
@@ -110,8 +112,8 @@ export function MoveToFolderDialog({
         <div className="flex flex-col gap-3">
           <Input
             id="search-folders"
-            label="Search folders"
-            placeholder="Search folders..."
+            label={t("library5.move.search")}
+            placeholder={t("library5.move.searchPlaceholder")}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full"

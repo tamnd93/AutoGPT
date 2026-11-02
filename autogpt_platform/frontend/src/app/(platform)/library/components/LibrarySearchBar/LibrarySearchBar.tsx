@@ -4,12 +4,14 @@ import { Input } from "@/components/atoms/Input/Input";
 import { useLibrarySearchbar } from "./useLibrarySearchbar";
 import { Search01Icon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   setSearchTerm: (value: string) => void;
 }
 
 export function LibrarySearchBar({ setSearchTerm }: Props) {
+  const t = useT();
   const { handleSearchInput } = useLibrarySearchbar({ setSearchTerm });
 
   return (
@@ -25,14 +27,14 @@ export function LibrarySearchBar({ setSearchTerm }: Props) {
       />
 
       <Input
-        label="Search workflows"
+        label={t("library5.search.label")}
         id="library-search-bar"
         hideLabel
         onChange={handleSearchInput}
         className="min-w-[18rem] pl-12 lg:min-w-[30rem]"
         type="text"
         data-testid="library-textbox"
-        placeholder="Search workflows"
+        placeholder={t("library5.search.placeholder")}
       />
     </div>
   );

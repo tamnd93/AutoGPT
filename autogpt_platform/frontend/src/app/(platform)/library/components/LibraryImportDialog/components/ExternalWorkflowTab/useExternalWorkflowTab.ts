@@ -3,10 +3,11 @@ import { uploadFileDirect } from "@/lib/direct-upload";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { fetchWorkflowFromUrl } from "./fetchWorkflowFromUrl";
+import { useT } from "@/lib/i18n";
 
-function decodeBase64Json(dataUrl: string): string {
+function decodeBase64Json(dataUrl: string, message: string): string {
   const match = dataUrl.match(/^data:[^;]+;base64,(.+)$/);
-  if (!match) throw new Error("Could not read the uploaded file.");
+  if (!match) throw new Error(message);
   const binary = atob(match[1]);
   const bytes = Uint8Array.from(binary, (c) => c.charCodeAt(0));
   const json = new TextDecoder().decode(bytes);
@@ -33,16 +34,15 @@ async function uploadJsonAsFile(
 function storeAndRedirect(
   fileInfo: { fileId: string; fileName: string; mimeType: string },
   router: ReturnType<typeof useRouter>,
+  prompt: string,
 ) {
-  sessionStorage.setItem(
-    "importWorkflowPrompt",
-    "Import this workflow and recreate it as an AutoGPT workflow",
-  );
+  sessionStorage.setItem("importWorkflowPrompt", prompt);
   sessionStorage.setItem("importWorkflowFile", JSON.stringify(fileInfo));
   router.push("/copilot?source=import&autosubmit=true");
 }
 
 export function useExternalWorkflowTab() {
+  const t = useT();
   const { toast } = useToast();
   const router = useRouter();
   const [fileValue, setFileValue] = useState("");
@@ -57,12 +57,18 @@ export function useExternalWorkflowTab() {
     try {
       const jsonString = await resolveJson(mode);
       if (!jsonString) return;
-      storeAndRedirect(await uploadJsonAsFile(jsonString), router);
+      storeAndRedirect(
+        await uploadJsonAsFile(jsonString),
+        router,
+        t("library5.external.promptImport"),
+      );
     } catch (err) {
       toast({
-        title: "Upload failed",
+        title: t("library5.external.uploadFailed"),
         description:
-          err instanceof Error ? err.message : "Could not upload the file.",
+          err instanceof Error
+            ? err.message
+            : t("library5.external.couldNotUpload"),
         variant: "destructive",
       });
     } finally {
@@ -75,7 +81,7 @@ export function useExternalWorkflowTab() {
       const result = await fetchWorkflowFromUrl(urlValue);
       if (!result.ok) {
         toast({
-          title: "Could not fetch workflow",
+          title: t("library5.external.couldNotFetch"),
           description: result.error,
           variant: "destructive",
         });
@@ -86,16 +92,21 @@ export function useExternalWorkflowTab() {
     }
 
     try {
-      const json = decodeBase64Json(fileValue);
+      const json = decodeBase64Json(
+        fileValue,
+        t("library5.external.couldNotRead"),
+      );
       setFileValue("");
       return json;
     } catch (err) {
       const isParseError = err instanceof SyntaxError;
       toast({
-        title: isParseError ? "Invalid JSON" : "Invalid file",
+        title: isParseError
+          ? t("library5.external.invalidJson")
+          : t("library5.external.invalidFile"),
         description: isParseError
-          ? "The uploaded file is not valid JSON."
-          : "Could not read the uploaded file.",
+          ? t("library5.external.invalidJsonBody")
+          : t("library5.external.couldNotRead"),
         variant: "destructive",
       });
       return null;

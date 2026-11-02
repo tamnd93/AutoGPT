@@ -18,6 +18,7 @@ import { library1En } from "./library-1.en";
 import { library2En } from "./library-2.en";
 import { library3En } from "./library-3.en";
 import { library4En } from "./library-4.en";
+import { library5En } from "./library-5.en";
 import { marketplace1En } from "./marketplace-1.en";
 import { marketplace2En } from "./marketplace-2.en";
 import { marketplace3En } from "./marketplace-3.en";
@@ -53,6 +54,7 @@ export const en = {
   ...library2En,
   ...library3En,
   ...library4En,
+  ...library5En,
   ...marketplace1En,
   ...marketplace2En,
   ...marketplace3En,

@@ -25,6 +25,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { FOLDER_COLORS } from "../folder-constants";
 import { Folder01Icon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT, type MessageKey } from "@/lib/i18n";
 
 const LazyEmojiPicker = dynamic(
   () =>
@@ -44,6 +45,7 @@ export const libraryFolderCreationFormSchema = z.object({
 });
 
 export default function LibraryFolderCreationDialog() {
+  const t = useT();
   const [isOpen, setIsOpen] = useState(false);
   const queryClient = useQueryClient();
   const { toast } = useToast();
@@ -57,14 +59,14 @@ export default function LibraryFolderCreationDialog() {
         setIsOpen(false);
         form.reset();
         toast({
-          title: "Folder created",
-          description: "Your folder has been created successfully.",
+          title: t("library5.folderCreate.created"),
+          description: t("library5.folderCreate.createdBody"),
         });
       },
       onError: () => {
         toast({
-          title: "Error",
-          description: "Failed to create folder. Please try again.",
+          title: t("library3.common.error"),
+          description: t("library5.folderCreate.failed"),
           variant: "destructive",
         });
       },
@@ -92,7 +94,7 @@ export default function LibraryFolderCreationDialog() {
 
   return (
     <Dialog
-      title="Create Folder"
+      title={t("library5.folderCreate.title")}
       styling={{ maxWidth: "30rem" }}
       controlled={{
         isOpen,
@@ -128,8 +130,8 @@ export default function LibraryFolderCreationDialog() {
                   <Input
                     {...field}
                     id={field.name}
-                    label="Folder name"
-                    placeholder="Enter folder name"
+                    label={t("library5.folderCreate.name")}
+                    placeholder={t("library5.folderCreate.namePlaceholder")}
                     className="!mb-0 w-full"
                     wrapperClassName="!mb-0"
                   />
@@ -147,13 +149,13 @@ export default function LibraryFolderCreationDialog() {
                 <FormControl>
                   <Select
                     id="folderColor"
-                    label="Folder color"
-                    placeholder="Select a color"
+                    label={t("library5.folderCreate.color")}
+                    placeholder={t("library5.folderCreate.colorPlaceholder")}
                     value={field.value}
                     onValueChange={field.onChange}
                     options={FOLDER_COLORS.map((color) => ({
                       value: color.value,
-                      label: color.label,
+                      label: t(color.label as MessageKey),
                       icon: (
                         <div
                           className="h-4 w-4 rounded-full"

@@ -8,10 +8,12 @@ import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { uploadAgentFormSchema } from "./LibraryUploadAgentDialog";
+import { useT } from "@/lib/i18n";
 
 export function useLibraryUploadAgentDialog(options?: {
   onSuccess?: () => void;
 }) {
+  const t = useT();
   const [isOpen, setIsOpen] = useState(false);
   const { toast } = useToast();
   const [agentObject, setAgentObject] = useState<Graph | null>(null);
@@ -23,8 +25,8 @@ export function useLibraryUploadAgentDialog(options?: {
           setIsOpen(false);
           options?.onSuccess?.();
           toast({
-            title: "Success",
-            description: "Workflow uploaded successfully",
+            title: t("library5.upload.successTitle"),
+            description: t("library5.upload.successBody"),
             variant: "default",
           });
           const qID = "flowID";
@@ -32,8 +34,8 @@ export function useLibraryUploadAgentDialog(options?: {
         },
         onError: () => {
           toast({
-            title: "Error",
-            description: "Error Uploading workflow",
+            title: t("library3.common.error"),
+            description: t("library5.upload.errorUploading"),
             variant: "destructive",
           });
         },
@@ -119,7 +121,7 @@ export function useLibraryUploadAgentDialog(options?: {
 
   async function onSubmit(values: z.infer<typeof uploadAgentFormSchema>) {
     if (!agentObject) {
-      form.setError("root", { message: "No workflow object to save" });
+      form.setError("root", { message: t("library5.upload.noWorkflow") });
       return;
     }
 
