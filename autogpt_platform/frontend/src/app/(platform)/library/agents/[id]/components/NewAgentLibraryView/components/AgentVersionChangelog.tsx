@@ -8,6 +8,7 @@ import { LibraryAgent } from "@/app/api/__generated__/models/libraryAgent";
 import { okData } from "@/app/api/helpers";
 import type { StoreAgentDetails } from "@/app/api/__generated__/models/storeAgentDetails";
 import React from "react";
+import { useT } from "@/lib/i18n";
 
 interface AgentVersionChangelogProps {
   agent: LibraryAgent;
@@ -25,6 +26,7 @@ export function AgentVersionChangelog({
   isOpen,
   onClose,
 }: AgentVersionChangelogProps) {
+  const t = useT();
   // Get marketplace data if agent has marketplace listing
   const { data: storeAgentData, isLoading } = useGetV2GetSpecificAgent(
     agent?.marketplace_listing?.creator.slug || "",
@@ -74,7 +76,7 @@ export function AgentVersionChangelog({
                 // TODO(tokens): no exact role for bg-blue-100 (#DBEAFE), text-blue-800 (#1E40AF); no dark roles yet for dark:bg-blue-900 (#1E3A8A), dark:text-blue-100 (#DBEAFE)
                 className="rounded-full bg-blue-100 px-2 py-1 text-blue-800 dark:bg-blue-900 dark:text-blue-100"
               >
-                Current
+                {t("library1.changelog.current")}
               </Text>
             )}
           </div>
@@ -85,7 +87,7 @@ export function AgentVersionChangelog({
           // TODO(tokens): no exact role for text-neutral-600 (#525252); no dark roles yet for dark:text-neutral-400 (#A3A3A3)
           className="mt-1 text-neutral-600 dark:text-neutral-400"
         >
-          Available marketplace version
+          {t("library1.changelog.available")}
         </Text>
       </div>
     );
@@ -93,7 +95,7 @@ export function AgentVersionChangelog({
 
   return (
     <Dialog
-      title={`Version History - ${agent.name}`}
+      title={t("library1.changelog.title", { name: agent.name })}
       styling={{
         maxWidth: "45rem",
       }}
@@ -122,8 +124,7 @@ export function AgentVersionChangelog({
                 // TODO(tokens): no exact role for text-neutral-600 (#525252); no dark roles yet for dark:text-neutral-400 (#A3A3A3)
                 className="text-neutral-600 dark:text-neutral-400"
               >
-                View changes and updates across different versions of this
-                workflow.
+                {t("library1.changelog.body")}
               </Text>
               {agentVersions.map(renderVersionItem)}
             </div>
@@ -134,7 +135,7 @@ export function AgentVersionChangelog({
                 // TODO(tokens): no exact role for text-neutral-600 (#525252); no dark roles yet for dark:text-neutral-400 (#A3A3A3)
                 className="text-neutral-600 dark:text-neutral-400"
               >
-                No version history available for this workflow.
+                {t("library1.changelog.empty")}
               </Text>
             </div>
           )}

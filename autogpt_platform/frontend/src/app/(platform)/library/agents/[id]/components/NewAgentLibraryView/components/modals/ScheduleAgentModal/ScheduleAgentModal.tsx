@@ -7,6 +7,7 @@ import { LibraryAgent } from "@/app/api/__generated__/models/libraryAgent";
 import { ModalScheduleSection } from "./components/ModalScheduleSection/ModalScheduleSection";
 import { useScheduleAgentModal } from "./useScheduleAgentModal";
 import { GraphExecutionJobInfo } from "@/app/api/__generated__/models/graphExecutionJobInfo";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   isOpen: boolean;
@@ -25,6 +26,7 @@ export function ScheduleAgentModal({
   inputCredentials,
   onScheduleCreated,
 }: Props) {
+  const t = useT();
   const [isScheduleFormValid, setIsScheduleFormValid] = useState(true);
 
   const {
@@ -63,7 +65,7 @@ export function ScheduleAgentModal({
 
   return (
     <Dialog
-      title="Schedule Run"
+      title={t("library1.schedule.title")}
       controlled={{ isOpen, set: handleClose }}
       styling={{ maxWidth: "600px", maxHeight: "90vh" }}
     >
@@ -88,7 +90,7 @@ export function ScheduleAgentModal({
               onClick={handleClose}
               disabled={isCreatingSchedule}
             >
-              Cancel
+              {t("library1.schedule.cancel")}
             </Button>
             <Button
               variant="primary"
@@ -96,7 +98,7 @@ export function ScheduleAgentModal({
               loading={isCreatingSchedule}
               disabled={!canSchedule}
             >
-              Schedule
+              {t("library1.schedule.schedule")}
             </Button>
           </div>
         </div>

@@ -2,6 +2,7 @@
 
 import React from "react";
 import { Select } from "@/components/atoms/Select/Select";
+import { useT } from "@/lib/i18n";
 
 type CronFrequency =
   | "hourly"
@@ -23,28 +24,30 @@ export function FrequencySelect({
   selectedMinute: string;
   onMinuteChange: (v: string) => void;
 }) {
+  const t = useT();
+
   return (
     <>
       <Select
         id="repeat"
-        label="Repeats"
+        label={t("library1.cron.repeats")}
         size="small"
         value={value}
         onValueChange={(v) => onChange(v as CronFrequency)}
         options={[
-          { label: "Every Hour", value: "hourly" },
-          { label: "Daily", value: "daily" },
-          { label: "Weekly", value: "weekly" },
-          { label: "Monthly", value: "monthly" },
-          { label: "Yearly", value: "yearly" },
-          { label: "Custom", value: "custom" },
+          { label: t("library1.cron.everyHour"), value: "hourly" },
+          { label: t("library1.cron.daily"), value: "daily" },
+          { label: t("library1.cron.weekly"), value: "weekly" },
+          { label: t("library1.cron.monthly"), value: "monthly" },
+          { label: t("library1.cron.yearly"), value: "yearly" },
+          { label: t("library1.cron.custom"), value: "custom" },
         ]}
         className="max-w-80"
       />
       {value === "hourly" && (
         <Select
           id="at-minute"
-          label="At minute"
+          label={t("library1.cron.atMinute")}
           size="small"
           value={selectedMinute}
           onValueChange={(v) => onMinuteChange(v)}

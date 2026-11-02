@@ -9,6 +9,7 @@ import { formatEn } from "./format.en";
 import { home1En } from "./home-1.en";
 import { home2En } from "./home-2.en";
 import { integrationsEn } from "./integrations.en";
+import { library1En } from "./library-1.en";
 import { marketplace1En } from "./marketplace-1.en";
 import { marketplace2En } from "./marketplace-2.en";
 import { marketplace3En } from "./marketplace-3.en";
@@ -33,6 +34,7 @@ export const en = {
   ...home1En,
   ...home2En,
   ...integrationsEn,
+  ...library1En,
   ...marketplace1En,
   ...marketplace2En,
   ...marketplace3En,

@@ -23,6 +23,7 @@ import {
 } from "react";
 import { getSystemCredentials } from "../../../../../../../../../../components/contextual/CredentialsInput/helpers";
 import { showExecutionErrorToast } from "./errorHelpers";
+import { useLocale, useT } from "@/lib/i18n";
 
 export type RunVariant =
   | "manual"
@@ -42,6 +43,8 @@ export function useAgentRunModal(
   callbacks?: UseAgentRunModalCallbacks,
 ) {
   const { toast } = useToast();
+  const t = useT();
+  const locale = useLocale();
   const queryClient = useQueryClient();
   const [isOpen, setIsOpen] = useState(false);
   const [inputValues, setInputValues] = useState<Record<string, any>>(
@@ -159,7 +162,7 @@ export function useAgentRunModal(
       onSuccess: (response) => {
         if (response.status === 200) {
           toast({
-            title: "Workflow execution started",
+            title: t("library1.toast.executionStarted"),
           });
           queryClient.invalidateQueries({
             queryKey: getGetV1ListGraphExecutionsQueryKey(agent.graph_id),
@@ -169,10 +172,15 @@ export function useAgentRunModal(
         }
       },
       onError: (error: any) => {
-        showExecutionErrorToast(toast, error, {
-          graph_id: agent.graph_id,
-          graph_version: agent.graph_version,
-        });
+        showExecutionErrorToast(
+          toast,
+          error,
+          {
+            graph_id: agent.graph_id,
+            graph_version: agent.graph_version,
+          },
+          locale,
+        );
       },
     },
   });
@@ -182,7 +190,7 @@ export function useAgentRunModal(
       onSuccess: (response) => {
         if (response.status === 200) {
           toast({
-            title: "Trigger setup complete",
+            title: t("library1.toast.triggerComplete"),
           });
           queryClient.invalidateQueries({
             queryKey: getGetV2ListPresetsQueryKey({ graph_id: agent.graph_id }),
@@ -193,8 +201,8 @@ export function useAgentRunModal(
       },
       onError: (error: any) => {
         toast({
-          title: "❌ Failed to setup trigger",
-          description: error.message || "An unexpected error occurred.",
+          title: t("library1.toast.triggerFailed"),
+          description: error.message || t("library1.error.unexpected"),
           variant: "destructive",
         });
       },
@@ -285,8 +293,10 @@ export function useAgentRunModal(
     );
 
     toast({
-      title: "⚠️ Missing required inputs",
-      description: `Please provide: ${allMissingFields.map((k) => `"${k}"`).join(", ")}`,
+      title: t("library1.toast.missingInputs"),
+      description: t("library1.toast.provideFields", {
+        fields: allMissingFields.map((k) => `"${k}"`).join(", "),
+      }),
       variant: "destructive",
     });
   }, [
@@ -310,8 +320,8 @@ export function useAgentRunModal(
     ) {
       if (!presetName.trim()) {
         toast({
-          title: "⚠️ Trigger name required",
-          description: "Please provide a name for your trigger.",
+          title: t("library1.toast.triggerNameRequired"),
+          description: t("library1.toast.triggerNameBody"),
           variant: "destructive",
         });
         return;
@@ -320,7 +330,11 @@ export function useAgentRunModal(
       setupTriggerMutation.mutate({
         data: {
           name: presetName,
-          description: presetDescription || `Trigger for ${agent.name}`,
+          description:
+            presetDescription ||
+            t("library1.toast.defaultTriggerDescription", {
+              name: agent.name,
+            }),
           graph_id: agent.graph_id,
           graph_version: agent.graph_version,
           trigger_config: inputValues,

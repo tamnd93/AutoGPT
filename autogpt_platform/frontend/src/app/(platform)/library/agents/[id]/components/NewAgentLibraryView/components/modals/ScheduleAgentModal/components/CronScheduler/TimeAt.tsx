@@ -2,16 +2,19 @@
 
 import React, { useEffect, useMemo, useState } from "react";
 import { Select } from "@/components/atoms/Select/Select";
+import { useT } from "@/lib/i18n";
 
 export function TimeAt({
   value,
   onChange,
-  label = "At",
+  label,
 }: {
   value: string;
   onChange: (v: string) => void;
   label?: string;
 }) {
+  const t = useT();
+  const resolvedLabel = label ?? t("library1.cron.at");
   const [hour12, setHour12] = useState<string>("9");
   const [minute, setMinute] = useState<string>("00");
   const [ampm, setAmPm] = useState<"AM" | "PM">("AM");
@@ -56,7 +59,7 @@ export function TimeAt({
     <div className="flex items-end gap-1">
       <div className="relative">
         <label className="mb-0 block text-sm font-medium text-foreground-body">
-          {label}
+          {resolvedLabel}
         </label>
         <div className="flex items-center gap-2">
           <Select

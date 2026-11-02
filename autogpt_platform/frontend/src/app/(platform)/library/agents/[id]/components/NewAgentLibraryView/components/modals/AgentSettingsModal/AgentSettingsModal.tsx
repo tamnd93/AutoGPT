@@ -9,6 +9,7 @@ import { useAgentSafeMode } from "@/hooks/useAgentSafeMode";
 import { useState } from "react";
 import { Settings01Icon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   agent: LibraryAgent;
@@ -21,6 +22,7 @@ export function AgentSettingsModal({
   controlledOpen,
   onOpenChange,
 }: Props) {
+  const t = useT();
   const [internalIsOpen, setInternalIsOpen] = useState(false);
   const isOpen = controlledOpen !== undefined ? controlledOpen : internalIsOpen;
 
@@ -49,7 +51,7 @@ export function AgentSettingsModal({
     <Dialog
       controlled={{ isOpen, set: setIsOpen }}
       styling={{ maxWidth: "600px", maxHeight: "90vh" }}
-      title="Workflow Settings"
+      title={t("library1.settings.title")}
     >
       {controlledOpen === undefined && (
         <Dialog.Trigger>
@@ -57,14 +59,14 @@ export function AgentSettingsModal({
             variant="ghost"
             size="small"
             className="m-0 min-w-0 rounded-full p-0 px-1"
-            aria-label="Workflow Settings"
+            aria-label={t("library1.settings.title")}
           >
             <Icon
               icon={Settings01Icon}
               size={18}
               className="text-foreground-secondary"
             />
-            <Text variant="small">Workflow Settings</Text>
+            <Text variant="small">{t("library1.settings.title")}</Text>
           </Button>
         </Dialog.Trigger>
       )}
@@ -75,11 +77,10 @@ export function AgentSettingsModal({
               <div className="flex w-full items-start justify-between gap-4">
                 <div className="flex-1">
                   <Text variant="large-semibold">
-                    Human-in-the-loop approval
+                    {t("library1.settings.hitl")}
                   </Text>
                   <Text variant="large" className="mt-1 text-foreground-strong">
-                    The workflow will pause at human-in-the-loop blocks and wait
-                    for your review before continuing
+                    {t("library1.settings.hitlBody")}
                   </Text>
                 </div>
                 <Switch
@@ -96,11 +97,10 @@ export function AgentSettingsModal({
               <div className="flex w-full items-start justify-between gap-4">
                 <div className="flex-1">
                   <Text variant="large-semibold">
-                    Sensitive action approval
+                    {t("library1.settings.sensitive")}
                   </Text>
                   <Text variant="large" className="mt-1 text-foreground-strong">
-                    The workflow will pause at sensitive action blocks and wait
-                    for your review before continuing
+                    {t("library1.settings.sensitiveBody")}
                   </Text>
                 </div>
                 <Switch

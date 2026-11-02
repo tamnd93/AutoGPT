@@ -7,6 +7,7 @@ import { Key, storage } from "@/services/storage/local-storage";
 import { useCallback, useEffect, useState } from "react";
 import { SecurityCheckIcon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   agentId: string;
@@ -15,6 +16,7 @@ interface Props {
 }
 
 export function AIAgentSafetyPopup({ agentId, onAcknowledge, isOpen }: Props) {
+  const t = useT();
   function handleAcknowledge() {
     // Add this agent to the list of agents for which popup has been shown
     const seenAgentsJson = storage.get(Key.AI_AGENT_SAFETY_POPUP_SHOWN);
@@ -34,7 +36,7 @@ export function AIAgentSafetyPopup({ agentId, onAcknowledge, isOpen }: Props) {
 
   return (
     <Dialog
-      title="Safety Checks"
+      title={t("library1.safety.title")}
       controlled={{ isOpen, set: () => {} }}
       styling={{ maxWidth: "480px" }}
     >
@@ -49,18 +51,15 @@ export function AIAgentSafetyPopup({ agentId, onAcknowledge, isOpen }: Props) {
           </div>
 
           <Text variant="h3" className="mb-4">
-            Safety Checks Enabled
+            {t("library1.safety.heading")}
           </Text>
 
           <Text variant="body" className="mb-2 text-foreground-body">
-            AI-generated workflows may take actions that affect your data or
-            external systems.
+            {t("library1.safety.body1")}
           </Text>
 
           <Text variant="body" className="mb-8 text-foreground-body">
-            AutoGPT includes safety checks so you&apos;ll always have the
-            opportunity to review and approve sensitive actions before they
-            happen.
+            {t("library1.safety.body2")}
           </Text>
 
           <Button
@@ -69,7 +68,7 @@ export function AIAgentSafetyPopup({ agentId, onAcknowledge, isOpen }: Props) {
             className="w-full"
             onClick={handleAcknowledge}
           >
-            Got it
+            {t("library1.safety.gotIt")}
           </Button>
         </div>
       </Dialog.Content>

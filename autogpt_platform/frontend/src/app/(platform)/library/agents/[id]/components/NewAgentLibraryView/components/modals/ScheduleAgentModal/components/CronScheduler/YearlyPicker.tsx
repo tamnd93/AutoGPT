@@ -3,21 +3,7 @@
 import React from "react";
 import { Text } from "@/components/atoms/Text/Text";
 import { MultiToggle } from "@/components/molecules/MultiToggle/MultiToggle";
-
-const months = [
-  { label: "Jan", value: 1 },
-  { label: "Feb", value: 2 },
-  { label: "Mar", value: 3 },
-  { label: "Apr", value: 4 },
-  { label: "May", value: 5 },
-  { label: "Jun", value: 6 },
-  { label: "Jul", value: 7 },
-  { label: "Aug", value: 8 },
-  { label: "Sep", value: 9 },
-  { label: "Oct", value: 10 },
-  { label: "Nov", value: 11 },
-  { label: "Dec", value: 12 },
-];
+import { useT } from "@/lib/i18n";
 
 export function YearlyPicker({
   values,
@@ -26,6 +12,22 @@ export function YearlyPicker({
   values: number[];
   onChange: (v: number[]) => void;
 }) {
+  const t = useT();
+  const months = [
+    t("library1.yearly.jan"),
+    t("library1.yearly.feb"),
+    t("library1.yearly.mar"),
+    t("library1.yearly.apr"),
+    t("library1.yearly.may"),
+    t("library1.yearly.jun"),
+    t("library1.yearly.jul"),
+    t("library1.yearly.aug"),
+    t("library1.yearly.sep"),
+    t("library1.yearly.oct"),
+    t("library1.yearly.nov"),
+    t("library1.yearly.dec"),
+  ].map((label, index) => ({ label, value: index + 1 }));
+
   function toggleAll() {
     if (values.length === months.length) onChange([]);
     else onChange(months.map((m) => m.value));
@@ -36,7 +38,7 @@ export function YearlyPicker({
   return (
     <div className="mb-6 space-y-2">
       <Text variant="body-medium" as="span" className="text-foreground-base">
-        Months
+        {t("library1.yearly.months")}
       </Text>
       <div className="flex gap-2">
         <button
@@ -45,14 +47,16 @@ export function YearlyPicker({
           className="h-[2.25rem] rounded-full border border-zinc-700 px-4 py-2 text-sm font-medium leading-4 text-foreground-base hover:bg-surface-hover"
           onClick={toggleAll}
         >
-          {values.length === months.length ? "Deselect All" : "Select All"}
+          {values.length === months.length
+            ? t("library1.yearly.deselectAll")
+            : t("library1.yearly.selectAll")}
         </button>
       </div>
       <MultiToggle
         items={items}
         selectedValues={selected}
         onChange={(sv) => onChange(sv.map((s) => parseInt(s)))}
-        aria-label="Select months"
+        aria-label={t("library1.yearly.selectMonthsAria")}
       />
     </div>
   );

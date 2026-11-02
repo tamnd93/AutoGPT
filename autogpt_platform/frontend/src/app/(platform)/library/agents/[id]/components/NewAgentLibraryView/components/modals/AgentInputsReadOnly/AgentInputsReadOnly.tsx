@@ -6,6 +6,7 @@ import { CredentialsInput } from "@/components/contextual/CredentialsInput/Crede
 import { isSystemCredential } from "@/components/contextual/CredentialsInput/helpers";
 import type { CredentialsMetaInput } from "@/lib/autogpt-server-api/types";
 import { RunAgentInputs } from "../RunAgentInputs/RunAgentInputs";
+import { useT } from "@/lib/i18n";
 import { getAgentCredentialsFields, getAgentInputFields } from "./helpers";
 
 type Props = {
@@ -19,6 +20,7 @@ export function AgentInputsReadOnly({
   inputs,
   credentialInputs,
 }: Props) {
+  const t = useT();
   const inputFields = getAgentInputFields(agent);
   const credentialFieldEntries = Object.entries(
     getAgentCredentialsFields(agent),
@@ -38,7 +40,7 @@ export function AgentInputsReadOnly({
   if (!hasInputs && !hasCredentials) {
     return (
       <Text variant="body" className="text-foreground-body">
-        No input for this run.
+        {t("library1.inputsReadOnly.empty")}
       </Text>
     );
   }

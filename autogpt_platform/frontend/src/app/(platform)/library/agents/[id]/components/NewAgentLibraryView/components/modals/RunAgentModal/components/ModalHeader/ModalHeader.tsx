@@ -4,24 +4,26 @@ import { Link } from "@/components/atoms/Link/Link";
 import { Text } from "@/components/atoms/Text/Text";
 import { ShowMoreText } from "@/components/molecules/ShowMoreText/ShowMoreText";
 import { humanizeCronExpression } from "@/lib/cron-expression-utils";
+import { useT } from "@/lib/i18n";
 
 interface ModalHeaderProps {
   agent: LibraryAgent;
 }
 
 export function ModalHeader({ agent }: ModalHeaderProps) {
+  const t = useT();
   const creator = agent.marketplace_listing?.creator;
 
   return (
     <div className="flex flex-col gap-4">
       <Badge variant="info" className="w-fit">
-        New Task
+        {t("library1.header.newTask")}
       </Badge>
       <div>
         <Text variant="h2">{agent.name}</Text>
         {creator ? (
           <Link href={`/marketplace/creator/${creator.slug}`} isExternal>
-            by {creator.name}
+            {t("library1.header.by", { creator: creator.name })}
           </Link>
         ) : null}
 
@@ -41,7 +43,7 @@ export function ModalHeader({ agent }: ModalHeaderProps) {
             className="flex flex-col gap-4 rounded-medium border border-blue-100 bg-info-surface p-4"
           >
             <Text variant="lead-semibold" className="text-info-foreground">
-              Tip
+              {t("library1.header.tip")}
             </Text>
             <div
               // TODO(tokens): no exact role for bg-blue-100 (#DBEAFE)
@@ -49,10 +51,11 @@ export function ModalHeader({ agent }: ModalHeaderProps) {
             />
 
             <Text variant="body">
-              For best results, run this workflow{" "}
-              {humanizeCronExpression(
-                agent.recommended_schedule_cron,
-              ).toLowerCase()}
+              {t("library1.header.tipBody", {
+                schedule: humanizeCronExpression(
+                  agent.recommended_schedule_cron,
+                ).toLowerCase(),
+              })}
             </Text>
           </div>
         ) : null}
@@ -67,7 +70,7 @@ export function ModalHeader({ agent }: ModalHeaderProps) {
               variant="lead-semibold"
               className="text-purple-600"
             >
-              Instructions
+              {t("library1.header.instructions")}
             </Text>
 
             <div

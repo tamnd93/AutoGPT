@@ -24,6 +24,7 @@ import { getSelectOptions } from "./helpers";
 import { useRunAgentInputs } from "./useRunAgentInputs";
 import { Cancel01Icon, PlusSignIcon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 
 /**
  * A generic prop structure for the TypeBasedInput.
@@ -52,6 +53,7 @@ export function RunAgentInputs({
   readOnly = false,
   ...props
 }: Props & React.HTMLAttributes<HTMLElement>) {
+  const t = useT();
   const { handleUploadFile, uploadProgress } = useRunAgentInputs();
 
   // Options and keys come from the schema the type was judged by: an optional
@@ -74,11 +76,11 @@ export function RunAgentInputs({
       innerInputElement = (
         <DSInput
           id={`${baseId}-number`}
-          label={schema.title ?? placeholder ?? "Number"}
+          label={schema.title ?? placeholder ?? t("library1.inputs.number")}
           hideLabel
           type="number"
           value={value ?? ""}
-          placeholder={placeholder || "Enter number"}
+          placeholder={placeholder || t("library1.inputs.enterNumber")}
           onChange={(e) => {
             const v = (e.target as HTMLInputElement).value;
             if (!v || v.trim() === "") {
@@ -97,12 +99,12 @@ export function RunAgentInputs({
       innerInputElement = (
         <DSInput
           id={`${baseId}-textarea`}
-          label={schema.title ?? placeholder ?? "Text"}
+          label={schema.title ?? placeholder ?? t("library1.inputs.text")}
           hideLabel
           type="textarea"
           rows={3}
           value={value ?? ""}
-          placeholder={placeholder || "Enter text"}
+          placeholder={placeholder || t("library1.inputs.enterText")}
           onChange={(e) => onChange((e.target as HTMLInputElement).value)}
           {...props}
         />
@@ -167,7 +169,7 @@ export function RunAgentInputs({
       innerInputElement = (
         <DSInput
           id={`${baseId}-date`}
-          label={schema.title ?? placeholder ?? "Date"}
+          label={schema.title ?? placeholder ?? t("library1.inputs.date")}
           hideLabel
           type="date"
           value={dateValue ? format(dateValue, "yyyy-MM-dd") : ""}
@@ -179,7 +181,7 @@ export function RunAgentInputs({
               onChange(new Date(y, m - 1, d));
             }
           }}
-          placeholder={placeholder || "Pick a date"}
+          placeholder={placeholder || t("library1.inputs.pickDate")}
           {...props}
         />
       );
@@ -196,12 +198,12 @@ export function RunAgentInputs({
       innerInputElement = (
         <DSInput
           id={`${baseId}-datetime`}
-          label={schema.title ?? placeholder ?? "Date time"}
+          label={schema.title ?? placeholder ?? t("library1.inputs.dateTime")}
           hideLabel
           type="datetime-local"
           value={value ?? ""}
           onChange={(e) => onChange((e.target as HTMLInputElement).value)}
-          placeholder={placeholder || "Enter date and time"}
+          placeholder={placeholder || t("library1.inputs.enterDateTime")}
           {...props}
         />
       );
@@ -224,11 +226,11 @@ export function RunAgentInputs({
       innerInputElement = (
         <DSSelect
           id={`${baseId}-select`}
-          label={schema.title ?? placeholder ?? "Select"}
+          label={schema.title ?? placeholder ?? t("library1.inputs.select")}
           hideLabel
           value={value ?? ""}
           onValueChange={(val: string) => onChange(val)}
-          placeholder={placeholder || "Select an option"}
+          placeholder={placeholder || t("library1.inputs.selectOption")}
           options={selectOptions.map((opt) => ({
             value: opt,
             label: String(opt),
@@ -333,7 +335,9 @@ export function RunAgentInputs({
                           }
                           // TODO(tokens): no dark roles yet for dark:border-gray-700 (#374151), dark:bg-gray-900 (#111827)
                           className="w-full rounded border px-2 py-1 dark:border-gray-700 dark:bg-gray-900"
-                          placeholder={`Enter ${header}`}
+                          placeholder={t("library1.inputs.enterField", {
+                            field: header,
+                          })}
                         />
                       </td>
                     ))}
@@ -373,12 +377,12 @@ export function RunAgentInputs({
       innerInputElement = (
         <DSInput
           id={`${baseId}-text`}
-          label={schema.title ?? placeholder ?? "Text"}
+          label={schema.title ?? placeholder ?? t("library1.inputs.text")}
           hideLabel
           type="text"
           value={value ?? ""}
           onChange={(e) => onChange((e.target as HTMLInputElement).value)}
-          placeholder={placeholder || "Enter text"}
+          placeholder={placeholder || t("library1.inputs.enterText")}
           {...props}
         />
       );

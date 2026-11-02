@@ -6,8 +6,10 @@ import { RunAgentInputs } from "../../../RunAgentInputs/RunAgentInputs";
 import { useRunAgentModalContext } from "../../context";
 import { ModalSection } from "../ModalSection/ModalSection";
 import { WebhookTriggerBanner } from "../WebhookTriggerBanner/WebhookTriggerBanner";
+import { useT } from "@/lib/i18n";
 
 export function ModalRunSection() {
+  const t = useT();
   const {
     agent,
     defaultRunType,
@@ -39,38 +41,46 @@ export function ModalRunSection() {
       {defaultRunType === "automatic-trigger" ||
       defaultRunType === "manual-trigger" ? (
         <ModalSection
-          title="Task Trigger"
-          subtitle="Set up a trigger for the workflow to run this task automatically"
+          title={t("library1.runSection.triggerTitle")}
+          subtitle={t("library1.runSection.triggerSubtitle")}
         >
           <WebhookTriggerBanner />
           <div className="flex flex-col gap-4">
             <div className="flex flex-col space-y-2">
               <label className="flex items-center gap-1 text-sm font-medium">
-                Trigger Name
-                <InformationTooltip description="Name of the trigger you are setting up" />
+                {t("library1.runSection.triggerName")}
+                <InformationTooltip
+                  description={t("library1.runSection.triggerNameTooltip")}
+                />
               </label>
               <Input
                 id="trigger_name"
-                label="Trigger Name"
+                label={t("library1.runSection.triggerName")}
                 size="small"
                 hideLabel
                 value={presetName}
-                placeholder="Enter trigger name"
+                placeholder={t("library1.runSection.triggerNamePlaceholder")}
                 onChange={(e) => setPresetName(e.target.value)}
               />
             </div>
             <div className="flex flex-col space-y-2">
               <label className="flex items-center gap-1 text-sm font-medium">
-                Trigger Description
-                <InformationTooltip description="Description of the trigger you are setting up" />
+                {t("library1.runSection.triggerDescription")}
+                <InformationTooltip
+                  description={t(
+                    "library1.runSection.triggerDescriptionTooltip",
+                  )}
+                />
               </label>
               <Input
                 id="trigger_description"
-                label="Trigger Description"
+                label={t("library1.runSection.triggerDescription")}
                 size="small"
                 hideLabel
                 value={presetDescription}
-                placeholder="Enter trigger description"
+                placeholder={t(
+                  "library1.runSection.triggerDescriptionPlaceholder",
+                )}
                 onChange={(e) => setPresetDescription(e.target.value)}
               />
             </div>
@@ -80,8 +90,8 @@ export function ModalRunSection() {
 
       {inputFields.length > 0 ? (
         <ModalSection
-          title="Task Inputs"
-          subtitle="Enter the information you want to provide to the workflow for this task"
+          title={t("library1.runSection.inputsTitle")}
+          subtitle={t("library1.runSection.inputsSubtitle")}
         >
           {inputFields.map(([key, inputSubSchema]) => (
             <RunAgentInputs
@@ -98,8 +108,8 @@ export function ModalRunSection() {
 
       {credentialFields.length > 0 ? (
         <ModalSection
-          title="Task Credentials"
-          subtitle="These are the credentials the workflow will use to perform this task"
+          title={t("library1.runSection.credentialsTitle")}
+          subtitle={t("library1.runSection.credentialsSubtitle")}
         >
           <CredentialsGroupedView
             credentialFields={credentialFields}

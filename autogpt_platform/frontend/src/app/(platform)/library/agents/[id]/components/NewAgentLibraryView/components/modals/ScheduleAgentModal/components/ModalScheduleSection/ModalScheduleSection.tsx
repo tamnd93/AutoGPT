@@ -4,6 +4,7 @@ import { useCallback, useState } from "react";
 import { validateSchedule } from "./helpers";
 import { TimezoneNotice } from "../TimezoneNotice/TimezoneNotice";
 import { CronScheduler } from "../CronScheduler/CronScheduler";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   scheduleName: string;
@@ -22,6 +23,7 @@ export function ModalScheduleSection({
   onCronExpressionChange,
   onValidityChange,
 }: Props) {
+  const t = useT();
   function handleScheduleNameChange(e: React.ChangeEvent<HTMLInputElement>) {
     onScheduleNameChange(e.target.value);
   }
@@ -44,14 +46,14 @@ export function ModalScheduleSection({
     <div className="mt-6">
       <Input
         id="schedule-name"
-        label="Schedule Name"
+        label={t("library1.schedule.name")}
         value={scheduleName}
         size="small"
         onChange={(e) => {
           handleScheduleNameChange(e);
           validateNow({ scheduleName: e.target.value });
         }}
-        placeholder="Enter a name for this schedule"
+        placeholder={t("library1.schedule.namePlaceholder")}
         error={errors.scheduleName}
         className="max-w-80"
       />
@@ -63,8 +65,7 @@ export function ModalScheduleSection({
             variant="body"
             className="text-blue-800"
           >
-            💡 This workflow has a recommended schedule that has been pre-filled
-            below. You can modify it as needed.
+            {t("library1.schedule.recommendedNote")}
           </Text>
         </div>
       )}

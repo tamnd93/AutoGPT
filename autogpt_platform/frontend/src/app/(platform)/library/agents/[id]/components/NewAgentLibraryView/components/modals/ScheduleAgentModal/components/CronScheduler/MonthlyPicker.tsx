@@ -3,6 +3,7 @@
 import React from "react";
 import { Text } from "@/components/atoms/Text/Text";
 import { MultiToggle } from "@/components/molecules/MultiToggle/MultiToggle";
+import { useT } from "@/lib/i18n";
 
 export function MonthlyPicker({
   values,
@@ -11,6 +12,8 @@ export function MonthlyPicker({
   values: number[];
   onChange: (v: number[]) => void;
 }) {
+  const t = useT();
+
   function allDays() {
     onChange(Array.from({ length: 31 }, (_, i) => i + 1));
   }
@@ -26,7 +29,7 @@ export function MonthlyPicker({
   return (
     <div className="mb-6 space-y-2">
       <Text variant="body-medium" as="span" className="text-foreground-base">
-        Days of Month
+        {t("library1.monthly.daysOfMonth")}
       </Text>
       <div className="flex gap-2">
         <button
@@ -35,7 +38,7 @@ export function MonthlyPicker({
           className={`h-[2.25rem] rounded-full border border-zinc-700 px-4 py-2 text-sm font-medium leading-4 text-foreground-base hover:bg-surface-hover`}
           onClick={allDays}
         >
-          All Days
+          {t("library1.monthly.allDays")}
         </button>
         <button
           type="button"
@@ -43,7 +46,7 @@ export function MonthlyPicker({
           className={`h-[2.25rem] rounded-full border border-zinc-700 px-4 py-2 text-sm font-medium leading-4 text-foreground-base hover:bg-surface-hover`}
           onClick={customize}
         >
-          Customize
+          {t("library1.monthly.customize")}
         </button>
         <button
           type="button"
@@ -51,7 +54,7 @@ export function MonthlyPicker({
           className="h-[2.25rem] rounded-full border border-zinc-700 px-4 py-2 text-sm font-medium leading-4 text-foreground-base hover:bg-surface-hover"
           onClick={() => onChange([15])}
         >
-          15th
+          {t("library1.monthly.fifteenth")}
         </button>
         <button
           type="button"
@@ -59,7 +62,7 @@ export function MonthlyPicker({
           className="h-[2.25rem] rounded-full border border-zinc-700 px-4 py-2 text-sm font-medium leading-4 text-foreground-base hover:bg-surface-hover"
           onClick={() => onChange([31])}
         >
-          Last Day
+          {t("library1.monthly.lastDay")}
         </button>
       </div>
 
@@ -68,7 +71,7 @@ export function MonthlyPicker({
           items={items}
           selectedValues={selected}
           onChange={(sv) => onChange(sv.map((s) => parseInt(s)))}
-          aria-label="Select days of month"
+          aria-label={t("library1.monthly.selectDaysAria")}
         />
       )}
     </div>

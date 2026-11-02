@@ -21,6 +21,7 @@ import {
 import { ModalHeader } from "./components/ModalHeader/ModalHeader";
 import { ModalRunSection } from "./components/ModalRunSection/ModalRunSection";
 import { RunActions } from "./components/RunActions/RunActions";
+import { useT } from "@/lib/i18n";
 import { RunAgentModalContextProvider } from "./context";
 import { useAgentRunModal } from "./useAgentRunModal";
 
@@ -46,9 +47,10 @@ export function RunAgentModal({
   onRunCreated,
   onTriggerSetup,
   onScheduleCreated,
-  title = "Run Workflow",
+  title,
   dialogVariant = "default",
 }: Props) {
+  const t = useT();
   const {
     // UI state
     isOpen,
@@ -207,7 +209,7 @@ export function RunAgentModal({
   return (
     <>
       <Dialog
-        title={title}
+        title={title ?? t("library1.modal.title")}
         variant={dialogVariant}
         controlled={{ isOpen, set: handleSetOpen }}
         styling={{ maxWidth: "600px", maxHeight: "90vh" }}
@@ -275,15 +277,12 @@ export function RunAgentModal({
                                   !allRequiredInputsAreSet
                                 }
                               >
-                                Schedule Task
+                                {t("library1.modal.scheduleTask")}
                               </Button>
                             </span>
                           </TooltipTrigger>
                           <TooltipContent>
-                            <p>
-                              Please set up all required inputs and credentials
-                              before scheduling
-                            </p>
+                            <p>{t("library1.modal.schedulingHint")}</p>
                           </TooltipContent>
                         </Tooltip>
                       </TooltipProvider>
@@ -293,7 +292,7 @@ export function RunAgentModal({
                         onClick={handleOpenScheduleModal}
                         disabled={isExecuting || isSettingUpTrigger}
                       >
-                        Schedule Task
+                        {t("library1.modal.scheduleTask")}
                       </Button>
                     )
                   }

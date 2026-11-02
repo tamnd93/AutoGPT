@@ -33,8 +33,10 @@ import { useMarketplaceUpdate } from "./hooks/useMarketplaceUpdate";
 import { useNewAgentLibraryView } from "./useNewAgentLibraryView";
 import { PlusSignIcon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 
 export function NewAgentLibraryView() {
+  const t = useT();
   const {
     agentId,
     agent,
@@ -159,8 +161,7 @@ export function NewAgentLibraryView() {
           >
             <ErrorCard
               responseError={{
-                message:
-                  "Could not load this workflow's triggers. Check your connection and try again.",
+                message: t("library1.view.triggersError"),
               }}
               context="triggers"
               onRetry={retryTriggerLists}
@@ -205,7 +206,7 @@ export function NewAgentLibraryView() {
             <div className="flex items-center justify-between">
               <Breadcrumbs
                 items={[
-                  { name: "My Library", link: "/library" },
+                  { name: t("library1.view.myLibrary"), link: "/library" },
                   { name: agent.name, link: `/library/agents/${agentId}` },
                 ]}
               />
@@ -254,7 +255,8 @@ export function NewAgentLibraryView() {
                     activeTab,
                   })}
                 >
-                  <Icon icon={PlusSignIcon} size={16} /> New workflow task
+                  <Icon icon={PlusSignIcon} size={16} />{" "}
+                  {t("library1.view.newTask")}
                 </Button>
               }
               agent={agent}
@@ -315,7 +317,7 @@ export function NewAgentLibraryView() {
           >
             <ErrorCard
               context="workflow tasks"
-              hint="Use Try Again in the sidebar to reload your tasks."
+              hint={t("library1.view.tasksHint")}
             />
           </SelectedViewLayout>
         ) : sidebarLoading ? (

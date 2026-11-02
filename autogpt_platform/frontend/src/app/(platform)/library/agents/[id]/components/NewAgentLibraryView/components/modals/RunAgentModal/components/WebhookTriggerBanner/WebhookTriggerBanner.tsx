@@ -1,4 +1,8 @@
+import { useT } from "@/lib/i18n";
+
 export function WebhookTriggerBanner() {
+  const t = useT();
+
   return (
     <div
       // TODO(tokens): no exact role for border-blue-200 (#BFDBFE)
@@ -24,16 +28,13 @@ export function WebhookTriggerBanner() {
             // TODO(tokens): no exact role for text-blue-800 (#1E40AF)
             className="text-sm font-medium text-blue-800"
           >
-            Webhook Trigger
+            {t("library1.webhook.title")}
           </h3>
           <div
             // TODO(tokens): no exact role for text-blue-700 (#1D4ED8)
             className="mt-2 text-sm text-blue-700"
           >
-            <p>
-              This will create a webhook endpoint that automatically runs your
-              workflow when triggered by external events.
-            </p>
+            <p>{t("library1.webhook.body")}</p>
           </div>
         </div>
       </div>

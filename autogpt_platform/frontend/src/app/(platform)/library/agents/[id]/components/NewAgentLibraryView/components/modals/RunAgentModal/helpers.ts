@@ -1,9 +1,12 @@
 import { CredentialsMetaInput } from "@/app/api/__generated__/models/credentialsMetaInput";
 import { isEmpty } from "@/lib/utils";
+import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/locale";
+import { getMessage } from "@/lib/i18n/translate";
 
 export function validateInputs(
   inputSchema: any,
   values: Record<string, any>,
+  locale: Locale = DEFAULT_LOCALE,
 ): Record<string, string> {
   const errors: Record<string, string> = {};
 
@@ -14,7 +17,9 @@ export function validateInputs(
   for (const fieldName of requiredFields) {
     const fieldSchema = inputSchema.properties[fieldName];
     if (!fieldSchema?.hidden && isEmpty(values[fieldName])) {
-      errors[fieldName] = `${fieldSchema?.title || fieldName} is required`;
+      errors[fieldName] = getMessage(locale, "library1.error.fieldRequired", {
+        field: fieldSchema?.title || fieldName,
+      });
     }
   }
 
@@ -24,6 +29,7 @@ export function validateInputs(
 export function validateCredentials(
   credentialsSchema: any,
   values: Record<string, CredentialsMetaInput>,
+  locale: Locale = DEFAULT_LOCALE,
 ): Record<string, string> {
   const errors: Record<string, string> = {};
 
@@ -33,7 +39,11 @@ export function validateCredentials(
 
   for (const fieldName of credentialFields) {
     if (!values[fieldName]) {
-      errors[fieldName] = `${fieldName} credentials are required`;
+      errors[fieldName] = getMessage(
+        locale,
+        "library1.error.credentialRequired",
+        { field: fieldName },
+      );
     }
   }
 

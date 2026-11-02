@@ -3,6 +3,7 @@ import { Button } from "@/components/atoms/Button/Button";
 import { RunVariant } from "../../useAgentRunModal";
 import { FlaskConicalIcon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   defaultRunType: RunVariant;
@@ -23,6 +24,7 @@ export function RunActions({
   isRunReady = true,
   scheduleButton,
 }: Props) {
+  const t = useT();
   const isTrigger =
     defaultRunType === "automatic-trigger" ||
     defaultRunType === "manual-trigger";
@@ -39,7 +41,7 @@ export function RunActions({
           className="gap-1.5 text-amber-600 hover:bg-warning-surface hover:text-warning-foreground"
         >
           <Icon icon={FlaskConicalIcon} size={16} />
-          Simulate
+          {t("library1.actions.simulate")}
         </Button>
       )}
       {scheduleButton}
@@ -49,7 +51,9 @@ export function RunActions({
         disabled={!isRunReady || isExecuting || isSettingUpTrigger}
         loading={isExecuting || isSettingUpTrigger}
       >
-        {isTrigger ? "Set up Trigger" : "Start Task"}
+        {isTrigger
+          ? t("library1.actions.setTrigger")
+          : t("library1.actions.startTask")}
       </Button>
     </div>
   );
