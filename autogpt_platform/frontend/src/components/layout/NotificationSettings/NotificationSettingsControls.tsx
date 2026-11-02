@@ -4,12 +4,14 @@ import { useId } from "react";
 
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { Text } from "@/components/atoms/Text/Text";
+import { useT } from "@/lib/i18n";
 import { Alert01Icon } from "@hugeicons/core-free-icons";
 
 import { SettingRow } from "./components/SettingRow/SettingRow";
 import { useNotificationSettings } from "./useNotificationSettings";
 
 export function NotificationSettingsControls() {
+  const t = useT();
   const {
     isNotificationsEnabled,
     isSoundEnabled,
@@ -23,7 +25,7 @@ export function NotificationSettingsControls() {
   if (!isSupported) {
     return (
       <Text variant="small" as="p" className="text-foreground-tertiary">
-        This browser doesn&apos;t support notifications.
+        {t("nav2.notifications.unsupported")}
       </Text>
     );
   }
@@ -31,16 +33,16 @@ export function NotificationSettingsControls() {
   return (
     <div className="flex flex-col gap-3">
       <SettingRow
-        label="Notifications"
-        description="Get told when your experts finish, even in another tab."
+        label={t("nav2.notifications.label")}
+        description={t("nav2.notifications.description")}
         checked={isNotificationsEnabled}
         disabled={isBlocked}
         describedBy={isBlocked ? blockedExplainerId : undefined}
         onCheckedChange={toggleNotifications}
       />
       <SettingRow
-        label="Sound"
-        description="Play a chime with each one."
+        label={t("nav2.notifications.sound")}
+        description={t("nav2.notifications.soundDescription")}
         checked={isSoundEnabled && isNotificationsEnabled}
         disabled={!isNotificationsEnabled}
         onCheckedChange={toggleSound}
@@ -58,8 +60,7 @@ export function NotificationSettingsControls() {
             className="mt-0.5 size-4 shrink-0 text-foreground-tertiary"
           />
           <Text variant="small" as="p" className="text-foreground-secondary">
-            Your browser is blocking notifications for AutoGPT. Allow them in
-            its site settings to switch this back on.
+            {t("nav2.notifications.blocked")}
           </Text>
         </div>
       ) : null}

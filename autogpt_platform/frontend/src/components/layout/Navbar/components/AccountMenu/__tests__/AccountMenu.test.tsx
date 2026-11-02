@@ -1,4 +1,5 @@
 import { IconType } from "@/components/layout/Navbar/helpers";
+import { LocaleProvider } from "@/lib/i18n";
 import { render, screen } from "@/tests/integrations/test-utils";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { AccountMenu } from "../AccountMenu";
@@ -80,6 +81,31 @@ const baseGroups: MenuItemGroup[] = [
   },
 ];
 
+const viGroups: MenuItemGroup[] = [
+  {
+    items: [
+      {
+        icon: IconType.Edit,
+        labelKey: "nav2.menu.profile",
+        href: "/settings/profile",
+      },
+      {
+        icon: IconType.Settings,
+        labelKey: "nav2.menu.settings",
+        href: "/settings/account",
+      },
+    ],
+  },
+  {
+    items: [
+      {
+        icon: IconType.LogOut,
+        labelKey: "nav2.menu.logout",
+      },
+    ],
+  },
+];
+
 describe("AccountMenu", () => {
   beforeEach(() => {
     vi.stubEnv("NEXT_PUBLIC_BEHAVE_AS", "CLOUD");
@@ -97,6 +123,29 @@ describe("AccountMenu", () => {
 
   afterEach(() => {
     vi.unstubAllEnvs();
+  });
+
+  test("renders the menu and its rows in Vietnamese", () => {
+    render(
+      <LocaleProvider locale="vi">
+        <AccountMenu
+          userName="Ada Lovelace"
+          userEmail="ada@example.com"
+          menuItemGroups={viGroups}
+        />
+      </LocaleProvider>,
+    );
+
+    expect(screen.getByLabelText("Mở menu hồ sơ")).toBeDefined();
+    expect(screen.getByText("Hồ sơ")).toBeDefined();
+    expect(screen.getByText("Cài đặt")).toBeDefined();
+    expect(screen.getByText("Đăng xuất")).toBeDefined();
+    expect(screen.getByText("Hoạt động")).toBeDefined();
+    expect(screen.getByRole("button", { name: "Gửi phản hồi" })).toBeDefined();
+    expect(
+      screen.getByRole("button", { name: "Dẫn tôi một vòng" }),
+    ).toBeDefined();
+    expect(screen.getByText("Hoạt động workflow")).toBeDefined();
   });
 
   test("renders user name and email when loaded", () => {

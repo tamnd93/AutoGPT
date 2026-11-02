@@ -1,4 +1,5 @@
 import { act, cleanup, render, screen, waitFor } from "@testing-library/react";
+import { LocaleProvider } from "@/lib/i18n";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -211,6 +212,38 @@ describe("NotificationSettingsControls", () => {
     expect(
       describedByText(screen.getByRole("switch", { name: "Sound" })),
     ).toMatch(/play a chime/i);
+  });
+
+  it("reads the switches and the blocked explainer in Vietnamese", async () => {
+    setPermission("denied");
+    render(
+      <LocaleProvider locale="vi">
+        <NotificationSettingsControls />
+      </LocaleProvider>,
+    );
+
+    const notifications = await screen.findByRole("switch", {
+      name: "Thông báo",
+    });
+    expect(screen.getByRole("switch", { name: "Âm thanh" })).toBeDefined();
+    expect(screen.getByText(/đang chặn thông báo cho AutoGPT/i)).toBeDefined();
+    await waitFor(() =>
+      expect(describedByText(notifications)).toMatch(/xong việc/i),
+    );
+    expect(describedByText(notifications)).toMatch(/đang chặn thông báo/i);
+  });
+
+  it("reads the unsupported-browser notice in Vietnamese", () => {
+    setPermission("unsupported");
+    render(
+      <LocaleProvider locale="vi">
+        <NotificationSettingsControls />
+      </LocaleProvider>,
+    );
+
+    expect(
+      screen.getByText("Trình duyệt này không hỗ trợ thông báo."),
+    ).toBeDefined();
   });
 
   it("reports gracefully when the browser has no Notification API", async () => {

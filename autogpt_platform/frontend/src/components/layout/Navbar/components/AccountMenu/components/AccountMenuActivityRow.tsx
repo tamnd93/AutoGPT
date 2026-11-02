@@ -11,12 +11,14 @@ import { formatNotificationCount } from "../../AgentActivityDropdown/helpers";
 import { useAgentActivityDropdown } from "../../AgentActivityDropdown/useAgentActivityDropdown";
 import { ArrowRight01Icon, Pulse01Icon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 
 const rowClasses =
   // TODO(tokens): no exact role for text-neutral-700 (#404040), hover:bg-neutral-100 (#F5F5F5), focus-visible:bg-neutral-100 (#F5F5F5), data-[state=open]:bg-neutral-100 (#F5F5F5)
   "group relative flex w-full items-center gap-3 rounded-lg py-2 pl-3 pr-2 text-left text-sm font-normal text-neutral-700 outline-none transition-colors duration-200 ease-out hover:bg-neutral-100 focus-visible:bg-neutral-100 focus-visible:outline-none data-[state=open]:bg-neutral-100";
 
 export function AccountMenuActivityRow() {
+  const t = useT();
   const { activeExecutions, recentCompletions, recentFailures } =
     useAgentActivityDropdown();
 
@@ -43,7 +45,9 @@ export function AccountMenuActivityRow() {
           <span className="relative z-10 flex shrink-0 items-center">
             <Icon icon={Pulse01Icon} className="h-[18px] w-[18px] shrink-0" />
           </span>
-          <span className="relative z-10 truncate">Activity</span>
+          <span className="relative z-10 truncate">
+            {t("nav2.menu.activity")}
+          </span>
           {totalCount > 0 && (
             <span
               data-testid="account-menu-activity-total"

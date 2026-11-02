@@ -1,5 +1,6 @@
 import { fireEvent, render, screen } from "@/tests/integrations/test-utils";
 import { SidebarProvider } from "@/components/molecules/Sidebar/Sidebar";
+import { LocaleProvider } from "@/lib/i18n";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { RecentChatItem } from "../RecentChatItem";
@@ -206,6 +207,76 @@ describe("RecentChatItem — actions menu", () => {
 
     openActions();
     expect(await screen.findByText(/exporting/i)).toBeDefined();
+  });
+});
+
+describe("RecentChatItem — Vietnamese", () => {
+  it("reads the fallback title and the actions menu in Vietnamese", async () => {
+    render(
+      <LocaleProvider locale="vi">
+        <SidebarProvider>
+          <RecentChatItem
+            {...makeProps({ session: { ...baseSession, title: null } })}
+          />
+        </SidebarProvider>
+      </LocaleProvider>,
+    );
+
+    expect(screen.getByText("Đoạn chat chưa đặt tên")).toBeDefined();
+    fireEvent.pointerDown(
+      screen.getByRole("button", { name: "Thao tác với đoạn chat" }),
+      { button: 0 },
+    );
+
+    expect(
+      await screen.findByRole("menuitem", { name: "Đổi tên" }),
+    ).toBeDefined();
+    expect(
+      screen.getByRole("menuitem", { name: "Xuất đoạn chat" }),
+    ).toBeDefined();
+    expect(
+      screen.getByRole("menuitem", { name: "Chia sẻ đoạn chat" }),
+    ).toBeDefined();
+    expect(
+      screen.getByRole("menuitem", { name: "Xoá đoạn chat" }),
+    ).toBeDefined();
+  });
+
+  it("reads the rename input and the pinning actions in Vietnamese", async () => {
+    const { unmount } = render(
+      <LocaleProvider locale="vi">
+        <SidebarProvider>
+          <RecentChatItem
+            {...makeProps({ isEditing: true, editingTitle: "abc" })}
+          />
+        </SidebarProvider>
+      </LocaleProvider>,
+    );
+    expect(screen.getByLabelText("Đổi tên đoạn chat")).toBeDefined();
+    unmount();
+
+    render(
+      <LocaleProvider locale="vi">
+        <SidebarProvider>
+          <RecentChatItem
+            {...makeProps({
+              chatPinningEnabled: true,
+              isLearningEnabled: true,
+            })}
+          />
+        </SidebarProvider>
+      </LocaleProvider>,
+    );
+    fireEvent.pointerDown(
+      screen.getByRole("button", { name: "Thao tác với đoạn chat" }),
+      { button: 0 },
+    );
+    expect(
+      await screen.findByRole("menuitem", { name: "Ghim đoạn chat" }),
+    ).toBeDefined();
+    expect(
+      screen.getByRole("menuitem", { name: "Loại khỏi quá trình học" }),
+    ).toBeDefined();
   });
 });
 

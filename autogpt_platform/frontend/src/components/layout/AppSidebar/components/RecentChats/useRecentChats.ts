@@ -13,12 +13,14 @@ import { useSessionDeletion } from "@/app/(platform)/copilot/useSessionDeletion"
 import { toast } from "@/components/molecules/Toast/use-toast";
 import { useStableCallback } from "@/hooks/useStableCallback";
 import { ApiError } from "@/lib/autogpt-server-api/helpers";
+import { useT } from "@/lib/i18n";
 import { CHAT_SOURCE_KIND } from "@/services/skill-learning/helpers";
 import { useQueryClient } from "@tanstack/react-query";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useState } from "react";
 
 export function useRecentChats() {
+  const t = useT();
   const queryClient = useQueryClient();
   const { sessions, isLoading, hasMore, isLoadingMore, loadMore } =
     useSessionList();
@@ -48,9 +50,11 @@ export function useRecentChats() {
       },
       onError: (error) => {
         toast({
-          title: "Failed to update chat",
+          title: t("nav2.chat.updateFailed"),
           description:
-            error instanceof Error ? error.message : "An error occurred",
+            error instanceof Error
+              ? error.message
+              : t("nav2.chat.genericError"),
           variant: "destructive",
         });
       },
@@ -65,9 +69,11 @@ export function useRecentChats() {
       },
       onError: (error) => {
         toast({
-          title: "Failed to rename chat",
+          title: t("nav2.chat.renameFailed"),
           description:
-            error instanceof Error ? error.message : "An error occurred",
+            error instanceof Error
+              ? error.message
+              : t("nav2.chat.genericError"),
           variant: "destructive",
         });
         setEditingSessionId(null);
@@ -79,19 +85,17 @@ export function useRecentChats() {
     mutation: {
       onSuccess: () => {
         toast({
-          title: "Excluded from learning",
-          description:
-            "This chat will not be used for future skill learning. Skills " +
-            "that depended on it were restored or paused.",
+          title: t("nav2.chat.excluded"),
+          description: t("nav2.chat.excludedDescription"),
         });
       },
       onError: (error) => {
         toast({
-          title: "Could not exclude this chat",
+          title: t("nav2.chat.excludeFailed"),
           description:
             error instanceof ApiError
               ? error.message
-              : "Nothing has been recorded for this chat yet.",
+              : t("nav2.chat.excludeFailedDescription"),
           variant: "destructive",
         });
       },
@@ -135,14 +139,14 @@ export function useRecentChats() {
     setExportingIds((prev) => new Set(prev).add(id));
     try {
       await fetchAndExportChat(id, title, getV2GetSession);
-      toast({ title: "Chat exported" });
+      toast({ title: t("nav2.chat.exported") });
     } catch (error) {
       toast({
-        title: "Export failed",
+        title: t("nav2.chat.exportFailed"),
         description:
           error instanceof Error
             ? error.message
-            : "Could not export this chat. Please try again.",
+            : t("nav2.chat.exportFailedDescription"),
         variant: "destructive",
       });
     } finally {

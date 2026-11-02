@@ -5,6 +5,7 @@ import { Text } from "@/components/atoms/Text/Text";
 import { useTallyFeedback } from "@/components/molecules/TallyPoup/useTallyFeedback";
 import { useOptionalSidebar } from "@/components/molecules/Sidebar/Sidebar";
 import { useAuth } from "@/lib/auth/hooks/useAuth";
+import { useT } from "@/lib/i18n";
 import { HelpCircleIcon } from "@hugeicons/core-free-icons";
 
 const rowClasses =
@@ -12,6 +13,7 @@ const rowClasses =
   "group relative flex w-full items-center gap-3 rounded-lg py-2 pl-3 pr-2 text-left text-neutral-700 outline-none transition-colors duration-200 ease-out hover:bg-neutral-100 focus-visible:bg-neutral-100 focus-visible:outline-none";
 
 export function AccountMenuFeedbackRow() {
+  const t = useT();
   const { isLoggedIn, isUserLoading } = useAuth();
   const feedback = useTallyFeedback(isUserLoading ? null : isLoggedIn);
   const sidebar = useOptionalSidebar();
@@ -47,7 +49,7 @@ export function AccountMenuFeedbackRow() {
         tone="inherit"
         className="relative z-10 flex-1 truncate"
       >
-        Give feedback
+        {t("nav2.menu.feedback")}
       </Text>
     </button>
   );

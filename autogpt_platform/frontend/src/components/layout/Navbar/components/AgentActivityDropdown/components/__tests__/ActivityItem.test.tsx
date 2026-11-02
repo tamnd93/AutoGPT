@@ -93,14 +93,38 @@ describe("ActivityItem", () => {
     expect(screen.getByText("Weather Agent")).toBeDefined();
   });
 
-  it("renders the vietnamese time for the vi locale", () => {
+  it("renders the vietnamese time and status for the vi locale", () => {
     render(
       <LocaleProvider locale="vi">
         <ActivityItem execution={makeExecution()} />
       </LocaleProvider>,
     );
 
-    expect(screen.getByText(/^Completed \d+ ngày trước$/)).toBeDefined();
+    expect(screen.getByText(/^Hoàn thành \d+ ngày trước$/)).toBeDefined();
+  });
+
+  it("reads a failed run and a running run in Vietnamese", () => {
+    const { unmount } = render(
+      <LocaleProvider locale="vi">
+        <ActivityItem
+          execution={makeExecution({ status: AgentExecutionStatus.FAILED })}
+        />
+      </LocaleProvider>,
+    );
+    expect(screen.getByText(/^Thất bại /)).toBeDefined();
+    unmount();
+
+    render(
+      <LocaleProvider locale="vi">
+        <ActivityItem
+          execution={makeExecution({
+            status: AgentExecutionStatus.RUNNING,
+            ended_at: null,
+          })}
+        />
+      </LocaleProvider>,
+    );
+    expect(screen.getByText(/đang chạy$/)).toBeDefined();
   });
 
   it("renders a non-linked item when the execution has no library agent", () => {

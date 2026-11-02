@@ -13,22 +13,32 @@ import { Progress } from "@/components/atoms/Progress/Progress";
 import { Skeleton } from "@/components/atoms/Skeleton/Skeleton";
 import { Text } from "@/components/atoms/Text/Text";
 import { formatTrialEnd } from "@/components/organisms/TrialCard/helpers";
+import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { useTrialStatus } from "@/services/trials/useTrialStatus";
 
 export function WalletCopilotUsage() {
+  const t = useT();
   const { data: usage, isError, refetch } = useCopilotUsage();
   const tierLabel = formatTierLabel(usage?.tier);
+  // formatTierLabel already prints a trial as "Free trial"; the trial badge
+  // reads it from the raw tier so the copy stays a catalogue string.
+  const isTrialTier = usage?.tier === "TRIAL";
 
   return (
-    <section aria-label="Chat usage" className="flex flex-col gap-4">
+    <section
+      aria-label={t("nav2.wallet.chatUsage")}
+      className="flex flex-col gap-4"
+    >
       <div className="flex items-center justify-between gap-3">
         <Text variant="large-medium" as="h2">
-          Chat usage
+          {t("nav2.wallet.chatUsage")}
         </Text>
         {tierLabel && (
           <Badge variant="info" size="small" className={TIER_BADGE_CLASS_NAME}>
-            {tierLabel === "Trial" ? "Free trial" : `${tierLabel} plan`}
+            {isTrialTier
+              ? t("nav2.wallet.freeTrialPlan")
+              : t("common.planSuffix", { plan: tierLabel })}
           </Badge>
         )}
       </div>
@@ -44,11 +54,12 @@ export function WalletCopilotUsage() {
 }
 
 function UsageWindows({ usage }: { usage: CoPilotUsagePublic }) {
+  const t = useT();
   if (usage.tier === "TRIAL") return <TrialUsage />;
   if (!usage.daily && !usage.weekly) {
     return (
       <Text variant="body" tone="secondary">
-        No usage limits
+        {t("nav2.wallet.noLimits")}
       </Text>
     );
   }
@@ -57,14 +68,14 @@ function UsageWindows({ usage }: { usage: CoPilotUsagePublic }) {
     <div className="flex flex-col gap-4">
       {usage.daily && (
         <UsageBar
-          label="Today"
+          label={t("nav2.wallet.today")}
           percentUsed={usage.daily.percent_used}
           resetsAt={usage.daily.resets_at}
         />
       )}
       {usage.weekly && (
         <UsageBar
-          label="This week"
+          label={t("nav2.wallet.thisWeek")}
           percentUsed={usage.weekly.percent_used}
           resetsAt={usage.weekly.resets_at}
         />
@@ -74,6 +85,7 @@ function UsageWindows({ usage }: { usage: CoPilotUsagePublic }) {
 }
 
 function TrialUsage() {
+  const t = useT();
   const { data: trial, isPending, refetch } = useTrialStatus();
   if (isPending) return <UsageLoading />;
   if (trial?.allowance_used_percent == null) {
@@ -90,20 +102,22 @@ function TrialUsage() {
           // TODO(tokens): no exact role for text-neutral-700 (#404040)
           className="text-neutral-700"
         >
-          Trial allowance
+          {t("nav2.wallet.trialAllowance")}
         </Text>
         <Text
           variant="body"
           // TODO(tokens): no exact role for text-neutral-500 (#737373)
           className="tabular-nums text-neutral-500"
         >
-          {formatTrialPercent(percent)} used
+          {t("nav2.wallet.percentUsed", {
+            percent: formatTrialPercent(percent),
+          })}
         </Text>
       </div>
       <Progress
         value={percent}
         role="progressbar"
-        aria-label="Trial allowance usage"
+        aria-label={t("nav2.wallet.trialAllowanceAria")}
         aria-valuemin={0}
         aria-valuemax={100}
         aria-valuenow={percent}
@@ -119,7 +133,10 @@ function TrialUsage() {
         // TODO(tokens): no exact role for text-neutral-500 (#737373)
         className="text-neutral-500"
       >
-        {trial.active ? "Ends" : "Ended"} {formatTrialEnd(trial.ends_at)}
+        {t(
+          trial.active ? "nav2.wallet.trialEndsOn" : "nav2.wallet.trialEndedOn",
+          { date: formatTrialEnd(trial.ends_at) },
+        )}
       </Text>
     </div>
   );
@@ -134,10 +151,12 @@ function formatTrialPercent(percent: number) {
 }
 
 function UsageLoading() {
+  const t = useT();
+
   return (
     <div
       role="status"
-      aria-label="Loading chat usage"
+      aria-label={t("nav2.wallet.loadingUsageAria")}
       className="flex flex-col gap-4"
     >
       {[0, 1].map((index) => (
@@ -155,10 +174,12 @@ function UsageLoading() {
 }
 
 function UsageUnavailable({ onRetry }: { onRetry: () => void }) {
+  const t = useT();
+
   return (
     <div className="flex items-center justify-between gap-3">
       <Text variant="small" tone="secondary">
-        Usage is unavailable right now.
+        {t("nav2.wallet.unavailable")}
       </Text>
       <Button
         variant="ghost"
@@ -166,7 +187,7 @@ function UsageUnavailable({ onRetry }: { onRetry: () => void }) {
         onClick={onRetry}
         className="h-auto px-2 py-1 text-xs"
       >
-        Retry
+        {t("nav2.wallet.retry")}
       </Button>
     </div>
   );

@@ -2,6 +2,7 @@ import type { MessageKey } from "./en";
 import { formatVi } from "./format.vi";
 import { integrationsVi } from "./integrations.vi";
 import { nav1Vi } from "./nav-1.vi";
+import { nav2Vi } from "./nav-2.vi";
 import { navVi } from "./nav.vi";
 
 export const vi: Partial<Record<MessageKey, string>> = {
@@ -9,5 +10,6 @@ export const vi: Partial<Record<MessageKey, string>> = {
   ...navVi,
   ...formatVi,
   ...nav1Vi,
+  ...nav2Vi,
   "common.planSuffix": "gói {plan}",
 };

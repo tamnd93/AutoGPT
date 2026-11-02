@@ -4,7 +4,7 @@ import { AgentExecutionStatus } from "@/app/api/__generated__/models/agentExecut
 import { LoadingSpinner } from "@/components/atoms/LoadingSpinner/LoadingSpinner";
 import { Text } from "@/components/atoms/Text/Text";
 import { isCompletedWithErrors } from "@/lib/run-health";
-import { useLocale } from "@/lib/i18n";
+import { useLocale, useT } from "@/lib/i18n";
 import { formatTimeAgo } from "@/lib/utils/time";
 import Link, { useLinkStatus } from "next/link";
 import type { AgentExecutionWithInfo } from "../helpers";
@@ -50,6 +50,7 @@ interface Props {
 
 export function ActivityItem({ execution }: Props) {
   const locale = useLocale();
+  const t = useT();
 
   function getStatusIcon() {
     switch (execution.status) {
@@ -105,11 +106,17 @@ export function ActivityItem({ execution }: Props) {
     if (isActiveStatus) {
       const timeAgo = execution.started_at
         ? formatTimeAgo(execution.started_at.toString(), locale)
-        : "recently";
-      const statusText =
-        execution.status === AgentExecutionStatus.QUEUED ? "queued" : "running";
+        : t("nav2.activity.recently");
+      const status =
+        execution.status === AgentExecutionStatus.QUEUED
+          ? t("nav2.activity.queued")
+          : t("nav2.activity.running");
       return [
-        `Started ${timeAgo}, ${getExecutionDuration(execution)} ${statusText}`,
+        t("nav2.activity.started", {
+          timeAgo,
+          duration: getExecutionDuration(execution, locale),
+          status,
+        }),
       ];
     }
 
@@ -118,32 +125,30 @@ export function ActivityItem({ execution }: Props) {
       ? formatTimeAgo(execution.ended_at.toString(), locale)
       : execution.started_at
         ? formatTimeAgo(execution.started_at.toString(), locale)
-        : "recently";
+        : t("nav2.activity.recently");
 
-    let statusText = "ended";
+    let status = t("nav2.activity.ended");
     switch (execution.status) {
       case AgentExecutionStatus.COMPLETED:
-        statusText = isCompletedWithErrors(execution)
-          ? "completed with errors"
-          : "completed";
+        status = isCompletedWithErrors(execution)
+          ? t("nav2.activity.completedWithErrors")
+          : t("nav2.activity.completed");
         break;
       case AgentExecutionStatus.FAILED:
-        statusText = "failed";
+        status = t("nav2.activity.failed");
         break;
       case AgentExecutionStatus.TERMINATED:
-        statusText = "stopped";
+        status = t("nav2.activity.stopped");
         break;
       case AgentExecutionStatus.INCOMPLETE:
-        statusText = "incomplete";
+        status = t("nav2.activity.incomplete");
         break;
       case AgentExecutionStatus.REVIEW:
-        statusText = "awaiting approval";
+        status = t("nav2.activity.awaitingApproval");
         break;
     }
 
-    return [
-      `${statusText.charAt(0).toUpperCase() + statusText.slice(1)} ${timeAgo}`,
-    ];
+    return [t("nav2.activity.statusLine", { status, timeAgo })];
   }
 
   // Determine the tab based on execution status

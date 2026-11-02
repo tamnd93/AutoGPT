@@ -1,6 +1,8 @@
 import { AgentExecutionStatus } from "@/app/api/__generated__/models/agentExecutionStatus";
 import { GraphExecutionMeta as GeneratedGraphExecutionMeta } from "@/app/api/__generated__/models/graphExecutionMeta";
 import type { GraphExecution } from "@/lib/autogpt-server-api/types";
+import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/locale";
+import { getMessage } from "@/lib/i18n/translate";
 
 // Time constants
 const MILLISECONDS_PER_SECOND = 1000;
@@ -14,27 +16,30 @@ const MAX_EXECUTIONS_CAP = 1000;
 
 export function getExecutionDuration(
   execution: GeneratedGraphExecutionMeta,
+  locale: Locale = DEFAULT_LOCALE,
 ): string {
-  if (!execution.started_at) return "Unknown";
+  if (!execution.started_at)
+    return getMessage(locale, "nav2.activity.unknownDuration");
 
   const start = new Date(execution.started_at);
   const end = execution.ended_at ? new Date(execution.ended_at) : new Date();
 
   // Check if dates are valid
   if (isNaN(start.getTime()) || isNaN(end.getTime())) {
-    return "Unknown";
+    return getMessage(locale, "nav2.activity.unknownDuration");
   }
 
   const durationMs = end.getTime() - start.getTime();
 
   // Handle negative durations (shouldn't happen but just in case)
-  if (durationMs < 0) return "Unknown";
+  if (durationMs < 0)
+    return getMessage(locale, "nav2.activity.unknownDuration");
 
   const durationSec = Math.floor(durationMs / MILLISECONDS_PER_SECOND);
 
   // For short durations (< 5 seconds), show "a few seconds"
   if (durationSec < SHORT_DURATION_THRESHOLD_SECONDS) {
-    return "a few seconds";
+    return getMessage(locale, "nav2.activity.aFewSeconds");
   }
 
   if (durationSec < SECONDS_PER_MINUTE) return `${durationSec}s`;
@@ -69,12 +74,14 @@ export function enrichExecutionWithAgentInfo(
     string,
     { name: string; description: string; library_agent_id?: string }
   >,
+  locale: Locale = DEFAULT_LOCALE,
 ): AgentExecutionWithInfo {
   const agentInfo = agentInfoMap.get(execution.graph_id);
 
   return {
     ...execution,
-    agent_name: agentInfo?.name ?? "Unknown Workflow",
+    agent_name:
+      agentInfo?.name ?? getMessage(locale, "nav2.activity.unknownWorkflow"),
     agent_description: agentInfo?.description ?? "",
     library_agent_id: agentInfo?.library_agent_id,
   };
@@ -129,6 +136,7 @@ export function categorizeExecutions(
     string,
     { name: string; description: string; library_agent_id?: string }
   >,
+  locale: Locale = DEFAULT_LOCALE,
 ): NotificationState {
   const seventyTwoHoursAgo = new Date(Date.now() - MILLISECONDS_PER_72_HOURS);
 
@@ -146,7 +154,7 @@ export function categorizeExecutions(
     .slice(0, MAX_EXECUTIONS_CAP); // Apply 800 execution cap
 
   const enrichedExecutions = recentExecutions.map((execution) =>
-    enrichExecutionWithAgentInfo(execution, agentInfoMap),
+    enrichExecutionWithAgentInfo(execution, agentInfoMap, locale),
   );
 
   // Categorize the capped executions
@@ -249,11 +257,13 @@ export function handleExecutionUpdate(
     string,
     { name: string; description: string; library_agent_id?: string }
   >,
+  locale: Locale = DEFAULT_LOCALE,
 ): NotificationState {
   // Enrich the execution
   const enrichedExecution = enrichExecutionWithAgentInfo(
     execution,
     agentInfoMap,
+    locale,
   );
 
   // Remove from all categories first

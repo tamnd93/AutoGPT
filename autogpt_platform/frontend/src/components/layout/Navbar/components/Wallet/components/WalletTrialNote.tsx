@@ -1,6 +1,7 @@
 import type { TrialStatusResponse } from "@/app/api/__generated__/models/trialStatusResponse";
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { Text } from "@/components/atoms/Text/Text";
+import { useLocale } from "@/lib/i18n";
 import { CreditCardIcon } from "@hugeicons/core-free-icons";
 import { getTrialPlanLine } from "../helpers";
 
@@ -10,7 +11,8 @@ interface Props {
 }
 
 export function WalletTrialNote({ id, trial }: Props) {
-  const line = getTrialPlanLine(trial);
+  const locale = useLocale();
+  const line = getTrialPlanLine(trial, locale);
   if (!line) return null;
 
   return (

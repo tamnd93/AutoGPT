@@ -1,3 +1,5 @@
+import type { MessageKey } from "@/lib/i18n";
+
 export enum IconType {
   Marketplace,
   Library,
@@ -15,31 +17,36 @@ export enum IconType {
   WhatsNew,
 }
 
+export type MenuItem = {
+  icon: IconType;
+  /** Catalogue label; every menu row in the product goes through it. */
+  labelKey?: MessageKey;
+  /** Raw label for a row outside the catalogue (stories and fixtures). */
+  text?: string;
+  href?: string;
+  external?: boolean;
+  onClick?: () => void;
+};
+
 export type MenuItemGroup = {
   groupName?: string;
-  items: {
-    icon: IconType;
-    text: string;
-    href?: string;
-    external?: boolean;
-    onClick?: () => void;
-  }[];
+  items: MenuItem[];
 };
 
 export function getAccountMenuItems(
   userRole?: string,
   isBillingEnabled = true,
 ): MenuItemGroup[] {
-  const footerItems: MenuItemGroup["items"] = [
+  const footerItems: MenuItem[] = [
     {
       icon: IconType.WhatsNew,
-      text: "What's new",
+      labelKey: "nav2.menu.whatsNew",
       href: "https://agpt.co/docs/platform/changelog/changelog/",
       external: true,
     },
     {
       icon: IconType.Help,
-      text: "Help & Docs",
+      labelKey: "nav2.menu.help",
       href: "https://agpt.co/docs",
       external: true,
     },
@@ -48,14 +55,14 @@ export function getAccountMenuItems(
   if (userRole === "admin") {
     footerItems.push({
       icon: IconType.Sliders,
-      text: "Admin",
+      labelKey: "nav2.menu.admin",
       href: "/admin/marketplace",
     });
   }
 
   footerItems.push({
     icon: IconType.LogOut,
-    text: "Log out",
+    labelKey: "nav2.menu.logout",
   });
 
   return [
@@ -63,19 +70,19 @@ export function getAccountMenuItems(
       items: [
         {
           icon: IconType.Edit,
-          text: "Profile",
+          labelKey: "nav2.menu.profile",
           href: "/settings/profile",
         },
         {
           icon: IconType.Settings,
-          text: "Settings",
+          labelKey: "nav2.menu.settings",
           href: "/settings/account",
         },
         ...(isBillingEnabled
           ? [
               {
                 icon: IconType.Billing,
-                text: "Billing",
+                labelKey: "nav2.menu.billing" as const,
                 href: "/settings/billing",
               },
             ]

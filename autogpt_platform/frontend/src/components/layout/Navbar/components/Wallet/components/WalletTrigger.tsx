@@ -8,6 +8,7 @@ import {
   TooltipTrigger,
 } from "@/components/atoms/Tooltip/BaseTooltip";
 import { PopoverTrigger } from "@/components/molecules/Popover/Popover";
+import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { Wallet01Icon } from "@hugeicons/core-free-icons";
 import { Ref, useState } from "react";
@@ -37,6 +38,7 @@ export function WalletTrigger({
   flash,
   unseen,
 }: Props) {
+  const t = useT();
   const [tooltipOpen, setTooltipOpen] = useState(false);
 
   return (
@@ -50,7 +52,7 @@ export function WalletTrigger({
             <button
               ref={walletRef}
               type="button"
-              aria-label={compact ? "Usage and credits" : undefined}
+              aria-label={compact ? t("nav2.wallet.usageAria") : undefined}
               data-state={open ? "open" : "closed"}
               onClick={onClick}
               className={cn(
@@ -95,7 +97,9 @@ export function WalletTrigger({
           )}
         />
       </div>
-      {compact && <TooltipContent side="top">Usage and credits</TooltipContent>}
+      {compact && (
+        <TooltipContent side="top">{t("nav2.wallet.usageAria")}</TooltipContent>
+      )}
     </Tooltip>
   );
 }
@@ -105,9 +109,13 @@ function ClassicBalance({
   completedCount,
   totalCount,
 }: Pick<Props, "formattedCredits" | "completedCount" | "totalCount">) {
+  const t = useT();
+
   return (
     <div>
-      <span className="mr-1 hidden xl:inline-block">Earn credits </span>
+      <span className="mr-1 hidden xl:inline-block">
+        {t("nav2.wallet.earnCredits")}{" "}
+      </span>
       <span className="text-sm font-semibold">{formattedCredits}</span>
       {completedCount !== null && completedCount < totalCount && (
         <span
@@ -117,7 +125,10 @@ function ClassicBalance({
       )}
       <div className="absolute bottom-[-2.5rem] left-1/2 z-50 hidden -translate-x-1/2 transform whitespace-nowrap rounded-small bg-surface px-4 py-2 shadow-md group-hover:block">
         <Text variant="body-medium">
-          {completedCount} of {totalCount} rewards claimed
+          {t("nav2.wallet.rewardsClaimed", {
+            completed: completedCount ?? 0,
+            total: totalCount,
+          })}
         </Text>
       </div>
     </div>

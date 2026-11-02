@@ -12,8 +12,10 @@ import {
   Tick02Icon,
 } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 
 export function AccountMenuOrgList() {
+  const t = useT();
   const { orgs, teams, activeOrg, activeTeam, switchOrg, switchTeam } =
     useOrgTeamSwitcher();
 
@@ -37,7 +39,9 @@ export function AccountMenuOrgList() {
       <span className="flex h-5 w-5 items-center justify-center">
         <Icon icon={PlusSignIcon} size={14} />
       </span>
-      <span className="flex-1 truncate text-left">Create organization</span>
+      <span className="flex-1 truncate text-left">
+        {t("nav2.menu.createOrg")}
+      </span>
     </button>
   );
 
@@ -48,7 +52,7 @@ export function AccountMenuOrgList() {
           // TODO(tokens): no exact role for text-neutral-500 (#737373)
           className="px-2 py-1 text-sm text-neutral-500"
         >
-          No organizations yet
+          {t("nav2.menu.noOrgs")}
         </div>
         {createOrgButton}
       </div>
@@ -62,7 +66,7 @@ export function AccountMenuOrgList() {
           // TODO(tokens): no exact role for text-neutral-400 (#A3A3A3)
           className="px-2 py-1 text-xs font-medium uppercase text-neutral-400"
         >
-          Organizations
+          {t("nav2.menu.organizations")}
         </span>
         {orgs.map((org) => (
           <button
@@ -84,7 +88,7 @@ export function AccountMenuOrgList() {
                 // TODO(tokens): no exact role for text-neutral-400 (#A3A3A3)
                 className="text-xs text-neutral-400"
               >
-                Personal
+                {t("nav2.menu.personal")}
               </span>
             )}
             {org.id === activeOrg?.id && (
@@ -106,7 +110,7 @@ export function AccountMenuOrgList() {
               // TODO(tokens): no exact role for text-neutral-400 (#A3A3A3)
               className="px-2 py-1 text-xs font-medium uppercase text-neutral-400"
             >
-              Teams
+              {t("nav2.menu.teams")}
             </span>
             {teams.map((team) => (
               <button
@@ -122,7 +126,7 @@ export function AccountMenuOrgList() {
                     // TODO(tokens): no exact role for text-neutral-400 (#A3A3A3)
                     className="text-xs text-neutral-400"
                   >
-                    Private
+                    {t("nav2.menu.private")}
                   </span>
                 )}
                 {team.id === activeTeam?.id && (
@@ -136,7 +140,7 @@ export function AccountMenuOrgList() {
               className="flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm text-neutral-500 hover:bg-neutral-100"
             >
               <Icon icon={Settings02Icon} size={14} />
-              <span>Manage teams</span>
+              <span>{t("nav2.menu.manageTeams")}</span>
             </Link>
           </div>
         </>

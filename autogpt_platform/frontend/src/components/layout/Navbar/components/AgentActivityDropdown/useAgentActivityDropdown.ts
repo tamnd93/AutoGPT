@@ -3,6 +3,7 @@ import { useGetV1ListAllExecutions } from "@/app/api/__generated__/endpoints/gra
 import { okData } from "@/app/api/helpers";
 import { useExecutionEvents } from "@/hooks/useExecutionEvents";
 import { useLibraryAgents } from "@/hooks/useLibraryAgents/useLibraryAgents";
+import { useLocale } from "@/lib/i18n";
 import type { GraphExecution } from "@/lib/autogpt-server-api/types";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
@@ -12,6 +13,7 @@ import {
 } from "./helpers";
 
 export function useAgentActivityDropdown() {
+  const locale = useLocale();
   const [isOpen, setIsOpen] = useState(false);
   const { agentInfoMap } = useLibraryAgents();
 
@@ -40,10 +42,10 @@ export function useAgentActivityDropdown() {
   const handleExecutionEvent = useCallback(
     (execution: GraphExecution) => {
       setNotifications((currentState) =>
-        handleExecutionUpdate(currentState, execution, agentInfoMap),
+        handleExecutionUpdate(currentState, execution, agentInfoMap, locale),
       );
     },
-    [agentInfoMap],
+    [agentInfoMap, locale],
   );
 
   // Process initial execution state when data loads
@@ -60,11 +62,15 @@ export function useAgentActivityDropdown() {
       agentInfoMap.size > 0 &&
       processedExecutionsRef.current !== executionKey
     ) {
-      const notifications = categorizeExecutions(executions, agentInfoMap);
+      const notifications = categorizeExecutions(
+        executions,
+        agentInfoMap,
+        locale,
+      );
       setNotifications(notifications);
       processedExecutionsRef.current = executionKey;
     }
-  }, [executions, executionsSuccess, agentInfoMap]);
+  }, [executions, executionsSuccess, agentInfoMap, locale]);
 
   // Subscribe to execution events for all graphs
   useExecutionEvents({

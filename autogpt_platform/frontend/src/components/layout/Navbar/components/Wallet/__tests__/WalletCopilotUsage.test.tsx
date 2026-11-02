@@ -7,6 +7,7 @@ import {
 } from "@/app/api/__generated__/endpoints/chat/chat.msw";
 import { getGetTrialsGetTrialStatusMockHandler200 } from "@/app/api/__generated__/endpoints/trials/trials.msw";
 import type { CoPilotUsagePublic } from "@/app/api/__generated__/models/coPilotUsagePublic";
+import { LocaleProvider } from "@/lib/i18n";
 import { server } from "@/mocks/mock-server";
 import { act, render, screen } from "@/tests/integrations/test-utils";
 import {
@@ -70,6 +71,59 @@ describe("WalletCopilotUsage", () => {
     ).toBeDefined();
     expect(screen.queryByRole("progressbar")).toBeNull();
     expect(screen.queryByText("0% used")).toBeNull();
+  });
+
+  it("reads the plan and the usage windows in Vietnamese", async () => {
+    mockUsage();
+    render(
+      <LocaleProvider locale="vi">
+        <WalletCopilotUsage />
+      </LocaleProvider>,
+    );
+
+    expect(screen.getByText("Mức dùng chat")).toBeDefined();
+    expect(await screen.findByText("gói Pro")).toBeDefined();
+    expect(screen.getByText("Hôm nay")).toBeDefined();
+    expect(screen.getByText("Tuần này")).toBeDefined();
+  });
+
+  it("reads the trial allowance in Vietnamese", async () => {
+    setTrialUser();
+    mockUsage(12, 18, "TRIAL");
+    server.use(
+      getGetTrialsGetTrialStatusMockHandler200(
+        trialResponse({ allowance_used_percent: 42.4 }),
+      ),
+    );
+    render(
+      <LocaleProvider locale="vi">
+        <WalletCopilotUsage />
+      </LocaleProvider>,
+    );
+
+    expect(await screen.findByText("Gói dùng thử miễn phí")).toBeDefined();
+    expect(await screen.findByText("Hạn mức dùng thử")).toBeDefined();
+    expect(screen.getByText("đã dùng 42%")).toBeDefined();
+    expect(screen.getByText(/^Kết thúc /)).toBeDefined();
+  });
+
+  it("reads the unavailable and retry states in Vietnamese", async () => {
+    server.use(
+      http.get(
+        "*/api/chat/usage",
+        () => new HttpResponse(null, { status: 503 }),
+      ),
+    );
+    render(
+      <LocaleProvider locale="vi">
+        <WalletCopilotUsage />
+      </LocaleProvider>,
+    );
+
+    expect(
+      await screen.findByText("Hiện không lấy được mức dùng."),
+    ).toBeDefined();
+    expect(screen.getByRole("button", { name: "Thử lại" })).toBeDefined();
   });
 
   it("shows unlimited only after a successful response with no limits", async () => {

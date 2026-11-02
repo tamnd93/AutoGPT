@@ -1,10 +1,22 @@
 import { IconType } from "@/components/layout/Navbar/helpers";
+import { DEFAULT_LOCALE } from "@/lib/i18n/locale";
+import { getMessage } from "@/lib/i18n/translate";
 import { describe, expect, test } from "vitest";
 import { getAccountMenuIcon } from "../helpers";
 import { getAccountMenuItems } from "../../../helpers";
 
+// The catalogue holds message keys; resolve them in the default locale so the
+// assertions still read the English labels people see.
+function labelOf(
+  item: ReturnType<typeof getAccountMenuItems>[number]["items"][number],
+) {
+  return item.labelKey
+    ? getMessage(DEFAULT_LOCALE, item.labelKey)
+    : (item.text ?? "");
+}
+
 function flattenTexts(groups: ReturnType<typeof getAccountMenuItems>) {
-  return groups.flatMap((group) => group.items.map((item) => item.text));
+  return groups.flatMap((group) => group.items.map(labelOf));
 }
 
 describe("getAccountMenuIcon", () => {
@@ -51,7 +63,9 @@ describe("getAccountMenuItems", () => {
     const items = getAccountMenuItems(undefined).flatMap(
       (group) => group.items,
     );
-    const whatsNew = items.find((item) => item.text === "What's new");
+    const whatsNew = items.find(
+      (item) => item.labelKey === "nav2.menu.whatsNew",
+    );
 
     expect(whatsNew?.href).toBe(
       "https://agpt.co/docs/platform/changelog/changelog/",

@@ -17,6 +17,7 @@ import {
   Search01Icon,
 } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   activeExecutions: AgentExecutionWithInfo[];
@@ -46,6 +47,7 @@ export function ActivityDropdown({
   recentCompletions,
   recentFailures,
 }: Props) {
+  const t = useT();
   const {
     isSearchVisible,
     searchQuery,
@@ -85,8 +87,8 @@ export function ActivityDropdown({
               <div className="relative w-full">
                 <Input
                   id="agent-search"
-                  label="Search workflows"
-                  placeholder="Search runs by workflow name..."
+                  label={t("nav2.activity.searchLabel")}
+                  placeholder={t("nav2.activity.searchPlaceholder")}
                   hideLabel
                   size="small"
                   value={searchQuery}
@@ -99,7 +101,7 @@ export function ActivityDropdown({
                 <button
                   onClick={handleClearSearch}
                   className="absolute right-1 top-1/2 flex h-6 w-6 -translate-y-1/2 items-center justify-center"
-                  aria-label="Clear search"
+                  aria-label={t("nav2.activity.clearSearch")}
                 >
                   <Icon
                     icon={Cancel01Icon}
@@ -116,14 +118,14 @@ export function ActivityDropdown({
                 // TODO(tokens): no exact role for text-neutral-500 (#737373)
                 className="text-xs font-medium uppercase text-neutral-500"
               >
-                Workflow Activity
+                {t("nav2.activity.title")}
               </span>
               {withSearch ? (
                 <Button
                   variant="ghost"
                   size="small"
                   onClick={toggleSearch}
-                  aria-label="Search workflows"
+                  aria-label={t("nav2.activity.searchLabel")}
                   className="!h-auto !w-fit !min-w-0 !p-0 hover:border-transparent hover:bg-transparent"
                 >
                   <Icon
@@ -164,13 +166,13 @@ export function ActivityDropdown({
             <div className="flex flex-col items-center justify-center">
               <Text variant="body-medium" className="!text-foreground-base">
                 {searchQuery
-                  ? "No matching workflows found"
-                  : "No recent runs to show yet"}
+                  ? t("nav2.activity.noMatching")
+                  : t("nav2.activity.noRecent")}
               </Text>
               <Text variant="body" className="!text-foreground-tertiary">
                 {searchQuery
-                  ? "Try another search term"
-                  : "Start a workflow to get updates"}
+                  ? t("nav2.activity.tryAnother")
+                  : t("nav2.activity.startWorkflow")}
               </Text>
             </div>
           </div>

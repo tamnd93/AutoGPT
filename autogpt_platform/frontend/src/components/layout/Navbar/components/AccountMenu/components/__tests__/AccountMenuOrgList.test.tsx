@@ -1,4 +1,5 @@
 import { useOrgTeamStore } from "@/services/org-team/store";
+import { LocaleProvider } from "@/lib/i18n";
 import { render, screen } from "@/tests/integrations/test-utils";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it } from "vitest";
@@ -64,6 +65,35 @@ describe("AccountMenuOrgList", () => {
 
     expect(screen.getByText("No organizations yet")).toBeDefined();
     expect(screen.getByTestId("create-organization-button")).toBeDefined();
+  });
+
+  it("reads the empty state and the create button in Vietnamese", () => {
+    seedStore({ orgs: [], teams: [] });
+
+    render(
+      <LocaleProvider locale="vi">
+        <AccountMenuOrgList />
+      </LocaleProvider>,
+    );
+
+    expect(screen.getByText("Chưa có tổ chức nào")).toBeDefined();
+    expect(screen.getByText("Tạo tổ chức")).toBeDefined();
+  });
+
+  it("reads the org, personal and team labels in Vietnamese", () => {
+    seedStore();
+
+    render(
+      <LocaleProvider locale="vi">
+        <AccountMenuOrgList />
+      </LocaleProvider>,
+    );
+
+    expect(screen.getByText("Tổ chức")).toBeDefined();
+    expect(screen.getByText("Cá nhân")).toBeDefined();
+    expect(screen.getByText("Nhóm")).toBeDefined();
+    expect(screen.getByText("Riêng tư")).toBeDefined();
+    expect(screen.getByText("Quản lý nhóm")).toBeDefined();
   });
 
   it("lists every org with a Personal badge and marks the active org", () => {

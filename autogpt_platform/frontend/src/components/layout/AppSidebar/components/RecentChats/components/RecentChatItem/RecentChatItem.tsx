@@ -28,6 +28,7 @@ import {
   Share03Icon,
 } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 import { isKey } from "@/lib/keyboard";
 
 interface Session {
@@ -95,7 +96,8 @@ export const RecentChatItem = memo(function RecentChatItem({
   onExcludeFromLearning,
   onDelete,
 }: Props) {
-  const title = session.title || "Untitled chat";
+  const t = useT();
+  const title = session.title || t("nav2.chat.untitled");
   const hasPlatformLogo = !!resolvePlatformLogo(session.source_platform);
 
   // Enter and Escape both blur the input, which would otherwise trigger a
@@ -108,7 +110,7 @@ export const RecentChatItem = memo(function RecentChatItem({
       <SidebarMenuItem>
         <input
           autoFocus
-          aria-label="Rename chat"
+          aria-label={t("nav2.chat.renameAria")}
           value={editingTitle}
           onChange={(e) => onEditingTitleChange(e.target.value)}
           onKeyDown={(e) => {
@@ -165,7 +167,7 @@ export const RecentChatItem = memo(function RecentChatItem({
         <DropdownMenuTrigger asChild>
           <SidebarMenuAction
             showOnHover
-            aria-label="Chat actions"
+            aria-label={t("nav2.chat.actionsAria")}
             className="max-md:!top-1.5 max-md:w-8 max-md:[&>svg]:size-5"
           >
             <Icon
@@ -184,12 +186,12 @@ export const RecentChatItem = memo(function RecentChatItem({
               ) : (
                 <Icon icon={PinIcon} className="mr-2 h-4 w-4" />
               )}
-              {session.is_pinned ? "Unpin chat" : "Pin chat"}
+              {session.is_pinned ? t("nav2.chat.unpin") : t("nav2.chat.pin")}
             </DropdownMenuItem>
           )}
           <DropdownMenuItem onClick={() => onRename(session.id, session.title)}>
             <Icon icon={PencilIcon} className="mr-2 h-4 w-4" />
-            Rename
+            {t("nav2.chat.rename")}
           </DropdownMenuItem>
           <DropdownMenuItem
             onClick={() => onExport(session.id, session.title)}
@@ -206,16 +208,16 @@ export const RecentChatItem = memo(function RecentChatItem({
             ) : (
               <Icon icon={Download04Icon} className="mr-2 h-4 w-4" />
             )}
-            {isExporting ? "Exporting…" : "Export chat"}
+            {isExporting ? t("nav2.chat.exporting") : t("nav2.chat.export")}
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => onShare(session.id)}>
             <Icon icon={Share03Icon} className="mr-2 h-4 w-4" />
-            Share chat
+            {t("nav2.chat.share")}
           </DropdownMenuItem>
           {isLearningEnabled && (
             <DropdownMenuItem onClick={() => onExcludeFromLearning(session.id)}>
               <Icon icon={BookOpen01Icon} className="mr-2 h-4 w-4" />
-              Exclude from learning
+              {t("nav2.chat.excludeLearning")}
             </DropdownMenuItem>
           )}
           <DropdownMenuItem
@@ -225,7 +227,7 @@ export const RecentChatItem = memo(function RecentChatItem({
             className="text-red-600 focus:bg-error-surface focus:text-red-600"
           >
             <Icon icon={Delete02Icon} className="mr-2 h-4 w-4" />
-            Delete chat
+            {t("nav2.chat.delete")}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

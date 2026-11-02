@@ -5,7 +5,8 @@ import {
 } from "@/components/molecules/Popover/Popover";
 import { environment } from "@/services/environment";
 import * as React from "react";
-import { MenuItemGroup } from "../../helpers";
+import { useT } from "@/lib/i18n";
+import { IconType, MenuItemGroup } from "../../helpers";
 import { AccountLogoutOption } from "./components/AccountLogoutOption";
 import { AccountMenuActivityRow } from "./components/AccountMenuActivityRow";
 import { AccountMenuFeedbackRow } from "./components/AccountMenuFeedbackRow";
@@ -36,6 +37,7 @@ export function AccountMenu({
   side = "top",
   align = "start",
 }: Props) {
+  const t = useT();
   const popupId = React.useId();
 
   return (
@@ -45,7 +47,7 @@ export function AccountMenu({
           type="button"
           // TODO(tokens): no exact role for focus-visible:ring-neutral-300 (#D4D4D4)
           className="flex cursor-pointer items-center space-x-3 rounded-full outline-none focus-visible:ring-2 focus-visible:ring-neutral-300"
-          aria-label="Open profile menu"
+          aria-label={t("nav2.menu.openProfile")}
           aria-controls={popupId}
           aria-haspopup="true"
           data-testid="profile-popout-menu-trigger"
@@ -80,7 +82,7 @@ export function AccountMenu({
 
         {menuItemGroups.map((group, groupIndex) => {
           const isLogoutGroup = group.items.some(
-            (item) => item.text === "Log out",
+            (item) => item.icon === IconType.LogOut,
           );
           const showDivider = groupIndex === 0 || isLogoutGroup;
 
@@ -102,10 +104,13 @@ export function AccountMenu({
                     </li>
                   )}
                   {group.items.map((item, itemIndex) => {
-                    const key = `${groupIndex}-${itemIndex}-${item.text}`;
+                    const key = `${groupIndex}-${itemIndex}-${item.labelKey ?? item.text}`;
                     const icon = getAccountMenuIcon(item.icon);
+                    const label = item.labelKey
+                      ? t(item.labelKey)
+                      : (item.text ?? "");
 
-                    if (item.text === "Log out") {
+                    if (item.icon === IconType.LogOut) {
                       return (
                         <li key={key}>
                           <AccountLogoutOption />
@@ -121,7 +126,7 @@ export function AccountMenu({
                             href={item.href}
                             external={item.external}
                             icon={icon}
-                            label={item.text}
+                            label={label}
                           />
                         </li>
                       );
@@ -133,7 +138,7 @@ export function AccountMenu({
                           as="button"
                           onClick={item.onClick}
                           icon={icon}
-                          label={item.text}
+                          label={label}
                         />
                       </li>
                     );

@@ -19,8 +19,10 @@ import {
 } from "@/components/atoms/Tooltip/BaseTooltip";
 import { isLogoutInProgress } from "@/lib/autogpt-server-api/helpers";
 import { useAuth } from "@/lib/auth/hooks/useAuth";
+import { useT } from "@/lib/i18n";
 
 export function SidebarUserActions() {
+  const t = useT();
   const { user, isLoggedIn, isUserLoading } = useAuth();
   const { state } = useSidebar();
   const isCollapsed = state === "collapsed";
@@ -68,7 +70,7 @@ export function SidebarUserActions() {
             </SidebarTooltipTrigger>
             <TooltipPortal>
               <SidebarTooltipContent side="right">
-                Account
+                {t("nav2.account.tooltip")}
               </SidebarTooltipContent>
             </TooltipPortal>
           </SidebarTooltip>

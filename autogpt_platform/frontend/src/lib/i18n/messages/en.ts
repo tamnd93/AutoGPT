@@ -1,6 +1,7 @@
 import { formatEn } from "./format.en";
 import { integrationsEn } from "./integrations.en";
 import { nav1En } from "./nav-1.en";
+import { nav2En } from "./nav-2.en";
 import { navEn } from "./nav.en";
 
 export const en = {
@@ -8,6 +9,7 @@ export const en = {
   ...navEn,
   ...formatEn,
   ...nav1En,
+  ...nav2En,
   "common.planSuffix": "{plan} plan",
 } as const;
 

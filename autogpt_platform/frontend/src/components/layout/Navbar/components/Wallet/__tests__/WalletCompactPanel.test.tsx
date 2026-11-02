@@ -1,4 +1,5 @@
 import { render, screen } from "@/tests/integrations/test-utils";
+import { LocaleProvider } from "@/lib/i18n";
 import { OnboardingStep } from "@/lib/autogpt-server-api";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
@@ -315,6 +316,62 @@ describe("WalletCompactPanel", () => {
 
     const billingLink = screen.getByRole("link", { name: /Billing settings/ });
     expect(billingLink.getAttribute("href")).toBe("/settings/billing");
+  });
+});
+
+describe("wallet copy in Vietnamese", () => {
+  it("translates the onboarding catalogue", () => {
+    const viGroups = getTaskGroups(null, "vi");
+
+    expect(viGroups[0].name).toBe("Khởi đầu thuận lợi");
+    expect(viGroups[0].tasks[0].name).toBe("Hoàn thành bước khởi động");
+    expect(viGroups[2].tasks[0].name).toBe("Kích hoạt workflow qua webhook");
+  });
+
+  it("translates the earn group progress line", () => {
+    const viEarnGroups = getEarnGroups(groups, completedSteps, "vi");
+
+    expect(viEarnGroups[0].label).toBe("First Wins · 2/2 hoàn thành");
+    expect(viEarnGroups[1].label).toBe(
+      "Consistency Challenge · 0/2 hoàn thành",
+    );
+  });
+
+  it("translates the trial plan line", () => {
+    expect(getTrialPlanLine({ active: true }, "vi")).toBe(
+      "Gói của bạn bắt đầu khi bản dùng thử kết thúc",
+    );
+    expect(
+      getTrialPlanLine({ active: true, cancel_at_period_end: true }, "vi"),
+    ).toBeNull();
+  });
+
+  it("reads the compact panel in Vietnamese", () => {
+    render(
+      <LocaleProvider locale="vi">
+        <WalletCompactPanel
+          groups={groups}
+          completedSteps={completedSteps}
+          formattedCredits="$9.79"
+          trialNoteID="trial-note"
+          onAddCredits={() => {}}
+          onOpenExplainer={() => {}}
+          onNavigate={() => {}}
+        />
+      </LocaleProvider>,
+    );
+
+    expect(screen.getByText("Credit tự động hoá")).toBeDefined();
+    expect(screen.getByRole("button", { name: "Nạp credit" })).toBeDefined();
+    expect(screen.getByText("Nhận credit")).toBeDefined();
+    expect(screen.getByText("First Wins · 2/2 hoàn thành")).toBeDefined();
+    expect(screen.getByText("Xong")).toBeDefined();
+    expect(
+      screen.getByRole("button", { name: "Cách hoạt động" }),
+    ).toBeDefined();
+    expect(
+      screen.getByRole("link", { name: "Cài đặt thanh toán" }),
+    ).toBeDefined();
   });
 });
 

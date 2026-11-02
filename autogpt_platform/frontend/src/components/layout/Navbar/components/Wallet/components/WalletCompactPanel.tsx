@@ -9,6 +9,7 @@ import {
   CreditCardIcon,
   InformationCircleIcon,
 } from "@hugeicons/core-free-icons";
+import { useT } from "@/lib/i18n";
 import { useTrialStatus } from "@/services/trials/useTrialStatus";
 import { useId } from "react";
 import { TaskGroup } from "../helpers";
@@ -35,6 +36,7 @@ export function WalletCompactPanel({
   onOpenExplainer,
   onNavigate,
 }: Props) {
+  const t = useT();
   const isPaymentEnabled = useGetFlag(Flag.ENABLE_PLATFORM_PAYMENT);
   const creditsHeadingID = useId();
   const { data: trial } = useTrialStatus();
@@ -56,7 +58,7 @@ export function WalletCompactPanel({
             variant="large-medium"
             tone="primary"
           >
-            Automation credits
+            {t("nav2.wallet.credits")}
           </Text>
           <Text
             variant="large-semibold"
@@ -75,7 +77,7 @@ export function WalletCompactPanel({
             onClick={onAddCredits}
             className="w-full"
           >
-            Add credits
+            {t("nav2.wallet.addCredits")}
           </Button>
         )}
       </section>
@@ -88,7 +90,7 @@ export function WalletCompactPanel({
           leadingIcon={InformationCircleIcon}
           onClick={onOpenExplainer}
         >
-          How it works
+          {t("nav2.wallet.howItWorks")}
         </Button>
         <Button
           as="NextLink"
@@ -98,7 +100,7 @@ export function WalletCompactPanel({
           rightIcon={<Icon icon={ArrowRight01Icon} size={14} aria-hidden />}
           onClick={onNavigate}
         >
-          Billing settings
+          {t("nav2.wallet.billingSettings")}
         </Button>
       </div>
     </div>

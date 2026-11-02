@@ -4,6 +4,7 @@ import { useEffect, useReducer, useSyncExternalStore } from "react";
 
 import { useCopilotUIStore } from "@/app/(platform)/copilot/store";
 import { toast } from "@/components/molecules/Toast/use-toast";
+import { useT } from "@/lib/i18n";
 
 import {
   readPermission,
@@ -21,6 +22,7 @@ import {
  * and the surface has to send them to their browser's site settings.
  */
 export function useNotificationSettings() {
+  const t = useT();
   const isNotificationsEnabled = useCopilotUIStore(
     (s) => s.isNotificationsEnabled,
   );
@@ -61,8 +63,8 @@ export function useNotificationSettings() {
 
     if (typeof Notification === "undefined") {
       toast({
-        title: "Notifications not supported",
-        description: "Your browser does not support notifications.",
+        title: t("nav2.notifications.notSupportedTitle"),
+        description: t("nav2.notifications.notSupportedDescription"),
         variant: "destructive",
       });
       return;
@@ -80,17 +82,15 @@ export function useNotificationSettings() {
     // refused, so nothing needs unblocking in browser settings.
     if (result === "default") {
       toast({
-        title: "Notifications not turned on",
-        description:
-          "Your browser didn't confirm permission. Try again, or allow them from the icon in the address bar.",
+        title: t("nav2.notifications.notTurnedOnTitle"),
+        description: t("nav2.notifications.notTurnedOnDescription"),
       });
       return;
     }
 
     toast({
-      title: "Notifications blocked",
-      description:
-        "Please allow notifications in your browser settings to enable this feature.",
+      title: t("nav2.notifications.blockedTitle"),
+      description: t("nav2.notifications.blockedDescription"),
       variant: "destructive",
     });
   }

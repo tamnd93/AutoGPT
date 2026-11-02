@@ -7,6 +7,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/molecules/Collapsible/Collapsible";
+import { useLocale, useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import {
   ArrowDown01Icon,
@@ -22,9 +23,10 @@ interface Props {
 }
 
 export function WalletEarnCredits({ groups, completedSteps }: Props) {
+  const locale = useLocale();
   const headingID = useId();
   const [open, setOpen] = useState(true);
-  const earnGroups = getEarnGroups(groups, completedSteps);
+  const earnGroups = getEarnGroups(groups, completedSteps, locale);
   const available = earnGroups.reduce(
     (total, group) => total + group.amount,
     0,
@@ -63,6 +65,8 @@ function EarnCreditsHeader({
   open: boolean;
   available: number;
 }) {
+  const t = useT();
+
   return (
     <h2 id={headingID}>
       <CollapsibleTrigger asChild>
@@ -73,7 +77,7 @@ function EarnCreditsHeader({
         >
           <span className="flex w-full items-baseline justify-between gap-3">
             <Text as="span" variant="large-medium" tone="primary">
-              Earn credits
+              {t("nav2.wallet.earnCredits")}
             </Text>
             <Text
               as="span"
@@ -82,13 +86,13 @@ function EarnCreditsHeader({
               className="tabular-nums"
             >
               {available > 0
-                ? `$${available.toFixed(2)} available`
-                : "All claimed"}
+                ? t("nav2.wallet.available", { amount: available.toFixed(2) })
+                : t("nav2.wallet.allClaimed")}
             </Text>
           </span>
           <span className="flex w-full items-center justify-between gap-3">
             <Text as="span" variant="small" tone="secondary">
-              {open ? "Hide onboarding tasks" : "Show onboarding tasks"}
+              {open ? t("nav2.wallet.hideTasks") : t("nav2.wallet.showTasks")}
             </Text>
             <Icon
               icon={ArrowDown01Icon}
@@ -107,6 +111,7 @@ function EarnCreditsHeader({
 }
 
 function EarnGroupSection({ group }: { group: EarnGroup }) {
+  const t = useT();
   const [open, setOpen] = useState(group.defaultOpen);
 
   return (
@@ -130,7 +135,7 @@ function EarnGroupSection({ group }: { group: EarnGroup }) {
           />
         </span>
         <Text variant="body-tight" as="span" tone="muted" className="shrink-0">
-          {group.done ? "Done" : `$${group.amount.toFixed(2)}`}
+          {group.done ? t("nav2.wallet.done") : `$${group.amount.toFixed(2)}`}
         </Text>
       </button>
 
@@ -140,6 +145,8 @@ function EarnGroupSection({ group }: { group: EarnGroup }) {
 }
 
 function EarnTaskRow({ row }: { row: EarnRow }) {
+  const t = useT();
+
   return (
     <div className="flex items-start justify-between gap-3 py-1.5 pl-8 pr-3">
       <div className="flex min-w-0 items-start gap-2.5">
@@ -147,13 +154,15 @@ function EarnTaskRow({ row }: { row: EarnRow }) {
         <Text variant="body">{row.label}</Text>
       </div>
       <Text variant="body-tight" as="span" tone="muted" className="shrink-0">
-        {row.done ? "Done" : `$${row.amount.toFixed(2)}`}
+        {row.done ? t("nav2.wallet.done") : `$${row.amount.toFixed(2)}`}
       </Text>
     </div>
   );
 }
 
 function StatusIcon({ done }: { done: boolean }) {
+  const t = useT();
+
   return (
     <span className="mt-0.5 shrink-0">
       {done ? (
@@ -162,14 +171,14 @@ function StatusIcon({ done }: { done: boolean }) {
           size={18}
           // TODO(tokens): no exact role for text-[#00a656] (#00A656)
           className="text-[#00a656]"
-          aria-label="completed"
+          aria-label={t("nav2.wallet.completedStatus")}
         />
       ) : (
         <Icon
           icon={CircleIcon}
           size={16}
           className="text-foreground-subtle"
-          aria-label="pending"
+          aria-label={t("nav2.wallet.pendingStatus")}
         />
       )}
     </span>

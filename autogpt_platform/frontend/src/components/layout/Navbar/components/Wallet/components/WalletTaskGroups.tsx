@@ -1,3 +1,4 @@
+import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { useOnboarding } from "@/providers/onboarding/onboarding-provider";
 import { BadgeQuestionMark, Check, ChevronDown } from "lucide-react";
@@ -11,6 +12,7 @@ interface Props {
 }
 
 export function TaskGroups({ groups }: Props) {
+  const t = useT();
   const { state, updateState } = useOnboarding();
   const refs = useRef<Record<string, HTMLDivElement | null>>({});
   const confettiTimers = useRef(new Set<ReturnType<typeof setTimeout>>());
@@ -186,8 +188,10 @@ export function TaskGroups({ groups }: Props) {
               <div className="mt-1 text-xs font-normal leading-tight text-foreground-tertiary">
                 {group.details}
                 <br />
-                {getCompletedCount(group.tasks)} of {group.tasks.length}{" "}
-                completed
+                {t("nav2.wallet.taskCompleted", {
+                  done: getCompletedCount(group.tasks),
+                  total: group.tasks.length,
+                })}
               </div>
             </div>
             {/* Reward and chevron */}
@@ -197,7 +201,7 @@ export function TaskGroups({ groups }: Props) {
                   // TODO(tokens): no exact role for bg-green-200 (#94D5AC)
                   className="rounded-full bg-green-200 px-2.5 py-0.5 font-sans text-xs font-medium text-success-foreground"
                 >
-                  Done
+                  {t("nav2.wallet.done")}
                 </div>
               ) : (
                 <div
@@ -352,10 +356,10 @@ export function TaskGroups({ groups }: Props) {
           {/* Name and details */}
           <div className="flex-1">
             <div className="text-sm font-medium text-foreground-strong">
-              Hidden Tasks
+              {t("nav2.wallet.hiddenTasks")}
             </div>
             <div className="mt-1 text-xs font-normal leading-tight text-foreground-tertiary">
-              Check back later — new tasks are on the way
+              {t("nav2.wallet.hiddenTasksNote")}
             </div>
           </div>
         </div>

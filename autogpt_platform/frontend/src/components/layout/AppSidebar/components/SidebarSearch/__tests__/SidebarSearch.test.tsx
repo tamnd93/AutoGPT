@@ -1,4 +1,5 @@
 import { render, screen } from "@/tests/integrations/test-utils";
+import { LocaleProvider } from "@/lib/i18n";
 import { SidebarProvider } from "@/components/molecules/Sidebar/Sidebar";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it } from "vitest";
@@ -22,6 +23,17 @@ describe("SidebarSearch", () => {
   it("renders a Search button", () => {
     renderSearch();
     expect(screen.getByRole("button", { name: "Search" })).toBeDefined();
+  });
+
+  it("reads the search button in Vietnamese", () => {
+    render(
+      <LocaleProvider locale="vi">
+        <SidebarProvider>
+          <SidebarSearch />
+        </SidebarProvider>
+      </LocaleProvider>,
+    );
+    expect(screen.getByRole("button", { name: "Tìm kiếm" })).toBeDefined();
   });
 
   it("opens the global search palette when clicked", async () => {

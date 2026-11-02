@@ -8,6 +8,7 @@ import { TopUpDialog } from "@/components/layout/TopUpPrompt/TopUpDialog/TopUpDi
 import { useIsBillingEnabled } from "@/hooks/useIsBillingEnabled";
 import { cn } from "@/lib/utils";
 import { UsageCreditsDialog } from "@/components/organisms/UsageCreditsDialog/UsageCreditsDialog";
+import { useT } from "@/lib/i18n";
 import { useId } from "react";
 import { WalletCompactPanel } from "./components/WalletCompactPanel";
 import { WalletFullPanel } from "./components/WalletFullPanel";
@@ -19,6 +20,7 @@ interface Props {
 }
 
 export function Wallet({ compact = false }: Props) {
+  const t = useT();
   const isBillingEnabled = useIsBillingEnabled();
   const {
     state,
@@ -66,7 +68,9 @@ export function Wallet({ compact = false }: Props) {
           onCloseAutoFocus={(event) => {
             if (topUpOpen || explainerOpen) event.preventDefault();
           }}
-          aria-label={compact ? "Usage and credits" : "Automation credits"}
+          aria-label={
+            compact ? t("nav2.wallet.usageAria") : t("nav2.wallet.credits")
+          }
           aria-describedby={compact ? trialNoteID : undefined}
           className={cn(
             "z-50",

@@ -10,6 +10,7 @@ import {
   PopoverTrigger,
 } from "@/components/molecules/Popover/Popover";
 import { Text } from "@/components/atoms/Text/Text";
+import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import type { SectionNavLink } from "./SectionNavItem";
 
@@ -20,6 +21,7 @@ interface Props {
 }
 
 export function SectionMobileNav({ items, sectionName, showBackLink }: Props) {
+  const t = useT();
   const [open, setOpen] = useState(false);
   const current = items.find((i) => i.isActive) ?? items[0];
 
@@ -33,7 +35,7 @@ export function SectionMobileNav({ items, sectionName, showBackLink }: Props) {
       {showBackLink ? (
         <Link
           href="/copilot"
-          aria-label="Back to home"
+          aria-label={t("nav2.sectionNav.backHome")}
           // TODO(tokens): no exact role for hover:text-[#1F1F20] (#1F1F20)
           className="flex items-center gap-1 rounded-[8px] py-1 pr-2 text-foreground-body transition-colors hover:text-[#1F1F20]"
         >
@@ -46,7 +48,10 @@ export function SectionMobileNav({ items, sectionName, showBackLink }: Props) {
             type="button"
             // TODO(tokens): no fitting role for focus-visible:ring-[#3E3E43] #3E3E43; #3E3E43 is foreground-emphasis (a text colour) and action (the primary button's fill), not a focus ring
             className="flex w-fit items-center gap-2 rounded-full border border-border-base bg-surface px-3 py-2 outline-none focus-visible:ring-2 focus-visible:ring-[#3E3E43]"
-            aria-label={`${sectionName} navigation, current: ${current.label}`}
+            aria-label={t("nav2.sectionNav.aria", {
+              section: sectionName,
+              current: current.label,
+            })}
           >
             <span className="flex items-center gap-2">
               <UIIcon
