@@ -1,11 +1,9 @@
 import { postV1SubmitOnboardingProfile } from "@/app/api/__generated__/endpoints/onboarding/onboarding";
 import type { User } from "@/lib/auth/types";
+import { useT } from "@/lib/i18n";
 import { useEffect, useRef, useState } from "react";
 import { accountDisplayName, normalizeOnboardingProfile } from "./helpers";
 import { useOnboardingWizardStore } from "./store";
-
-const SAVE_ERROR =
-  "We couldn't save your profile. Your answers are saved; please retry before continuing.";
 
 export function useOnboardingProfile({
   user,
@@ -14,6 +12,8 @@ export function useOnboardingProfile({
   user: User | null;
   enabled: boolean;
 }) {
+  const t = useT();
+  const saveError = t("onboarding3.profile.saveFailed");
   const userID = user?.id ?? null;
   const activeUserID = useRef(userID);
   activeUserID.current = userID;
@@ -53,8 +53,8 @@ export function useOnboardingProfile({
     );
     const userName = accountDisplayName(user);
     if (!role.trim() || !userName) {
-      setFailure({ userID, message: SAVE_ERROR });
-      throw new Error(SAVE_ERROR);
+      setFailure({ userID, message: saveError });
+      throw new Error(saveError);
     }
     const profile = {
       user_name: userName,
@@ -79,12 +79,12 @@ export function useOnboardingProfile({
         signal: abort.signal,
       });
       if (!isCurrent()) throw new Error("Your account changed.");
-      if (result.status !== 200) throw new Error(SAVE_ERROR);
+      if (result.status !== 200) throw new Error(saveError);
     }
     const promise = save().catch((error: unknown) => {
       if (isCurrent()) {
         submission.current = null;
-        setFailure({ userID, message: SAVE_ERROR });
+        setFailure({ userID, message: saveError });
       }
       throw error;
     });

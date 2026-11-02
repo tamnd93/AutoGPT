@@ -3,6 +3,7 @@ import {
   useGetSubscriptionStatus,
 } from "@/app/api/__generated__/endpoints/credits/credits";
 import type { SubscriptionStatusResponse } from "@/app/api/__generated__/models/subscriptionStatusResponse";
+import { useT } from "@/lib/i18n";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
@@ -10,6 +11,7 @@ export function usePaidCheckoutStatus(
   userID: string | null,
   paymentEnabled: boolean,
 ) {
+  const t = useT();
   const params = useSearchParams();
   const returning = useRef(params.get("subscription") === "success");
   const previousUserID = useRef(userID);
@@ -53,10 +55,7 @@ export function usePaidCheckoutStatus(
     isLoading: query.isLoading,
     ready: !unconfirmed,
     pending: unconfirmed && !timedOut,
-    error:
-      unconfirmed && timedOut
-        ? "Your payment is still being confirmed. Please retry to check its status."
-        : null,
+    error: unconfirmed && timedOut ? t("onboarding3.checkout.pending") : null,
     retry,
   };
 }

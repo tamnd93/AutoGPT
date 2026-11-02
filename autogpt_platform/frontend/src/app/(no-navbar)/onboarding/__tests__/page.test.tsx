@@ -861,4 +861,42 @@ describe("onboarding page in Vietnamese", () => {
       await screen.findByRole("button", { name: "Tải lại tiến độ mới nhất" }),
     ).toBeDefined();
   });
+
+  it("reads a profile save failure in Vietnamese", async () => {
+    atPaywall();
+    tier = "PRO";
+    submitProfile.mockRejectedValue(new Error("offline"));
+
+    render(
+      <LocaleProvider locale="vi">
+        <OnboardingPage />
+      </LocaleProvider>,
+    );
+
+    expect(
+      await screen.findByText(
+        "Chúng tôi không lưu được hồ sơ của bạn. Câu trả lời của bạn đã được lưu; vui lòng thử lại trước khi tiếp tục.",
+      ),
+    ).toBeDefined();
+  });
+
+  it("reads a completion failure in Vietnamese", async () => {
+    atPaywall();
+    tier = "PRO";
+    completeStep.mockRejectedValue(new Error("offline"));
+
+    render(
+      <LocaleProvider locale="vi">
+        <OnboardingPage />
+      </LocaleProvider>,
+    );
+
+    fireEvent.click(await screen.findByTestId("step-preparing"));
+
+    expect(
+      await screen.findByText(
+        "Chúng tôi không hoàn tất được việc thiết lập tài khoản của bạn. Tiến độ của bạn đã được lưu; vui lòng thử lại.",
+      ),
+    ).toBeDefined();
+  });
 });

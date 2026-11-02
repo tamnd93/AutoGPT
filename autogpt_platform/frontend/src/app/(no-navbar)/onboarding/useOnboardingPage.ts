@@ -1,5 +1,6 @@
 import { postV1CompleteOnboardingStep } from "@/app/api/__generated__/endpoints/onboarding/onboarding";
 import { useAuth } from "@/lib/auth/hooks/useAuth";
+import { useT } from "@/lib/i18n";
 import { trackAdsConversion } from "@/services/analytics/google-ads";
 import { trackTrialCheckoutAbandoned } from "@/services/analytics/monetization-analytics";
 import { environment } from "@/services/environment";
@@ -14,6 +15,7 @@ import { useOnboardingProfile } from "./useOnboardingProfile";
 import { useWizardProgress } from "./useWizardProgress";
 
 export function useOnboardingPage() {
+  const t = useT();
   const router = useRouter();
   const searchParams = useSearchParams();
   const { isLoggedIn, isUserLoading, user } = useAuth();
@@ -123,8 +125,7 @@ export function useOnboardingPage() {
       if (!isCurrent()) return;
       setCompletionError({
         userID: user?.id,
-        message:
-          "We couldn't finish setting up your account. Your progress is saved; please retry.",
+        message: t("onboarding3.page.completionFailed"),
       });
     } finally {
       if (completion.current === attempt) completion.current = null;

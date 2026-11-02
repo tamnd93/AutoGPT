@@ -6,28 +6,30 @@ import { formatEn } from "./format.en";
 import { home1En } from "./home-1.en";
 import { home2En } from "./home-2.en";
 import { integrationsEn } from "./integrations.en";
+import { navEn } from "./nav.en";
 import { nav1En } from "./nav-1.en";
 import { nav2En } from "./nav-2.en";
 import { nav3En } from "./nav-3.en";
-import { navEn } from "./nav.en";
 import { onboarding1En } from "./onboarding-1.en";
 import { onboarding2En } from "./onboarding-2.en";
+import { onboarding3En } from "./onboarding-3.en";
 
 export const en = {
-  ...integrationsEn,
-  ...navEn,
-  ...formatEn,
-  ...nav1En,
-  ...home1En,
-  ...home2En,
-  ...nav2En,
-  ...nav3En,
   ...chatInput1En,
   ...chatInput2En,
   ...chatInput3En,
   ...chatTools1En,
+  ...formatEn,
+  ...home1En,
+  ...home2En,
+  ...integrationsEn,
+  ...navEn,
+  ...nav1En,
+  ...nav2En,
+  ...nav3En,
   ...onboarding1En,
   ...onboarding2En,
+  ...onboarding3En,
   "common.planSuffix": "{plan} plan",
 } as const;
 

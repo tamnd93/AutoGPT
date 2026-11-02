@@ -4,6 +4,8 @@ import {
 } from "@/app/api/__generated__/endpoints/onboarding/onboarding";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { useLocale } from "@/lib/i18n";
+import { getMessage } from "@/lib/i18n/translate";
 import {
   clearLocalProgress,
   readProgress,
@@ -30,6 +32,7 @@ export function useWizardProgress({
 }) {
   const router = useRouter();
   const params = useSearchParams();
+  const locale = useLocale();
   const currentUserID = useRef(userID);
   currentUserID.current = userID;
   const latest = useRef({ steps, params, router });
@@ -73,8 +76,7 @@ export function useWizardProgress({
           loaded: false,
           loadError: true,
           conflict: true,
-          error:
-            "Onboarding was updated in another session. Reload its latest progress to continue. This device's unsaved answers will be replaced.",
+          error: getMessage(locale, "onboarding3.wizard.conflict"),
         });
     }
 
@@ -103,9 +105,12 @@ export function useWizardProgress({
           loaded: false,
           loadError: true,
           conflict: false,
-          error: accountChanged.current
-            ? "Your signed-in account changed. Reload the page to restore its progress."
-            : "We couldn't restore your onboarding progress. Please retry.",
+          error: getMessage(
+            locale,
+            accountChanged.current
+              ? "onboarding3.wizard.accountChanged"
+              : "onboarding3.wizard.restoreFailed",
+          ),
         });
         return;
       }
@@ -115,6 +120,7 @@ export function useWizardProgress({
         userID: userID!,
         initialRevision: revision,
         onConflict: conflict,
+        t: (key, values) => getMessage(locale, key, values),
         async save(wizardProgress, wizardRevision, signal) {
           if (!isCurrent()) throw new Error("Your account changed.");
           const result = await patchV1UpdateOnboardingState(
@@ -175,7 +181,7 @@ export function useWizardProgress({
         loadError: false,
         conflict: false,
         error: offline
-          ? "Your saved progress is available on this device. Changes will sync when the connection returns."
+          ? getMessage(locale, "onboarding3.wizard.offline")
           : null,
       });
       let previous = snapshotProgress();
@@ -199,7 +205,7 @@ export function useWizardProgress({
       if (currentUserID.current !== userID)
         useOnboardingWizardStore.getState().reset();
     };
-  }, [userID, ready, layout, attempt]);
+  }, [userID, ready, layout, attempt, locale]);
 
   function retry() {
     if (accountChanged.current) {

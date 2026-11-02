@@ -6,6 +6,7 @@ import {
 } from "@/app/api/__generated__/endpoints/brain-dump/brain-dump.msw";
 import openapi from "@/app/api/openapi.json";
 import { server } from "@/mocks/mock-server";
+import { LocaleProvider } from "@/lib/i18n";
 import {
   act,
   cleanup,
@@ -38,6 +39,8 @@ import { makeProgress } from "./progress-fixture";
 // devDependency here, so the recording store is replaced with an
 // in-memory double. Everything above it (the recorder, the upload queue,
 // the recovery prompt) runs for real.
+const { loadFailure } = vi.hoisted(() => ({ loadFailure: { fail: false } }));
+
 const { recordingStoreState } = vi.hoisted(() => ({
   recordingStoreState: {
     // Ids the store was asked to mark finalized, kept separately because
@@ -176,18 +179,20 @@ vi.mock("@/lib/auth/hooks/useAuth", () => ({
 
 vi.mock("@/app/api/__generated__/endpoints/onboarding/onboarding", () => ({
   getV1OnboardingState: () =>
-    Promise.resolve({
-      status: 200,
-      data: {
-        userId: "brain-user",
-        completedSteps: [],
-        wizardRevision: 0,
-        wizardProgress: makeProgress({
-          currentStep: "painPoints",
-          completedSteps: ["team", "autopilot", "role"],
+    loadFailure.fail
+      ? Promise.reject(new Error("offline"))
+      : Promise.resolve({
+          status: 200,
+          data: {
+            userId: "brain-user",
+            completedSteps: [],
+            wizardRevision: 0,
+            wizardProgress: makeProgress({
+              currentStep: "painPoints",
+              completedSteps: ["team", "autopilot", "role"],
+            }),
+          },
         }),
-      },
-    }),
   getV1CheckIfOnboardingIsCompleted: () =>
     Promise.resolve({ status: 200, data: false }),
   patchV1UpdateOnboardingState: (body: {
@@ -435,6 +440,7 @@ beforeEach(() => {
   recordingStoreState.parts = [];
   recordingStoreState.finalizedIds = [];
   wizardSaves.length = 0;
+  loadFailure.fail = false;
   useOnboardingWizardStore.getState().reset();
   localStorage.clear();
   window.sessionStorage.removeItem(STEP_STORAGE_KEY);
@@ -1653,6 +1659,24 @@ describe("onboarding brain dump — a refused microphone", () => {
       screen.getByRole("button", { name: "record instead" }),
     );
     expect(await screen.findByRole("button", { name: "Talk" })).toBeDefined();
+  });
+});
+
+describe("onboarding page errors in Vietnamese", () => {
+  it("reads the restore failure in Vietnamese", async () => {
+    loadFailure.fail = true;
+
+    render(
+      <LocaleProvider locale="vi">
+        <OnboardingPage />
+      </LocaleProvider>,
+    );
+
+    expect(
+      await screen.findByText(
+        "Chúng tôi không khôi phục được tiến độ onboarding của bạn. Vui lòng thử lại.",
+      ),
+    ).toBeDefined();
   });
 });
 

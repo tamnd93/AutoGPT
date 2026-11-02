@@ -1,5 +1,6 @@
+import { LocaleProvider } from "@/lib/i18n";
 import { act, cleanup, renderHook } from "@testing-library/react";
-import { afterEach, beforeEach, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { readLocalProgress, writeLocalProgress } from "../progress";
 import { PAYWALL_LAST_STEPS, useOnboardingWizardStore } from "../store";
 import { useWizardProgress } from "../useWizardProgress";
@@ -51,6 +52,23 @@ function mountWizard(userID = "u1") {
         steps: PAYWALL_LAST_STEPS,
       }),
     { initialProps: { userID } },
+  );
+}
+
+function mountWizardVi(userID = "u1") {
+  return renderHook(
+    ({ userID }) =>
+      useWizardProgress({
+        userID,
+        ready: true,
+        steps: PAYWALL_LAST_STEPS,
+      }),
+    {
+      initialProps: { userID },
+      wrapper: ({ children }) => (
+        <LocaleProvider locale="vi">{children}</LocaleProvider>
+      ),
+    },
   );
 }
 
@@ -270,6 +288,62 @@ it("rejects a restored draft belonging to another signed-in account", async () =
   expect(result.current.error).toMatch(/account changed/i);
   expect(readLocalProgress("u1")).toBeNull();
   expect(patchState).not.toHaveBeenCalled();
+});
+
+describe("onboarding progress copy in Vietnamese", () => {
+  it("reads a stale-draft conflict in Vietnamese", async () => {
+    writeLocalProgress("u1", makeProgress({ role: "Stale" }), true, 3);
+    const { result } = mountWizardVi();
+    await settle();
+
+    expect(result.current.conflict).toBe(true);
+    expect(result.current.error).toBe(
+      "Onboarding đã được cập nhật ở một phiên khác. Hãy tải lại tiến độ mới nhất để tiếp tục. Các câu trả lời chưa lưu trên thiết bị này sẽ bị thay thế.",
+    );
+  });
+
+  it("reads a changed signed-in account in Vietnamese", async () => {
+    getState.mockResolvedValue(response(makeProgress(), 4, "u2"));
+    const { result } = mountWizardVi();
+    await settle();
+
+    expect(result.current.error).toBe(
+      "Tài khoản đăng nhập của bạn đã thay đổi. Hãy tải lại trang để khôi phục tiến độ.",
+    );
+  });
+
+  it("reads a failed restore in Vietnamese", async () => {
+    getState.mockRejectedValue(new Error("Offline"));
+    const { result } = mountWizardVi();
+    await settle();
+
+    expect(result.current.error).toBe(
+      "Chúng tôi không khôi phục được tiến độ onboarding của bạn. Vui lòng thử lại.",
+    );
+  });
+
+  it("reads the offline sync notice in Vietnamese", async () => {
+    writeLocalProgress("u1", makeProgress(), false, 3);
+    getState.mockRejectedValue(new Error("Offline"));
+    const { result } = mountWizardVi();
+    await settle();
+
+    expect(result.current.error).toBe(
+      "Tiến độ đã lưu của bạn có trên thiết bị này. Các thay đổi sẽ đồng bộ khi có kết nối trở lại.",
+    );
+  });
+
+  it("reads the save failure in Vietnamese", async () => {
+    patchState.mockRejectedValue(new Error("offline"));
+    const { result } = mountWizardVi();
+    await settle();
+    act(() => useOnboardingWizardStore.getState().setRole("Founder"));
+    await settle();
+
+    expect(result.current.error).toBe(
+      "Chúng tôi không lưu được tiến độ vào tài khoản của bạn. Chúng tôi sẽ tiếp tục thử lại; bạn có thể tiếp tục tại đây.",
+    );
+  });
 });
 
 it("ignores a delayed restore after the account changes", async () => {
