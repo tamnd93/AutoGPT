@@ -5,6 +5,7 @@ import { Text } from "@/components/atoms/Text/Text";
 import Image from "next/image";
 import { isLocalStoreMediaUrl } from "@/lib/store-media";
 import { useThumbnailImages } from "./useThumbnailImages";
+import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import {
   Cancel01Icon,
@@ -29,6 +30,7 @@ export function ThumbnailImages({
   initialSelectedImage = null,
   errorMessage,
 }: ThumbnailImagesProps) {
+  const t = useT();
   const {
     images,
     selectedImage,
@@ -52,15 +54,16 @@ export function ThumbnailImages({
       <div className="flex flex-col gap-1">
         <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
           <Text variant="body-medium" as="h3" className="text-textBlack">
-            Media
+            {t("marketplace3.thumbnails.media")}
           </Text>
           <Text variant="small" as="span" className="text-foreground-tertiary">
-            {images.length}/5 images
+            {t("marketplace3.thumbnails.count", {
+              count: images.length,
+            })}
           </Text>
         </div>
         <Text variant="small" className="text-foreground-tertiary">
-          The selected image is submitted first and appears as the marketplace
-          thumbnail.
+          {t("marketplace3.thumbnails.explainer")}
         </Text>
         {errorMessage && <p className="text-sm text-error">{errorMessage}</p>}
       </div>
@@ -94,7 +97,11 @@ export function ThumbnailImages({
               ) : (
                 <Icon icon={PlusSignIcon} size={16} />
               )}
-              <span>{isUploading ? "Uploading" : "Add image"}</span>
+              <span>
+                {isUploading
+                  ? t("marketplace3.thumbnails.uploading")
+                  : t("marketplace3.thumbnails.addImage")}
+              </span>
             </label>
             <Button
               type="button"
@@ -105,7 +112,9 @@ export function ThumbnailImages({
               loading={isGenerating}
               leftIcon={<Icon icon={MagicWand01Icon} className="h-4 w-4" />}
             >
-              {isGenerating ? "Generating" : "Generate"}
+              {isGenerating
+                ? t("marketplace3.thumbnails.generating")
+                : t("marketplace3.thumbnails.generate")}
             </Button>
           </div>
         ) : (
@@ -124,12 +133,16 @@ export function ThumbnailImages({
                         : "border-transparent hover:border-border-strong",
                     )}
                     aria-pressed={selectedImage === src}
-                    aria-label={`Select thumbnail ${index + 1}`}
+                    aria-label={t("marketplace3.thumbnails.selectAria", {
+                      index: index + 1,
+                    })}
                   >
                     <Image
                       src={src}
                       unoptimized={isLocalStoreMediaUrl(src)}
-                      alt={`Thumbnail ${index + 1}`}
+                      alt={t("marketplace3.thumbnails.alt", {
+                        index: index + 1,
+                      })}
                       fill
                       style={{ objectFit: "cover" }}
                     />
@@ -142,14 +155,16 @@ export function ThumbnailImages({
                       handleRemoveImage(index);
                     }}
                     className="absolute right-1.5 top-1.5 z-30 inline-flex size-7 cursor-pointer items-center justify-center rounded-full bg-action-hover/85 text-action-foreground shadow-sm backdrop-blur-sm transition-colors hover:bg-action-hover"
-                    aria-label={`Remove image ${index + 1}`}
+                    aria-label={t("marketplace3.thumbnails.removeAria", {
+                      index: index + 1,
+                    })}
                     data-testid={`thumbnail-remove-${index}`}
                   >
                     <Icon icon={Cancel01Icon} size={14} />
                   </button>
                   {index === 0 ? (
                     <span className="mt-1 block text-center text-caption-sm font-medium leading-inherit text-foreground-tertiary">
-                      Thumbnail
+                      {t("marketplace3.thumbnails.thumbnailLabel")}
                     </span>
                   ) : null}
                 </div>
@@ -172,7 +187,9 @@ export function ThumbnailImages({
                   }
                   data-testid="thumbnail-add-image"
                 >
-                  {isUploading ? "Uploading" : "Add image"}
+                  {isUploading
+                    ? t("marketplace3.thumbnails.uploading")
+                    : t("marketplace3.thumbnails.addImage")}
                 </Button>
               ) : null}
               <Button
@@ -185,10 +202,10 @@ export function ThumbnailImages({
                 leftIcon={<Icon icon={MagicWand01Icon} className="h-4 w-4" />}
               >
                 {isGenerating
-                  ? "Generating"
+                  ? t("marketplace3.thumbnails.generating")
                   : images.length >= 5
-                    ? "Max images reached"
-                    : "Generate"}
+                    ? t("marketplace3.thumbnails.maxReached")
+                    : t("marketplace3.thumbnails.generate")}
               </Button>
             </div>
           </div>

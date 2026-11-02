@@ -9,6 +9,7 @@ import { StoreSubmissionEditRequest } from "@/app/api/__generated__/models/store
 import { useToast } from "@/components/molecules/Toast/use-toast";
 import { useStoreCategories } from "@/hooks/useStoreCategories";
 import { validateYouTubeUrl } from "@/lib/utils";
+import { useT } from "@/lib/i18n";
 import { SUB_HEADING_MAX } from "../../PublishAgentModal/components/AgentInfoStep/helpers";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
@@ -30,34 +31,35 @@ export const useEditAgentForm = ({
   onSuccess,
   onClose,
 }: useEditAgentFormProps) => {
+  const t = useT();
   const editAgentSchema = z.object({
     title: z
       .string()
-      .min(1, "Title is required")
-      .max(100, "Title must be less than 100 characters"),
+      .min(1, t("marketplace3.zod.titleRequired"))
+      .max(100, t("marketplace3.zod.titleTooLong")),
     subheader: z
       .string()
       .trim()
-      .min(1, "Tagline is required")
+      .min(1, t("marketplace3.zod.taglineRequired"))
       .max(
         SUB_HEADING_MAX,
-        `Tagline must be ${SUB_HEADING_MAX} characters or less`,
+        t("marketplace3.zod.taglineTooLong", { max: SUB_HEADING_MAX }),
       ),
     youtubeLink: z
       .string()
-      .refine(validateYouTubeUrl, "Please enter a valid YouTube URL"),
-    category: z.string().min(1, "Category is required"),
+      .refine(validateYouTubeUrl, t("marketplace3.zod.youtubeInvalid")),
+    category: z.string().min(1, t("marketplace3.zod.categoryRequired")),
     description: z
       .string()
-      .min(1, "Description is required")
-      .max(1000, "Description must be less than 1000 characters"),
+      .min(1, t("marketplace3.zod.descriptionRequired"))
+      .max(1000, t("marketplace3.zod.descriptionTooLong")),
     changes_summary: z
       .string()
-      .min(1, "Changes summary is required")
-      .max(500, "Changes summary must be less than 500 characters"),
+      .min(1, t("marketplace3.zod.changesRequired"))
+      .max(500, t("marketplace3.zod.changesTooLong")),
     agentOutputDemo: z
       .string()
-      .refine(validateYouTubeUrl, "Please enter a valid YouTube URL"),
+      .refine(validateYouTubeUrl, t("marketplace3.zod.youtubeInvalid")),
   });
 
   type EditAgentFormData = z.infer<typeof editAgentSchema>;
@@ -105,7 +107,7 @@ export const useEditAgentForm = ({
     if (images.length === 0) {
       form.setError("root", {
         type: "manual",
-        message: "At least one image is required",
+        message: t("marketplace3.edit.imageRequired"),
       });
       return;
     }
@@ -131,9 +133,8 @@ export const useEditAgentForm = ({
       // Extract the StoreSubmission from the response
       if (response.status === 200 && response.data) {
         toast({
-          title: "Workflow Updated",
-          description:
-            "Your workflow submission has been updated successfully.",
+          title: t("marketplace3.edit.updatedTitle"),
+          description: t("marketplace3.edit.updatedBody"),
           duration: 3000,
           variant: "default",
         });
@@ -146,15 +147,15 @@ export const useEditAgentForm = ({
         onSuccess(response.data);
         onClose();
       } else {
-        throw new Error("Failed to update submission");
+        throw new Error(t("marketplace3.edit.failedUpdate"));
       }
     } catch (error) {
-      if (toastIfPlanRequired(error, "Publishing needs an active plan")) return;
+      if (toastIfPlanRequired(error, t("marketplace3.publish.planPublishing")))
+        return;
       Sentry.captureException(error);
       toast({
-        title: "Edit Workflow Error",
-        description:
-          "An error occurred while editing the workflow. Please try again.",
+        title: t("marketplace3.edit.errorTitle"),
+        description: t("marketplace3.edit.errorBody"),
         duration: 3000,
         variant: "destructive",
       });

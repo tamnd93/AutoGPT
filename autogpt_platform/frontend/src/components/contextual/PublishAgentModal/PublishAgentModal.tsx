@@ -11,6 +11,7 @@ import { Skeleton } from "@/components/atoms/Skeleton/Skeleton";
 import { Button } from "@/components/atoms/Button/Button";
 import { Props, usePublishAgentModal } from "./usePublishAgentModal";
 import { useAuth } from "@/lib/auth/hooks/useAuth";
+import { useT } from "@/lib/i18n";
 import { SubmissionStatus } from "@/app/api/__generated__/models/submissionStatus";
 import { getApprovedMarketplaceUrl } from "@/lib/utils";
 import {
@@ -51,6 +52,7 @@ export function PublishAgentModal({
   });
 
   const { user, isUserLoading } = useAuth();
+  const t = useT();
   const shouldReduceMotion = useReducedMotion();
 
   const stepOrder = React.useMemo(
@@ -143,7 +145,7 @@ export function PublishAgentModal({
   return (
     <>
       <Dialog
-        title="Publish Workflow"
+        title={t("marketplace3.publish.title")}
         styling={{
           maxWidth: "48rem",
           marginRight: "0.5rem",
@@ -165,7 +167,9 @@ export function PublishAgentModal({
       >
         {showTrigger && (
           <Dialog.Trigger>
-            {trigger || <Button size="small">Publish Workflow</Button>}
+            {trigger || (
+              <Button size="small">{t("marketplace3.publish.button")}</Button>
+            )}
           </Dialog.Trigger>
         )}
         <Dialog.Content>

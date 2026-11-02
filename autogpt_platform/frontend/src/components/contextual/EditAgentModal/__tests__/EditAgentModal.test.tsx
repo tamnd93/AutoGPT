@@ -5,6 +5,7 @@ import { server } from "@/mocks/mock-server";
 import { fireEvent, render, screen } from "@/tests/integrations/test-utils";
 import { http, HttpResponse } from "msw";
 
+import { LocaleProvider } from "@/lib/i18n";
 import { EditAgentModal } from "../EditAgentModal";
 
 function makeSubmission(): StoreSubmissionEditRequest & {
@@ -24,6 +25,33 @@ function makeSubmission(): StoreSubmissionEditRequest & {
     graph_id: "graph-1",
   };
 }
+
+describe("EditAgentModal in Vietnamese", () => {
+  it("reads the edit form chrome in Vietnamese", () => {
+    render(
+      <LocaleProvider locale="vi">
+        <EditAgentModal
+          isOpen={true}
+          onClose={() => {}}
+          submission={makeSubmission()}
+          onSuccess={() => {}}
+        />
+      </LocaleProvider>,
+    );
+
+    expect(
+      screen.getByRole("dialog", { name: "Chỉnh sửa bài đăng" }),
+    ).toBeDefined();
+    expect(screen.getByText("Ghi chú cập nhật")).toBeDefined();
+    expect(screen.getByText("Thông tin cơ bản")).toBeDefined();
+    expect(screen.getByText("Hình thu nhỏ")).toBeDefined();
+    expect(screen.getByText("Chi tiết trải nghiệm")).toBeDefined();
+    expect(
+      screen.getByRole("button", { name: "Cập nhật bài đăng" }),
+    ).toBeDefined();
+    expect(screen.getByRole("button", { name: "Huỷ" })).toBeDefined();
+  });
+});
 
 describe("EditAgentModal", () => {
   it("does not render when submission is null", () => {

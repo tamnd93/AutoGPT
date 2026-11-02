@@ -33,6 +33,7 @@ import {
   Store01Icon,
 } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 
 const DESCRIPTION_MAX = 1000;
 const INSTRUCTIONS_MAX = 2000;
@@ -45,6 +46,7 @@ export function AgentInfoStep({
   initialData,
   isMarketplaceUpdate,
 }: Props) {
+  const t = useT();
   const {
     form,
     agentId,
@@ -116,11 +118,11 @@ export function AgentInfoStep({
     !!watched.agentOutputDemo;
 
   const title = isMarketplaceUpdate
-    ? "Describe the update"
-    : "Build the store listing";
+    ? t("marketplace3.publish.describeUpdate")
+    : t("marketplace3.publish.buildListing");
   const description = isMarketplaceUpdate
-    ? "Explain what changed, then adjust any listing details that need to move with this version."
-    : "Write a bit of details about your workflow so reviewers and users know what to expect.";
+    ? t("marketplace3.publish.describeUpdateBody")
+    : t("marketplace3.publish.buildListingBody");
 
   return (
     <div className="mx-auto flex w-full flex-col">
@@ -141,15 +143,14 @@ export function AgentInfoStep({
                     // TODO(tokens): no exact role for text-amber-950 #451a03
                     className="text-amber-950"
                   >
-                    Update note
+                    {t("marketplace3.edit.updateNote")}
                   </Text>
                   <Text
                     // TODO(tokens): no exact role for text-amber-800 #92400e
                     variant="small"
                     className="text-amber-800"
                   >
-                    Reviewers use this to understand why the marketplace listing
-                    needs a new version.
+                    {t("marketplace3.publish.updateNoteBody")}
                   </Text>
                 </div>
               </div>
@@ -160,11 +161,11 @@ export function AgentInfoStep({
                   <Input
                     id={field.name}
                     labelVariant="body"
-                    label="What changed?"
-                    labelTooltip="Summary of what's new or improved in this version. Reviewers see this first."
+                    label={t("marketplace3.edit.whatChanged")}
+                    labelTooltip={t("marketplace3.edit.whatChangedTooltip")}
                     type="textarea"
                     rows={1}
-                    placeholder="Describe what's new or improved in this version..."
+                    placeholder={t("marketplace3.edit.whatChangedPlaceholder")}
                     error={form.formState.errors.changesSummary?.message}
                     required
                     wrapperClassName="!mb-0"
@@ -194,7 +195,7 @@ export function AgentInfoStep({
                     size={18}
                     className="text-foreground-tertiary"
                   />
-                  Listing basics
+                  {t("marketplace3.edit.listingBasics")}
                   {basicsHasError ? (
                     <Icon
                       icon={AlertCircleIcon}
@@ -220,10 +221,10 @@ export function AgentInfoStep({
                       <Input
                         id={field.name}
                         labelVariant="body"
-                        label="Title"
-                        labelTooltip="Public name shown on the marketplace listing."
+                        label={t("marketplace3.edit.titleLabel")}
+                        labelTooltip={t("marketplace3.edit.titleTooltip")}
                         type="text"
-                        placeholder="Workflow name"
+                        placeholder={t("marketplace3.edit.titlePlaceholder")}
                         error={form.formState.errors.title?.message}
                         {...field}
                       />
@@ -241,10 +242,12 @@ export function AgentInfoStep({
                         <Input
                           id={field.name}
                           labelVariant="body"
-                          label="Tagline"
-                          labelTooltip="The one-line subtitle shown under the workflow name and on preview cards. Start with a verb and name the outcome for the user."
+                          label={t("marketplace3.edit.tagline")}
+                          labelTooltip={t("marketplace3.edit.taglineTooltip")}
                           type="text"
-                          placeholder="Find decision-makers at any company in seconds"
+                          placeholder={t(
+                            "marketplace3.edit.taglinePlaceholder",
+                          )}
                           error={form.formState.errors.subheader?.message}
                           required
                           {...field}
@@ -261,10 +264,10 @@ export function AgentInfoStep({
                     <Input
                       id={field.name}
                       labelVariant="body"
-                      label="Slug"
-                      labelTooltip="URL-friendly identifier used in the marketplace path. Lowercase letters, numbers, hyphens only."
+                      label={t("marketplace3.publish.slug")}
+                      labelTooltip={t("marketplace3.publish.slugTooltip")}
                       type="text"
-                      placeholder="URL-friendly name"
+                      placeholder={t("marketplace3.publish.slugPlaceholder")}
                       error={form.formState.errors.slug?.message}
                       {...field}
                     />
@@ -278,8 +281,8 @@ export function AgentInfoStep({
                     <Select
                       id={field.name}
                       labelVariant="body"
-                      label="Category"
-                      labelTooltip="Primary category that helps users discover the workflow."
+                      label={t("marketplace3.edit.category")}
+                      labelTooltip={t("marketplace3.edit.categoryTooltip")}
                       placeholder={placeholder}
                       disabled={isUnavailable}
                       value={field.value}
@@ -304,7 +307,7 @@ export function AgentInfoStep({
                     size={18}
                     className="text-foreground-tertiary"
                   />
-                  Thumbnails
+                  {t("marketplace3.edit.thumbnails")}
                   {thumbnailsHasError ? (
                     <Icon
                       icon={AlertCircleIcon}
@@ -344,7 +347,7 @@ export function AgentInfoStep({
                     size={18}
                     className="text-foreground-tertiary"
                   />
-                  Experience details
+                  {t("marketplace3.edit.experience")}
                   {experienceHasError ? (
                     <Icon
                       icon={AlertCircleIcon}
@@ -373,11 +376,13 @@ export function AgentInfoStep({
                       <Input
                         id={field.name}
                         labelVariant="body"
-                        label="Description"
-                        labelTooltip="What the workflow does and the outcome users get."
+                        label={t("marketplace3.edit.description")}
+                        labelTooltip={t("marketplace3.edit.descriptionTooltip")}
                         type="textarea"
                         rows={2}
-                        placeholder="Describe the outcome this workflow creates"
+                        placeholder={t(
+                          "marketplace3.edit.descriptionPlaceholder",
+                        )}
                         error={form.formState.errors.description?.message}
                         {...field}
                       />
@@ -396,11 +401,15 @@ export function AgentInfoStep({
                       <Input
                         id={field.name}
                         labelVariant="body"
-                        label="Instructions"
-                        labelTooltip="Steps users should follow to set up and run the workflow."
+                        label={t("marketplace3.publish.instructions")}
+                        labelTooltip={t(
+                          "marketplace3.publish.instructionsTooltip",
+                        )}
                         type="textarea"
                         rows={2}
-                        placeholder="Explain inputs, setup, and what to expect after a run"
+                        placeholder={t(
+                          "marketplace3.publish.instructionsPlaceholder",
+                        )}
                         error={form.formState.errors.instructions?.message}
                         {...field}
                       />
@@ -416,10 +425,10 @@ export function AgentInfoStep({
                       <Input
                         id={field.name}
                         labelVariant="body"
-                        label="YouTube video link"
-                        labelTooltip="Demo or walkthrough video hosted on YouTube."
+                        label={t("marketplace3.edit.youtube")}
+                        labelTooltip={t("marketplace3.edit.youtubeTooltip")}
                         type="url"
-                        placeholder="https://youtube.com/watch?v=..."
+                        placeholder={t("marketplace3.edit.youtubePlaceholder")}
                         error={form.formState.errors.youtubeLink?.message}
                         {...field}
                       />
@@ -433,10 +442,10 @@ export function AgentInfoStep({
                       <Input
                         id={field.name}
                         labelVariant="body"
-                        label="Output demo"
-                        labelTooltip="Link showing example output the workflow produces."
+                        label={t("marketplace3.edit.outputDemo")}
+                        labelTooltip={t("marketplace3.edit.outputDemoTooltip")}
                         type="url"
-                        placeholder="https://youtube.com/watch?v=..."
+                        placeholder={t("marketplace3.edit.youtubePlaceholder")}
                         error={form.formState.errors.agentOutputDemo?.message}
                         {...field}
                       />
@@ -456,10 +465,12 @@ export function AgentInfoStep({
                             as="span"
                             className="text-foreground-base"
                           >
-                            Recommended schedule
+                            {t("marketplace3.publish.recommendedSchedule")}
                           </Text>
                           <InformationTooltip
-                            description="Suggested cron schedule users can run the workflow on. Sets a run cadence for recurring use cases."
+                            description={t(
+                              "marketplace3.publish.recommendedScheduleTooltip",
+                            )}
                             iconSize={20}
                           />
                         </div>
@@ -483,7 +494,7 @@ export function AgentInfoStep({
                         >
                           {field.value
                             ? humanizeCronExpression(field.value)
-                            : "Set schedule"}
+                            : t("marketplace3.publish.setSchedule")}
                         </Text>
                       </button>
                     </div>
@@ -502,7 +513,7 @@ export function AgentInfoStep({
                 size="small"
                 className="w-full sm:w-auto"
               >
-                Back
+                {t("marketplace3.publish.back")}
               </Button>
             }
             primary={
@@ -513,7 +524,9 @@ export function AgentInfoStep({
                 loading={isSubmitting}
                 className="w-full sm:w-auto"
               >
-                {isSubmitting ? "Submitting" : "Submit for review"}
+                {isSubmitting
+                  ? t("marketplace3.publish.submitting")
+                  : t("marketplace3.publish.submitForReview")}
               </Button>
             }
           />
@@ -525,7 +538,7 @@ export function AgentInfoStep({
         setOpen={setCronScheduleDialogOpen}
         onSubmit={handleScheduleChange}
         defaultCronExpression={form.getValues("recommendedScheduleCron") || ""}
-        title="Recommended Schedule"
+        title={t("marketplace3.publish.recommendedScheduleTitle")}
       />
     </div>
   );

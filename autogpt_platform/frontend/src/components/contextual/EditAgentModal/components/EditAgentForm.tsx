@@ -30,6 +30,7 @@ import {
   Store01Icon,
 } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 
 const DESCRIPTION_MAX = 1000;
 const CHANGES_SUMMARY_MAX = 500;
@@ -48,6 +49,7 @@ export function EditAgentForm({
   onClose,
   onSuccess,
 }: EditAgentFormProps) {
+  const t = useT();
   const {
     form,
     images,
@@ -106,15 +108,14 @@ export function EditAgentForm({
                   as="h3"
                   className="text-amber-950"
                 >
-                  Update note
+                  {t("marketplace3.edit.updateNote")}
                 </Text>
                 <Text
                   // TODO(tokens): no exact role for text-amber-800 #92400e
                   variant="small"
                   className="text-amber-800"
                 >
-                  Reviewers use this to understand why this submission was
-                  edited.
+                  {t("marketplace3.edit.updateNoteBody")}
                 </Text>
               </div>
             </div>
@@ -129,11 +130,11 @@ export function EditAgentForm({
                   <Input
                     id={field.name}
                     labelVariant="body"
-                    label="What changed?"
-                    labelTooltip="Summary of what's new or improved in this version. Reviewers see this first."
+                    label={t("marketplace3.edit.whatChanged")}
+                    labelTooltip={t("marketplace3.edit.whatChangedTooltip")}
                     type="textarea"
                     rows={1}
-                    placeholder="Briefly describe what you changed"
+                    placeholder={t("marketplace3.edit.whatChangedPlaceholder")}
                     error={form.formState.errors.changes_summary?.message}
                     required
                     wrapperClassName="!mb-0"
@@ -163,7 +164,7 @@ export function EditAgentForm({
                     size={18}
                     className="text-foreground-tertiary"
                   />
-                  Listing basics
+                  {t("marketplace3.edit.listingBasics")}
                   {basicsHasError ? (
                     <Icon
                       icon={AlertCircleIcon}
@@ -189,10 +190,10 @@ export function EditAgentForm({
                       <Input
                         id={field.name}
                         labelVariant="body"
-                        label="Title"
-                        labelTooltip="Public name shown on the marketplace listing."
+                        label={t("marketplace3.edit.titleLabel")}
+                        labelTooltip={t("marketplace3.edit.titleTooltip")}
                         type="text"
-                        placeholder="Workflow name"
+                        placeholder={t("marketplace3.edit.titlePlaceholder")}
                         error={form.formState.errors.title?.message}
                         {...field}
                       />
@@ -210,10 +211,12 @@ export function EditAgentForm({
                         <Input
                           id={field.name}
                           labelVariant="body"
-                          label="Tagline"
-                          labelTooltip="The one-line subtitle shown under the workflow name and on preview cards. Start with a verb and name the outcome for the user."
+                          label={t("marketplace3.edit.tagline")}
+                          labelTooltip={t("marketplace3.edit.taglineTooltip")}
                           type="text"
-                          placeholder="Find decision-makers at any company in seconds"
+                          placeholder={t(
+                            "marketplace3.edit.taglinePlaceholder",
+                          )}
                           error={form.formState.errors.subheader?.message}
                           required
                           {...field}
@@ -230,8 +233,8 @@ export function EditAgentForm({
                     <Select
                       id={field.name}
                       labelVariant="body"
-                      label="Category"
-                      labelTooltip="Primary category that helps users discover the workflow."
+                      label={t("marketplace3.edit.category")}
+                      labelTooltip={t("marketplace3.edit.categoryTooltip")}
                       placeholder={categoryPlaceholder}
                       disabled={categoriesUnavailable}
                       value={field.value}
@@ -256,7 +259,7 @@ export function EditAgentForm({
                     size={18}
                     className="text-foreground-tertiary"
                   />
-                  Thumbnails
+                  {t("marketplace3.edit.thumbnails")}
                   {thumbnailsHasError ? (
                     <Icon
                       icon={AlertCircleIcon}
@@ -298,7 +301,7 @@ export function EditAgentForm({
                     size={18}
                     className="text-foreground-tertiary"
                   />
-                  Experience details
+                  {t("marketplace3.edit.experience")}
                   {experienceHasError ? (
                     <Icon
                       icon={AlertCircleIcon}
@@ -327,11 +330,13 @@ export function EditAgentForm({
                       <Input
                         id={field.name}
                         labelVariant="body"
-                        label="Description"
-                        labelTooltip="What the workflow does and the outcome users get."
+                        label={t("marketplace3.edit.description")}
+                        labelTooltip={t("marketplace3.edit.descriptionTooltip")}
                         type="textarea"
                         rows={2}
-                        placeholder="Describe the outcome this workflow creates"
+                        placeholder={t(
+                          "marketplace3.edit.descriptionPlaceholder",
+                        )}
                         error={form.formState.errors.description?.message}
                         {...field}
                       />
@@ -347,10 +352,10 @@ export function EditAgentForm({
                       <Input
                         id={field.name}
                         labelVariant="body"
-                        label="YouTube video link"
-                        labelTooltip="Demo or walkthrough video hosted on YouTube."
+                        label={t("marketplace3.edit.youtube")}
+                        labelTooltip={t("marketplace3.edit.youtubeTooltip")}
                         type="url"
-                        placeholder="https://youtube.com/watch?v=..."
+                        placeholder={t("marketplace3.edit.youtubePlaceholder")}
                         error={form.formState.errors.youtubeLink?.message}
                         {...field}
                       />
@@ -364,10 +369,10 @@ export function EditAgentForm({
                       <Input
                         id={field.name}
                         labelVariant="body"
-                        label="Output demo"
-                        labelTooltip="Link showing example output the workflow produces."
+                        label={t("marketplace3.edit.outputDemo")}
+                        labelTooltip={t("marketplace3.edit.outputDemoTooltip")}
                         type="url"
-                        placeholder="https://youtube.com/watch?v=..."
+                        placeholder={t("marketplace3.edit.youtubePlaceholder")}
                         error={form.formState.errors.agentOutputDemo?.message}
                         {...field}
                       />
@@ -386,7 +391,7 @@ export function EditAgentForm({
               size="small"
               className="w-full sm:w-auto"
             >
-              Cancel
+              {t("marketplace3.edit.cancel")}
             </Button>
             <Button
               type="submit"
@@ -395,7 +400,9 @@ export function EditAgentForm({
               loading={isSubmitting}
               className="w-full sm:w-auto"
             >
-              {isSubmitting ? "Saving" : "Update submission"}
+              {isSubmitting
+                ? t("marketplace3.edit.saving")
+                : t("marketplace3.edit.updateSubmission")}
             </Button>
           </div>
         </form>

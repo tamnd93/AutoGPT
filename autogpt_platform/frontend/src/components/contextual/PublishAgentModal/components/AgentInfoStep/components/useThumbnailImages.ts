@@ -3,6 +3,7 @@ import { useState, useRef, useEffect } from "react";
 import { postV2GenerateSubmissionImage } from "@/app/api/__generated__/endpoints/store/store";
 import { resolveResponse } from "@/app/api/helpers";
 import { useToast } from "@/components/molecules/Toast/use-toast";
+import { useT } from "@/lib/i18n";
 import {
   isFileTooLarge,
   SUBMISSION_MEDIA_MAX_SIZE_MB,
@@ -32,6 +33,7 @@ export function useThumbnailImages({
   const [isUploading, setIsUploading] = useState(false);
   const thumbnailsContainerRef = useRef<HTMLDivElement | null>(null);
   const { toast } = useToast();
+  const t = useT();
 
   const initialImagesKey = JSON.stringify(initialImages);
 
@@ -119,12 +121,14 @@ export function useThumbnailImages({
         setSelectedImage(imageUrl);
       }
     } catch (error) {
-      if (toastIfPlanRequired(error, "Uploading images needs an active plan"))
+      if (toastIfPlanRequired(error, t("marketplace3.publish.planUploading")))
         return;
       const detail =
-        error instanceof Error ? error.message : "Please try again.";
+        error instanceof Error
+          ? error.message
+          : t("marketplace3.thumbnails.tryAgain");
       toast({
-        title: "Upload failed",
+        title: t("marketplace3.thumbnails.uploadFailed"),
         description: detail,
         variant: "destructive",
       });
@@ -139,7 +143,7 @@ export function useThumbnailImages({
     setIsGenerating(true);
     try {
       if (!agentId) {
-        throw new Error("Workflow ID is required");
+        throw new Error(t("marketplace3.thumbnails.workflowIdRequired"));
       }
       const { image_url } = await resolveResponse(
         postV2GenerateSubmissionImage({ graph_id: agentId }),
@@ -149,13 +153,11 @@ export function useThumbnailImages({
         setSelectedImage(image_url);
       }
     } catch (error) {
-      if (
-        toastIfPlanRequired(error, "Generating an image needs an active plan")
-      )
+      if (toastIfPlanRequired(error, t("marketplace3.publish.planGenerating")))
         return;
       toast({
-        title: "Generation failed",
-        description: "Failed to generate image. Please try again.",
+        title: t("marketplace3.thumbnails.generateFailed"),
+        description: t("marketplace3.thumbnails.generateFailedBody"),
         variant: "destructive",
       });
     } finally {

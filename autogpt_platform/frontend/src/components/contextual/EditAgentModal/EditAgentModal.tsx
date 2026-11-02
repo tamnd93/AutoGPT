@@ -4,6 +4,7 @@ import { Dialog } from "@/components/molecules/Dialog/Dialog";
 import { StoreSubmission } from "@/app/api/__generated__/models/storeSubmission";
 import { EditAgentForm } from "./components/EditAgentForm";
 import { StoreSubmissionEditRequest } from "@/app/api/__generated__/models/storeSubmissionEditRequest";
+import { useT } from "@/lib/i18n";
 
 export interface EditAgentModalProps {
   isOpen: boolean;
@@ -23,11 +24,12 @@ export function EditAgentModal({
   submission,
   onSuccess,
 }: EditAgentModalProps) {
+  const t = useT();
   if (!submission) return null;
 
   return (
     <Dialog
-      title="Edit submission"
+      title={t("marketplace3.edit.title")}
       styling={{
         maxWidth: "48rem",
       }}

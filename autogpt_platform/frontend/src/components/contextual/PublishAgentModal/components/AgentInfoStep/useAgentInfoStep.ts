@@ -6,6 +6,7 @@ import { useToast } from "@/components/molecules/Toast/use-toast";
 import { postV2CreateStoreSubmission } from "@/app/api/__generated__/endpoints/store/store";
 import { okData } from "@/app/api/helpers";
 import * as Sentry from "@sentry/nextjs";
+import { useT } from "@/lib/i18n";
 import {
   PublishAgentFormData,
   PublishAgentInfoInitialData,
@@ -34,9 +35,10 @@ export function useAgentInfoStep({
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { toast } = useToast();
+  const t = useT();
 
   const form = useForm<PublishAgentFormData>({
-    resolver: zodResolver(publishAgentSchemaFactory(isMarketplaceUpdate)),
+    resolver: zodResolver(publishAgentSchemaFactory(isMarketplaceUpdate, t)),
     defaultValues: {
       changesSummary: "",
       title: "",
@@ -101,7 +103,7 @@ export function useAgentInfoStep({
     if (images.length === 0) {
       form.setError("root", {
         type: "manual",
-        message: "At least one image is required",
+        message: t("marketplace3.edit.imageRequired"),
       });
       return;
     }
@@ -109,8 +111,8 @@ export function useAgentInfoStep({
     // Validate that an agent is selected before submission
     if (!selectedAgentId || !selectedAgentVersion) {
       toast({
-        title: "Workflow Selection Required",
-        description: "Please select a workflow before submitting to the store.",
+        title: t("marketplace3.publish.selectionRequiredTitle"),
+        description: t("marketplace3.publish.selectionRequiredBody"),
         variant: "destructive",
       });
       return;
@@ -141,13 +143,14 @@ export function useAgentInfoStep({
 
       onSuccess(response);
     } catch (error) {
-      if (toastIfPlanRequired(error, "Publishing needs an active plan")) return;
+      if (toastIfPlanRequired(error, t("marketplace3.publish.planPublishing")))
+        return;
       Sentry.captureException(error);
       toast({
-        title: "Submit Workflow Error",
+        title: t("marketplace3.publish.submitErrorTitle"),
         description:
           (error instanceof Error ? error.message : undefined) ||
-          "An error occurred while submitting the workflow. Please try again.",
+          t("marketplace3.publish.submitErrorBody"),
         duration: 3000,
         variant: "destructive",
       });
