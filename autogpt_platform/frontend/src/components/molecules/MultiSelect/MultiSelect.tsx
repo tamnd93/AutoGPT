@@ -9,6 +9,7 @@ import {
   CommandList,
 } from "./components/Command";
 import { cn } from "@/lib/utils";
+import { useT } from "@/lib/i18n";
 import { Command as CommandPrimitive } from "cmdk";
 import { X as RemoveIcon, Check } from "lucide-react";
 import React, {
@@ -166,6 +167,7 @@ const MultiSelectorTrigger = forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
 >(({ className, children, ...props }, ref) => {
+  const t = useT();
   const { value, onValueChange, activeIndex } = useMultiSelect();
 
   const mousePreventDefault = useCallback((e: React.MouseEvent) => {
@@ -202,14 +204,14 @@ const MultiSelectorTrigger = forwardRef<
           </Text>
           <button
             data-slot="multi-select-remove"
-            aria-label={`Remove ${item} option`}
-            aria-roledescription="button to remove option"
+            aria-label={t("shared3.multiSelect.removeOption", { item })}
+            aria-roledescription={t("shared3.multiSelect.removeRole")}
             type="button"
             onMouseDown={mousePreventDefault}
             onClick={() => onValueChange(item)}
           >
             <span data-slot="multi-select-remove-label" className="sr-only">
-              Remove {item} option
+              {t("shared3.multiSelect.removeOption", { item })}
             </span>
             <RemoveIcon
               data-slot="multi-select-remove-icon"

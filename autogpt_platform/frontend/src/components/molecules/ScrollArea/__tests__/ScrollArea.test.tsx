@@ -7,6 +7,7 @@ import {
 import { createRef } from "react";
 import { describe, expect, it, vi } from "vitest";
 
+import { LocaleProvider } from "@/lib/i18n";
 import { ScrollArea, ScrollBar } from "../ScrollArea";
 
 function viewportOf(container: HTMLElement) {
@@ -93,6 +94,26 @@ describe("ScrollArea", () => {
     fireEvent.click(screen.getByRole("button", { name: "Scroll to top" }));
 
     expect(scrollTo).toHaveBeenCalledWith(expect.objectContaining({ top: 0 }));
+  });
+
+  it("reads the scroll-to-top aria in Vietnamese", () => {
+    const { container } = render(
+      <LocaleProvider locale="vi">
+        <ScrollArea showScrollToTop>
+          <p>Row</p>
+        </ScrollArea>
+      </LocaleProvider>,
+    );
+    const viewport = viewportOf(container);
+
+    act(() => {
+      viewport.scrollTop = 300;
+      fireEvent.scroll(viewport);
+    });
+
+    expect(
+      screen.getByRole("button", { name: "Cuộn lên đầu" }),
+    ).toBeDefined();
   });
 
   it("exports the scroll bar for callers that compose their own root", () => {
