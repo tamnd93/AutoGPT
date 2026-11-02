@@ -8,9 +8,10 @@ import {
   FlashIcon,
   SparklesIcon,
 } from "@hugeicons/core-free-icons";
+import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
-import { AUTOPILOT_BLURB, AUTOPILOT_ROLE } from "../helpers";
+
 import {
   CHIP_SHAPE,
   CHIP_SIZE,
@@ -36,6 +37,7 @@ export function AutopilotCard({
   workflowCount,
   onChat,
 }: Props) {
+  const t = useT();
   return (
     <section
       aria-label={AUTOPILOT_NAME}
@@ -43,7 +45,7 @@ export function AutopilotCard({
     >
       <Link
         href="/team/autopilot"
-        aria-label={`View ${AUTOPILOT_NAME}`}
+        aria-label={t("team8.card.viewAria", { name: AUTOPILOT_NAME })}
         className="flex flex-1 flex-col items-start p-2 pb-4"
       >
         <ExpertCover color={AUTOPILOT_COVER_COLOR} status="built-in" />
@@ -72,14 +74,16 @@ export function AutopilotCard({
             style={categoryTagStyle(AUTOPILOT_COVER_COLOR)}
           >
             <Icon icon={SparklesIcon} size={12} className="shrink-0" />
-            <span className="truncate">{AUTOPILOT_ROLE}</span>
+            <span className="truncate">
+              {t("chatRuntime2.threadHeader.defaultRole")}
+            </span>
           </span>
           <Text
             variant="body"
             tone="muted"
             className="mt-1 line-clamp-2 min-h-[2lh]"
           >
-            {AUTOPILOT_BLURB}
+            {t("team8.autopilot.blurb")}
           </Text>
         </div>
 
@@ -87,20 +91,20 @@ export function AutopilotCard({
           <CardStats className="mt-3 w-full">
             <CardStat
               icon={Calendar03Icon}
-              label="Schedules"
-              singular="schedule"
+              label={t("team8.page.tabSchedules")}
+              singular={t("team8.card.singularSchedule")}
               count={scheduleCount}
             />
             <CardStat
               icon={SparklesIcon}
-              label="Skills"
-              singular="skill"
+              label={t("team8.page.tabSkills")}
+              singular={t("team8.card.singularSkill")}
               count={skillCount}
             />
             <CardStat
               icon={FlashIcon}
-              label="Workflows"
-              singular="workflow"
+              label={t("team8.page.tabWorkflows")}
+              singular={t("team8.card.singularWorkflow")}
               count={workflowCount}
             />
           </CardStats>
@@ -115,7 +119,7 @@ export function AutopilotCard({
           leadingIcon={BubbleChatIcon}
           onClick={onChat}
         >
-          Chat
+          {t("team8.common.chat")}
         </Button>
       </div>
     </section>

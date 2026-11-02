@@ -4,8 +4,9 @@ import { Icon } from "@/components/atoms/Icon/Icon";
 import { Text } from "@/components/atoms/Text/Text";
 import { Tick02Icon, SparklesIcon } from "@hugeicons/core-free-icons";
 import { ExpertCover } from "../../components/ExpertTeamCard/components/ExpertCover";
+import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
-import { AUTOPILOT_PILL_CLASS, AUTOPILOT_ROLE } from "../../helpers";
+import { AUTOPILOT_PILL_CLASS } from "../../helpers";
 import {
   AUTOPILOT_COVER_URL,
   AUTOPILOT_NAME,
@@ -13,6 +14,7 @@ import {
 import { AUTOPILOT_HEX } from "@/components/molecules/ExpertAvatar/colors";
 
 export function AutopilotHeader() {
+  const t = useT();
   return (
     <header>
       <ExpertCover
@@ -42,7 +44,7 @@ export function AutopilotHeader() {
               )}
             >
               <Icon icon={SparklesIcon} size={12} />
-              {AUTOPILOT_ROLE}
+              {t("chatRuntime2.threadHeader.defaultRole")}
             </Text>
             <Text
               variant="small-medium"
@@ -53,7 +55,7 @@ export function AutopilotHeader() {
               )}
             >
               <Icon icon={Tick02Icon} size={12} />
-              Built in
+              {t("team8.header.builtIn")}
             </Text>
           </div>
         </div>
@@ -64,7 +66,7 @@ export function AutopilotHeader() {
           size="small"
           className="shrink-0"
         >
-          Chat
+          {t("team8.common.chat")}
         </Button>
       </div>
     </header>

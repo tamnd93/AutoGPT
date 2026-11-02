@@ -1,9 +1,11 @@
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { Text } from "@/components/atoms/Text/Text";
 import { ArrowLeft02Icon } from "@hugeicons/core-free-icons";
+import { useT } from "@/lib/i18n";
 import Link from "next/link";
 
 export function BackToTeamLink() {
+  const t = useT();
   return (
     <Link
       href="/team"
@@ -17,7 +19,7 @@ export function BackToTeamLink() {
         tone="muted"
         className="group-hover:text-foreground-emphasis"
       >
-        Back to Team
+        {t("team8.backToTeam")}
       </Text>
     </Link>
   );

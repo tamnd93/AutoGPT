@@ -2,17 +2,18 @@ import { Button } from "@/components/atoms/Button/Button";
 import { Text } from "@/components/atoms/Text/Text";
 import { UserGroupIcon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 
 export function EmptyTeamState() {
+  const t = useT();
   return (
     <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed border-border-strong bg-surface p-8 text-center">
       <Icon icon={UserGroupIcon} size={32} className="text-foreground-subtle" />
       <Text variant="large-medium" tone="primary">
-        No hired experts yet
+        {t("team8.empty.title")}
       </Text>
       <Text variant="body" tone="secondary" className="max-w-prose">
-        Hire an expert from the marketplace and they will show up here, ready to
-        work alongside Otto.
+        {t("team8.empty.body")}
       </Text>
       <div className="flex flex-wrap items-center justify-center gap-2">
         <Button
@@ -21,10 +22,10 @@ export function EmptyTeamState() {
           variant="primary"
           size="small"
         >
-          Browse the marketplace
+          {t("team8.empty.browse")}
         </Button>
         <Button as="NextLink" href="/raise" variant="secondary" size="small">
-          Create an Expert
+          {t("team8.empty.create")}
         </Button>
       </div>
     </div>
