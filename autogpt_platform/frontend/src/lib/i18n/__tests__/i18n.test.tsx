@@ -16,6 +16,11 @@ function Probe() {
   return <span>{t("integrations.title")}</span>;
 }
 
+function ValueProbe() {
+  const t = useT();
+  return <span>{t("common.planSuffix", { plan: "Plus" })}</span>;
+}
+
 describe("getMessage", () => {
   test("returns the vietnamese message", () => {
     expect(getMessage("vi", "integrations.title")).toBe("Tích hợp");
@@ -61,6 +66,15 @@ describe("LocaleProvider", () => {
   test("reads english when no provider wraps the tree", () => {
     render(<Probe />);
     expect(screen.getByText("Integrations")).toBeDefined();
+  });
+
+  test("interpolates values through useT", () => {
+    render(
+      <LocaleProvider locale="vi">
+        <ValueProbe />
+      </LocaleProvider>,
+    );
+    expect(screen.getByText("gói Plus")).toBeDefined();
   });
 });
 

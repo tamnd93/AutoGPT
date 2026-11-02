@@ -3,22 +3,14 @@
 import { createContext, useContext, type ReactNode } from "react";
 
 import { DEFAULT_LOCALE, LOCALE_COOKIE, type Locale } from "./locale";
-import { en, type MessageKey } from "./messages/en";
-import { vi } from "./messages/vi";
+import type { MessageKey } from "./messages/en";
+import { getMessage, type MessageValues } from "./translate";
 
 export { DEFAULT_LOCALE, LOCALE_COOKIE, isLocale } from "./locale";
 export type { Locale } from "./locale";
 export type { MessageKey } from "./messages/en";
-
-export function getMessage(locale: Locale, key: string): string {
-  if (locale === "vi") {
-    const translated = vi[key as MessageKey];
-    if (translated) return translated;
-  }
-  return Object.prototype.hasOwnProperty.call(en, key)
-    ? en[key as MessageKey]
-    : key;
-}
+export { getMessage } from "./translate";
+export type { MessageValues } from "./translate";
 
 const LocaleContext = createContext<Locale>(DEFAULT_LOCALE);
 
@@ -39,7 +31,8 @@ export function useLocale(): Locale {
 
 export function useT() {
   const locale = useLocale();
-  return (key: MessageKey) => getMessage(locale, key);
+  return (key: MessageKey, values?: MessageValues) =>
+    getMessage(locale, key, values);
 }
 
 export function writeLocaleCookie(locale: Locale): void {
