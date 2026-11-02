@@ -2,6 +2,7 @@
 
 import type { VoiceSample } from "@/app/api/__generated__/models/voiceSample";
 import { Button } from "@/components/atoms/Button/Button";
+import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { useId } from "react";
 import { CustomVoiceOption } from "./components/CustomVoiceOption";
@@ -37,6 +38,7 @@ export function VoicePicker({
   cardColors,
   compact = false,
 }: Props) {
+  const t = useT();
   const choiceGroupName = useId();
   const customTextareaId = useId();
   const {
@@ -69,8 +71,8 @@ export function VoicePicker({
             )}
           >
             {name
-              ? `How should ${name} write?`
-              : "How should this expert write?"}
+              ? t("shared5.voice.title", { name })
+              : t("shared5.voice.titleNoName")}
           </h2>
           <p
             data-slot="voice-picker-description"
@@ -79,8 +81,7 @@ export function VoicePicker({
               compact ? "text-sm" : "text-base",
             )}
           >
-            Pick the voice that feels right. You can fine-tune it anytime in the
-            Soul editor.
+            {t("shared5.voice.description")}
           </p>
         </header>
       )}
@@ -90,7 +91,7 @@ export function VoicePicker({
         className={cn("flex flex-col", compact ? "gap-2" : "gap-3")}
       >
         <legend data-slot="voice-picker-legend" className="sr-only">
-          Writing voice
+          {t("shared5.voice.legend")}
         </legend>
         {samples.slice(0, 2).map((sample, index) => {
           const choice = index === 0 ? "a" : "b";
@@ -132,7 +133,7 @@ export function VoicePicker({
           onClick={onSkip}
           disabled={isSubmitting}
         >
-          Skip for now
+          {t("shared5.voice.skip")}
         </Button>
         <Button
           variant="primary"
@@ -142,7 +143,7 @@ export function VoicePicker({
           loading={isSubmitting}
           className="rounded-full"
         >
-          Use this voice
+          {t("shared5.voice.use")}
         </Button>
       </footer>
     </div>

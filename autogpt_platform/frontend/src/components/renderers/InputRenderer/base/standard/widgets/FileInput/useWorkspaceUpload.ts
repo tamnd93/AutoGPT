@@ -1,17 +1,19 @@
 import { useDeleteWorkspaceFile } from "@/app/api/__generated__/endpoints/workspace/workspace";
 import { useToast } from "@/components/molecules/Toast/use-toast";
 import { uploadFileDirect } from "@/lib/direct-upload";
+import { useT } from "@/lib/i18n";
 import { parseWorkspaceFileID, buildWorkspaceURI } from "@/lib/workspace-uri";
 
 export function useWorkspaceUpload() {
+  const t = useT();
   const { toast } = useToast();
 
   const { mutate: deleteMutation } = useDeleteWorkspaceFile({
     mutation: {
       onError: () => {
         toast({
-          title: "Failed to delete file",
-          description: "The file could not be removed from storage.",
+          title: t("shared5.upload.deleteFailedTitle"),
+          description: t("shared5.upload.deleteFailedBody"),
           variant: "destructive",
         });
       },

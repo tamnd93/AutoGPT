@@ -1,3 +1,4 @@
+import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { selectableCardClassName, type SelectableCardColors } from "../helpers";
 
@@ -27,6 +28,7 @@ export function CustomVoiceOption({
   onFocus,
   onChange,
 }: Props) {
+  const t = useT();
   const characterCountId = `${textareaId}-character-count`;
 
   return (
@@ -52,14 +54,14 @@ export function CustomVoiceOption({
           data-slot="custom-voice-option-radio"
           className="sr-only"
         />
-        Paste your own
+        {t("shared5.voice.pasteOwn")}
       </label>
       <label
         htmlFor={textareaId}
         data-slot="custom-voice-option-textarea-label"
         className="sr-only"
       >
-        Custom voice sample
+        {t("shared5.voice.customSampleLabel")}
       </label>
       <textarea
         id={textareaId}
@@ -69,7 +71,7 @@ export function CustomVoiceOption({
         rows={compact ? 2 : CUSTOM_VOICE_TEXTAREA_ROWS}
         maxLength={MAX_CUSTOM_VOICE_SAMPLE_CHARACTERS}
         aria-describedby={characterCountId}
-        placeholder="Paste a few sentences written the way you'd like this expert to sound."
+        placeholder={t("shared5.voice.customPlaceholder")}
         data-slot="custom-voice-option-textarea"
         className={cn(
           "w-full resize-none border bg-background text-sm leading-relaxed text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring",
@@ -82,8 +84,10 @@ export function CustomVoiceOption({
         data-slot="custom-voice-option-count"
         className="mt-1.5 text-right text-xs text-muted-foreground"
       >
-        {customText.length.toLocaleString()} /{" "}
-        {MAX_CUSTOM_VOICE_SAMPLE_CHARACTERS.toLocaleString()} characters
+        {t("shared5.voice.characterCount", {
+          count: customText.length.toLocaleString(),
+          max: MAX_CUSTOM_VOICE_SAMPLE_CHARACTERS.toLocaleString(),
+        })}
       </p>
     </div>
   );
