@@ -70,6 +70,23 @@ describe("uploadFiles", () => {
     expect(outcome.failed).toEqual([]);
   });
 
+  test("falls back to Vietnamese copy for a non-Error upload failure", async () => {
+    uploadFileDirectMock.mockRejectedValueOnce("nope");
+
+    const outcome = await uploadFiles(
+      [makeFile("odd.bin")],
+      null,
+      "vi",
+    );
+
+    expect(outcome.failed).toEqual([
+      {
+        name: "odd.bin",
+        message: "Vui lòng thử lại.",
+      },
+    ]);
+  });
+
   test("reports upload errors per file and keeps going", async () => {
     uploadFileDirectMock.mockRejectedValueOnce(new Error("Too large"));
 

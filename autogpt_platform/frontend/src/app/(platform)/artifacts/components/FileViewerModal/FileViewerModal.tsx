@@ -7,6 +7,7 @@ import type { ArtifactRef } from "@/app/(platform)/copilot/store";
 import { Button } from "@/components/atoms/Button/Button";
 import { Dialog } from "@/components/molecules/Dialog/Dialog";
 import { useToast } from "@/components/molecules/Toast/use-toast";
+import { useT } from "@/lib/i18n";
 import { useState } from "react";
 import {
   downloadFileBlob,
@@ -103,6 +104,7 @@ function Header({
   isSourceView,
   onToggleSource,
 }: HeaderProps) {
+  const t = useT();
   const { toast } = useToast();
   const [isDownloading, setIsDownloading] = useState(false);
 
@@ -113,9 +115,11 @@ function Header({
       await downloadFileBlob(fileId, name);
     } catch (error) {
       toast({
-        title: "Failed to download file",
+        title: t("artifacts2.viewer.downloadFailedTitle"),
         description:
-          error instanceof Error ? error.message : "Please try again.",
+          error instanceof Error
+            ? error.message
+            : t("artifacts2.viewer.retry"),
         variant: "destructive",
       });
     } finally {
@@ -143,7 +147,9 @@ function Header({
               )
             }
           >
-            {isSourceView ? "Preview" : "Source"}
+            {isSourceView
+              ? t("artifacts2.viewer.preview")
+              : t("artifacts2.viewer.source")}
           </Button>
         ) : null}
         <Button
@@ -154,7 +160,9 @@ function Header({
           leftIcon={<Icon icon={Download04Icon} size={14} />}
           data-testid="file-viewer-download"
         >
-          {isDownloading ? "Downloading…" : "Download"}
+          {isDownloading
+            ? t("artifacts2.viewer.downloading")
+            : t("artifacts2.viewer.download")}
         </Button>
       </div>
     </div>

@@ -9,6 +9,7 @@ import {
   getFilePreviewUrl,
   getFileTypeLabel,
 } from "../../ArtifactsList/helpers";
+import { useT } from "@/lib/i18n";
 import { DownloadOnly } from "./DownloadOnly";
 
 interface Props {
@@ -19,6 +20,7 @@ interface Props {
 // The preview endpoint returns the thumbnail embedded in the office file
 // (first slide or page), and 415s when there is none.
 export function OfficePreview({ file, downloadUrl }: Props) {
+  const t = useT();
   const [isLoaded, setIsLoaded] = useState(false);
   const [hasError, setHasError] = useState(false);
 
@@ -52,8 +54,8 @@ export function OfficePreview({ file, downloadUrl }: Props) {
           downloadUrl={downloadUrl}
           message={
             isPresentation
-              ? "Showing the first slide. Download to open the full presentation."
-              : "Showing the first page. Download to open the full file."
+              ? t("artifacts2.office.slide")
+              : t("artifacts2.office.page")
           }
         />
       </div>

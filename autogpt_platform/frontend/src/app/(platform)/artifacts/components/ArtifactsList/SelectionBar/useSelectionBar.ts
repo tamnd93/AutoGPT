@@ -1,6 +1,7 @@
 import { deleteWorkspaceFile } from "@/app/api/__generated__/endpoints/workspace/workspace";
 import type { WorkspaceFileItem } from "@/app/api/__generated__/models/workspaceFileItem";
 import { useToast } from "@/components/molecules/Toast/use-toast";
+import { useT } from "@/lib/i18n";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { invalidateWorkspaceFileQueries } from "../helpers";
@@ -9,6 +10,7 @@ export function useSelectionBar(
   selectedFiles: WorkspaceFileItem[],
   onDone: () => void,
 ) {
+  const t = useT();
   const [isMoveOpen, setIsMoveOpen] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -24,7 +26,10 @@ export function useSelectionBar(
       const failed = results.filter((r) => r.status === "rejected").length;
       if (failed > 0) {
         throw new Error(
-          `${failed} of ${fileIds.length} files could not be deleted.`,
+          t("artifacts2.selection.deleteFailedCount", {
+            failed,
+            total: fileIds.length,
+          }),
         );
       }
     },
@@ -33,16 +38,20 @@ export function useSelectionBar(
       toast({
         title:
           fileIds.length === 1
-            ? "File deleted"
-            : `${fileIds.length} files deleted`,
+            ? t("artifacts2.selection.deletedOne")
+            : t("artifacts2.selection.deletedMany", {
+                count: fileIds.length,
+              }),
       });
       onDone();
     },
     onError: (error) => {
       toast({
-        title: "Failed to delete files",
+        title: t("artifacts2.selection.deleteFailedTitle"),
         description:
-          error instanceof Error ? error.message : "Please try again.",
+          error instanceof Error
+            ? error.message
+            : t("artifacts2.selection.retry"),
         variant: "destructive",
       });
     },
@@ -52,8 +61,10 @@ export function useSelectionBar(
     if (isDeleting || count === 0) return;
     const confirmed = window.confirm(
       count === 1
-        ? `Delete "${selectedFiles[0].name}"?`
-        : `Delete ${count} files?`,
+        ? t("artifacts2.selection.confirmOne", {
+            name: selectedFiles[0].name,
+          })
+        : t("artifacts2.selection.confirmMany", { count }),
     );
     if (!confirmed) return;
     try {
@@ -75,7 +86,10 @@ export function useSelectionBar(
     setIsMoveOpen,
     isDeleting,
     handleDelete,
-    moveSubject: count === 1 ? `“${selectedFiles[0].name}”` : `${count} files`,
+    moveSubject:
+      count === 1
+        ? `“${selectedFiles[0].name}”`
+        : t("artifacts2.selection.moveSubjectMany", { count }),
     sharedFolderId,
   };
 }

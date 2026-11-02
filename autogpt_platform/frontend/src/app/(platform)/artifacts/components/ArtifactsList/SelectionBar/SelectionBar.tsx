@@ -4,6 +4,7 @@ import type { WorkspaceFileItem } from "@/app/api/__generated__/models/workspace
 import { Button } from "@/components/atoms/Button/Button";
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { Text } from "@/components/atoms/Text/Text";
+import { useT } from "@/lib/i18n";
 import {
   Cancel01Icon,
   Delete02Icon,
@@ -25,6 +26,7 @@ export function SelectionBar({
   onSelectAll,
   onClear,
 }: Props) {
+  const t = useT();
   const {
     isMoveOpen,
     setIsMoveOpen,
@@ -46,7 +48,7 @@ export function SelectionBar({
           as="span"
           className="text-foreground-strong"
         >
-          {count} selected
+          {t("artifacts2.selection.selected", { count })}
         </Text>
         {count < totalCount ? (
           <button
@@ -55,7 +57,7 @@ export function SelectionBar({
             onClick={onSelectAll}
             data-testid="artifacts-select-all"
           >
-            Select all {totalCount}
+            {t("artifacts2.selection.selectAll", { count: totalCount })}
           </button>
         ) : null}
       </div>
@@ -67,7 +69,7 @@ export function SelectionBar({
           data-testid="artifacts-selection-move"
         >
           <Icon icon={Folder01Icon} size={14} />
-          Move to folder
+          {t("artifacts2.selection.moveToFolder")}
         </Button>
         <Button
           variant="outline"
@@ -79,11 +81,13 @@ export function SelectionBar({
           data-testid="artifacts-selection-delete"
         >
           <Icon icon={Delete02Icon} size={14} />
-          {isDeleting ? "Deleting…" : "Delete"}
+          {isDeleting
+            ? t("artifacts2.selection.deleting")
+            : t("artifacts2.selection.delete")}
         </Button>
         <button
           type="button"
-          aria-label="Clear selection"
+          aria-label={t("artifacts2.selection.clearAria")}
           className="inline-flex h-7 w-7 items-center justify-center rounded-full text-foreground-tertiary transition-colors hover:bg-surface-hover hover:text-foreground-strong"
           onClick={onClear}
           data-testid="artifacts-selection-clear"

@@ -1,5 +1,7 @@
 import { bulkMoveWorkspaceFiles } from "@/app/api/__generated__/endpoints/workspace/workspace";
 import { uploadFileDirect } from "@/lib/direct-upload";
+import type { Locale } from "@/lib/i18n/locale";
+import { getMessage } from "@/lib/i18n/translate";
 
 export interface UploadOutcome {
   uploaded: number;
@@ -14,6 +16,7 @@ export interface UploadOutcome {
 export async function uploadFiles(
   files: File[],
   folderId: string | null,
+  locale: Locale = "en",
 ): Promise<UploadOutcome> {
   const outcome: UploadOutcome = { uploaded: 0, leftAtRoot: [], failed: [] };
   for (const file of files) {
@@ -23,7 +26,10 @@ export async function uploadFiles(
     } catch (error) {
       outcome.failed.push({
         name: file.name,
-        message: error instanceof Error ? error.message : "Please try again.",
+        message:
+          error instanceof Error
+            ? error.message
+            : getMessage(locale, "artifacts2.upload.retry"),
       });
       continue;
     }

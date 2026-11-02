@@ -5,6 +5,7 @@ import { Button } from "@/components/atoms/Button/Button";
 import { Input } from "@/components/atoms/Input/Input";
 import { Dialog } from "@/components/molecules/Dialog/Dialog";
 import { isKey } from "@/lib/keyboard";
+import { useT } from "@/lib/i18n";
 import { useRenameFileDialog } from "./useRenameFileDialog";
 
 interface Props {
@@ -14,6 +15,7 @@ interface Props {
 }
 
 export function RenameFileDialog({ file, isOpen, setIsOpen }: Props) {
+  const t = useT();
   const { name, setName, validationError, canSubmit, isPending, handleSubmit } =
     useRenameFileDialog(file, () => setIsOpen(false));
 
@@ -21,14 +23,14 @@ export function RenameFileDialog({ file, isOpen, setIsOpen }: Props) {
     <Dialog
       controlled={{ isOpen, set: setIsOpen }}
       styling={{ maxWidth: "28rem" }}
-      title="Rename file"
+      title={t("artifacts2.rename.title")}
     >
       <Dialog.Content>
         <div className="flex flex-col gap-3">
           <Input
             id="rename-file-name"
-            label="File name"
-            placeholder="Enter file name"
+            label={t("artifacts2.rename.label")}
+            placeholder={t("artifacts2.rename.placeholder")}
             value={name}
             error={validationError ?? undefined}
             onChange={(e) => setName(e.target.value)}
@@ -46,7 +48,7 @@ export function RenameFileDialog({ file, isOpen, setIsOpen }: Props) {
             onClick={handleSubmit}
             data-testid="rename-file-submit"
           >
-            Save
+            {t("artifacts2.rename.save")}
           </Button>
         </div>
       </Dialog.Content>

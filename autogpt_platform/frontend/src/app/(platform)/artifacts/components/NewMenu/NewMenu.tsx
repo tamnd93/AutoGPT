@@ -8,6 +8,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/molecules/DropdownMenu/DropdownMenu";
+import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import {
   ArrowDown01Icon,
@@ -26,6 +27,7 @@ interface Props {
 }
 
 export function NewMenu({ selectedFolderId, selectedFolderName }: Props) {
+  const t = useT();
   const {
     fileInputRef,
     isUploading,
@@ -53,7 +55,9 @@ export function NewMenu({ selectedFolderId, selectedFolderName }: Props) {
             {isUploading ? (
               <Icon icon={Loading03Icon} size={16} className="animate-spin" />
             ) : null}
-            {isUploading ? "Uploading…" : "New"}
+            {isUploading
+              ? t("artifacts2.newMenu.uploading")
+              : t("artifacts2.newMenu.new")}
             <Icon icon={ArrowDown01Icon} size={16} />
           </button>
         </DropdownMenuTrigger>
@@ -63,14 +67,14 @@ export function NewMenu({ selectedFolderId, selectedFolderName }: Props) {
             data-testid="artifacts-upload-file"
           >
             <Icon icon={Upload03Icon} size={16} className="mr-2" />
-            Upload file
+            {t("artifacts2.newMenu.uploadFile")}
           </DropdownMenuItem>
           <DropdownMenuItem
             onSelect={() => setIsCreateOpen(true)}
             data-testid="create-folder-button"
           >
             <Icon icon={FolderAddIcon} size={16} className="mr-2" />
-            New folder
+            {t("artifacts2.newMenu.newFolder")}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

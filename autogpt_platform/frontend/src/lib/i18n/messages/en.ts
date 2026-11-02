@@ -2,6 +2,7 @@ import { account1En } from "./account-1.en";
 import { account2En } from "./account-2.en";
 import { AiConnections1En } from "./ai-connections-1.en";
 import { Artifacts1En } from "./artifacts-1.en";
+import { Artifacts2En } from "./artifacts-2.en";
 import { artifacts3En } from "./artifacts-3.en";
 import { auth1En } from "./auth-1.en";
 import { auth2En } from "./auth-2.en";
@@ -67,6 +68,7 @@ export const en = {
   ...account2En,
   ...AiConnections1En,
   ...Artifacts1En,
+  ...Artifacts2En,
   ...artifacts3En,
   ...auth1En,
   ...auth2En,
