@@ -12,6 +12,7 @@ import {
   AlertTitle,
 } from "@/components/molecules/Alert/Alert";
 import { ShowMoreText } from "@/components/molecules/ShowMoreText/ShowMoreText";
+import { useT } from "@/lib/i18n";
 import { describeFailedSteps } from "@/lib/run-health";
 import { Alert02Icon, CancelCircleIcon } from "@hugeicons/core-free-icons";
 import { useRunFailures } from "./useRunFailures";
@@ -28,6 +29,7 @@ interface Props {
 }
 
 export function RunFailures({ run }: Props) {
+  const t = useT();
   const { steps, failedStepCount, runError, isLoadingNames } =
     useRunFailures(run);
 
@@ -45,12 +47,12 @@ export function RunFailures({ run }: Props) {
         <AlertTitle>
           {failedStepCount > 0
             ? describeFailedSteps(failedStepCount)
-            : "This run failed"}
+            : t("library2.failures.runFailed")}
         </AlertTitle>
         <AlertDescription className="flex flex-col gap-3">
           {run.status === AgentExecutionStatus.COMPLETED ? (
             <Text variant="small" className="!text-foreground-secondary">
-              The run still finished, so its output may be incomplete.
+              {t("library2.failures.outputIncomplete")}
             </Text>
           ) : null}
           {runError ? (
@@ -70,7 +72,9 @@ export function RunFailures({ run }: Props) {
                   ) : isLoadingNames ? (
                     <Skeleton className="h-5 w-32" />
                   ) : (
-                    <Text variant="body-medium">Unknown step</Text>
+                    <Text variant="body-medium">
+                      {t("library2.failures.unknownStep")}
+                    </Text>
                   )}
                   <ShowMoreText
                     variant="small"

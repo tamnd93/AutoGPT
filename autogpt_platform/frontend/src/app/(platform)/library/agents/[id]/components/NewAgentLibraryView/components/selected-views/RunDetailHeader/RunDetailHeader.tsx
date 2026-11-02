@@ -7,6 +7,7 @@ import { RunStatusBadge } from "../SelectedRunView/components/RunStatusBadge";
 import { FlaskConicalIcon, TimeScheduleIcon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { useIsBillingEnabled } from "@/hooks/useIsBillingEnabled";
+import { useT } from "@/lib/i18n";
 import { isCompletedWithErrors } from "@/lib/run-health";
 
 type Props = {
@@ -18,6 +19,7 @@ type Props = {
 };
 
 export function RunDetailHeader({ agent, run, scheduleRecurrence }: Props) {
+  const t = useT();
   const isBillingEnabled = useIsBillingEnabled();
   return (
     <div className={AGENT_LIBRARY_SECTION_PADDING_X}>
@@ -42,7 +44,7 @@ export function RunDetailHeader({ agent, run, scheduleRecurrence }: Props) {
                         variant="small-medium"
                         className="!text-warning-foreground"
                       >
-                        Simulated
+                        {t("library2.runDetail.simulated")}
                       </Text>
                     </div>
                   )}
@@ -63,7 +65,7 @@ export function RunDetailHeader({ agent, run, scheduleRecurrence }: Props) {
                     variant="small-medium"
                     className="text-yellow-700"
                   >
-                    Scheduled
+                    {t("library2.runDetail.scheduled")}
                   </Text>
                 </div>
               ) : null}
@@ -75,7 +77,7 @@ export function RunDetailHeader({ agent, run, scheduleRecurrence }: Props) {
           {run ? (
             <div className="mt-1 flex flex-wrap items-center gap-2 gap-y-1 text-foreground-subtle">
               <Text variant="small" className="text-foreground-tertiary">
-                Started{" "}
+                {t("library2.runDetail.started")}{" "}
                 {run.started_at
                   ? formatDistanceToNow(run.started_at, { addSuffix: true })
                   : "—"}
@@ -87,7 +89,9 @@ export function RunDetailHeader({ agent, run, scheduleRecurrence }: Props) {
                 |
               </span>
               <Text variant="small" className="text-foreground-tertiary">
-                Version: {run.graph_version}
+                {t("library2.runDetail.version", {
+                  version: run.graph_version,
+                })}
               </Text>
               {run.stats?.node_exec_count !== undefined && (
                 <>
@@ -98,7 +102,9 @@ export function RunDetailHeader({ agent, run, scheduleRecurrence }: Props) {
                     |
                   </span>
                   <Text variant="small" className="text-foreground-tertiary">
-                    Steps: {run.stats.node_exec_count}
+                    {t("library2.runDetail.steps", {
+                      count: run.stats.node_exec_count,
+                    })}
                   </Text>
                 </>
               )}
@@ -111,8 +117,12 @@ export function RunDetailHeader({ agent, run, scheduleRecurrence }: Props) {
                     |
                   </span>
                   <Text variant="small" className="text-foreground-tertiary">
-                    Duration:{" "}
-                    {formatDistanceStrict(0, run.stats.duration * 1000)}
+                    {t("library2.runDetail.duration", {
+                      duration: formatDistanceStrict(
+                        0,
+                        run.stats.duration * 1000,
+                      ),
+                    })}
                   </Text>
                 </>
               )}
@@ -125,7 +135,9 @@ export function RunDetailHeader({ agent, run, scheduleRecurrence }: Props) {
                     |
                   </span>
                   <Text variant="small" className="text-foreground-tertiary">
-                    Cost: ${(run.stats.cost / 100).toFixed(2)}
+                    {t("library2.runDetail.cost", {
+                      cost: (run.stats.cost / 100).toFixed(2),
+                    })}
                   </Text>
                 </>
               )}

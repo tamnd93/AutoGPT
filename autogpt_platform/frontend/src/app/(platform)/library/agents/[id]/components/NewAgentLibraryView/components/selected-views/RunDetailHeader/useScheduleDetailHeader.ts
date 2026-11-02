@@ -2,6 +2,7 @@
 
 import { useDeleteV1DeleteExecutionSchedule } from "@/app/api/__generated__/endpoints/schedules/schedules";
 import { useToast } from "@/components/molecules/Toast/use-toast";
+import { useT } from "@/lib/i18n";
 import { invalidateAllScheduleQueries } from "@/services/schedules/invalidate-schedules";
 import { useQueryClient } from "@tanstack/react-query";
 
@@ -12,17 +13,18 @@ export function useScheduleDetailHeader(
 ) {
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const t = useT();
 
   const deleteMutation = useDeleteV1DeleteExecutionSchedule({
     mutation: {
       onSuccess: () => {
-        toast({ title: "Schedule deleted" });
+        toast({ title: t("library2.schedule.deleted") });
         invalidateAllScheduleQueries(queryClient, agentGraphId);
       },
       onError: (error: any) =>
         toast({
-          title: "Failed to delete schedule",
-          description: error?.message || "An unexpected error occurred.",
+          title: t("library2.schedule.deleteFailed"),
+          description: error?.message || t("library2.common.unexpectedError"),
           variant: "destructive",
         }),
     },

@@ -14,6 +14,7 @@ import {
 } from "@/components/molecules/ScrollableTabs/ScrollableTabs";
 import { PendingReviewsList } from "@/components/organisms/PendingReviewsList/PendingReviewsList";
 import { usePendingReviewsForExecution } from "@/hooks/usePendingReviews";
+import { useT } from "@/lib/i18n";
 import { isLargeScreen, useBreakpoint } from "@/lib/hooks/useBreakpoint";
 import { useEffect } from "react";
 import { AgentInputsReadOnly } from "../../modals/AgentInputsReadOnly/AgentInputsReadOnly";
@@ -43,6 +44,7 @@ export function SelectedRunView({
   onClearSelectedRun,
   banner,
 }: Props) {
+  const t = useT();
   const { run, preset, isLoading, responseError, httpError } =
     useSelectedRunView(agent.graph_id, runId);
 
@@ -113,19 +115,21 @@ export function SelectedRunView({
               <ScrollableTabsList className="px-4">
                 {withReviews && (
                   <ScrollableTabsTrigger value="reviews">
-                    Reviews ({pendingReviews.length})
+                    {t("library2.runView.reviewsTab", {
+                      count: pendingReviews.length,
+                    })}
                   </ScrollableTabsTrigger>
                 )}
                 {withSummary && (
                   <ScrollableTabsTrigger value="summary">
-                    Summary
+                    {t("library2.runView.summary")}
                   </ScrollableTabsTrigger>
                 )}
                 <ScrollableTabsTrigger value="output">
-                  Output
+                  {t("library2.runView.output")}
                 </ScrollableTabsTrigger>
                 <ScrollableTabsTrigger value="input">
-                  Your input
+                  {t("library2.runView.yourInput")}
                 </ScrollableTabsTrigger>
               </ScrollableTabsList>
               <div className="my-6 flex flex-col gap-6">
@@ -140,11 +144,13 @@ export function SelectedRunView({
                           <PendingReviewsList
                             reviews={pendingReviews}
                             onReviewComplete={refetchReviews}
-                            emptyMessage="No pending reviews for this execution"
+                            emptyMessage={t(
+                              "library2.runView.noPendingReviews",
+                            )}
                           />
                         ) : (
                           <Text variant="body" className="text-foreground-body">
-                            No pending reviews for this execution
+                            {t("library2.runView.noPendingReviews")}
                           </Text>
                         )}
                       </RunDetailCard>
@@ -159,10 +165,12 @@ export function SelectedRunView({
                       <RunDetailCard
                         title={
                           <div className="flex items-center gap-1">
-                            <Text variant="lead-semibold">Summary</Text>
+                            <Text variant="lead-semibold">
+                              {t("library2.runView.summary")}
+                            </Text>
                             <InformationTooltip
                               iconSize={20}
-                              description="This AI-generated summary describes how the workflow handled your task. It's an experimental feature and may occasionally be inaccurate."
+                              description={t("library2.runView.summaryTooltip")}
                             />
                           </div>
                         }
@@ -176,7 +184,7 @@ export function SelectedRunView({
                 {/* Output Section */}
                 <ScrollableTabsContent value="output">
                   <div className="scroll-mt-4">
-                    <RunDetailCard title="Output">
+                    <RunDetailCard title={t("library2.runView.output")}>
                       {isLoading ? (
                         <div
                           // TODO(tokens): no exact role for text-neutral-500 (#737373)
@@ -195,7 +203,7 @@ export function SelectedRunView({
                           variant="body"
                           className="text-neutral-600"
                         >
-                          No output from this run.
+                          {t("library2.outputs.empty")}
                         </Text>
                       )}
                     </RunDetailCard>
@@ -208,10 +216,12 @@ export function SelectedRunView({
                     <RunDetailCard
                       title={
                         <div className="flex items-center gap-1">
-                          <Text variant="lead-semibold">Your input</Text>
+                          <Text variant="lead-semibold">
+                            {t("library2.runView.yourInput")}
+                          </Text>
                           <InformationTooltip
                             iconSize={20}
-                            description="This is the input that was provided to the workflow for running this task."
+                            description={t("library2.runView.inputTooltip")}
                           />
                         </div>
                       }

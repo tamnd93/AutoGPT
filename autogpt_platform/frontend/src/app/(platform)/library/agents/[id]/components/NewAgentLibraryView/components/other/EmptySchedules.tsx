@@ -1,19 +1,21 @@
 "use client";
 
 import { Text } from "@/components/atoms/Text/Text";
+import { useT } from "@/lib/i18n";
 import { EmptySchedulesIllustration } from "./EmptySchedulesIllustration";
 
 export function EmptySchedules() {
+  const t = useT();
+
   return (
     <div className="flex h-full flex-col items-center justify-center gap-20">
       <EmptySchedulesIllustration />
       <div className="flex flex-col items-center gap-2">
         <Text variant="h4" className="text-center leading-inherit">
-          Nothing scheduled yet
+          {t("library2.emptySchedules.title")}
         </Text>
         <Text variant="large" className="text-foreground-body">
-          Create a new run, and you&apos;ll have the option to schedule your
-          workflow to run automatically.
+          {t("library2.emptySchedules.body")}
         </Text>
       </div>
     </div>

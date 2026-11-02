@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/atoms/Button/Button";
 import { Text } from "@/components/atoms/Text/Text";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   hasUpdate?: boolean;
@@ -22,6 +23,8 @@ export function MarketplaceBanners({
   onUpdate,
   onPublish,
 }: Props) {
+  const t = useT();
+
   const renderUpdateBanner = () => {
     if (hasUpdate && latestVersion) {
       return (
@@ -36,15 +39,14 @@ export function MarketplaceBanners({
                 // TODO(tokens): no exact role for text-neutral-900 (#171717); no dark roles yet for dark:text-neutral-100 (#F5F5F5)
                 className="mb-2 text-neutral-900 dark:text-neutral-100"
               >
-                Update available
+                {t("library2.banners.updateAvailable")}
               </Text>
               <Text
                 // TODO(tokens): no exact role for text-gray-700 (#374151); no dark roles yet for dark:text-gray-300 (#D1D5DB)
                 variant="body"
                 className="text-gray-700 dark:text-gray-300"
               >
-                You should update your workflow in order to get the latest /
-                best results
+                {t("library2.banners.updateBody")}
               </Text>
             </div>
             {onUpdate && (
@@ -56,7 +58,9 @@ export function MarketplaceBanners({
                   // TODO(tokens): no exact role for bg-neutral-800 (#262626), hover:bg-neutral-900 (#171717); no dark roles yet for dark:bg-neutral-700 (#404040), dark:hover:bg-neutral-800 (#262626)
                   className="bg-neutral-800 text-action-foreground hover:bg-neutral-900 dark:bg-neutral-700 dark:hover:bg-neutral-800"
                 >
-                  {isUpdating ? "Updating..." : "Update workflow"}
+                  {isUpdating
+                    ? t("library2.banners.updating")
+                    : t("library2.banners.update")}
                 </Button>
               </div>
             )}
@@ -81,15 +85,14 @@ export function MarketplaceBanners({
                 // TODO(tokens): no exact role for text-neutral-900 (#171717); no dark roles yet for dark:text-neutral-100 (#F5F5F5)
                 className="mb-2 text-neutral-900 dark:text-neutral-100"
               >
-                Unpublished changes
+                {t("library2.banners.unpublished")}
               </Text>
               <Text
                 // TODO(tokens): no exact role for text-gray-700 (#374151); no dark roles yet for dark:text-gray-300 (#D1D5DB)
                 variant="body"
                 className="text-gray-700 dark:text-gray-300"
               >
-                You&apos;ve made changes to this workflow that aren&apos;t
-                published yet. Would you like to publish the latest version?
+                {t("library2.banners.unpublishedBody")}
               </Text>
             </div>
             {onPublish && (
@@ -100,7 +103,7 @@ export function MarketplaceBanners({
                   // TODO(tokens): no exact role for bg-neutral-800 (#262626), hover:bg-neutral-900 (#171717); no dark roles yet for dark:bg-neutral-700 (#404040), dark:hover:bg-neutral-800 (#262626)
                   className="bg-neutral-800 text-action-foreground hover:bg-neutral-900 dark:bg-neutral-700 dark:hover:bg-neutral-800"
                 >
-                  Publish changes
+                  {t("library2.banners.publish")}
                 </Button>
               </div>
             )}

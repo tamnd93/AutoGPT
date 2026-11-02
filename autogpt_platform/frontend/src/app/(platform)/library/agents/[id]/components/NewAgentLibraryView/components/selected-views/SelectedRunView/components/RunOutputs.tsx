@@ -10,6 +10,7 @@ import {
   OutputItem,
 } from "@/components/contextual/OutputRenderers";
 import { HIDDEN_FROM_REPLAY } from "@/lib/replay-privacy";
+import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import React, { useMemo } from "react";
 
@@ -26,6 +27,7 @@ export function RunOutputs({
   shareToken,
   hiddenFromReplay = false,
 }: RunOutputsProps) {
+  const t = useT();
   const items = useMemo(() => {
     const list: Array<{
       key: string;
@@ -89,7 +91,9 @@ export function RunOutputs({
 
   if (!items.length) {
     // TODO(tokens): no exact role for text-neutral-600 (#525252)
-    return <div className="text-neutral-600">No output from this run.</div>;
+    return (
+      <div className="text-neutral-600">{t("library2.outputs.empty")}</div>
+    );
   }
 
   return (

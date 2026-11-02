@@ -7,7 +7,7 @@ import { ErrorCard } from "@/components/molecules/ErrorCard/ErrorCard";
 import { humanizeCronExpression } from "@/lib/cron-expression-utils";
 import { isLargeScreen, useBreakpoint } from "@/lib/hooks/useBreakpoint";
 import { useUserTimezone } from "@/lib/hooks/useUserTimezone";
-import { useLocale } from "@/lib/i18n";
+import { useLocale, useT } from "@/lib/i18n";
 import { formatInTimezone, getTimezoneDisplayName } from "@/lib/timezone-utils";
 import { AgentInputsReadOnly } from "../../modals/AgentInputsReadOnly/AgentInputsReadOnly";
 import { LoadingSelectedContent } from "../LoadingSelectedContent";
@@ -39,6 +39,7 @@ export function SelectedScheduleView({
 
   const userTimezone = useUserTimezone();
   const locale = useLocale();
+  const t = useT();
 
   const breakpoint = useBreakpoint();
   const isLgScreenUp = isLargeScreen(breakpoint);
@@ -51,7 +52,7 @@ export function SelectedScheduleView({
             ? {
                 message: String(
                   (error as unknown as { message?: string })?.message ||
-                    "Failed to load schedule",
+                    t("library2.scheduleView.loadFailed"),
                 ),
               }
             : undefined
@@ -103,7 +104,7 @@ export function SelectedScheduleView({
 
             {/* Schedule Section */}
             <div id="schedule" className="scroll-mt-4">
-              <RunDetailCard title="Schedule">
+              <RunDetailCard title={t("library2.scheduleView.schedule")}>
                 {isLoading || !schedule ? (
                   <div
                     // TODO(tokens): no exact role for text-neutral-500 (#737373)
@@ -114,11 +115,15 @@ export function SelectedScheduleView({
                 ) : (
                   <div className="relative flex flex-col gap-8">
                     <div className="flex flex-col gap-1.5">
-                      <Text variant="large-medium">Name</Text>
+                      <Text variant="large-medium">
+                        {t("library2.scheduleView.name")}
+                      </Text>
                       <Text variant="body">{schedule.name}</Text>
                     </div>
                     <div className="flex flex-col gap-1.5">
-                      <Text variant="large-medium">Recurrence</Text>
+                      <Text variant="large-medium">
+                        {t("library2.scheduleView.recurrence")}
+                      </Text>
                       <Text variant="body" className="flex items-center gap-3">
                         {humanizeCronExpression(schedule.cron)}{" "}
                         <span className="text-foreground-tertiary">•</span>{" "}
@@ -131,7 +136,9 @@ export function SelectedScheduleView({
                       </Text>
                     </div>
                     <div className="flex flex-col gap-1.5">
-                      <Text variant="large-medium">Next run</Text>
+                      <Text variant="large-medium">
+                        {t("library2.scheduleView.nextRun")}
+                      </Text>
                       <Text variant="body" className="flex items-center gap-3">
                         {formatInTimezone(
                           schedule.next_run_time,
@@ -162,7 +169,7 @@ export function SelectedScheduleView({
 
             {/* Input Section */}
             <div id="input" className="scroll-mt-4">
-              <RunDetailCard title="Your input">
+              <RunDetailCard title={t("library2.scheduleView.yourInput")}>
                 <div className="relative">
                   <AgentInputsReadOnly
                     agent={agent}

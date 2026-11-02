@@ -1,5 +1,5 @@
 import { useUserTimezone } from "@/lib/hooks/useUserTimezone";
-import { useLocale } from "@/lib/i18n";
+import { useLocale, useT } from "@/lib/i18n";
 import { getTimezoneDisplayName } from "@/lib/timezone-utils";
 import { InformationCircleIcon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
@@ -7,6 +7,7 @@ import { Icon } from "@/components/atoms/Icon/Icon";
 export function TimezoneNotice() {
   const userTimezone = useUserTimezone();
   const locale = useLocale();
+  const t = useT();
 
   if (!userTimezone) {
     return null;
@@ -24,9 +25,9 @@ export function TimezoneNotice() {
           // TODO(tokens): no exact role for text-amber-800 (#92400E)
           className="text-sm text-amber-800"
         >
-          No timezone set. Schedule will run in UTC.
+          {t("library2.timezone.none")}
           <a href="/settings/account" className="ml-1 underline">
-            Set your timezone
+            {t("library2.timezone.setLink")}
           </a>
         </p>
       </div>
@@ -42,7 +43,7 @@ export function TimezoneNotice() {
         className="h-4 w-4 text-muted-foreground"
       />
       <p className="text-sm text-muted-foreground">
-        Schedule will run in your timezone:{" "}
+        {t("library2.timezone.inYour")}{" "}
         <span className="font-medium">{tzName}</span>
       </p>
     </div>

@@ -13,6 +13,7 @@ import type { GraphExecution } from "@/app/api/__generated__/models/graphExecuti
 import type { LibraryAgent } from "@/app/api/__generated__/models/libraryAgent";
 import { okData } from "@/app/api/helpers";
 import { useToast } from "@/components/molecules/Toast/use-toast";
+import { useT } from "@/lib/i18n";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 
@@ -31,6 +32,7 @@ export function useSelectedRunActions({
 }: Params) {
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const t = useT();
 
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [isCreateTemplateModalOpen, setIsCreateTemplateModalOpen] =
@@ -56,18 +58,18 @@ export function useSelectedRunActions({
         graphExecId: run?.id ?? "",
       });
 
-      toast({ title: "Run stopped" });
+      toast({ title: t("library2.runActions.toast.stopped") });
 
       await queryClient.invalidateQueries({
         queryKey: getGetV1ListGraphExecutionsQueryKey(agentGraphId),
       });
     } catch (error: unknown) {
       toast({
-        title: "Failed to stop run",
+        title: t("library2.runActions.toast.stopFailed"),
         description:
           error instanceof Error
             ? error.message
-            : "An unexpected error occurred.",
+            : t("library2.common.unexpectedError"),
         variant: "destructive",
       });
     }
@@ -76,15 +78,15 @@ export function useSelectedRunActions({
   async function handleRunAgain() {
     if (!run) {
       toast({
-        title: "Run not found",
-        description: "Run not found",
+        title: t("library2.runActions.toast.runNotFound"),
+        description: t("library2.runActions.toast.runNotFound"),
         variant: "destructive",
       });
       return;
     }
 
     try {
-      toast({ title: "Run started" });
+      toast({ title: t("library2.runActions.toast.started") });
 
       const res = await executeRun({
         graphId: run.graph_id,
@@ -105,11 +107,11 @@ export function useSelectedRunActions({
       if (newRunId && onSelectRun) onSelectRun(newRunId);
     } catch (error: unknown) {
       toast({
-        title: "Failed to start run",
+        title: t("library2.runActions.toast.startFailed"),
         description:
           error instanceof Error
             ? error.message
-            : "An unexpected error occurred.",
+            : t("library2.common.unexpectedError"),
         variant: "destructive",
       });
     }
@@ -122,8 +124,8 @@ export function useSelectedRunActions({
   async function handleCreateTemplate(name: string, description: string) {
     if (!run) {
       toast({
-        title: "Run not found",
-        description: "Cannot create template from missing run",
+        title: t("library2.runActions.toast.runNotFound"),
+        description: t("library2.runActions.toast.missingRunTemplate"),
         variant: "destructive",
       });
       return;
@@ -140,7 +142,7 @@ export function useSelectedRunActions({
 
       if (res.status === 200) {
         toast({
-          title: "Template created",
+          title: t("library2.runActions.toast.templateCreated"),
         });
 
         if (agent) {
@@ -155,11 +157,11 @@ export function useSelectedRunActions({
       }
     } catch (error: unknown) {
       toast({
-        title: "Failed to create template",
+        title: t("library2.runActions.toast.templateFailed"),
         description:
           error instanceof Error
             ? error.message
-            : "An unexpected error occurred.",
+            : t("library2.common.unexpectedError"),
         variant: "destructive",
       });
     }

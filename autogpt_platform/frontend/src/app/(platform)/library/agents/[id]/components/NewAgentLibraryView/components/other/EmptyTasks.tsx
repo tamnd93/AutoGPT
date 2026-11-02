@@ -15,7 +15,7 @@ import { Dialog } from "@/components/molecules/Dialog/Dialog";
 import { ShowMoreText } from "@/components/molecules/ShowMoreText/ShowMoreText";
 import { useToast } from "@/components/molecules/Toast/use-toast";
 import { exportAsJSONFile } from "@/lib/utils";
-import { useLocale } from "@/lib/i18n";
+import { useLocale, useT } from "@/lib/i18n";
 import { formatDate } from "@/lib/utils/time";
 import { useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
@@ -42,6 +42,7 @@ export function EmptyTasks({
   const queryClient = useQueryClient();
   const router = useRouter();
   const locale = useLocale();
+  const t = useT();
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [isDeletingAgent, setIsDeletingAgent] = useState(false);
 
@@ -59,16 +60,16 @@ export function EmptyTasks({
         queryKey: getGetV2ListLibraryAgentsQueryKey(),
       });
 
-      toast({ title: "Workflow deleted" });
+      toast({ title: t("library2.emptyTasks.workflowDeleted") });
       setShowDeleteDialog(false);
       router.push("/library");
     } catch (error: unknown) {
       toast({
-        title: "Failed to delete workflow",
+        title: t("library2.emptyTasks.workflowDeleteFailed"),
         description:
           error instanceof Error
             ? error.message
-            : "An unexpected error occurred.",
+            : t("library2.common.unexpectedError"),
         variant: "destructive",
       });
     } finally {
@@ -86,13 +87,16 @@ export function EmptyTasks({
       if (res.status === 200) {
         const filename = `${agent.name}_v${agent.graph_version}.json`;
         exportAsJSONFile(res.data as any, filename);
-        toast({ title: "Workflow exported" });
+        toast({ title: t("library2.emptyTasks.workflowExported") });
       } else {
-        toast({ title: "Failed to export workflow", variant: "destructive" });
+        toast({
+          title: t("library2.emptyTasks.workflowExportFailed"),
+          variant: "destructive",
+        });
       }
     } catch (e: any) {
       toast({
-        title: "Failed to export workflow",
+        title: t("library2.emptyTasks.workflowExportFailed"),
         description: e?.message,
         variant: "destructive",
       });
@@ -115,11 +119,10 @@ export function EmptyTasks({
                   variant="h3"
                   className="text-center text-heading-sm leading-inherit"
                 >
-                  Ready to get started?
+                  {t("library2.emptyTasks.ready")}
                 </Text>
                 <Text variant="large" className="text-center">
-                  Run your workflow and this space will fill with your
-                  workflow&apos;s activity
+                  {t("library2.emptyTasks.runHint")}
                 </Text>
               </div>
             </div>
@@ -130,7 +133,7 @@ export function EmptyTasks({
                   size="large"
                   className="inline-flex w-[19.75rem]"
                 >
-                  Setup your task
+                  {t("library2.emptyTasks.setupTask")}
                 </Button>
               }
               agent={agent}
@@ -144,13 +147,15 @@ export function EmptyTasks({
 
       <div className="mt-4 flex flex-col gap-10 rounded-large border border-border-base p-6 lg:mt-0 lg:w-[29.5rem]">
         <Text variant="label" className="text-foreground-tertiary">
-          About this workflow
+          {t("library2.emptyTasks.about")}
         </Text>
         <div className="flex flex-col gap-2">
           <Text variant="h4">{agent.name}</Text>
           {isPublished ? (
             <Text variant="body">
-              by {agent.marketplace_listing?.creator.name}
+              {t("library2.emptyTasks.by", {
+                creator: agent.marketplace_listing?.creator.name ?? "",
+              })}
             </Text>
           ) : null}
         </div>
@@ -159,14 +164,13 @@ export function EmptyTasks({
           variant="body"
           className="-mt-4 text-textGrey"
         >
-          {agent.description ||
-            `This workflow is not yet published. Once it is published, You can publish your workflow by clicking the "Publish" button in the workflow editor.`}
+          {agent.description || t("library2.emptyTasks.unpublished")}
         </ShowMoreText>
         <div className="flex flex-col gap-4">
           <div className="flex items-center gap-20">
             <div className="flex flex-col gap-0">
               <Text variant="body-medium" className="text-foreground-base">
-                Workflow created on
+                {t("library2.emptyTasks.createdOn")}
               </Text>
               <Text variant="body" className="text-textGrey">
                 {createdAt}
@@ -175,7 +179,7 @@ export function EmptyTasks({
             {isUpdated ? (
               <div className="flex flex-col gap-0">
                 <Text variant="body-medium" className="text-foreground-base">
-                  Workflow updated on
+                  {t("library2.emptyTasks.updatedOn")}
                 </Text>
                 <Text variant="body" className="text-textGrey">
                   {updatedAt}
@@ -189,18 +193,18 @@ export function EmptyTasks({
                 href={`/build?flowID=${agent.graph_id}&flowVersion=${agent.graph_version}`}
                 target="_blank"
               >
-                Edit workflow
+                {t("library2.emptyTasks.edit")}
               </Link>
             </Button>
             <Button variant="secondary" size="small" onClick={handleExport}>
-              Export workflow to file
+              {t("library2.emptyTasks.export")}
             </Button>
             <Button
               variant="secondary"
               size="small"
               onClick={() => setShowDeleteDialog(true)}
             >
-              Delete workflow
+              {t("library2.emptyTasks.delete")}
             </Button>
           </div>
         </div>
@@ -212,28 +216,25 @@ export function EmptyTasks({
           set: setShowDeleteDialog,
         }}
         styling={{ maxWidth: "32rem" }}
-        title="Delete workflow"
+        title={t("library2.emptyTasks.deleteTitle")}
       >
         <Dialog.Content>
           <div>
-            <Text variant="large">
-              Are you sure you want to delete this workflow? This action cannot
-              be undone.
-            </Text>
+            <Text variant="large">{t("library2.emptyTasks.deleteBody")}</Text>
             <Dialog.Footer>
               <Button
                 variant="secondary"
                 disabled={isDeletingAgent}
                 onClick={() => setShowDeleteDialog(false)}
               >
-                Cancel
+                {t("library2.common.cancel")}
               </Button>
               <Button
                 variant="destructive"
                 onClick={handleDeleteAgent}
                 loading={isDeletingAgent}
               >
-                Delete Workflow
+                {t("library2.emptyTasks.deleteConfirm")}
               </Button>
             </Dialog.Footer>
           </div>

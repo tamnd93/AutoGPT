@@ -5,6 +5,7 @@ import { Button } from "@/components/atoms/Button/Button";
 import { Input } from "@/components/atoms/Input/Input";
 import { Text } from "@/components/atoms/Text/Text";
 import { Dialog } from "@/components/molecules/Dialog/Dialog";
+import { useT } from "@/lib/i18n";
 import { useState } from "react";
 
 interface Props {
@@ -15,6 +16,7 @@ interface Props {
 }
 
 export function CreateTemplateModal({ isOpen, onClose, onCreate }: Props) {
+  const t = useT();
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [isCreating, setIsCreating] = useState(false);
@@ -41,7 +43,7 @@ export function CreateTemplateModal({ isOpen, onClose, onCreate }: Props) {
 
   return (
     <Dialog
-      title="Create Template"
+      title={t("library2.createTemplate.title")}
       controlled={{ isOpen, set: () => onClose() }}
       styling={{ maxWidth: "500px" }}
     >
@@ -49,16 +51,15 @@ export function CreateTemplateModal({ isOpen, onClose, onCreate }: Props) {
         <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-1">
             <Text variant="body" className="text-foreground-secondary">
-              Save this task as a template to reuse later with the same inputs
-              and credentials.
+              {t("library2.createTemplate.body")}
             </Text>
           </div>
 
           <div className="flex w-[96%] flex-col gap-4 pl-1">
             <Input
               id="template-name"
-              label="Name"
-              placeholder="Enter template name"
+              label={t("library2.createTemplate.name")}
+              placeholder={t("library2.createTemplate.namePlaceholder")}
               value={name}
               onChange={(e) => setName(e.target.value)}
               autoFocus
@@ -66,8 +67,8 @@ export function CreateTemplateModal({ isOpen, onClose, onCreate }: Props) {
             <Input
               type="textarea"
               id="template-description"
-              label="Description"
-              placeholder="Optional description"
+              label={t("library2.createTemplate.description")}
+              placeholder={t("library2.createTemplate.descriptionPlaceholder")}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               rows={3}
@@ -78,7 +79,7 @@ export function CreateTemplateModal({ isOpen, onClose, onCreate }: Props) {
         <Dialog.Footer className="mt-6">
           <div className="flex justify-end gap-3">
             <Button variant="secondary" onClick={handleCancel}>
-              Cancel
+              {t("library2.createTemplate.cancel")}
             </Button>
             <Button
               variant="primary"
@@ -86,7 +87,7 @@ export function CreateTemplateModal({ isOpen, onClose, onCreate }: Props) {
               disabled={!name.trim() || isCreating}
               loading={isCreating}
             >
-              Create Template
+              {t("library2.createTemplate.submit")}
             </Button>
           </div>
         </Dialog.Footer>

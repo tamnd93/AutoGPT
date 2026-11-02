@@ -26,6 +26,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/molecules/DropdownMenu/DropdownMenu";
 import { useToast } from "@/components/molecules/Toast/use-toast";
+import { useT } from "@/lib/i18n";
 import { exportAsJSONFile } from "@/lib/utils";
 import { useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
@@ -49,6 +50,7 @@ export function AgentActionsDropdown({
   scheduleId,
   onClearSelectedRun,
 }: Props) {
+  const t = useT();
   const { toast } = useToast();
 
   const { mutateAsync: deleteAgent } = useDeleteV2DeleteLibraryAgent();
@@ -79,16 +81,16 @@ export function AgentActionsDropdown({
         queryKey: getGetV2ListLibraryAgentsQueryKey(),
       });
 
-      toast({ title: "Workflow deleted" });
+      toast({ title: t("library2.emptyTasks.workflowDeleted") });
       setShowDeleteDialog(false);
       router.push("/library");
     } catch (error: unknown) {
       toast({
-        title: "Failed to delete workflow",
+        title: t("library2.emptyTasks.workflowDeleteFailed"),
         description:
           error instanceof Error
             ? error.message
-            : "An unexpected error occurred.",
+            : t("library2.common.unexpectedError"),
         variant: "destructive",
       });
     } finally {
@@ -106,13 +108,16 @@ export function AgentActionsDropdown({
       if (res.status === 200) {
         const filename = `${agent.name}_v${agent.graph_version}.json`;
         exportAsJSONFile(res.data as any, filename);
-        toast({ title: "Workflow exported" });
+        toast({ title: t("library2.emptyTasks.workflowExported") });
       } else {
-        toast({ title: "Failed to export workflow", variant: "destructive" });
+        toast({
+          title: t("library2.emptyTasks.workflowExportFailed"),
+          variant: "destructive",
+        });
       }
     } catch (e: any) {
       toast({
-        title: "Failed to export workflow",
+        title: t("library2.emptyTasks.workflowExportFailed"),
         description: e?.message,
         variant: "destructive",
       });
@@ -125,7 +130,7 @@ export function AgentActionsDropdown({
     try {
       await deleteRun({ graphExecId: run.id });
 
-      toast({ title: "Task deleted" });
+      toast({ title: t("library2.actionsDropdown.taskDeleted") });
 
       await queryClient.refetchQueries({
         queryKey: getGetV1ListGraphExecutionsQueryKey(agentGraphId),
@@ -136,11 +141,11 @@ export function AgentActionsDropdown({
       setShowDeleteRunDialog(false);
     } catch (error: unknown) {
       toast({
-        title: "Failed to delete task",
+        title: t("library2.actionsDropdown.taskDeleteFailed"),
         description:
           error instanceof Error
             ? error.message
-            : "An unexpected error occurred.",
+            : t("library2.common.unexpectedError"),
         variant: "destructive",
       });
     }
@@ -150,7 +155,7 @@ export function AgentActionsDropdown({
     setIsDeletingSchedule(true);
     try {
       await deleteSchedule({ scheduleId: scheduleId ?? "" });
-      toast({ title: "Schedule deleted" });
+      toast({ title: t("library2.schedule.deleted") });
 
       await queryClient.invalidateQueries({
         queryKey: getGetV1ListExecutionSchedulesForAGraphQueryOptions(
@@ -161,11 +166,11 @@ export function AgentActionsDropdown({
       setShowDeleteDialog(false);
     } catch (error: unknown) {
       toast({
-        title: "Failed to delete schedule",
+        title: t("library2.schedule.deleteFailed"),
         description:
           error instanceof Error
             ? error.message
-            : "An unexpected error occurred.",
+            : t("library2.common.unexpectedError"),
         variant: "destructive",
       });
     } finally {
@@ -180,7 +185,7 @@ export function AgentActionsDropdown({
           <Button
             variant="icon"
             size="icon"
-            aria-label="More actions"
+            aria-label={t("library2.actionsDropdown.more")}
             className="min-w-fit"
           >
             <Icon icon={MoreHorizontalIcon} size={18} />
@@ -193,7 +198,7 @@ export function AgentActionsDropdown({
                 onClick={() => setShowDeleteRunDialog(true)}
                 className="flex items-center gap-2"
               >
-                Delete this task
+                {t("library2.actionsDropdown.deleteThisTask")}
               </DropdownMenuItem>
               <DropdownMenuSeparator />
             </>
@@ -204,20 +209,20 @@ export function AgentActionsDropdown({
               target="_blank"
               className="flex items-center gap-2"
             >
-              Edit workflow
+              {t("library2.emptyTasks.edit")}
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem
             onClick={handleExport}
             className="flex items-center gap-2"
           >
-            Export workflow to file
+            {t("library2.emptyTasks.export")}
           </DropdownMenuItem>
           <DropdownMenuItem
             onClick={() => setShowDeleteDialog(true)}
             className="flex items-center gap-2"
           >
-            Delete workflow
+            {t("library2.emptyTasks.delete")}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
@@ -228,13 +233,12 @@ export function AgentActionsDropdown({
           set: setShowDeleteRunDialog,
         }}
         styling={{ maxWidth: "32rem" }}
-        title="Delete task"
+        title={t("library2.actionsDropdown.deleteTaskTitle")}
       >
         <Dialog.Content>
           <div>
             <Text variant="large">
-              Are you sure you want to delete this task? This action cannot be
-              undone.
+              {t("library2.actionsDropdown.deleteTaskBody")}
             </Text>
             <Dialog.Footer>
               <Button
@@ -242,14 +246,14 @@ export function AgentActionsDropdown({
                 disabled={isDeletingRun}
                 onClick={() => setShowDeleteRunDialog(false)}
               >
-                Cancel
+                {t("library2.common.cancel")}
               </Button>
               <Button
                 variant="destructive"
                 onClick={handleDeleteRun}
                 loading={isDeletingRun}
               >
-                Delete Task
+                {t("library2.actionsDropdown.deleteTaskConfirm")}
               </Button>
             </Dialog.Footer>
           </div>
@@ -262,28 +266,25 @@ export function AgentActionsDropdown({
           set: setShowDeleteDialog,
         }}
         styling={{ maxWidth: "32rem" }}
-        title="Delete workflow"
+        title={t("library2.emptyTasks.deleteTitle")}
       >
         <Dialog.Content>
           <div>
-            <Text variant="large">
-              Are you sure you want to delete this workflow? This action cannot
-              be undone.
-            </Text>
+            <Text variant="large">{t("library2.emptyTasks.deleteBody")}</Text>
             <Dialog.Footer>
               <Button
                 variant="secondary"
                 disabled={isDeletingAgent}
                 onClick={() => setShowDeleteDialog(false)}
               >
-                Cancel
+                {t("library2.common.cancel")}
               </Button>
               <Button
                 variant="destructive"
                 onClick={handleDeleteAgent}
                 loading={isDeletingAgent}
               >
-                Delete Workflow
+                {t("library2.emptyTasks.deleteConfirm")}
               </Button>
             </Dialog.Footer>
           </div>
@@ -296,13 +297,12 @@ export function AgentActionsDropdown({
           set: setShowDeleteScheduleDialog,
         }}
         styling={{ maxWidth: "32rem" }}
-        title="Delete schedule"
+        title={t("library2.actionsDropdown.deleteScheduleTitle")}
       >
         <Dialog.Content>
           <div>
             <Text variant="large">
-              Are you sure you want to delete this schedule? This action cannot
-              be undone.
+              {t("library2.actionsDropdown.deleteScheduleBody")}
             </Text>
             <Dialog.Footer>
               <Button
@@ -310,14 +310,14 @@ export function AgentActionsDropdown({
                 disabled={isDeletingSchedule}
                 onClick={() => setShowDeleteScheduleDialog(false)}
               >
-                Cancel
+                {t("library2.common.cancel")}
               </Button>
               <Button
                 variant="destructive"
                 onClick={handleDeleteSchedule}
                 loading={isDeletingSchedule}
               >
-                Delete Schedule
+                {t("library2.actionsDropdown.deleteScheduleConfirm")}
               </Button>
             </Dialog.Footer>
           </div>

@@ -2,6 +2,7 @@ import { usePostV1CreateExecutionSchedule as useCreateSchedule } from "@/app/api
 import { GraphExecutionJobInfo } from "@/app/api/__generated__/models/graphExecutionJobInfo";
 import { LibraryAgent } from "@/app/api/__generated__/models/libraryAgent";
 import { useToast } from "@/components/molecules/Toast/use-toast";
+import { useT } from "@/lib/i18n";
 import { invalidateAllScheduleQueries } from "@/services/schedules/invalidate-schedules";
 import { useQueryClient } from "@tanstack/react-query";
 import { useCallback, useMemo, useState } from "react";
@@ -18,6 +19,7 @@ export function useScheduleAgentModal(
   callbacks?: UseScheduleAgentModalCallbacks,
 ) {
   const { toast } = useToast();
+  const t = useT();
   const queryClient = useQueryClient();
 
   const defaultScheduleName = useMemo(() => `Run ${agent.name}`, [agent.name]);
@@ -31,7 +33,7 @@ export function useScheduleAgentModal(
       onSuccess: (response) => {
         if (response.status === 200) {
           toast({
-            title: "Schedule created",
+            title: t("library2.schedule.created"),
           });
           callbacks?.onCreateSchedule?.(response.data);
           invalidateAllScheduleQueries(queryClient, agent.graph_id);
@@ -43,8 +45,8 @@ export function useScheduleAgentModal(
       },
       onError: (error: any) => {
         toast({
-          title: "❌ Failed to create schedule",
-          description: error.message || "An unexpected error occurred.",
+          title: t("library2.schedule.createFailed"),
+          description: error.message || t("library2.common.unexpectedError"),
           variant: "destructive",
         });
       },
@@ -55,8 +57,8 @@ export function useScheduleAgentModal(
     (scheduleName: string, cronExpression: string) => {
       if (!scheduleName.trim()) {
         toast({
-          title: "⚠️ Schedule name required",
-          description: "Please provide a name for your schedule.",
+          title: t("library2.schedule.nameRequired"),
+          description: t("library2.schedule.nameRequiredBody"),
           variant: "destructive",
         });
         return Promise.reject(new Error("Schedule name required"));
@@ -88,6 +90,7 @@ export function useScheduleAgentModal(
       inputCredentials,
       createScheduleMutation,
       toast,
+      t,
     ],
   );
 

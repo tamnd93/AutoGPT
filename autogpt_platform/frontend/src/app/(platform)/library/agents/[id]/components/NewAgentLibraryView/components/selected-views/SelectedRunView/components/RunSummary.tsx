@@ -10,12 +10,15 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/atoms/Tooltip/BaseTooltip";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   run: GraphExecution | GraphExecutionWithNodes;
 }
 
 export function RunSummary({ run }: Props) {
+  const t = useT();
+
   if (!run.stats?.activity_status) return null;
 
   const correctnessScore = run.stats.correctness_score;
@@ -36,7 +39,7 @@ export function RunSummary({ run }: Props) {
               // TODO(tokens): no exact role for text-neutral-600 (#525252)
               className="text-sm font-medium text-neutral-600"
             >
-              Success Estimate:
+              {t("library2.summary.successEstimate")}
             </span>
             <div className="flex items-center gap-2">
               <div
@@ -78,15 +81,14 @@ export function RunSummary({ run }: Props) {
               </TooltipTrigger>
               <TooltipContent>
                 <p className="max-w-xs">
-                  AI-generated estimate of how well this execution achieved its
-                  intended purpose. This score indicates
+                  {t("library2.summary.tooltip")}
                   {correctnessScore >= 0.8
-                    ? " the workflow was highly successful."
+                    ? t("library2.summary.suffixHigh")
                     : correctnessScore >= 0.6
-                      ? " the workflow was mostly successful with minor issues."
+                      ? t("library2.summary.suffixMostly")
                       : correctnessScore >= 0.4
-                        ? " the workflow was partially successful with some gaps."
-                        : " the workflow had limited success with significant issues."}
+                        ? t("library2.summary.suffixPartial")
+                        : t("library2.summary.suffixLimited")}
                 </p>
               </TooltipContent>
             </Tooltip>

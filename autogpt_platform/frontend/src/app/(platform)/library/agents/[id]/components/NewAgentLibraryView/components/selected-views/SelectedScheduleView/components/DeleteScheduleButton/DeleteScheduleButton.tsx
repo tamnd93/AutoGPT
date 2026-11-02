@@ -5,6 +5,7 @@ import type { LibraryAgent } from "@/app/api/__generated__/models/libraryAgent";
 import { useScheduleDetailHeader } from "../../../RunDetailHeader/useScheduleDetailHeader";
 import { Delete02Icon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 
 type Props = {
   agent: LibraryAgent;
@@ -13,6 +14,7 @@ type Props = {
 };
 
 export function DeleteScheduleButton({ agent, scheduleId, onDeleted }: Props) {
+  const t = useT();
   const { deleteSchedule, isDeleting } = useScheduleDetailHeader(
     agent.graph_id,
     scheduleId,
@@ -29,7 +31,8 @@ export function DeleteScheduleButton({ agent, scheduleId, onDeleted }: Props) {
       }}
       loading={isDeleting}
     >
-      <Icon icon={Delete02Icon} size={16} /> Delete schedule
+      <Icon icon={Delete02Icon} size={16} />{" "}
+      {t("library2.schedule.deleteButton")}
     </Button>
   );
 }

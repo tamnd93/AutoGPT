@@ -13,6 +13,7 @@ import {
   StopCircleIcon,
 } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 
 type StatusIconMap = {
   icon: React.ReactNode;
@@ -94,11 +95,12 @@ type Props = {
 };
 
 export function RunStatusBadge({ status, completedWithErrors = false }: Props) {
+  const t = useT();
   const style = completedWithErrors
     ? completedWithErrorsStyle
     : statusIconMap[status];
   const label = completedWithErrors
-    ? "Completed with errors"
+    ? t("library2.runStatus.completedWithErrors")
     : getRunStatusInfo(status).label;
 
   return (

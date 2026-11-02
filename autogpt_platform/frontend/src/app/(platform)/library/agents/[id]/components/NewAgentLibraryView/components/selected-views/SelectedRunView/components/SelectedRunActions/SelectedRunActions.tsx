@@ -15,6 +15,7 @@ import {
   StopIcon,
 } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 
 type Props = {
   agent: LibraryAgent;
@@ -29,6 +30,7 @@ export function SelectedRunActions({
   onSelectRun,
   onClearSelectedRun,
 }: Props) {
+  const t = useT();
   const {
     canRunManually,
     handleRunAgain,
@@ -57,7 +59,7 @@ export function SelectedRunActions({
         <Button
           variant="icon"
           size="icon"
-          aria-label="Rerun task"
+          aria-label={t("library2.runActions.rerun")}
           onClick={handleRunAgain}
           disabled={isRunningAgain}
         >
@@ -83,7 +85,7 @@ export function SelectedRunActions({
         <Button
           variant="icon"
           size="icon"
-          aria-label="Stop task"
+          aria-label={t("library2.runActions.stop")}
           onClick={handleStopRun}
           disabled={isStopping}
           // TODO(tokens): no exact role for hover:border-red-800 (#832525), hover:bg-red-800 (#832525)
@@ -99,7 +101,7 @@ export function SelectedRunActions({
           as="NextLink"
           href={openInBuilderHref}
           target="_blank"
-          aria-label="View task details"
+          aria-label={t("library2.runActions.viewDetails")}
         >
           <Icon icon={EyeIcon} size={18} className="text-foreground-body" />
         </Button>
@@ -115,9 +117,9 @@ export function SelectedRunActions({
           <Button
             variant="icon"
             size="icon"
-            aria-label="Save task as template"
+            aria-label={t("library2.runActions.saveAsTemplate")}
             onClick={() => setIsCreateTemplateModalOpen(true)}
-            title="Create template"
+            title={t("library2.runActions.createTemplate")}
           >
             <Icon
               icon={Album01Icon}

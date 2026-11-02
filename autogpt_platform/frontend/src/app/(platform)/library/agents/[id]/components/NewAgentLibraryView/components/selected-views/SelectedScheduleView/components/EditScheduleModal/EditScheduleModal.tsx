@@ -11,6 +11,7 @@ import { GraphExecutionJobInfo } from "@/app/api/__generated__/models/graphExecu
 import { useEditScheduleModal } from "./useEditScheduleModal";
 import { PencilEdit02Icon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 
 type Props = {
   graphId: string;
@@ -25,6 +26,7 @@ export function EditScheduleModal({
   triggerClassName,
   iconOnly = false,
 }: Props) {
+  const t = useT();
   const {
     isOpen,
     setIsOpen,
@@ -47,13 +49,17 @@ export function EditScheduleModal({
 
   return (
     <Dialog
-      title="Edit Schedule"
+      title={t("library2.editSchedule.title")}
       controlled={{ isOpen, set: setIsOpen }}
       styling={{ maxWidth: "22rem" }}
     >
       <Dialog.Trigger>
         {iconOnly ? (
-          <Button variant="icon" size="icon" aria-label="Edit schedule">
+          <Button
+            variant="icon"
+            size="icon"
+            aria-label={t("library2.editSchedule.editButton")}
+          >
             <Icon
               icon={PencilEdit02Icon}
               size={18}
@@ -66,7 +72,8 @@ export function EditScheduleModal({
             size="small"
             className={triggerClassName ?? "absolute -right-2 -top-2"}
           >
-            <Icon icon={PencilEdit02Icon} className="size-4" /> Edit schedule
+            <Icon icon={PencilEdit02Icon} className="size-4" />{" "}
+            {t("library2.editSchedule.editButton")}
           </Button>
         )}
       </Dialog.Trigger>
@@ -74,7 +81,7 @@ export function EditScheduleModal({
         <div className="flex flex-col gap-6">
           <Input
             id="schedule-name"
-            label="Name"
+            label={t("library2.editSchedule.name")}
             value={name}
             onChange={(e) => setName(e.target.value)}
             error={errors.scheduleName}
@@ -83,7 +90,7 @@ export function EditScheduleModal({
             <>
               <Select
                 id="repeat"
-                label="Repeats"
+                label={t("library2.editSchedule.repeats")}
                 value={repeat}
                 onValueChange={setRepeat}
                 options={repeatOptions}
@@ -94,7 +101,7 @@ export function EditScheduleModal({
                     items={dayItems}
                     selectedValues={selectedDays}
                     onChange={setSelectedDays}
-                    aria-label="Select days"
+                    aria-label={t("library2.editSchedule.selectDays")}
                   />
                   {errors.days && (
                     <Text variant="small" tone="danger">
@@ -105,7 +112,7 @@ export function EditScheduleModal({
               )}
               <Input
                 id="schedule-time"
-                label="At"
+                label={t("library2.editSchedule.at")}
                 value={time}
                 onChange={(e) => setTime(e.target.value.trim())}
                 placeholder="00:00"
@@ -114,8 +121,9 @@ export function EditScheduleModal({
             </>
           ) : (
             <Text variant="body" tone="muted">
-              Repeats {recurrenceLabel.toLowerCase()}. This timing can&apos;t be
-              changed here, so saving only renames the schedule.
+              {t("library2.editSchedule.timingLocked", {
+                recurrence: recurrenceLabel.toLowerCase(),
+              })}
             </Text>
           )}
         </div>
@@ -127,7 +135,7 @@ export function EditScheduleModal({
               onClick={() => setIsOpen(false)}
               className="min-w-32"
             >
-              Cancel
+              {t("library2.common.cancel")}
             </Button>
             <Button
               variant="primary"
@@ -136,7 +144,9 @@ export function EditScheduleModal({
               loading={isPending}
               className="min-w-32"
             >
-              {isPending ? "Saving…" : "Save"}
+              {isPending
+                ? t("library2.editSchedule.saving")
+                : t("library2.editSchedule.save")}
             </Button>
           </div>
         </Dialog.Footer>
