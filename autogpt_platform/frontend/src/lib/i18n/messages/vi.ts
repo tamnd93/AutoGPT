@@ -64,6 +64,7 @@ import { Profile4Vi } from "./profile-4.vi";
 import { profile5Vi } from "./profile-5.vi";
 import { RuntimeErrors2Vi } from "./runtime-errors-2.vi";
 import { runtimeErrors3Vi } from "./runtime-errors-3.vi";
+import { runtimeErrors4Vi } from "./runtime-errors-4.vi";
 import { Schedule1Vi } from "./schedule-1.vi";
 import { settingsRest1Vi } from "./settings-rest-1.vi";
 import { settingsRest2Vi } from "./settings-rest-2.vi";
@@ -153,6 +154,7 @@ export const vi: Partial<Record<MessageKey, string>> = {
   ...profile5Vi,
   ...RuntimeErrors2Vi,
   ...runtimeErrors3Vi,
+  ...runtimeErrors4Vi,
   ...Schedule1Vi,
   ...settingsRest1Vi,
   ...settingsRest2Vi,

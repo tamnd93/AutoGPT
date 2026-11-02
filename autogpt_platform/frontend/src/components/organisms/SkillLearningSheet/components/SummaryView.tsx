@@ -11,7 +11,7 @@ import { formatDistanceToNow } from "date-fns";
 import { OutcomeReportRequestOutcome } from "@/app/api/__generated__/models/outcomeReportRequestOutcome";
 import { SkillPolicyRequest } from "@/app/api/__generated__/models/skillPolicyRequest";
 import { SourceRemovedNotice } from "./SourceRemovedNotice";
-import { useT } from "@/lib/i18n";
+import { useLocale, useT } from "@/lib/i18n";
 
 interface Props {
   detail: SkillLearningDetail;
@@ -40,6 +40,7 @@ export function SummaryView({
   onReport,
 }: Props) {
   const t = useT();
+  const locale = useLocale();
   const isCurrent =
     version != null && version.id === detail.current_version?.id;
   const badgeState = version && !isCurrent ? version.state : detail.state;
@@ -111,7 +112,7 @@ export function SummaryView({
                   tone="secondary"
                   data-testid="reuse-label"
                 >
-                  {reuseLabel(version)}
+                  {reuseLabel(version, locale)}
                 </Text>
               </li>
             </ul>

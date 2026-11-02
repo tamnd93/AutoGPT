@@ -1,5 +1,27 @@
 import { describe, expect, it } from "vitest";
-import { lineDiff, skillDetailHref, stepChanges } from "../helpers";
+import type { SkillVersionSummary } from "@/app/api/__generated__/models/skillVersionSummary";
+import {
+  lineDiff,
+  recentChangeLine,
+  reuseLabel,
+  skillDetailHref,
+  stepChanges,
+} from "../helpers";
+
+function version(over: Partial<SkillVersionSummary> = {}): SkillVersionSummary {
+  return {
+    id: "v1",
+    skill_name: "scraper",
+    version: 2,
+    origin: "updated",
+    origin_label: "Edited by you",
+    body: "x",
+    state: "active",
+    evidence: [],
+    use: null,
+    ...over,
+  } as unknown as SkillVersionSummary;
+}
 
 describe("skill-learning helpers", () => {
   it("groups before/after by procedure step", () => {
@@ -29,6 +51,29 @@ describe("skill-learning helpers", () => {
     expect(
       skillDetailHref({ expertId: null, skillName: "csv", versionId: "v2" }),
     ).toBe("/settings/memory?skill=csv&version=v2");
+  });
+});
+
+describe("skill-learning helpers in Vietnamese", () => {
+  it("words step labels, the reuse fallback and the change line in Vietnamese", () => {
+    expect(
+      stepChanges(
+        "## Steps\n1. Open\n2. Close",
+        "## Steps\n1. Open\n2. Shut",
+        "vi",
+      ),
+    ).toEqual([{ step: "Bước 2", before: "Close", after: "Shut" }]);
+    expect(reuseLabel(version(), "vi")).toBe("Chưa được dùng lại");
+    expect(
+      recentChangeLine(
+        version({
+          version: 1,
+          skill_name: "scraper",
+          origin_label: "Học từ chat",
+        }),
+        "vi",
+      ),
+    ).toBe("Đã thêm scraper · Học từ chat · Chưa được dùng lại");
   });
 });
 

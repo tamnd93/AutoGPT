@@ -10,7 +10,7 @@ import {
   stripFrontmatter,
 } from "@/services/skill-learning/helpers";
 import { PackageFiles } from "./PackageFiles/PackageFiles";
-import { useT } from "@/lib/i18n";
+import { useLocale, useT } from "@/lib/i18n";
 
 interface Props {
   proposal: SkillVersionSummary;
@@ -34,7 +34,8 @@ export function DecisionView({
   onDecide,
 }: Props) {
   const t = useT();
-  const changes = stepChanges(current?.body ?? "", proposal.body ?? "");
+  const locale = useLocale();
+  const changes = stepChanges(current?.body ?? "", proposal.body ?? "", locale);
   return (
     <section
       aria-label={t("skills1.decision.needsYou")}

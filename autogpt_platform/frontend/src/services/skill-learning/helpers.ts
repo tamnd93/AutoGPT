@@ -1,4 +1,6 @@
 import type { SkillVersionSummary } from "@/app/api/__generated__/models/skillVersionSummary";
+import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/locale";
+import { getMessage } from "@/lib/i18n/translate";
 
 export const CHAT_SOURCE_KIND = "chat_session";
 
@@ -37,25 +39,37 @@ export function versionLabel(version: SkillVersionSummary) {
   return `v${version.version} · ${version.origin_label}`;
 }
 
-export function evidenceLine(version: SkillVersionSummary) {
+export function evidenceLine(
+  version: SkillVersionSummary,
+  locale: Locale = DEFAULT_LOCALE,
+) {
   const primary = (version.evidence ?? []).find(
     (item) => item.kind === "outcome",
   );
-  return primary?.label ?? reuseLabel(version);
+  return primary?.label ?? reuseLabel(version, locale);
 }
 
-export function reuseLabel(version: SkillVersionSummary) {
-  return version.use?.reuse_label ?? "Not yet reused";
+export function reuseLabel(
+  version: SkillVersionSummary,
+  locale: Locale = DEFAULT_LOCALE,
+) {
+  return (
+    version.use?.reuse_label ??
+    getMessage(locale, "runtimeErrors4.skill.notYetReused")
+  );
 }
 
-export function recentChangeLine(version: SkillVersionSummary) {
+export function recentChangeLine(
+  version: SkillVersionSummary,
+  locale: Locale = DEFAULT_LOCALE,
+) {
   const verb =
     version.origin === "restored"
-      ? "Restored"
+      ? getMessage(locale, "runtimeErrors4.skill.restored")
       : version.version === 1
-        ? "Added"
-        : "Updated";
-  return `${verb} ${version.skill_name} · ${version.origin_label} · ${evidenceLine(version)}`;
+        ? getMessage(locale, "runtimeErrors4.skill.added")
+        : getMessage(locale, "runtimeErrors4.skill.updated");
+  return `${verb} ${version.skill_name} · ${version.origin_label} · ${evidenceLine(version, locale)}`;
 }
 
 export interface StepChange {
@@ -69,9 +83,13 @@ export interface StepChange {
  * absent on one side render as added/removed; prose outside lists is
  * compared as a single "Other text" entry.
  */
-export function stepChanges(before: string, after: string): StepChange[] {
-  const previous = stepMap(before);
-  const next = stepMap(after);
+export function stepChanges(
+  before: string,
+  after: string,
+  locale: Locale = DEFAULT_LOCALE,
+): StepChange[] {
+  const previous = stepMap(before, locale);
+  const next = stepMap(after, locale);
   const keys = Array.from(new Set([...previous.keys(), ...next.keys()]));
   return keys
     .map((key) => ({
@@ -82,7 +100,7 @@ export function stepChanges(before: string, after: string): StepChange[] {
     .filter((change) => change.before !== change.after);
 }
 
-function stepMap(body: string) {
+function stepMap(body: string, locale: Locale) {
   const steps = new Map<string, string>();
   const prose: string[] = [];
   const counts = new Map<string, number>();
@@ -99,12 +117,21 @@ function stepMap(body: string) {
       counts.set(section, index);
       const prefix =
         !section || section.toLowerCase() === "steps" ? "" : `${section} · `;
-      steps.set(`${prefix}Step ${index}`, match[1]);
+      steps.set(
+        `${prefix}${getMessage(locale, "runtimeErrors4.skill.step", {
+          number: index,
+        })}`,
+        match[1],
+      );
     } else if (line) {
       prose.push(line);
     }
   }
-  if (prose.length) steps.set("Other text", prose.join("\n"));
+  if (prose.length)
+    steps.set(
+      getMessage(locale, "runtimeErrors4.skill.otherText"),
+      prose.join("\n"),
+    );
   return steps;
 }
 

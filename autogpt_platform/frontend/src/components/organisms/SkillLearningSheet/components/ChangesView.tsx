@@ -6,7 +6,7 @@ import { Text } from "@/components/atoms/Text/Text";
 import { lineDiff, stepChanges } from "@/services/skill-learning/helpers";
 import { useState } from "react";
 import { PackageFiles } from "./PackageFiles/PackageFiles";
-import { useT } from "@/lib/i18n";
+import { useLocale, useT } from "@/lib/i18n";
 
 interface Props {
   version: SkillVersionSummary | null;
@@ -16,6 +16,7 @@ interface Props {
 
 export function ChangesView({ version, versions, onSelect }: Props) {
   const t = useT();
+  const locale = useLocale();
   const [showRaw, setShowRaw] = useState(false);
   if (!version) {
     return (
@@ -27,7 +28,7 @@ export function ChangesView({ version, versions, onSelect }: Props) {
   const base = versions.find((item) => item.id === version.base_version_id);
   const before = base?.body ?? "";
   const after = version.body ?? "";
-  const changes = stepChanges(before, after);
+  const changes = stepChanges(before, after, locale);
   return (
     <div
       data-slot="skill-learning-sheet-changes"
