@@ -25,16 +25,18 @@ describe("SpendMeter", () => {
     );
   });
 
-  test("renders the vietnamese dollar figures for the vi locale", () => {
+  test("words the aria label and figures in Vietnamese for the vi locale", () => {
     render(
       <LocaleProvider locale="vi">
         <SpendMeter spent={8025} budget={5000} />
       </LocaleProvider>,
     );
 
-    const meter = screen.getByRole("progressbar", { name: "Weekly spend" });
+    const meter = screen.getByRole("progressbar", {
+      name: "Chi tiêu hằng tuần",
+    });
     expect(meter.getAttribute("aria-valuetext")).toBe(
-      "$80,25 of $50 spent this week (over budget)",
+      "$80,25 trên $50 đã chi trong tuần này (vượt ngân sách)",
     );
   });
 });

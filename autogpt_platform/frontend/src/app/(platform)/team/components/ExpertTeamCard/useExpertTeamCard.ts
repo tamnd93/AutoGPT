@@ -5,10 +5,12 @@ import {
 } from "@/app/api/__generated__/endpoints/experts/experts";
 import { Expert } from "@/app/api/__generated__/models/expert";
 import { useToast } from "@/components/molecules/Toast/use-toast";
+import { useT } from "@/lib/i18n";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 
 export function useExpertTeamCard(expert: Expert) {
+  const t = useT();
   const expertId = expert.id;
   const queryClient = useQueryClient();
   const { toast } = useToast();
@@ -23,7 +25,7 @@ export function useExpertTeamCard(expert: Expert) {
         },
         onError: () => {
           toast({
-            title: "Could not resume schedules",
+            title: t("team8.teamCard.resumeFailedTitle"),
             variant: "destructive",
           });
         },
@@ -37,7 +39,10 @@ export function useExpertTeamCard(expert: Expert) {
         queryClient.invalidateQueries({ queryKey: getListExpertsQueryKey() });
       },
       onError: () => {
-        toast({ title: "Could not retry setup", variant: "destructive" });
+        toast({
+          title: t("team8.teamCard.retrySetupFailedTitle"),
+          variant: "destructive",
+        });
       },
     },
   });

@@ -4,6 +4,7 @@ import { Icon } from "@/components/atoms/Icon/Icon";
 import { Text } from "@/components/atoms/Text/Text";
 import { IntegrationLogo } from "@/components/molecules/IntegrationLogo/IntegrationLogo";
 import { Calendar03Icon } from "@hugeicons/core-free-icons";
+import { useLocale, useT } from "@/lib/i18n";
 import { getSetupRowCopy, isCredentialItem } from "../helpers";
 
 interface Props {
@@ -21,9 +22,11 @@ export function SetupNeededRow({
   onConnect,
   onAllow,
 }: Props) {
+  const t = useT();
+  const locale = useLocale();
   const provider = item.providers[0];
   const isCredential = isCredentialItem(item);
-  const { title, detail } = getSetupRowCopy(item);
+  const { title, detail } = getSetupRowCopy(item, locale);
 
   return (
     <article className="flex items-center gap-2.5 rounded-2xl bg-surface px-3.5 py-2.5 smooth-shadow-ring-sm">
@@ -61,12 +64,12 @@ export function SetupNeededRow({
             loading={isGranting}
             onClick={onAllow}
           >
-            Allow
+            {t("team8.setupRow.allow")}
           </Button>
         ) : item.resolution === "connect" ? (
           isConnectable ? (
             <Button variant="primary" size="small" onClick={onConnect}>
-              Connect
+              {t("team8.setupRow.connect")}
             </Button>
           ) : (
             <Text
@@ -74,7 +77,7 @@ export function SetupNeededRow({
               as="span"
               className="!text-foreground-tertiary"
             >
-              Needs a platform key
+              {t("team8.setupRow.needsPlatformKey")}
             </Text>
           )
         ) : item.library_agent_id ? (
@@ -84,7 +87,7 @@ export function SetupNeededRow({
             variant="outline"
             size="small"
           >
-            Open workflow
+            {t("team8.setupRow.openWorkflow")}
           </Button>
         ) : null}
       </div>

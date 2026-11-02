@@ -48,4 +48,52 @@ export const team8Vi: Partial<Record<keyof typeof team8En, string>> = {
     "Tuyển một chuyên gia từ marketplace và họ sẽ hiện ở đây, sẵn sàng làm việc cùng Otto.",
   "team8.empty.browse": "Xem marketplace",
   "team8.empty.create": "Tạo chuyên gia",
+
+  "team8.teamCard.editSoulAria": "Sửa Soul",
+  "team8.teamCard.viewAria": "Xem {name}",
+  "team8.teamCard.budget": "Ngân sách",
+  "team8.teamCard.noBudget": "Chưa có ngân sách",
+  "team8.teamCard.unsupervised": "Không giám sát",
+  "team8.teamCard.schedulesPaused": "Lịch đã tạm dừng",
+  "team8.teamCard.resumeSchedules": "Tiếp tục lịch",
+  "team8.teamCard.installWorkflow": "Cài workflow",
+  "team8.teamCard.resumeFailedTitle": "Không tiếp tục được lịch",
+  "team8.teamCard.retrySetupFailedTitle": "Không thử lại được thiết lập",
+
+  "team8.cover.working": "Đang làm việc",
+
+  "team8.status.settingUp": "Đang thiết lập kỹ năng và workflow cho {name}…",
+  "team8.status.couldNotInstall": "Không cài được: {failures}",
+  "team8.status.setupDidntFinish": "Thiết lập chưa xong",
+  "team8.status.retry": "Thử thiết lập lại",
+
+  "team8.spend.aria": "Chi tiêu hằng tuần",
+  "team8.spend.value": "{spent} trên {budget} đã chi trong tuần này",
+  "team8.spend.valueOverBudget":
+    "{spent} trên {budget} đã chi trong tuần này (vượt ngân sách)",
+
+  "team8.integrationIcons.aria": "Tích hợp",
+  "team8.integrationIcons.access":
+    "{name} có quyền dùng tài khoản {service} của bạn",
+  "team8.integrationIcons.more": "+{count} nữa",
+
+  "team8.setupNeeded.aria": "Cần thiết lập",
+  "team8.setupNeeded.heading": "Cần thiết lập ({count})",
+  "team8.setupNeeded.itemsAria": "Mục cần thiết lập",
+
+  "team8.setupRow.allow": "Cho phép",
+  "team8.setupRow.connect": "Kết nối",
+  "team8.setupRow.needsPlatformKey": "Cần key nền tảng",
+  "team8.setupRow.openWorkflow": "Mở workflow",
+  "team8.setupRow.workflowFallback": "một workflow",
+  "team8.setupRow.serviceFallback": "Một dịch vụ",
+  "team8.setupRow.credentialTitle": "{provider} cho {expert}",
+  "team8.setupRow.credentialDetail":
+    "{workflow} cần thông tin này để chạy theo lịch.",
+  "team8.setupRow.scheduleTitle": "Lên lịch {workflow} cho {expert}",
+  "team8.setupRow.inputsDetail": "Cần {list} trước khi có thể chạy theo lịch.",
+  "team8.setupRow.readyDetail":
+    "Mọi kết nối đã sẵn sàng; vẫn cần tạo lịch chạy.",
+  "team8.setupRow.inputsFallback": "vài thông tin từ bạn",
+  "team8.setupRow.inputsJoiner": "{rest} và {last}",
 };

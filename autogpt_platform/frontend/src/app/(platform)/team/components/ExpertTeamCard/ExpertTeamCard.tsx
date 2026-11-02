@@ -17,7 +17,7 @@ import {
   SparklesIcon,
 } from "@hugeicons/core-free-icons";
 import { creditsToUsdLabel } from "@/lib/credits";
-import { useLocale } from "@/lib/i18n";
+import { useLocale, useT } from "@/lib/i18n";
 import { Flag, useGetFlag } from "@/services/feature-flags/use-get-flag";
 import Link from "next/link";
 import { MouseEvent } from "react";
@@ -55,6 +55,7 @@ export function ExpertTeamCard({
   const rosterStatus = getExpertRosterStatus(expert);
   const weeklySpend = getWeeklySpend(expert);
   const locale = useLocale();
+  const t = useT();
   const cover = getExpertCover(expert);
   // The area the expert works in, in the chip the marketplace already uses.
   const topic = expert.categories?.[0];
@@ -86,7 +87,7 @@ export function ExpertTeamCard({
         <Button
           variant="secondary"
           size="icon-sm"
-          aria-label="Edit Soul"
+          aria-label={t("team8.teamCard.editSoulAria")}
           leadingIcon={PencilEdit02Icon}
           onClick={handleEditSoulClick}
         />
@@ -99,7 +100,7 @@ export function ExpertTeamCard({
 
       <Link
         href={`/team/${expert.id}`}
-        aria-label={`View ${expert.name}`}
+        aria-label={t("team8.teamCard.viewAria", { name: expert.name })}
         className="flex flex-1 flex-col items-center p-2 pb-4"
       >
         <ExpertCover
@@ -124,7 +125,7 @@ export function ExpertTeamCard({
           <div className="mt-2 flex min-w-0 flex-1 flex-col gap-1">
             <div className="flex items-baseline justify-between gap-2">
               <Text variant="small-medium" tone="secondary">
-                Budget
+                {t("team8.teamCard.budget")}
               </Text>
               <Text
                 variant="small-medium"
@@ -133,7 +134,7 @@ export function ExpertTeamCard({
               >
                 {weeklySpend
                   ? `${creditsToUsdLabel(weeklySpend.spent, locale)} / ${creditsToUsdLabel(weeklySpend.budget, locale)}`
-                  : "No budget"}
+                  : t("team8.teamCard.noBudget")}
               </Text>
             </div>
             <SpendMeter
@@ -156,7 +157,7 @@ export function ExpertTeamCard({
             {topic ? <CategoryTag category={topic} /> : null}
             {isAutoModeEnabled && expert.autopilot_mode === "unsupervised" ? (
               <Badge variant="warning" size="small">
-                Unsupervised
+                {t("team8.teamCard.unsupervised")}
               </Badge>
             ) : null}
             <IntegrationIcons
@@ -171,20 +172,20 @@ export function ExpertTeamCard({
           <CardStats>
             <CardStat
               icon={Calendar03Icon}
-              label="Schedules"
-              singular="schedule"
+              label={t("team8.page.tabSchedules")}
+              singular={t("team8.card.singularSchedule")}
               count={schedules.length}
             />
             <CardStat
               icon={SparklesIcon}
-              label="Skills"
-              singular="skill"
+              label={t("team8.page.tabSkills")}
+              singular={t("team8.card.singularSkill")}
               count={expert.skills.length}
             />
             <CardStat
               icon={FlashIcon}
-              label="Workflows"
-              singular="workflow"
+              label={t("team8.page.tabWorkflows")}
+              singular={t("team8.card.singularWorkflow")}
               count={expert.workflows.length}
             />
           </CardStats>
@@ -200,7 +201,7 @@ export function ExpertTeamCard({
       {isPaused ? (
         <div className="mx-4 mb-3 flex items-center justify-between gap-2 rounded-lg bg-warning-surface px-3 py-2 ring-1 ring-inset ring-warning-border">
           <Text variant="body" className="text-warning-foreground">
-            Schedules paused
+            {t("team8.teamCard.schedulesPaused")}
           </Text>
           <Button
             variant="secondary"
@@ -208,7 +209,7 @@ export function ExpertTeamCard({
             loading={isResuming}
             onClick={handleResume}
           >
-            Resume schedules
+            {t("team8.teamCard.resumeSchedules")}
           </Button>
         </div>
       ) : null}
@@ -221,7 +222,7 @@ export function ExpertTeamCard({
           leadingIcon={BubbleChatIcon}
           onClick={() => onChat(expert.id)}
         >
-          Chat
+          {t("team8.common.chat")}
         </Button>
         <Button
           variant="secondary"
@@ -230,7 +231,7 @@ export function ExpertTeamCard({
           leadingIcon={PlusSignIcon}
           onClick={handleInstallClick}
         >
-          Install workflow
+          {t("team8.teamCard.installWorkflow")}
         </Button>
       </div>
 

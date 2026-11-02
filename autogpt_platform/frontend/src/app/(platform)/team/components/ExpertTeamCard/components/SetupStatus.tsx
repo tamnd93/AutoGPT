@@ -1,6 +1,7 @@
 import { Expert } from "@/app/api/__generated__/models/expert";
 import { Button } from "@/components/atoms/Button/Button";
 import { Text } from "@/components/atoms/Text/Text";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   expert: Expert;
@@ -9,6 +10,7 @@ interface Props {
 }
 
 export function SetupStatus({ expert, isRetrying, onRetry }: Props) {
+  const t = useT();
   if (expert.setup_status === "installing") {
     return (
       <div
@@ -21,7 +23,7 @@ export function SetupStatus({ expert, isRetrying, onRetry }: Props) {
           variant="body"
           className="text-sky-800"
         >
-          Setting up {expert.name}&apos;s skills and workflows…
+          {t("team8.status.settingUp", { name: expert.name })}
         </Text>
       </div>
     );
@@ -35,8 +37,10 @@ export function SetupStatus({ expert, isRetrying, onRetry }: Props) {
     >
       <Text variant="body" className="text-warning-foreground">
         {failures.length
-          ? `Couldn't install: ${failures.join(", ")}`
-          : "Setup didn't finish"}
+          ? t("team8.status.couldNotInstall", {
+              failures: failures.join(", "),
+            })
+          : t("team8.status.setupDidntFinish")}
       </Text>
       {expert.source_template_id ? (
         <Button
@@ -45,7 +49,7 @@ export function SetupStatus({ expert, isRetrying, onRetry }: Props) {
           loading={isRetrying}
           onClick={onRetry}
         >
-          Retry setup
+          {t("team8.status.retry")}
         </Button>
       ) : null}
     </div>

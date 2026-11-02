@@ -2,6 +2,7 @@
 
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { Text } from "@/components/atoms/Text/Text";
+import { useT } from "@/lib/i18n";
 import { Alert01Icon } from "@hugeicons/core-free-icons";
 import { ExpertConnectServiceDialog } from "../../[expertId]/components/ExpertIntegrationsSection/ExpertConnectServiceDialog";
 import { SetupNeededRow } from "./components/SetupNeededRow";
@@ -10,6 +11,7 @@ import { useSetupNeeded } from "./useSetupNeeded";
 /** Everything still standing between the team's scheduled workflows and
  *  their schedules, one row per gap with the one action that closes it. */
 export function SetupNeeded() {
+  const t = useT();
   const {
     items,
     isConnectable,
@@ -25,7 +27,7 @@ export function SetupNeeded() {
 
   return (
     <section
-      aria-label="Setup needed"
+      aria-label={t("team8.setupNeeded.aria")}
       className="flex min-w-0 flex-col"
       data-testid="setup-needed"
     >
@@ -38,10 +40,13 @@ export function SetupNeeded() {
           aria-hidden
         />
         <Text variant="small-medium" as="h2" className="!text-foreground-body">
-          Setup needed ({items.length})
+          {t("team8.setupNeeded.heading", { count: items.length })}
         </Text>
       </div>
-      <ul className="flex flex-col gap-2" aria-label="Setup items">
+      <ul
+        className="flex flex-col gap-2"
+        aria-label={t("team8.setupNeeded.itemsAria")}
+      >
         {items.map((item) => (
           <li
             key={`${item.expert_id}-${item.workflow_id}-${item.providers.join("+")}`}

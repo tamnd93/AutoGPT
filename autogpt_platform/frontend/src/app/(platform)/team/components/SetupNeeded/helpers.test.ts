@@ -16,6 +16,21 @@ function inputsItem(missing_inputs: string[]): ExpertSetupItem {
   };
 }
 
+describe("getSetupRowCopy in Vietnamese", () => {
+  test("words the schedule title and the missing inputs in Vietnamese", () => {
+    expect(getSetupRowCopy(inputsItem(["Email Address"]), "vi")).toEqual({
+      title: "Lên lịch Personal Newsletter cho Frankie",
+      detail: "Cần Email Address trước khi có thể chạy theo lịch.",
+    });
+    expect(getSetupRowCopy(inputsItem([]), "vi").detail).toBe(
+      "Cần vài thông tin từ bạn trước khi có thể chạy theo lịch.",
+    );
+    expect(
+      getSetupRowCopy(inputsItem(["Email Address", "Topic"]), "vi").detail,
+    ).toBe("Cần Email Address và Topic trước khi có thể chạy theo lịch.");
+  });
+});
+
 describe("getSetupRowCopy for missing inputs", () => {
   test.each([
     [[], "Needs a few details from you before it can run on schedule."],

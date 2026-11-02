@@ -1,6 +1,6 @@
 import { Progress } from "@/components/atoms/Progress/Progress";
 import { creditsToUsdLabel } from "@/lib/credits";
-import { useLocale } from "@/lib/i18n";
+import { useLocale, useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import type { CSSProperties } from "react";
 
@@ -14,19 +14,24 @@ interface Props {
 }
 
 export function SpendMeter({ spent, budget, muted, color }: Props) {
+  const t = useT();
   const locale = useLocale();
   const ratio = budget > 0 ? Math.min(Math.max(spent / budget, 0), 1) : 0;
   const isOverBudget = spent > budget;
   const clampedSpent = Math.min(Math.max(spent, 0), Math.max(budget, 0));
-  const valueText = `${creditsToUsdLabel(spent, locale)} of ${creditsToUsdLabel(budget, locale)} spent this week${
-    isOverBudget ? " (over budget)" : ""
-  }`;
+  const valueText = t(
+    isOverBudget ? "team8.spend.valueOverBudget" : "team8.spend.value",
+    {
+      spent: creditsToUsdLabel(spent, locale),
+      budget: creditsToUsdLabel(budget, locale),
+    },
+  );
 
   return (
     <Progress
       value={ratio * 100}
       role="progressbar"
-      aria-label="Weekly spend"
+      aria-label={t("team8.spend.aria")}
       aria-valuenow={clampedSpent}
       aria-valuemin={0}
       aria-valuemax={budget}

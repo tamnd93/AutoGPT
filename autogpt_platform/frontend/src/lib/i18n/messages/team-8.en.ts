@@ -46,4 +46,51 @@ export const team8En = {
     "Hire an expert from the marketplace and they will show up here, ready to work alongside Otto.",
   "team8.empty.browse": "Browse the marketplace",
   "team8.empty.create": "Create an Expert",
+
+  "team8.teamCard.editSoulAria": "Edit Soul",
+  "team8.teamCard.viewAria": "View {name}",
+  "team8.teamCard.budget": "Budget",
+  "team8.teamCard.noBudget": "No budget",
+  "team8.teamCard.unsupervised": "Unsupervised",
+  "team8.teamCard.schedulesPaused": "Schedules paused",
+  "team8.teamCard.resumeSchedules": "Resume schedules",
+  "team8.teamCard.installWorkflow": "Install workflow",
+  "team8.teamCard.resumeFailedTitle": "Could not resume schedules",
+  "team8.teamCard.retrySetupFailedTitle": "Could not retry setup",
+
+  "team8.cover.working": "Working",
+
+  "team8.status.settingUp": "Setting up {name}'s skills and workflows…",
+  "team8.status.couldNotInstall": "Couldn't install: {failures}",
+  "team8.status.setupDidntFinish": "Setup didn't finish",
+  "team8.status.retry": "Retry setup",
+
+  "team8.spend.aria": "Weekly spend",
+  "team8.spend.value": "{spent} of {budget} spent this week",
+  "team8.spend.valueOverBudget":
+    "{spent} of {budget} spent this week (over budget)",
+
+  "team8.integrationIcons.aria": "Integrations",
+  "team8.integrationIcons.access":
+    "{name} has access to your {service} account",
+  "team8.integrationIcons.more": "+{count} more",
+
+  "team8.setupNeeded.aria": "Setup needed",
+  "team8.setupNeeded.heading": "Setup needed ({count})",
+  "team8.setupNeeded.itemsAria": "Setup items",
+
+  "team8.setupRow.allow": "Allow",
+  "team8.setupRow.connect": "Connect",
+  "team8.setupRow.needsPlatformKey": "Needs a platform key",
+  "team8.setupRow.openWorkflow": "Open workflow",
+  "team8.setupRow.workflowFallback": "a workflow",
+  "team8.setupRow.serviceFallback": "A service",
+  "team8.setupRow.credentialTitle": "{provider} for {expert}",
+  "team8.setupRow.credentialDetail": "{workflow} needs it to run on schedule.",
+  "team8.setupRow.scheduleTitle": "Schedule {workflow} for {expert}",
+  "team8.setupRow.inputsDetail": "Needs {list} before it can run on schedule.",
+  "team8.setupRow.readyDetail":
+    "Every connection is in place; the schedule still has to be created.",
+  "team8.setupRow.inputsFallback": "a few details from you",
+  "team8.setupRow.inputsJoiner": "{rest} and {last}",
 } as const;

@@ -7,6 +7,7 @@ import {
   TooltipTrigger,
 } from "@/components/atoms/Tooltip/BaseTooltip";
 import { serviceLabelFromIcon } from "@/components/contextual/IntegrationsPanel/helpers";
+import { useT } from "@/lib/i18n";
 import Image from "next/image";
 import { useState } from "react";
 
@@ -22,13 +23,17 @@ interface Props {
  *  names the rest. It all sits inside the card link, so nothing is focusable
  *  itself and the hidden names are also given to screen readers inline. */
 export function IntegrationIcons({ expertName, providers }: Props) {
+  const t = useT();
   if (providers.length === 0) return null;
   const shown = providers.slice(0, VISIBLE_LOGOS);
   const hidden = providers.slice(VISIBLE_LOGOS);
   const hiddenNames = hidden.map(serviceLabelFromIcon).join(", ");
 
   return (
-    <ul aria-label="Integrations" className="flex shrink-0 items-center gap-1">
+    <ul
+      aria-label={t("team8.integrationIcons.aria")}
+      className="flex shrink-0 items-center gap-1"
+    >
       {shown.map((provider) => (
         <li key={provider} className="flex">
           <Tooltip>
@@ -38,8 +43,10 @@ export function IntegrationIcons({ expertName, providers }: Props) {
               </span>
             </TooltipTrigger>
             <TooltipContent>
-              {expertName} has access to your {serviceLabelFromIcon(provider)}{" "}
-              account
+              {t("team8.integrationIcons.access", {
+                name: expertName,
+                service: serviceLabelFromIcon(provider),
+              })}
             </TooltipContent>
           </Tooltip>
         </li>
@@ -53,7 +60,9 @@ export function IntegrationIcons({ expertName, providers }: Props) {
                 as="span"
                 className="cursor-default whitespace-nowrap !text-foreground-emphasis"
               >
-                +{hidden.length} more
+                {t("team8.integrationIcons.more", {
+                  count: hidden.length,
+                })}
                 <span className="sr-only">: {hiddenNames}</span>
               </Text>
             </TooltipTrigger>
