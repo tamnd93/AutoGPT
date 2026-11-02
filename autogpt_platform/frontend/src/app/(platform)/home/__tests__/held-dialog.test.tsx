@@ -180,6 +180,32 @@ test("the review dialog reads its chrome in Vietnamese", async () => {
   expect(within(nav).getByText("Còn 3/3")).toBeDefined();
 });
 
+test("the finished tally reads in Vietnamese", async () => {
+  const user = userEvent.setup();
+  serveAnswers();
+  const [a0, l0] = queue();
+  render(
+    <LocaleProvider locale="vi">
+      <NeedsYou dashboard={makeDashboard([a0, l0])} />
+    </LocaleProvider>,
+  );
+  const dialog = await openAt(a0);
+
+  const pane = within(dialog).getByRole("region", { name: "Mục đang chờ" });
+  await user.click(within(dialog).getByRole("button", { name: "Approve" }));
+  await waitFor(() =>
+    expect(pane.querySelector("h3")?.textContent).toBe(
+      "Create library folder Leads",
+    ),
+  );
+  await user.click(within(dialog).getByRole("button", { name: "Reject" }));
+
+  expect(await within(dialog).findByText("Đã xem xét tất cả 2")).toBeDefined();
+  expect(within(dialog).getByText("1 đã duyệt · 1 đã từ chối")).toBeDefined();
+  await user.click(within(dialog).getByRole("button", { name: "Xong" }));
+  await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
+});
+
 test("the sidebar jumps to an item", async () => {
   const [a0, l0, a1] = queue();
   renderTile([a0, l0, a1]);

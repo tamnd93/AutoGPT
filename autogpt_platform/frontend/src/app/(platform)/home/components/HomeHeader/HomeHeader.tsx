@@ -1,7 +1,7 @@
 import type { HomeDashboardResponse } from "@/app/api/__generated__/models/homeDashboardResponse";
 import { Text } from "@/components/atoms/Text/Text";
-import { useT } from "@/lib/i18n";
-import { formatHeaderDate, getHomeStatusLine } from "../../helpers";
+import { useLocale, useT } from "@/lib/i18n";
+import { formatHeaderDate, getHomeStatusLine, intlLocale } from "../../helpers";
 
 interface Props {
   dashboard: HomeDashboardResponse;
@@ -9,8 +9,13 @@ interface Props {
 
 export function HomeHeader({ dashboard }: Props) {
   const t = useT();
-  const date = formatHeaderDate(dashboard.generated_at, dashboard.timezone);
-  const status = getHomeStatusLine(dashboard);
+  const locale = useLocale();
+  const date = formatHeaderDate(
+    dashboard.generated_at,
+    dashboard.timezone,
+    intlLocale(locale),
+  );
+  const status = getHomeStatusLine(dashboard, locale);
 
   return (
     <header className="flex items-end justify-between gap-6 px-1 pb-5 pt-1">

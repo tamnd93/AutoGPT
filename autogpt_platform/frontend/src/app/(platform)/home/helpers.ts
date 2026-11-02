@@ -1,4 +1,20 @@
 import type { HomeDashboardResponse } from "@/app/api/__generated__/models/homeDashboardResponse";
+import type { Locale } from "@/lib/i18n";
+import type { MessageKey } from "@/lib/i18n/messages/en";
+import { getMessage, type MessageValues } from "@/lib/i18n/translate";
+
+function translate(
+  locale: Locale | undefined,
+  key: MessageKey,
+  values?: MessageValues,
+) {
+  return getMessage(locale ?? "en", key, values);
+}
+
+/** English keeps the Intl default, Vietnamese gets its own calendar words. */
+export function intlLocale(locale: Locale | undefined) {
+  return locale === "vi" ? "vi" : undefined;
+}
 
 export function getTimeOfDayGreeting(hour = new Date().getHours()) {
   if (hour < 12) return "Good morning";
@@ -6,19 +22,36 @@ export function getTimeOfDayGreeting(hour = new Date().getHours()) {
   return "Good evening";
 }
 
-export function getHomeStatusLine(dashboard: HomeDashboardResponse): string {
+export function getHomeStatusLine(
+  dashboard: HomeDashboardResponse,
+  locale?: Locale,
+): string {
   const attention = dashboard.attention.length;
   const active = dashboard.active_tasks.length;
   if (attention > 0 && active > 0) {
-    return `${attention} ${attention === 1 ? "decision" : "decisions"} waiting · ${active} ${active === 1 ? "workflow is" : "workflows are"} running now`;
+    const decisions =
+      attention === 1
+        ? translate(locale, "home2.status.decisionWaitingOne")
+        : translate(locale, "home2.status.decisionsWaiting", {
+            count: attention,
+          });
+    const workflows =
+      active === 1
+        ? translate(locale, "home2.status.workflowRunningOne")
+        : translate(locale, "home2.status.workflowsRunning", { count: active });
+    return `${decisions} · ${workflows}`;
   }
   if (attention > 0) {
-    return `${attention} ${attention === 1 ? "decision needs" : "decisions need"} you`;
+    return attention === 1
+      ? translate(locale, "home2.status.decisionNeedsOne")
+      : translate(locale, "home2.status.decisionsNeed", { count: attention });
   }
   if (active > 0) {
-    return `All clear · ${active} ${active === 1 ? "workflow is" : "workflows are"} running now`;
+    return active === 1
+      ? translate(locale, "home2.status.allClearOne")
+      : translate(locale, "home2.status.allClearMany", { count: active });
   }
-  return "Nothing needs you right now";
+  return translate(locale, "home2.status.nothing");
 }
 
 export function formatHeaderDate(
@@ -53,9 +86,14 @@ export function formatDuration(totalSeconds: number): string {
 
 // Null rather than "$0.00 this week" so a brand-new or idle expert reads as
 // having no spend line at all instead of an explicit zero.
-export function formatWeeklySpend(cents: number | undefined): string | null {
+export function formatWeeklySpend(
+  cents: number | undefined,
+  locale?: Locale,
+): string | null {
   if (!cents || cents <= 0) return null;
-  return `${formatCurrency(cents)} this week`;
+  return translate(locale, "home2.week.spend", {
+    amount: formatCurrency(cents),
+  });
 }
 
 export function formatCurrency(cents: number): string {

@@ -3,6 +3,7 @@ import type { HomeDashboardResponse } from "@/app/api/__generated__/models/homeD
 import { HomeSectionLabel } from "../HomeSectionLabel/HomeSectionLabel";
 import { HomeTileEmpty } from "../HomeTileEmpty/HomeTileEmpty";
 import { HomeTile } from "../HomeTile/HomeTile";
+import { useT } from "@/lib/i18n";
 import { ActiveRow } from "./components/ActiveRow";
 import { UpcomingRow } from "./components/UpcomingRow";
 
@@ -17,11 +18,17 @@ const TIMELINE_CLASS =
   "relative before:absolute before:bottom-5 before:left-[33px] before:top-5 before:w-px before:bg-surface-active";
 
 export function NowNext({ dashboard, className }: Props) {
+  const t = useT();
+
   return (
-    <HomeTile className={className} icon={Calendar03Icon} title="Now & next">
+    <HomeTile
+      className={className}
+      icon={Calendar03Icon}
+      title={t("home2.nowNext.title")}
+    >
       {dashboard.active_tasks.length > 0 ? (
         <div className="border-b border-separator pb-2">
-          <HomeSectionLabel>Working now</HomeSectionLabel>
+          <HomeSectionLabel>{t("home2.nowNext.workingNow")}</HomeSectionLabel>
           <div className={TIMELINE_CLASS}>
             {dashboard.active_tasks.map((item) => (
               <ActiveRow key={item.id} item={item} />
@@ -31,11 +38,11 @@ export function NowNext({ dashboard, className }: Props) {
       ) : null}
 
       <div className="pb-2">
-        <HomeSectionLabel>Coming up</HomeSectionLabel>
+        <HomeSectionLabel>{t("home2.nowNext.comingUp")}</HomeSectionLabel>
         {dashboard.upcoming_tasks.length === 0 ? (
           <HomeTileEmpty
-            title="Nothing is scheduled"
-            description="Your team is ready when you are."
+            title={t("home2.nowNext.emptyTitle")}
+            description={t("home2.nowNext.emptyBody")}
             className="min-h-0 gap-4 py-6"
           />
         ) : (

@@ -53,7 +53,41 @@ describe("getHomeStatusLine", () => {
   });
 });
 
+describe("getHomeStatusLine in Vietnamese", () => {
+  const dashboard = {
+    attention: [{}, {}],
+    active_tasks: [{}],
+  } as HomeDashboardResponse;
+
+  it("counts decisions and running workflows in Vietnamese", () => {
+    expect(getHomeStatusLine(dashboard, "vi")).toBe(
+      "2 quyết định đang chờ · 1 workflow đang chạy",
+    );
+    expect(getHomeStatusLine({ ...dashboard, active_tasks: [] }, "vi")).toBe(
+      "2 quyết định cần bạn xử lý",
+    );
+    expect(
+      getHomeStatusLine(
+        { ...dashboard, attention: [], active_tasks: [{}] },
+        "vi",
+      ),
+    ).toBe("Đã xong · 1 workflow đang chạy");
+    expect(
+      getHomeStatusLine(
+        { ...dashboard, attention: [], active_tasks: [] },
+        "vi",
+      ),
+    ).toBe("Hiện không có gì cần bạn");
+  });
+});
+
 describe("formatters", () => {
+  it("formats the briefing day in Vietnamese", () => {
+    expect(
+      formatHeaderDate(new Date("2026-08-09T23:30:00Z"), "Asia/Kolkata", "vi"),
+    ).toEqual({ weekday: "Thứ Hai", calendarDate: "10 tháng 8" });
+  });
+
   it("formats the briefing day in its configured timezone", () => {
     expect(
       formatHeaderDate(
@@ -74,5 +108,9 @@ describe("formatters", () => {
     expect(formatWeeklySpend(1_250)).toBe("$12.50 this week");
     expect(formatWeeklySpend(0)).toBeNull();
     expect(formatWeeklySpend(undefined)).toBeNull();
+  });
+
+  it("labels the weekly spend in Vietnamese", () => {
+    expect(formatWeeklySpend(1_250, "vi")).toBe("$12.50 tuần này");
   });
 });

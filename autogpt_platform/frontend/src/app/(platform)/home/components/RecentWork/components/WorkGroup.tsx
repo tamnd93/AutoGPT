@@ -3,6 +3,7 @@ import Link from "next/link";
 import type { HomeRecentWorkGroup } from "@/app/api/__generated__/models/homeRecentWorkGroup";
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { Text } from "@/components/atoms/Text/Text";
+import { useLocale } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { formatGroupCounts, getActorChip } from "../helpers";
 import { ActorMark } from "./ActorMark";
@@ -15,8 +16,9 @@ interface Props {
 }
 
 export function WorkGroup({ group, timezone }: Props) {
+  const locale = useLocale();
   const { actor } = group;
-  const chip = getActorChip(actor.kind);
+  const chip = getActorChip(actor.kind, locale);
   const runs = group.runs ?? [];
   const items = group.items ?? [];
   const header = (
@@ -41,7 +43,7 @@ export function WorkGroup({ group, timezone }: Props) {
         className="ml-auto shrink-0 tabular-nums"
         as="span"
       >
-        {formatGroupCounts(group)}
+        {formatGroupCounts(group, locale)}
       </Text>
       {actor.link ? (
         <Icon

@@ -3,6 +3,7 @@ import Link from "next/link";
 import type { HomeBriefingOutcome } from "@/app/api/__generated__/models/homeBriefingOutcome";
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { Text } from "@/components/atoms/Text/Text";
+import { useLocale, useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { trackFunnel } from "@/services/experts/experts-analytics";
 import { formatWorkTime, getRunTriggerLabel } from "../helpers";
@@ -77,6 +78,8 @@ export function OutcomeRow({ outcome, timezone, showAgentName }: Props) {
 }
 
 function RunMeta({ outcome, timezone, showAgentName }: Props) {
+  const t = useT();
+  const locale = useLocale();
   const parts = [
     outcome.status === "failed" ? (
       <span
@@ -84,7 +87,7 @@ function RunMeta({ outcome, timezone, showAgentName }: Props) {
         key="status"
         className="font-medium text-rose-600"
       >
-        Failed
+        {t("home2.recent.failedLabel")}
       </span>
     ) : null,
     showAgentName ? (
@@ -95,9 +98,9 @@ function RunMeta({ outcome, timezone, showAgentName }: Props) {
         {outcome.agent_name}
       </span>
     ) : null,
-    <span key="trigger">{getRunTriggerLabel(outcome.trigger)}</span>,
+    <span key="trigger">{getRunTriggerLabel(outcome.trigger, locale)}</span>,
     <span key="time" className="tabular-nums">
-      {formatWorkTime(outcome.occurred_at, timezone)}
+      {formatWorkTime(outcome.occurred_at, timezone, locale)}
     </span>,
   ].filter(Boolean);
 

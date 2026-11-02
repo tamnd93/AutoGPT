@@ -4,6 +4,7 @@ import { WorkHistoryIcon } from "@hugeicons/core-free-icons";
 import type { HomeDashboardResponse } from "@/app/api/__generated__/models/homeDashboardResponse";
 import type { HomeRecentWorkGroup } from "@/app/api/__generated__/models/homeRecentWorkGroup";
 import { Text } from "@/components/atoms/Text/Text";
+import { useT } from "@/lib/i18n";
 import { useTrackFunnelViewOnce } from "@/services/experts/use-track-funnel-view-once";
 import { HomeTile } from "../HomeTile/HomeTile";
 import { HomeTileEmpty } from "../HomeTileEmpty/HomeTileEmpty";
@@ -19,6 +20,7 @@ interface Props {
 /** One card for what the agents did this week: the team (each expert and
  *  Otto) first, then the workflows that ran on their own. */
 export function RecentWork({ dashboard, className }: Props) {
+  const t = useT();
   const { briefing } = dashboard;
   const groups = dashboard.recent_work?.groups ?? [];
   const { team, workflows } = splitGroupsBySection(groups);
@@ -34,7 +36,7 @@ export function RecentWork({ dashboard, className }: Props) {
     <HomeTile
       className={className}
       icon={WorkHistoryIcon}
-      title="Recent work"
+      title={t("home2.recent.title")}
       meta={
         <>
           <Text
@@ -43,7 +45,7 @@ export function RecentWork({ dashboard, className }: Props) {
             tone="muted"
             className="hidden sm:inline"
           >
-            This week
+            {t("home2.recent.thisWeek")}
           </Text>
           <span
             aria-hidden="true"
@@ -52,7 +54,7 @@ export function RecentWork({ dashboard, className }: Props) {
             ·
           </span>
           <Text variant="small" as="span" tone="muted" className="tabular-nums">
-            {completed} completed
+            {t("home2.recent.completed", { count: completed })}
           </Text>
           {failed > 0 ? (
             <Text
@@ -61,7 +63,7 @@ export function RecentWork({ dashboard, className }: Props) {
               // TODO(tokens): no exact role (text-rose-600 #E11D48)
               className="tabular-nums text-rose-600"
             >
-              {failed} failed
+              {t("home2.recent.failed", { count: failed })}
             </Text>
           ) : null}
         </>
@@ -69,8 +71,8 @@ export function RecentWork({ dashboard, className }: Props) {
     >
       {isEmpty ? (
         <HomeTileEmpty
-          title="Nothing to show yet"
-          description="Runs, files, integrations and schedules from your experts and workflows will appear here."
+          title={t("home2.recent.emptyTitle")}
+          description={t("home2.recent.emptyBody")}
         />
       ) : (
         <div className="divide-y divide-border-base">

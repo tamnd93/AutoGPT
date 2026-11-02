@@ -9,12 +9,22 @@ import type {
 } from "@/app/(platform)/copilot/components/ApprovalQueue/helpers";
 import { toApprovalItem } from "@/app/(platform)/copilot/components/ApprovalQueue/helpers";
 import { useProcessReviews } from "@/hooks/useProcessReviews";
+import { useLocale } from "@/lib/i18n";
+import type { MessageKey } from "@/lib/i18n/messages/en";
+import { getMessage, type MessageValues } from "@/lib/i18n/translate";
 import { trackFunnel } from "@/services/experts/experts-analytics";
-import { headlineButtonId, isHeldCall, receiptText } from "./helpers";
+import {
+  headlineButtonId,
+  isHeldCall,
+  receiptLabelKey,
+  receiptText,
+} from "./helpers";
 
 export interface HeldReceipt {
   outcome: "approved" | "rejected" | "elsewhere";
   text: string;
+  /** The tally's label, so counting an outcome never parses its sentence. */
+  labelKey?: MessageKey;
 }
 
 export interface AttentionListRow {
@@ -36,6 +46,12 @@ interface DecideOptions {
 
 // Held calls decided here stay as receipts in place, so the list never shifts under the pointer.
 export function useHeldReview({ items }: Args) {
+  const locale = useLocale();
+
+  function translate(key: MessageKey, values?: MessageValues) {
+    return getMessage(locale, key, values);
+  }
+
   const queryClient = useQueryClient();
   const { processReviews } = useProcessReviews();
   const [statuses, setStatuses] = useState<Record<string, CardStatus>>({});
@@ -92,7 +108,11 @@ export function useHeldReview({ items }: Args) {
         ...Object.fromEntries(
           gone.map((item) => [
             item.id,
-            { outcome: "elsewhere", text: "Answered elsewhere" },
+            {
+              outcome: "elsewhere",
+              text: translate("home2.receipt.elsewhere"),
+              labelKey: "home2.receipt.tallyElsewhere",
+            } satisfies HeldReceipt,
           ]),
         ),
       }));
@@ -137,7 +157,8 @@ export function useHeldReview({ items }: Args) {
         id: item.id,
         receipt: {
           outcome: approved ? "approved" : "rejected",
-          text: receiptText(toApprovalItem(item.review!), approved),
+          text: receiptText(toApprovalItem(item.review!), approved, locale),
+          labelKey: receiptLabelKey(toApprovalItem(item.review!), approved),
         } satisfies HeldReceipt,
       }));
       setReceipts((prev) => ({
@@ -146,8 +167,14 @@ export function useHeldReview({ items }: Args) {
       }));
       setAnnouncement(
         next.length === 1
-          ? `${done[0].title}: ${next[0].receipt.text}`
-          : `${next.length} answered: ${next[0].receipt.text.split(" · ")[0]}`,
+          ? translate("home2.receipt.announceOne", {
+              title: done[0].title,
+              text: next[0].receipt.text,
+            })
+          : translate("home2.receipt.announceMany", {
+              count: next.length,
+              label: next[0].receipt.text.split(" · ")[0],
+            }),
       );
       if (focusNext) focusNextAfter(ids);
       done.forEach((item) =>

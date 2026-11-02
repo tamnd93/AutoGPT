@@ -2,6 +2,7 @@ import { http, HttpResponse } from "msw";
 import { expect, test, vi } from "vitest";
 import type { HomeDashboardResponse } from "@/app/api/__generated__/models/homeDashboardResponse";
 import type { HomeRecentWork } from "@/app/api/__generated__/models/homeRecentWork";
+import { LocaleProvider } from "@/lib/i18n";
 import { server } from "@/mocks/mock-server";
 import { render, screen, within } from "@/tests/integrations/test-utils";
 import { HomeRecap } from "../components/HomeRecap/HomeRecap";
@@ -254,6 +255,49 @@ test("groups the week's runs and deliverables by who did them", async () => {
   expect(
     within(autopilotGroup).getByText("competitor-pricing.csv"),
   ).toBeDefined();
+});
+
+test("reads the week's work and the schedule tile in Vietnamese", async () => {
+  mockDashboard(dashboard);
+
+  render(
+    <LocaleProvider locale="vi">
+      <HomeRecap />
+    </LocaleProvider>,
+  );
+
+  expect(
+    await screen.findByRole("heading", { name: "Việc gần đây" }),
+  ).toBeDefined();
+  expect(screen.getByText("Tuần này")).toBeDefined();
+  expect(screen.getByText("3 đã xong")).toBeDefined();
+  expect(screen.getByText("1 thất bại")).toBeDefined();
+
+  const mariaGroup = screen.getByRole("article", { name: "Maria" });
+  expect(within(mariaGroup).getByText("Expert")).toBeDefined();
+  expect(
+    within(mariaGroup).getByText("3 lần chạy · 2 tệp · 1 lịch chạy"),
+  ).toBeDefined();
+  expect(within(mariaGroup).getByText("Lần chạy theo lịch")).toBeDefined();
+  expect(within(mariaGroup).getByText("Lần chạy thủ công")).toBeDefined();
+
+  const workflowGroup = screen.getByRole("article", {
+    name: "Release Note Generator",
+  });
+  expect(within(workflowGroup).getByText("Workflow")).toBeDefined();
+  expect(
+    within(workflowGroup).getByText("1 lần chạy · 1 thao tác"),
+  ).toBeDefined();
+  expect(within(workflowGroup).getByText("Thất bại")).toBeDefined();
+  expect(
+    within(workflowGroup).getByText("Lần chạy do kích hoạt"),
+  ).toBeDefined();
+
+  expect(
+    screen.getByRole("heading", { name: "Bây giờ & tiếp theo" }),
+  ).toBeDefined();
+  expect(screen.getByText("Sắp tới")).toBeDefined();
+  expect(screen.getByText("Chưa có lịch nào")).toBeDefined();
 });
 
 test("puts the team first and the workflows that ran on their own after them", async () => {

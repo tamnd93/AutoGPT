@@ -3,7 +3,7 @@ import Link from "next/link";
 import type { HomeDashboardResponse } from "@/app/api/__generated__/models/homeDashboardResponse";
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { Text } from "@/components/atoms/Text/Text";
-import { useT } from "@/lib/i18n";
+import { useLocale, useT } from "@/lib/i18n";
 import { formatWeeklySpend } from "../../helpers";
 import { HomeTileEmpty } from "../HomeTileEmpty/HomeTileEmpty";
 import { HomeTile } from "../HomeTile/HomeTile";
@@ -19,8 +19,9 @@ interface Props {
 
 export function AgentTeam({ dashboard, className }: Props) {
   const t = useT();
+  const locale = useLocale();
   const { team, agents } = dashboard;
-  const teamSpend = formatWeeklySpend(team.spend_cents);
+  const teamSpend = formatWeeklySpend(team.spend_cents, locale);
   const statusLine =
     team.working > 0
       ? t("home1.team.statusWorking", {

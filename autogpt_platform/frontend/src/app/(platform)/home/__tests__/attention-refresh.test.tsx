@@ -8,8 +8,15 @@ import { getGetHomeDashboardMockHandler200 } from "@/app/api/__generated__/endpo
 import type { Expert } from "@/app/api/__generated__/models/expert";
 import type { HomeAttentionItem } from "@/app/api/__generated__/models/homeAttentionItem";
 import { ExpertNeedsYouSection } from "@/app/(platform)/team/[expertId]/components/ExpertNeedsYouSection/ExpertNeedsYouSection";
+import { LocaleProvider } from "@/lib/i18n";
 import { server } from "@/mocks/mock-server";
-import { act, render, screen, waitFor } from "@/tests/integrations/test-utils";
+import {
+  act,
+  normalizeWhitespace,
+  render,
+  screen,
+  waitFor,
+} from "@/tests/integrations/test-utils";
 import { HomeRecap } from "../components/HomeRecap/HomeRecap";
 import { ada, makeDashboard } from "./heldItems";
 
@@ -84,6 +91,30 @@ function expectCount(count: number) {
       ),
   ).toBe(true);
 }
+
+test("reads the recap's own status line and date in Vietnamese", async () => {
+  const client = createClient();
+  server.use(
+    getGetHomeDashboardMockHandler200(() =>
+      makeDashboard([question, otherQuestion]),
+    ),
+  );
+
+  const { container } = render(
+    <QueryClientProvider client={client}>
+      <LocaleProvider locale="vi">
+        <HomeRecap />
+      </LocaleProvider>
+    </QueryClientProvider>,
+  );
+
+  await screen.findByText(question.description);
+  expect(normalizeWhitespace(container)).toContain(
+    "2 quyết định cần bạn xử lý",
+  );
+  expect(screen.getByText("Chủ Nhật")).toBeDefined();
+  expect(screen.getByText("9 tháng 8")).toBeDefined();
+});
 
 describe.each(["home", "expert"] as const)("%s attention freshness", (page) => {
   test.each([0, 1])(

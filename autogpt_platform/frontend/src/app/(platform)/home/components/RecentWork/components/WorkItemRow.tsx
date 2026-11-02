@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { HomeRecentWorkItem } from "@/app/api/__generated__/models/homeRecentWorkItem";
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { Text } from "@/components/atoms/Text/Text";
+import { useLocale } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { formatWorkTime, getWorkItemIcon } from "../helpers";
 
@@ -13,6 +14,7 @@ interface Props {
 const ROW_CLASS = "flex items-center gap-2";
 
 export function WorkItemRow({ item, timezone }: Props) {
+  const locale = useLocale();
   const content = (
     <>
       <span className="flex size-[18px] shrink-0 items-center justify-center text-foreground-subtle">
@@ -36,7 +38,7 @@ export function WorkItemRow({ item, timezone }: Props) {
         className="shrink-0 tabular-nums"
       >
         {item.provider ? `${item.provider} · ` : ""}
-        {formatWorkTime(item.occurred_at, timezone)}
+        {formatWorkTime(item.occurred_at, timezone, locale)}
       </Text>
     </>
   );

@@ -16,7 +16,27 @@ describe("formatUntil", () => {
   });
 });
 
+describe("formatUntil in Vietnamese", () => {
+  it("counts down in Vietnamese", () => {
+    expect(formatUntil(new Date(NOW.getTime() + 30_000), NOW, "vi")).toBe(
+      "bây giờ",
+    );
+    expect(formatUntil(new Date(NOW.getTime() + 90 * 60_000), NOW, "vi")).toBe(
+      "sau 1 giờ 30 phút",
+    );
+  });
+});
+
 describe("formatRunningFor", () => {
+  it("reads runtime in Vietnamese", () => {
+    const startedAt = (minutes: number) =>
+      new Date(NOW.getTime() - minutes * 60_000);
+    expect(formatRunningFor(startedAt(4), NOW, "vi")).toBe("Đang chạy 4 phút");
+    expect(formatRunningFor(startedAt(75), NOW, "vi")).toBe(
+      "Đang chạy 1 giờ 15 phút",
+    );
+  });
+
   it("scales from minutes to hours", () => {
     const startedAt = (minutes: number) =>
       new Date(NOW.getTime() - minutes * 60_000);

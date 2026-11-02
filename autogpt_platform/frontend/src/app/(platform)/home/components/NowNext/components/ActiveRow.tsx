@@ -3,6 +3,7 @@ import type { HomeActiveTask } from "@/app/api/__generated__/models/homeActiveTa
 import { Text } from "@/components/atoms/Text/Text";
 import { ExpertAvatar } from "@/components/molecules/ExpertAvatar/ExpertAvatar";
 import { WorkflowAvatar } from "@/components/molecules/WorkflowAvatar/WorkflowAvatar";
+import { useLocale, useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { formatRunningFor } from "../helpers";
 
@@ -13,6 +14,8 @@ interface Props {
 const ROW_CLASS = "relative flex items-center gap-3 py-2 pl-[3.75rem] pr-4";
 
 export function ActiveRow({ item }: Props) {
+  const t = useT();
+  const locale = useLocale();
   const content = (
     <>
       <span className="absolute left-4 top-1/2 z-10 flex size-9 -translate-y-1/2 items-center justify-center rounded-full bg-surface">
@@ -44,8 +47,9 @@ export function ActiveRow({ item }: Props) {
         </Text>
         <Text variant="small" tone="muted" className="truncate">
           {item.status === "queued"
-            ? "Queued"
-            : (formatRunningFor(item.started_at) ?? "Running now")}
+            ? t("home2.nowNext.queued")
+            : (formatRunningFor(item.started_at, new Date(), locale) ??
+              t("home2.nowNext.runningNow"))}
         </Text>
       </div>
     </>

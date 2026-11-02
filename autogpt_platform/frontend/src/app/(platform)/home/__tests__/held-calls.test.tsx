@@ -329,6 +329,38 @@ test("a held read's row reads its waiting tag and its buttons in Vietnamese", ()
   expect(screen.getByLabelText("Nội dung ghi")).toBeDefined();
 });
 
+test("a decided row's receipt reads in Vietnamese", async () => {
+  serveAnswers();
+  const item = homeHeldItem(folder("vi1", "Q3 reports"));
+  render(
+    <LocaleProvider locale="vi">
+      <NeedsYou dashboard={makeDashboard([item])} />
+    </LocaleProvider>,
+  );
+
+  await userEvent.click(
+    screen.getByRole("button", { name: `Duyệt: ${item.title}` }),
+  );
+
+  expect(await screen.findByText("· Đã duyệt · Otto đang xử lý")).toBeDefined();
+});
+
+test("a call that leaves the feed reads answered elsewhere in Vietnamese", async () => {
+  const gone = homeHeldItem(folder("vi2", "Q3 reports"));
+  const view = render(
+    <LocaleProvider locale="vi">
+      <NeedsYou dashboard={makeDashboard([gone])} />
+    </LocaleProvider>,
+  );
+  view.rerender(
+    <LocaleProvider locale="vi">
+      <NeedsYou dashboard={makeDashboard([])} />
+    </LocaleProvider>,
+  );
+
+  expect(await screen.findByText("· Đã trả lời ở nơi khác")).toBeDefined();
+});
+
 afterEach(() => {
   vi.restoreAllMocks();
 });

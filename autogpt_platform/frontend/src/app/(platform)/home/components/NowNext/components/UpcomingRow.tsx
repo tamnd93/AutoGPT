@@ -4,6 +4,7 @@ import { Icon } from "@/components/atoms/Icon/Icon";
 import { Text } from "@/components/atoms/Text/Text";
 import { ExpertAvatar } from "@/components/molecules/ExpertAvatar/ExpertAvatar";
 import { WorkflowAvatar } from "@/components/molecules/WorkflowAvatar/WorkflowAvatar";
+import { useLocale, useT } from "@/lib/i18n";
 import { formatUntil } from "../helpers";
 
 interface Props {
@@ -11,6 +12,9 @@ interface Props {
 }
 
 export function UpcomingRow({ item }: Props) {
+  const t = useT();
+  const locale = useLocale();
+
   return (
     <div className="relative flex items-center gap-3 py-2 pl-[3.75rem] pr-4">
       <span className="absolute left-4 top-1/2 z-10 flex size-9 -translate-y-1/2 items-center justify-center rounded-full bg-surface">
@@ -32,10 +36,12 @@ export function UpcomingRow({ item }: Props) {
         </Text>
         <Text variant="body" tone="muted" className="truncate">
           {item.expert?.name ??
-            (item.kind === "followup" ? "Follow-up" : "Scheduled task")}
+            (item.kind === "followup"
+              ? t("home2.nowNext.followUp")
+              : t("home2.nowNext.scheduledTask"))}
           <span aria-hidden="true"> · </span>
           <span className="tabular-nums">
-            {formatUntil(item.next_run_time)}
+            {formatUntil(item.next_run_time, new Date(), locale)}
           </span>
         </Text>
       </div>

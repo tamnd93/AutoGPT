@@ -3,7 +3,7 @@ import { Button } from "@/components/atoms/Button/Button";
 import { BubbleChatIcon, Settings01Icon } from "@hugeicons/core-free-icons";
 import { Text } from "@/components/atoms/Text/Text";
 import { ExpertAvatar } from "@/components/molecules/ExpertAvatar/ExpertAvatar";
-import { useT } from "@/lib/i18n";
+import { useLocale, useT } from "@/lib/i18n";
 import { trackFunnel } from "@/services/experts/experts-analytics";
 import { formatWeeklySpend } from "../../../helpers";
 import { formatUntil } from "../../NowNext/helpers";
@@ -17,9 +17,12 @@ interface Props {
  *  anything that needs doing is already spelled out under Needs you. */
 export function AgentRow({ agent }: Props) {
   const t = useT();
-  const spend = formatWeeklySpend(agent.spend_cents);
+  const locale = useLocale();
+  const spend = formatWeeklySpend(agent.spend_cents, locale);
   const nextRun = agent.next_run_time
-    ? t("home1.agent.nextRun", { when: formatUntil(agent.next_run_time) })
+    ? t("home1.agent.nextRun", {
+        when: formatUntil(agent.next_run_time, undefined, locale),
+      })
     : null;
   const secondLine = [spend, nextRun].filter(Boolean).join(" · ");
 

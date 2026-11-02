@@ -18,7 +18,7 @@ import {
   modeLine,
   toApprovalItem,
 } from "@/app/(platform)/copilot/components/ApprovalQueue/helpers";
-import { useT } from "@/lib/i18n";
+import { useLocale, useT } from "@/lib/i18n";
 import { isKey } from "@/lib/keyboard";
 import { reviewTally, shortAge } from "../helpers";
 import type { useHeldReview } from "../useHeldReview";
@@ -206,6 +206,7 @@ function Finished({
   carousel: ReturnType<typeof useReviewCarousel>;
 }) {
   const t = useT();
+  const locale = useLocale();
 
   return (
     <div className="flex h-full flex-col items-center justify-center gap-2 px-6 text-center">
@@ -214,7 +215,7 @@ function Finished({
         {t("home1.review.finished", { total: carousel.total })}
       </Text>
       <Text variant="body" tone="secondary">
-        {reviewTally(carousel.order)}
+        {reviewTally(carousel.order, locale)}
       </Text>
     </div>
   );
