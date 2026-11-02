@@ -12,6 +12,7 @@ import { getConnectableCredentialTypes } from "@/hooks/useCredentials";
 import { getDiscriminatorValue } from "@/components/renderers/InputRenderer/custom/CredentialField/helpers";
 import { getHostFromUrl } from "@/lib/utils/url";
 import { Dialog } from "@/components/molecules/Dialog/Dialog";
+import { useT } from "@/lib/i18n";
 import type { BlockIOCredentialsSubSchema } from "@/lib/autogpt-server-api/types";
 import { useState } from "react";
 import { ExistingCredentialsView } from "./components/ExistingCredentialsView/ExistingCredentialsView";
@@ -57,6 +58,7 @@ export function ConnectCredentialDialog({
   onClose,
   onConnected,
 }: Props) {
+  const t = useT();
   const [addingNew, setAddingNew] = useState(false);
   const [chosenId, setChosenId] = useState<string | null>(null);
   // The account the user chose to sign in to again. It becomes the upgrade
@@ -190,7 +192,7 @@ export function ConnectCredentialDialog({
           )}
           <div className="flex items-center justify-end gap-3">
             <Button variant="secondary" size="small" onClick={handleClose}>
-              Cancel
+              {t("credentials1.dialog.cancel")}
             </Button>
             {showExisting ? (
               <>
@@ -200,7 +202,7 @@ export function ConnectCredentialDialog({
                   disabled={existing?.isPending}
                   onClick={() => setAddingNew(true)}
                 >
-                  Add new
+                  {t("credentials1.dialog.addNew")}
                 </Button>
                 <Button
                   variant="primary"
@@ -210,12 +212,12 @@ export function ConnectCredentialDialog({
                   onClick={handleUseExisting}
                 >
                   {existing?.isPending
-                    ? "Granting…"
+                    ? t("credentials1.dialog.granting")
                     : isUpdating
-                      ? "Update this account"
+                      ? t("credentials1.dialog.updateThisAccount")
                       : isChoosing
-                        ? "Use this account"
-                        : "Use existing"}
+                        ? t("credentials1.dialog.useThisAccount")
+                        : t("credentials1.dialog.useExisting")}
                 </Button>
               </>
             ) : (
@@ -227,7 +229,9 @@ export function ConnectCredentialDialog({
                   loading={isConnecting}
                   onClick={handleContinue}
                 >
-                  {isConnecting ? "Connecting…" : "Continue"}
+                  {isConnecting
+                    ? t("credentials1.dialog.connecting")
+                    : t("credentials1.dialog.continue")}
                 </Button>
               )
             )}

@@ -8,6 +8,7 @@ import {
   waitFor,
 } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { LocaleProvider } from "@/lib/i18n";
 import { ConnectCredentialDialog } from "../ConnectCredentialDialog";
 
 vi.mock(
@@ -548,5 +549,30 @@ describe("ConnectCredentialDialog with existing accounts", () => {
       credentialID?: string;
     };
     expect(flow.credentialID).toBeUndefined();
+  });
+
+  it("renders the existing-account actions in vietnamese", () => {
+    render(
+      <LocaleProvider locale="vi">
+        <ConnectCredentialDialog
+          schema={baseSchema}
+          provider="github"
+          displayName="GitHub"
+          open
+          onClose={vi.fn()}
+          existing={offer()}
+        />
+      </LocaleProvider>,
+    );
+
+    expect(
+      screen.getByText("Cấp cho chuyên gia này quyền dùng GitHub"),
+    ).toBeDefined();
+    expect(screen.getByRole("radiogroup", { name: "Tài khoản" })).toBeDefined();
+    expect(screen.getByRole("button", { name: "Huỷ" })).toBeDefined();
+    expect(screen.getByRole("button", { name: "Thêm mới" })).toBeDefined();
+    expect(
+      screen.getByRole("button", { name: "Dùng tài khoản có sẵn" }),
+    ).toBeDefined();
   });
 });

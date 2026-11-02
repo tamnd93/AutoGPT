@@ -3,6 +3,7 @@
 import { AutoGPTLogo } from "@/components/atoms/AutoGPTLogo/AutoGPTLogo";
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { Text } from "@/components/atoms/Text/Text";
+import { useT } from "@/lib/i18n";
 import { ProviderAvatar } from "@/components/contextual/IntegrationsPanel/components/ConnectServiceDialog/components/DetailView/ProviderAvatar";
 import { Key01Icon, SecurityCheckIcon } from "@hugeicons/core-free-icons";
 import type { ExistingCredential } from "../../helpers";
@@ -16,20 +17,17 @@ interface Props {
   purpose?: "grant" | "choose" | "update";
 }
 
-const TITLES = {
-  grant: (name: string) => `Give this expert access to ${name}`,
-  choose: (name: string) => `Choose a ${name} account`,
-  update: (name: string) => `Update a ${name} account`,
-};
+const TITLE_KEYS = {
+  grant: "credentials1.existing.titleGrant",
+  choose: "credentials1.existing.titleChoose",
+  update: "credentials1.existing.titleUpdate",
+} as const;
 
-const DESCRIPTIONS = {
-  grant:
-    "Your account is already connected, but this expert can't use it yet. Pick an account to share, or add a new one.",
-  choose:
-    "You have more than one account connected. Pick the one this chat should use, or add a new one.",
-  update:
-    "None of your connected accounts has the access this needs. Pick the one to sign in to again, or add a new one.",
-};
+const DESCRIPTION_KEYS = {
+  grant: "credentials1.existing.descGrant",
+  choose: "credentials1.existing.descChoose",
+  update: "credentials1.existing.descUpdate",
+} as const;
 
 // The step before the connect methods when the account already has a
 // credential the expert lacks: pick which one to hand over. Mirrors the
@@ -42,6 +40,7 @@ export function ExistingCredentialsView({
   onSelect,
   purpose = "grant",
 }: Props) {
+  const t = useT();
   return (
     <div className="flex flex-col gap-5 pt-2">
       <div className="flex items-center justify-center gap-6">
@@ -70,16 +69,16 @@ export function ExistingCredentialsView({
           variant="h3"
           className="!text-lead !leading-10 text-foreground-strong"
         >
-          {TITLES[purpose](displayName)}
+          {t(TITLE_KEYS[purpose], { name: displayName })}
         </Text>
         <Text variant="body" className="!text-foreground-tertiary">
-          {DESCRIPTIONS[purpose]}
+          {t(DESCRIPTION_KEYS[purpose])}
         </Text>
       </div>
 
       <div
         role="radiogroup"
-        aria-label="Account"
+        aria-label={t("credentials1.existing.accountLabel")}
         // TODO(tokens): no exact role for bg-neutral-100 #f5f5f5
         className="flex flex-col gap-1 rounded-2xl bg-neutral-100 p-1.5"
       >
@@ -112,7 +111,9 @@ export function ExistingCredentialsView({
                   {credential.title}
                 </span>
                 <span className="text-xs text-foreground-tertiary">
-                  {credential.type === "oauth2" ? "OAuth" : "API key"}
+                  {credential.type === "oauth2"
+                    ? t("credentials1.existing.typeOAuth")
+                    : t("credentials1.existing.typeApiKey")}
                 </span>
               </span>
               <span
