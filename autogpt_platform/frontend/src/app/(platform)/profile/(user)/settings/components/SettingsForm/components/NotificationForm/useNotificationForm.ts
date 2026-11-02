@@ -4,6 +4,8 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useToast } from "@/components/molecules/Toast/use-toast";
+import { useLocale } from "@/lib/i18n";
+import { getMessage } from "@/lib/i18n/translate";
 import { NotificationPreference } from "@/app/api/__generated__/models/notificationPreference";
 import type { User } from "@/lib/auth/types";
 import { usePostV1UpdateNotificationPreferences } from "@/app/api/__generated__/endpoints/auth/auth";
@@ -37,6 +39,7 @@ export function useNotificationForm({
   preferences: NotificationPreference;
   user: User;
 }) {
+  const locale = useLocale();
   const { toast } = useToast();
   const defaultValues = createNotificationDefaultValues(preferences);
 
@@ -49,11 +52,11 @@ export function useNotificationForm({
     mutation: {
       onError: (error) => {
         toast({
-          title: "Error updating notifications",
+          title: getMessage(locale, "profile5.notifications.errorTitle"),
           description:
             error instanceof Error
               ? error.message
-              : "Failed to update notification preferences",
+              : getMessage(locale, "profile5.notifications.errorFallback"),
           variant: "destructive",
         });
       },
@@ -72,13 +75,15 @@ export function useNotificationForm({
       });
 
       toast({
-        title: "Successfully updated notification preferences",
+        title: getMessage(locale, "profile5.notifications.success"),
       });
     } catch (error) {
       toast({
-        title: "Error updating notifications",
+        title: getMessage(locale, "profile5.notifications.errorTitle"),
         description:
-          error instanceof Error ? error.message : "Something went wrong",
+          error instanceof Error
+            ? error.message
+            : getMessage(locale, "profile5.notifications.genericError"),
         variant: "destructive",
       });
     }

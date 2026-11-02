@@ -89,6 +89,26 @@ describe("SettingsPage", () => {
     ).toBeDefined();
   });
 
+  test("renders the notification settings chrome in vietnamese", async () => {
+    server.use(
+      getGetV1GetNotificationPreferencesMockHandler(defaultPreferences),
+      getGetV1GetUserTimezoneMockHandler({ timezone: "Asia/Kolkata" }),
+    );
+
+    render(
+      <LocaleProvider locale="vi">
+        <SettingsPage />
+      </LocaleProvider>,
+    );
+
+    expect(await screen.findByText("Thông báo")).toBeDefined();
+    expect(screen.getByRole("button", { name: "Lưu tuỳ chọn" })).toBeDefined();
+    expect(screen.getByRole("switch", { name: "Cảnh báo" })).toBeDefined();
+    expect(
+      screen.getByRole("combobox", { name: "Tần suất bản tin" }),
+    ).toBeDefined();
+  });
+
   test("saves notification preference changes", async () => {
     let submitted: NotificationPreferenceDTO | undefined;
 

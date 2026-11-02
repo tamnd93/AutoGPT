@@ -9,6 +9,8 @@ import {
 } from "@/app/api/__generated__/endpoints/oauth/oauth";
 import { okData } from "@/app/api/helpers";
 import { useToast } from "@/components/molecules/Toast/use-toast";
+import { useLocale } from "@/lib/i18n";
+import { getMessage } from "@/lib/i18n/translate";
 import {
   isFileTooLarge,
   OAUTH_LOGO_MAX_SIZE_MB,
@@ -17,6 +19,7 @@ import {
 import { getQueryClient } from "@/lib/react-query/queryClient";
 
 export const useOAuthApps = () => {
+  const locale = useLocale();
   const queryClient = getQueryClient();
   const { toast } = useToast();
   const [updatingAppId, setUpdatingAppId] = useState<string | null>(null);
@@ -46,16 +49,21 @@ export const useOAuthApps = () => {
 
       if (result.status === 200) {
         toast({
-          title: "Success",
-          description: `Application ${result.data.is_active ? "enabled" : "disabled"} successfully`,
+          title: getMessage(locale, "profile5.oauth.successTitle"),
+          description: getMessage(
+            locale,
+            result.data.is_active
+              ? "profile5.oauth.statusEnabled"
+              : "profile5.oauth.statusDisabled",
+          ),
         });
       } else {
         throw new Error("Failed to update status");
       }
     } catch {
       toast({
-        title: "Error",
-        description: "Failed to update application status",
+        title: getMessage(locale, "profile5.oauth.errorTitle"),
+        description: getMessage(locale, "profile5.oauth.statusFailed"),
         variant: "destructive",
       });
     } finally {
@@ -71,17 +79,24 @@ export const useOAuthApps = () => {
       setUploadingAppId(appId);
       await uploadOAuthAppLogoDirect(appId, file);
       toast({
-        title: "Success",
-        description: "Logo uploaded successfully",
+        title: getMessage(locale, "profile5.oauth.successTitle"),
+        description: getMessage(locale, "profile5.oauth.logoUploaded"),
       });
     } catch (error) {
-      if (toastIfPlanRequired(error, "Uploading a logo needs an active plan"))
+      if (
+        toastIfPlanRequired(
+          error,
+          getMessage(locale, "profile5.oauth.logoPlanRequired"),
+        )
+      )
         return;
       console.error("Failed to upload logo:", error);
       const errorMessage =
-        error instanceof Error ? error.message : "Failed to upload logo";
+        error instanceof Error
+          ? error.message
+          : getMessage(locale, "profile5.oauth.logoUploadFailed");
       toast({
-        title: "Error",
+        title: getMessage(locale, "profile5.oauth.errorTitle"),
         description: errorMessage,
         variant: "destructive",
       });

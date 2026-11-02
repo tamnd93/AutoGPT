@@ -7,6 +7,8 @@ import {
   FormItem,
 } from "@/components/molecules/Form/Form";
 import { Text } from "@/components/atoms/Text/Text";
+import { useT } from "@/lib/i18n";
+import type { MessageKey } from "@/lib/i18n/messages/en";
 import { Button } from "@/components/atoms/Button/Button";
 import { Select } from "@/components/atoms/Select/Select";
 import { NotificationPreference } from "@/app/api/__generated__/models/notificationPreference";
@@ -22,14 +24,19 @@ type NotificationFormProps = {
   user: User;
 };
 
-const BRIEFING_OPTIONS = [
-  { value: "DAILY", label: "Daily" },
-  { value: "WEEKLY", label: "Weekly" },
-  { value: "MONTHLY", label: "Monthly" },
-  { value: "OFF", label: "Off" },
+const BRIEFING_OPTIONS: { value: string; labelKey: MessageKey }[] = [
+  { value: "DAILY", labelKey: "profile5.notifications.frequency.daily" },
+  { value: "WEEKLY", labelKey: "profile5.notifications.frequency.weekly" },
+  { value: "MONTHLY", labelKey: "profile5.notifications.frequency.monthly" },
+  { value: "OFF", labelKey: "profile5.notifications.frequency.off" },
 ];
 
 export function NotificationForm({ preferences, user }: NotificationFormProps) {
+  const t = useT();
+  const briefingOptions = BRIEFING_OPTIONS.map((option) => ({
+    value: option.value,
+    label: t(option.labelKey),
+  }));
   const { form, onSubmit, onCancel, isLoading } = useNotificationForm({
     preferences,
     user,
@@ -38,15 +45,14 @@ export function NotificationForm({ preferences, user }: NotificationFormProps) {
   return (
     <div>
       <Text variant="h3" size="large-semibold">
-        Notifications
+        {t("profile5.notifications.title")}
       </Text>
       <Text
         // TODO(tokens): no exact role (text-slate-400 #8A97A8)
         variant="body"
         className="mt-2 text-slate-400"
       >
-        Billing and account messages are always sent — they are about your
-        account, not a promotion.
+        {t("profile5.notifications.description")}
       </Text>
       <FormProvider {...form}>
         <form
@@ -61,20 +67,19 @@ export function NotificationForm({ preferences, user }: NotificationFormProps) {
                 <FormItem className="flex flex-col gap-2">
                   <div className="space-y-0.5">
                     <Text variant="h4" size="body-medium">
-                      Briefing
+                      {t("profile5.notifications.briefingTitle")}
                     </Text>
                     <Text variant="body">
-                      What your workflows got done, at around 07:30 your time.
-                      Never sent when nothing ran.
+                      {t("profile5.notifications.briefingDesc")}
                     </Text>
                   </div>
                   <FormControl>
                     <Select
                       id="briefing-frequency"
-                      label="Briefing frequency"
+                      label={t("profile5.notifications.frequencyLabel")}
                       hideLabel
                       value={field.value}
-                      options={BRIEFING_OPTIONS}
+                      options={briefingOptions}
                       onValueChange={(value) =>
                         field.onChange(
                           value as NotificationFormValues["briefingFrequency"],
@@ -93,16 +98,15 @@ export function NotificationForm({ preferences, user }: NotificationFormProps) {
                 <FormItem className="flex flex-row items-center justify-between">
                   <div className="space-y-0.5">
                     <Text variant="h4" size="body-medium">
-                      Alerts
+                      {t("profile5.notifications.alertsTitle")}
                     </Text>
                     <Text variant="body">
-                      Only when something is waiting on you — never for a
-                      successful run. At most two a day.
+                      {t("profile5.notifications.alertsDesc")}
                     </Text>
                   </div>
                   <FormControl>
                     <Switch
-                      aria-label="Alerts"
+                      aria-label={t("profile5.notifications.alertsTitle")}
                       checked={field.value}
                       onCheckedChange={field.onChange}
                     />
@@ -118,16 +122,15 @@ export function NotificationForm({ preferences, user }: NotificationFormProps) {
                 <FormItem className="flex flex-row items-center justify-between">
                   <div className="space-y-0.5">
                     <Text variant="h4" size="body-medium">
-                      Marketplace reviews
+                      {t("profile5.notifications.reviewsTitle")}
                     </Text>
                     <Text variant="body">
-                      When a workflow you submitted is approved or needs
-                      changes.
+                      {t("profile5.notifications.reviewsDesc")}
                     </Text>
                   </div>
                   <FormControl>
                     <Switch
-                      aria-label="Marketplace reviews"
+                      aria-label={t("profile5.notifications.reviewsTitle")}
                       checked={field.value}
                       onCheckedChange={field.onChange}
                     />
@@ -146,7 +149,7 @@ export function NotificationForm({ preferences, user }: NotificationFormProps) {
               disabled={isLoading}
               className="min-w-[10rem]"
             >
-              Cancel
+              {t("profile5.notifications.cancel")}
             </Button>
             <Button
               type="submit"
@@ -154,7 +157,9 @@ export function NotificationForm({ preferences, user }: NotificationFormProps) {
               className="min-w-[10rem]"
               loading={isLoading}
             >
-              {isLoading ? "Saving..." : "Save preferences"}
+              {isLoading
+                ? t("profile5.notifications.saving")
+                : t("profile5.notifications.save")}
             </Button>
           </div>
         </form>

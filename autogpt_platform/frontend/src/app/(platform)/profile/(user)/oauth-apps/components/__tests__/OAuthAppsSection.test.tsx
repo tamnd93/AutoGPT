@@ -8,6 +8,7 @@ import {
 } from "@/tests/integrations/test-utils";
 
 import { ApiError } from "@/lib/autogpt-server-api/helpers";
+import { LocaleProvider } from "@/lib/i18n";
 
 import { OAuthAppsSection } from "../OAuthAppsSection";
 
@@ -129,6 +130,18 @@ describe("OAuthAppsSection - logo upload", () => {
     expect(toastSpy).not.toHaveBeenCalledWith(
       expect.objectContaining({ title: "Error" }),
     );
+  });
+
+  it("renders the oauth app chrome in vietnamese", async () => {
+    render(
+      <LocaleProvider locale="vi">
+        <OAuthAppsSection />
+      </LocaleProvider>,
+    );
+
+    await screen.findByText("My App");
+    expect(screen.getByText("Đang hoạt động")).toBeDefined();
+    expect(screen.getByRole("button", { name: "Vô hiệu hoá" })).toBeDefined();
   });
 
   it("surfaces a destructive toast when the upload fails", async () => {
