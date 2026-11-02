@@ -1,3 +1,6 @@
+import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/locale";
+import { getMessage } from "@/lib/i18n/translate";
+
 interface UsageWindow {
   percent_used: number;
   resets_at: string | Date;
@@ -169,17 +172,30 @@ export function formatTrialDate(value: string | Date | null) {
   });
 }
 
-export function formatTrialStartDescription(value: string | Date | null) {
+export function formatTrialStartDescription(
+  value: string | Date | null,
+  locale: Locale = DEFAULT_LOCALE,
+) {
   const date = formatTrialDate(value);
-  return `Pro starts on its own ${date ? `on ${date}` : "when your trial ends"}. Start it now to keep working today.`;
+  return date
+    ? getMessage(locale, "billing4.helpers.proStartsDescDated", { date })
+    : getMessage(locale, "billing4.helpers.proStartsDescUndated");
 }
 
-export function formatTrialStartTitle(value: string | Date | null) {
+export function formatTrialStartTitle(
+  value: string | Date | null,
+  locale: Locale = DEFAULT_LOCALE,
+) {
   const date = formatTrialDate(value);
-  return date ? `Pro starts on ${date}` : "Pro starts when your trial ends";
+  return date
+    ? getMessage(locale, "billing4.helpers.proStartsTitleDated", { date })
+    : getMessage(locale, "billing4.helpers.proStartsTitleUndated");
 }
 
-export function formatResumeTime(value: string | Date | null) {
+export function formatResumeTime(
+  value: string | Date | null,
+  locale: Locale = DEFAULT_LOCALE,
+) {
   if (!value) return null;
   const date = new Date(value);
   if (!Number.isFinite(date.getTime())) return null;
@@ -190,9 +206,9 @@ export function formatResumeTime(value: string | Date | null) {
   nextWeek.setDate(nextWeek.getDate() + 7);
   const day =
     date.toDateString() === today.toDateString()
-      ? "today"
+      ? getMessage(locale, "billing4.helpers.resumeToday")
       : date.toDateString() === tomorrow.toDateString()
-        ? "tomorrow"
+        ? getMessage(locale, "billing4.helpers.resumeTomorrow")
         : date > today && date < nextWeek
           ? date.toLocaleDateString(undefined, { weekday: "long" })
           : date.toLocaleDateString(undefined, {
@@ -202,10 +218,13 @@ export function formatResumeTime(value: string | Date | null) {
                 ? { year: "numeric" as const }
                 : {}),
             });
-  return `${day} at ${date.toLocaleTimeString(undefined, {
-    hour: "numeric",
-    minute: "2-digit",
-  })}`;
+  return getMessage(locale, "billing4.helpers.resumeAt", {
+    day,
+    time: date.toLocaleTimeString(locale === "vi" ? "vi-VN" : undefined, {
+      hour: "numeric",
+      minute: "2-digit",
+    }),
+  });
 }
 
 export function formatOfferPrice(price?: number, currency = "USD") {
@@ -227,12 +246,21 @@ export function formatOfferPrice(price?: number, currency = "USD") {
 export function getUsageOfferAction(
   experience: UsageExperience,
   offer: { price?: number; currency?: string },
+  locale: Locale = DEFAULT_LOCALE,
 ) {
-  if (experience.targetTier === "MAX") return "Upgrade to Max";
+  if (experience.targetTier === "MAX") {
+    return getMessage(locale, "billing4.offer.upgradeMax");
+  }
   if (experience.freshProUsage) {
     const amount = formatOfferPrice(offer.price, offer.currency);
-    return `Start Pro now${amount ? ` · ${amount}` : ""}`;
+    return amount
+      ? getMessage(locale, "billing4.offer.startProNowAmount", { amount })
+      : getMessage(locale, "billing4.offer.startProNow");
   }
-  if (experience.isCancelPending) return "Subscribe now";
-  return experience.tier === "BASIC" ? "Upgrade to Pro" : "Start Pro";
+  if (experience.isCancelPending) {
+    return getMessage(locale, "billing4.offer.subscribeNow");
+  }
+  return experience.tier === "BASIC"
+    ? getMessage(locale, "billing4.offer.upgradePro")
+    : getMessage(locale, "billing4.offer.startPro");
 }

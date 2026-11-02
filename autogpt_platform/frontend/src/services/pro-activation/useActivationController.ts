@@ -11,8 +11,10 @@ import { useActivationReadiness } from "./useActivationReadiness";
 import { pendingConsent, storeConsent } from "./storage";
 import { safeReturnTo } from "./helpers";
 import { useActivationRecovery } from "./useActivationRecovery";
+import { useT } from "@/lib/i18n";
 
 export function useActivationController() {
+  const t = useT();
   const userID = useAuthStore((state) => state.user?.id);
   const [attempt, setAttempt] = useState<ActivationResponse | null>(null);
   const [isOpen, setOpen] = useState(false);
@@ -139,9 +141,7 @@ export function useActivationController() {
         accept(quote);
       }
     } catch {
-      setError(
-        "We couldn’t load your upgrade details. Please try again before confirming payment.",
-      );
+      setError(t("billing4.activation.loadDetailsFailed"));
     } finally {
       inFlight.current = false;
       setBusy(false);
@@ -178,12 +178,10 @@ export function useActivationController() {
           if (userID) storeConsent(userID, null);
           setRetryConsent(false);
           setNeedsNewTerms(true);
-          setError("Review the current terms before confirming this upgrade.");
+          setError(t("billing4.activation.reviewTerms"));
         }
       } catch {
-        setError(
-          "We couldn’t confirm the payment status. Check the existing payment before trying again.",
-        );
+        setError(t("billing4.activation.confirmStatusFailed"));
       }
     } finally {
       inFlight.current = false;
@@ -198,7 +196,7 @@ export function useActivationController() {
     try {
       accept(await retrieveActivation(id));
     } catch {
-      setError("We couldn’t check your payment yet. Please try again.");
+      setError(t("billing4.activation.checkPaymentFailed"));
     } finally {
       inFlight.current = false;
       setBusy(false);
@@ -213,7 +211,7 @@ export function useActivationController() {
     consent.current = null;
     if (userID) storeConsent(userID, null);
     setRetryConsent(false);
-    setError("We couldn’t find a payment in progress. You can start again.");
+    setError(t("billing4.activation.noPayment"));
   }
 
   useActivationRecovery({

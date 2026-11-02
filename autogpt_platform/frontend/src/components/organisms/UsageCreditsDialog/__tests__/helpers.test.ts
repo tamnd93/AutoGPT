@@ -59,6 +59,27 @@ describe("getChatAllowance", () => {
   });
 });
 
+describe("getUsageCreditsAnswers in Vietnamese", () => {
+  const paidCappedVi = {
+    paymentEnabled: true,
+    allowance: "daily-weekly" as const,
+    isTrial: false,
+  };
+
+  it("writes the questions and answers in Vietnamese when asked", () => {
+    const items = getUsageCreditsAnswers(paidCappedVi, "vi");
+    const chat = items.find((item) => item.question === "Gói chat bao gồm những gì?");
+    expect(chat?.answer).toContain("Otto");
+    expect(chat?.answer).toContain("đặt lại hằng ngày và hằng tuần");
+    expect(
+      items.find((item) => item.question === "Khi nào thẻ của tôi bị tính tiền?"),
+    ).toBeDefined();
+    expect(items.map((item) => item.question)).toContain(
+      "Làm sao để có thêm?",
+    );
+  });
+});
+
 describe("getUsageCreditsAnswers", () => {
   const paidCapped = {
     paymentEnabled: true,

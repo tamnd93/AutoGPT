@@ -1,3 +1,6 @@
+import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/locale";
+import { getMessage } from "@/lib/i18n/translate";
+
 export type ChatAllowance =
   | "unknown"
   | "no-plan"
@@ -42,45 +45,45 @@ interface Args {
   isTrial: boolean;
 }
 
-export function getUsageCreditsAnswers({
-  paymentEnabled,
-  allowance,
-  isTrial,
-}: Args) {
+export function getUsageCreditsAnswers(
+  { paymentEnabled, allowance, isTrial }: Args,
+  locale: Locale = DEFAULT_LOCALE,
+) {
   return [
     {
-      question: "What does chat usage cover?",
-      answer: `Your chats with Otto and your experts, including the research and writing they do for you. ${describeAllowance(allowance, isTrial)}`,
+      question: getMessage(locale, "billing4.usage.qChat"),
+      answer: getMessage(locale, "billing4.usage.aChat", {
+        allowance: describeAllowance(allowance, isTrial, locale),
+      }),
     },
     {
-      question: "What are automation credits for?",
+      question: getMessage(locale, "billing4.usage.qCredits"),
       // An Otto (AutoPilot) step bills the allowance first and the credit
       // balance only once it is out: copilot/credit_billing.py.
-      answer: `Workflow runs and paid steps, like making images. A workflow step where Otto does the work uses your chat usage first, and your credits only once chat usage runs out. ${
-        paymentEnabled
-          ? "You can buy credits, earn them by finishing setup steps or turn on auto-refill to top them up."
-          : "You can earn them by finishing setup steps."
-      }`,
+      answer: getMessage(locale, "billing4.usage.aCredits", {
+        more: paymentEnabled
+          ? getMessage(locale, "billing4.usage.creditsMoreBuy")
+          : getMessage(locale, "billing4.usage.creditsMoreEarn"),
+      }),
     },
     // With payments off there is no checkout, upgrade or top-up to charge it.
     ...(paymentEnabled
       ? [
           {
-            question: "When is my card charged?",
+            question: getMessage(locale, "billing4.usage.qCard"),
             // A failed renewal is paid from the balance when it covers the
             // invoice: subscription_payment_failure.py, pay_invoice_from_wallet.
-            answer:
-              "A chat or a step never charges your card directly. Your card is charged when your plan starts and each time it renews, when you upgrade, and when you buy credits (including auto-refill). If a renewal payment fails, it's taken from your automation credits when they cover it.",
+            answer: getMessage(locale, "billing4.usage.aCard"),
           },
         ]
       : []),
     {
-      question: "How do I get more?",
+      question: getMessage(locale, "billing4.usage.qMore"),
       answer: [
-        describeMoreChat(allowance, paymentEnabled),
+        describeMoreChat(allowance, paymentEnabled, locale),
         paymentEnabled
-          ? "For more automation credits, select Add credits in the wallet."
-          : "For more automation credits, finish the setup steps in the wallet.",
+          ? getMessage(locale, "billing4.usage.moreCreditsBuy")
+          : getMessage(locale, "billing4.usage.moreCreditsEarn"),
       ]
         .filter(Boolean)
         .join(" "),
@@ -88,30 +91,44 @@ export function getUsageCreditsAnswers({
   ];
 }
 
-function describeAllowance(allowance: ChatAllowance, isTrial: boolean) {
-  const owner = isTrial ? "your trial" : "your plan";
+function describeAllowance(
+  allowance: ChatAllowance,
+  isTrial: boolean,
+  locale: Locale,
+) {
+  const owner = isTrial
+    ? getMessage(locale, "billing4.usage.ownerTrial")
+    : getMessage(locale, "billing4.usage.ownerPlan");
   switch (allowance) {
     case "no-plan":
-      return "It comes with a plan.";
+      return getMessage(locale, "billing4.usage.allowancePlan");
     case "lifetime-trial":
-      return "It comes with your trial, as one allowance for the whole trial.";
+      return getMessage(locale, "billing4.usage.allowanceTrial");
     case "unlimited":
-      return "It comes with your plan, which has no daily or weekly limits.";
+      return getMessage(locale, "billing4.usage.allowanceUnlimited");
     case "daily-weekly":
-      return `It comes with ${owner} and resets daily and weekly.`;
+      return getMessage(locale, "billing4.usage.allowanceDailyWeekly", {
+        owner,
+      });
     case "daily":
-      return `It comes with ${owner} and resets daily.`;
+      return getMessage(locale, "billing4.usage.allowanceDaily", { owner });
     case "weekly":
-      return `It comes with ${owner} and resets weekly.`;
+      return getMessage(locale, "billing4.usage.allowanceWeekly", { owner });
     case "unknown":
-      return "It comes with your plan.";
+      return getMessage(locale, "billing4.usage.allowanceUnknown");
   }
 }
 
 // Plans are bought and upgraded only with payments on, and an uncapped plan
 // has no more to get.
-function describeMoreChat(allowance: ChatAllowance, paymentEnabled: boolean) {
+function describeMoreChat(
+  allowance: ChatAllowance,
+  paymentEnabled: boolean,
+  locale: Locale,
+) {
   if (!paymentEnabled || allowance === "unlimited") return null;
-  if (allowance === "no-plan") return "For chat usage, choose a plan.";
-  return "For more chat usage, choose a bigger plan.";
+  if (allowance === "no-plan") {
+    return getMessage(locale, "billing4.usage.moreChatChoose");
+  }
+  return getMessage(locale, "billing4.usage.moreChatBigger");
 }

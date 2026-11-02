@@ -6,8 +6,10 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { updateTrialStatusCache } from "./updateTrialStatusCache";
+import { useT } from "@/lib/i18n";
 
 export function useTrialCheckoutReturn() {
+  const t = useT();
   const userID = useAuthStore((state) => state.user?.id);
   const params = useSearchParams();
   const isReturn = useRef(false);
@@ -35,7 +37,7 @@ export function useTrialCheckoutReturn() {
       .then(async (response) => {
         if (useAuthStore.getState().user?.id !== userID) return;
         if (response.status !== 200)
-          throw new Error("Could not confirm your trial.");
+          throw new Error(t("billing4.trialCheckout.notConfirmed"));
         if (!(await updateTrialStatusCache({ queryClient, userID, response })))
           return;
         if (
@@ -43,9 +45,7 @@ export function useTrialCheckoutReturn() {
           !response.data.converted &&
           response.data.status !== "canceled"
         )
-          throw new Error(
-            "Your trial is not active. Review your card setup and try again.",
-          );
+          throw new Error(t("billing4.trialCheckout.notActive"));
         if (response.data.active && reportedTrialStart.current !== userID) {
           reportedTrialStart.current = userID;
           reportTrialStart(userID);
@@ -59,7 +59,7 @@ export function useTrialCheckoutReturn() {
             error:
               error instanceof Error
                 ? error.message
-                : "Could not confirm your trial.",
+                : t("billing4.trialCheckout.notConfirmed"),
           });
         }
       });

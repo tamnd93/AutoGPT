@@ -1,4 +1,6 @@
 import { formatTierLabel } from "@/app/(platform)/copilot/components/usageHelpers";
+import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/locale";
+import { getMessage } from "@/lib/i18n/translate";
 import {
   formatResumeTime,
   formatTrialDate,
@@ -10,77 +12,100 @@ import { formatPaymentDue } from "./payment";
 export function usagePresentation(
   experience: UsageExperience,
   usageMultiplier?: number,
+  locale: Locale = DEFAULT_LOCALE,
 ) {
   const { tier, window, isTopTier, isActiveTrial } = experience;
   if (experience.inactiveTrialStatus) {
     const canceled = experience.inactiveTrialStatus === "canceled";
     const payment = experience.inactiveTrialStatus === "payment_failed";
     const title = payment
-      ? "Your payment didn’t go through"
+      ? getMessage(locale, "billing4.pres.paymentFailedTitle")
       : canceled
-        ? "Your trial was canceled"
-        : "Your trial has ended";
+        ? getMessage(locale, "billing4.pres.trialCanceledTitle")
+        : getMessage(locale, "billing4.pres.trialEndedTitle");
     return {
       eyebrow: payment
-        ? "Payment needs attention"
+        ? getMessage(locale, "billing4.pres.paymentEyebrow")
         : canceled
-          ? "Free trial · Canceled"
-          : "Free trial · Ended",
+          ? getMessage(locale, "billing4.pres.canceledEyebrow")
+          : getMessage(locale, "billing4.pres.endedEyebrow"),
       title,
       noticeTitle: title,
       description: payment
         ? (formatPaymentDue(experience.payment)?.description ??
-          "Review your billing details to continue. Your chats, workflows and results are saved.")
+          getMessage(locale, "billing4.pres.paymentDescription"))
         : canceled
-          ? "Your trial won’t turn into a paid subscription. Your chats, workflows and results are saved whenever you’re ready to choose a plan."
-          : "Your chats, workflows and results are saved. Choose a plan to keep going.",
-      supportLabel: "Contact support",
-      secondary: "Back to my work",
+          ? getMessage(locale, "billing4.pres.canceledDescription")
+          : getMessage(locale, "billing4.pres.endedDescription"),
+      supportLabel: getMessage(locale, "billing4.pres.contactSupport"),
+      secondary: getMessage(locale, "billing4.pres.backToWork"),
       trialSpent: false,
     };
   }
   const trialSpent = isActiveTrial && window === "trial";
-  const windowLabel = window === "weekly" ? "Weekly" : "Daily";
+  const windowLabel =
+    window === "weekly"
+      ? getMessage(locale, "billing4.pres.weekly")
+      : getMessage(locale, "billing4.pres.daily");
   const trialDate = formatTrialDate(experience.trialEndsAt);
-  const resumeTime = formatResumeTime(experience.resetsAt);
+  const resumeTime = formatResumeTime(experience.resetsAt, locale);
   const resume = resumeTime
-    ? `You can continue ${resumeTime}`
-    : "You can continue when your allowance refreshes";
+    ? getMessage(locale, "billing4.pres.continueAt", { time: resumeTime })
+    : getMessage(locale, "billing4.pres.continueRefresh");
   const title = trialSpent
-    ? "You’ve used your trial allowance"
+    ? getMessage(locale, "billing4.pres.trialSpentTitle")
     : isTopTier
       ? resume
       : window === "weekly"
-        ? "You’ve hit this week’s limit"
-        : "You’ve hit today’s limit";
+        ? getMessage(locale, "billing4.pres.weekLimit")
+        : getMessage(locale, "billing4.pres.dayLimit");
+  const planLabel =
+    formatTierLabel(tier) ?? getMessage(locale, "billing4.pres.yourPlan");
+  const eyebrowStatus = trialSpent
+    ? getMessage(locale, "billing4.pres.trialUsed")
+    : getMessage(locale, "billing4.pres.usageReached", {
+        window: windowLabel.toLowerCase(),
+      });
   return {
-    eyebrow: `${formatTierLabel(tier) ?? "Your plan"} · ${trialSpent ? "Trial allowance used" : `${windowLabel.toLowerCase()} usage reached`}`,
+    eyebrow: getMessage(locale, "billing4.pres.eyebrow", {
+      plan: planLabel,
+      status: eyebrowStatus,
+    }),
     title,
     noticeTitle: title,
     description: trialSpent
       ? experience.freshProUsage
-        ? formatTrialStartDescription(experience.trialEndsAt)
-        : "Choose your next plan to continue. Your chats, workflows and results are saved."
+        ? formatTrialStartDescription(experience.trialEndsAt, locale)
+        : getMessage(locale, "billing4.pres.nextPlan")
       : isTopTier
-        ? "Your chats, workflows and results are saved."
+        ? getMessage(locale, "billing4.pres.saved")
         : !experience.resetsAt
-          ? "Choose a plan to continue. Your chats, workflows and results are saved."
+          ? getMessage(locale, "billing4.pres.choosePlanSaved")
           : tier === "PRO"
-            ? `${resume}, or upgrade to Max for ${usageMultiplier ? `${usageMultiplier} times the usage` : "more usage"}.`
-            : `${resume}, or ${tier === "BASIC" ? "upgrade to Pro" : "start Pro"}.`,
+            ? getMessage(locale, "billing4.pres.proUpgrade", {
+                resume,
+                usage: usageMultiplier
+                  ? getMessage(locale, "billing4.pres.timesUsage", {
+                      multiplier: usageMultiplier,
+                    })
+                  : getMessage(locale, "billing4.pres.moreUsage"),
+              })
+            : tier === "BASIC"
+              ? getMessage(locale, "billing4.pres.basicUpgrade", { resume })
+              : getMessage(locale, "billing4.pres.startPro", { resume }),
     supportLabel:
       tier === "ENTERPRISE"
-        ? "Contact your account team"
+        ? getMessage(locale, "billing4.pres.contactAccountTeam")
         : tier === "BUSINESS"
-          ? "Contact support"
-          : "Contact us",
+          ? getMessage(locale, "billing4.pres.contactSupport")
+          : getMessage(locale, "billing4.pres.contactUs"),
     secondary: trialSpent
       ? experience.freshProUsage && trialDate
-        ? `Wait until ${trialDate}`
-        : "Back to my work"
+        ? getMessage(locale, "billing4.pres.waitUntil", { date: trialDate })
+        : getMessage(locale, "billing4.pres.backToWork")
       : experience.resetsAt
-        ? "Wait for reset"
-        : "Back to my work",
+        ? getMessage(locale, "billing4.pres.waitForReset")
+        : getMessage(locale, "billing4.pres.backToWork"),
     trialSpent,
   };
 }

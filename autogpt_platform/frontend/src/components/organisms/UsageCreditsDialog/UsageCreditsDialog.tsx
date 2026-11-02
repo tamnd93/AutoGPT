@@ -6,6 +6,7 @@ import { Text } from "@/components/atoms/Text/Text";
 import { Dialog } from "@/components/molecules/Dialog/Dialog";
 import { ArrowRight01Icon } from "@hugeicons/core-free-icons";
 import { useUsageCreditsDialog } from "./useUsageCreditsDialog";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   isOpen: boolean;
@@ -19,9 +20,11 @@ export function UsageCreditsDialog({
   onOpenChange,
   showBillingLink = true,
 }: Props) {
+  const t = useT();
+
   return (
     <Dialog
-      title="How usage and credits work"
+      title={t("billing4.dialog.title")}
       variant="compact"
       controlled={{ isOpen, set: onOpenChange }}
       className="max-w-xl"
@@ -41,7 +44,7 @@ export function UsageCreditsDialog({
                 }
                 onClick={() => onOpenChange(false)}
               >
-                Go to billing settings
+                {t("billing4.dialog.billingSettings")}
               </Button>
             </div>
           )}

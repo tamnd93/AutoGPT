@@ -6,12 +6,14 @@ import { useAuthStore } from "@/lib/auth/hooks/useAuthStore";
 import { refreshActivation } from "./refreshActivation";
 import { safeReturnTo } from "./helpers";
 import { storeConsent } from "./storage";
+import { useT } from "@/lib/i18n";
 
 export function useActivationReadiness(
   userID: string | undefined,
   setOpen: (open: boolean) => void,
   setError: (error: string) => void,
 ) {
+  const t = useT();
   const client = useQueryClient();
   const router = useRouter();
   const [readyPlan, setReadyPlan] = useState<"PRO" | "MAX" | null>(null);
@@ -53,9 +55,7 @@ export function useActivationReadiness(
       finishing.current = false;
       if (useAuthStore.getState().user?.id === userID) {
         setOpen(true);
-        setError(
-          "Your payment is confirmed. We’re refreshing your plan and usage before you continue.",
-        );
+        setError(t("billing4.activation.refreshing"));
       }
     } finally {
       finishing.current = false;

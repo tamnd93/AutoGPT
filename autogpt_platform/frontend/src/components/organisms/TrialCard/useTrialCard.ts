@@ -9,10 +9,13 @@ import { getTrialChargeAmount } from "./helpers";
 import { useTrialCancellation } from "./useTrialCancellation";
 import { useTrialFailure } from "./useTrialFailure";
 import { useTrialOfferViewed } from "./useTrialOfferViewed";
+import { useT } from "@/lib/i18n";
 
 const CHECKOUT_FAILED = "Unable to start trial checkout.";
 
 export function useTrialCard(returnTo: "onboarding" | "billing") {
+  const t = useT();
+  const checkoutFailed = t("billing4.trial.checkoutFailed");
   const userID = useAuthStore((state) => state.user?.id);
   const query = useTrialStatus();
   const failure = useTrialFailure(userID);
@@ -38,7 +41,7 @@ export function useTrialCard(returnTo: "onboarding" | "billing") {
         data: { offer_token: offer.token, return_to: returnTo },
       });
       if (useAuthStore.getState().user?.id !== userID) return;
-      if (response.status !== 200) throw new Error(CHECKOUT_FAILED);
+      if (response.status !== 200) throw new Error(checkoutFailed);
       markTrialCheckoutStarted(returnTo);
       await trackAdsConversionBeforeNavigation("begin_checkout", {
         value: getTrialChargeAmount(offer),
@@ -47,7 +50,7 @@ export function useTrialCard(returnTo: "onboarding" | "billing") {
       window.location.assign(response.data.url);
       checkoutRedirect.markRedirecting();
     } catch (error) {
-      failure.reportFailure({ userID, error, fallback: CHECKOUT_FAILED });
+      failure.reportFailure({ userID, error, fallback: checkoutFailed });
       await query.refetch();
     } finally {
       setIsCheckingOut(false);
