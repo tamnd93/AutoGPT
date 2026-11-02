@@ -9,6 +9,7 @@ import type { WorkspaceFolder } from "@/app/api/__generated__/models/workspaceFo
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { Skeleton } from "@/components/atoms/Skeleton/Skeleton";
 import { Text } from "@/components/atoms/Text/Text";
+import { useT } from "@/lib/i18n";
 import { isKey } from "@/lib/keyboard";
 import { cn } from "@/lib/utils";
 import {
@@ -40,11 +41,16 @@ export function WorkspaceFolderRows({
   onOpen,
   onToggleAttach,
 }: Props) {
+  const t = useT();
   if (isLoading) return <Skeleton className="h-14 w-full rounded-2xl" />;
   if (folders.length === 0) return null;
 
   return (
-    <ul role="list" aria-label="Folders" className="flex flex-col gap-2">
+    <ul
+      role="list"
+      aria-label={t("chatInput2.workspaceFolders.listAria")}
+      className="flex flex-col gap-2"
+    >
       {folders.map((folder) => {
         const isSelected = selectedIds.has(folder.id);
         const subfolderCount = subfolderCountOf(allFolders, folder.id);
@@ -61,7 +67,9 @@ export function WorkspaceFolderRows({
           >
             <button
               type="button"
-              aria-label={`Open ${folder.name}`}
+              aria-label={t("chatInput2.workspaceFolders.openAria", {
+                name: folder.name,
+              })}
               onClick={() => onOpen(folder.id)}
               onKeyDown={(e) => {
                 if (!isKey(e, "Enter", " ")) return;
@@ -99,7 +107,9 @@ export function WorkspaceFolderRows({
             <button
               type="button"
               aria-pressed={isSelected}
-              aria-label={`Attach folder ${folder.name}`}
+              aria-label={t("chatInput2.workspaceFolders.attachAria", {
+                name: folder.name,
+              })}
               onClick={(e) => {
                 e.stopPropagation();
                 onToggleAttach(folder, subfolderCount);
@@ -114,7 +124,7 @@ export function WorkspaceFolderRows({
                   : "text-foreground-tertiary hover:bg-surface-hover hover:text-foreground-body",
               )}
             >
-              Attach
+              {t("chatInput2.workspaceFolders.attach")}
               <Icon
                 icon={isSelected ? CheckmarkCircle02Icon : Circle}
                 className="h-4 w-4"

@@ -3,7 +3,8 @@ import {
   type UsageBudget,
 } from "@/services/usageExperience/budget";
 import { useT } from "@/lib/i18n";
-import { SEND_AT_RESET_PLACEHOLDER } from "../SendAtReset/helpers";
+import { useLocale } from "@/lib/i18n";
+import { sendAtResetPlaceholder } from "../SendAtReset/helpers";
 import { useScheduledSendHandoff } from "../SendAtReset/scheduledSendHandoff";
 import { useHandedOffSend } from "../SendAtReset/useHandedOffSend";
 import { useScheduledSend } from "../SendAtReset/useScheduledSend";
@@ -32,6 +33,7 @@ export function useComposerBudget({
   inputId,
 }: Args) {
   const t = useT();
+  const locale = useLocale();
   const isPlatformChat = spendsPlatformBudget(authProvider);
   const canWaitForReset =
     isLimitReached &&
@@ -54,7 +56,7 @@ export function useComposerBudget({
     atReset: canWaitForReset
       ? { onSchedule: sessionId ? scheduled.schedule : scheduleInNewChat }
       : undefined,
-    placeholder: canWaitForReset ? SEND_AT_RESET_PLACEHOLDER : undefined,
+    placeholder: canWaitForReset ? sendAtResetPlaceholder(locale) : undefined,
     showLowHint: isPlatformChat && !isLimitReached && budget?.state === "low",
     scheduled,
   };

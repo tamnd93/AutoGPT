@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/atoms/Button/Button";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import {
   Alert02Icon,
@@ -32,6 +33,8 @@ export function TranscriptionErrorBar({
   onDismiss,
   className,
 }: Props) {
+  const t = useT();
+
   return (
     <div
       role="alert"
@@ -51,7 +54,7 @@ export function TranscriptionErrorBar({
         disabled={isRetrying}
         onClick={onRetry}
       >
-        Retry
+        {t("chatInput2.transcriptionError.retry")}
       </Button>
       <Button
         type="button"
@@ -60,13 +63,13 @@ export function TranscriptionErrorBar({
         leadingIcon={Download04Icon}
         onClick={onDownload}
       >
-        Download recording
+        {t("chatInput2.transcriptionError.download")}
       </Button>
       <Button
         type="button"
         variant="icon"
         size="icon-xs"
-        aria-label="Dismiss"
+        aria-label={t("chatInput2.transcriptionError.dismiss")}
         onClick={onDismiss}
       >
         <Icon icon={Cancel01Icon} className="h-3.5 w-3.5" />

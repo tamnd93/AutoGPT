@@ -1,6 +1,12 @@
 import type { WorkspaceFileItem } from "@/app/api/__generated__/models/workspaceFileItem";
 import { describe, expect, it } from "vitest";
-import { applySelection, orderByList, type Selection } from "../helpers";
+import {
+  addLabel,
+  applySelection,
+  emptyMessage,
+  orderByList,
+  type Selection,
+} from "../helpers";
 
 const FILES = makeFiles(6);
 
@@ -93,6 +99,29 @@ describe("applySelection", () => {
     const anchored = applySelection(empty(), FILES, 1);
 
     expect(applySelection(anchored, FILES, 99)).toBe(anchored);
+  });
+});
+
+describe("dialog copy in Vietnamese", () => {
+  it("names what the Add button will attach", () => {
+    expect(addLabel(1, 0, "vi")).toBe("Thêm 1 tệp");
+    expect(addLabel(2, 1, "vi")).toBe("Thêm 2 tệp và 1 thư mục");
+    expect(addLabel(0, 1, "vi")).toBe("Thêm 1 thư mục");
+  });
+
+  it("keeps the English Add label by default", () => {
+    expect(addLabel(2, 1)).toBe("Add 2 files and 1 folder");
+    expect(addLabel(0, 0)).toBe("Add");
+  });
+
+  it("explains an empty listing in Vietnamese", () => {
+    expect(emptyMessage({ isSearching: true }, "vi")).toBe(
+      "Không có tệp phù hợp.",
+    );
+    expect(emptyMessage({ isInFolder: true }, "vi")).toBe("Thư mục này trống.");
+    expect(emptyMessage({}, "vi")).toBe(
+      "Chưa có tệp nào trong không gian làm việc của bạn.",
+    );
   });
 });
 

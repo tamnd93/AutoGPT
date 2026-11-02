@@ -21,6 +21,7 @@ import {
   budgetResetSentence,
   type ResetWait,
 } from "@/services/usageExperience/budget";
+import { useT } from "@/lib/i18n";
 import { useRouter } from "next/navigation";
 import type { ComponentProps } from "react";
 import { ResetWaitBox } from "./components/ResetWaitBox";
@@ -69,6 +70,7 @@ export function RateLimitResetDialog({
   onSendAtReset,
   isSchedulingAtReset,
 }: Props) {
+  const t = useT();
   const router = useRouter();
   const model =
     experience ??
@@ -91,12 +93,12 @@ export function RateLimitResetDialog({
   const payment = formatPaymentDue(model.payment);
   const fallbackTitle =
     failureWindow === "trial"
-      ? "You’ve used your trial allowance"
+      ? t("chatInput2.rateLimit.trialTitle")
       : failureWindow === "weekly"
-        ? "You’ve hit this week’s limit"
+        ? t("chatInput2.rateLimit.weeklyTitle")
         : failureWindow === "daily"
-          ? "You’ve hit today’s limit"
-          : "We couldn’t check your usage.";
+          ? t("chatInput2.rateLimit.dailyTitle")
+          : t("chatInput2.rateLimit.unavailableTitle");
   function upgrade() {
     if (onUpgrade) onUpgrade();
     else {
@@ -114,9 +116,9 @@ export function RateLimitResetDialog({
             className="mb-2 !text-xs !text-foreground-tertiary"
           >
             {checking
-              ? "Checking your allowance"
+              ? t("chatInput2.rateLimit.checkingEyebrow")
               : unavailable
-                ? "Usage temporarily unavailable"
+                ? t("chatInput2.rateLimit.unavailableEyebrow")
                 : copy.eyebrow}
           </Text>
           <Text
@@ -126,7 +128,7 @@ export function RateLimitResetDialog({
             className="!text-[26px] !leading-8"
           >
             {checking
-              ? "One moment. Your work is saved."
+              ? t("chatInput2.rateLimit.checkingTitle")
               : unavailable
                 ? fallbackTitle
                 : (waitTitle ?? copy.title)}
@@ -148,7 +150,7 @@ export function RateLimitResetDialog({
             role="status"
             className="!text-sm !text-foreground-tertiary"
           >
-            Refreshing your plan and usage…
+            {t("chatInput2.rateLimit.refreshing")}
           </Text>
         ) : unavailable ? (
           <div className="space-y-5">
@@ -156,10 +158,11 @@ export function RateLimitResetDialog({
               variant="body"
               className="!text-sm !leading-6 !text-foreground-tertiary"
             >
-              Your work is saved. Try again to check your allowance before
-              continuing.
+              {t("chatInput2.rateLimit.savedTryAgain")}
             </Text>
-            <Button onClick={onRetry}>Try again</Button>
+            <Button onClick={onRetry}>
+              {t("chatInput2.rateLimit.tryAgain")}
+            </Button>
           </div>
         ) : (
           <>
@@ -172,9 +175,9 @@ export function RateLimitResetDialog({
             {copy.trialSpent && (
               <div className="mb-5">
                 <UsageMeter
-                  label="Trial allowance"
+                  label={t("chatInput2.rateLimit.trialMeter")}
                   percent={model.trialPercent ?? 100}
-                  detail="One allowance for your trial. It doesn’t refresh."
+                  detail={t("chatInput2.rateLimit.trialMeterDetail")}
                 />
               </div>
             )}
@@ -202,18 +205,20 @@ export function RateLimitResetDialog({
                 />
               ) : (
                 <Button className="w-full" onClick={upgrade}>
-                  Review billing details
+                  {t("chatInput2.rateLimit.reviewBilling")}
                 </Button>
               ))}
             {isBillingEnabled && model.isTopTier && (
               <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border-base p-4">
                 <div>
-                  <Text variant="small-medium">Need more capacity?</Text>
+                  <Text variant="small-medium">
+                    {t("chatInput2.rateLimit.needCapacity")}
+                  </Text>
                   <Text
                     variant="small"
                     className="mt-1 !text-foreground-tertiary"
                   >
-                    We’ll help find the right fit.
+                    {t("chatInput2.rateLimit.capacityHelp")}
                   </Text>
                 </div>
                 <Button
@@ -236,7 +241,9 @@ export function RateLimitResetDialog({
           />
         )}
         <Button variant="ghost" className="mt-3 w-full" onClick={onClose}>
-          {checking || unavailable ? "Back to my work" : copy.secondary}
+          {checking || unavailable
+            ? t("chatInput2.rateLimit.backToWork")
+            : copy.secondary}
         </Button>
       </Dialog.Content>
     </Dialog>

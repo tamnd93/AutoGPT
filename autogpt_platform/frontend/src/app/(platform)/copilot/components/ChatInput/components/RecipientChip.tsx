@@ -7,6 +7,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/molecules/DropdownMenu/DropdownMenu";
 import { Skeleton } from "@/components/atoms/Skeleton/Skeleton";
+import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { ArrowDown01Icon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
@@ -39,11 +40,12 @@ export function RecipientChip({
   onSelect,
   isLoading,
 }: Props) {
+  const t = useT();
   if (isLoading) {
     return (
       <div
         role="status"
-        aria-label="Loading recipient"
+        aria-label={t("chatInput2.recipient.loadingAria")}
         className={CHIP_CLASSNAME}
       >
         <Skeleton className="h-6 w-6 rounded-full" />
@@ -57,7 +59,9 @@ export function RecipientChip({
       <DropdownMenuTrigger asChild>
         <button
           type="button"
-          aria-label={`Sending to ${recipient.name} — change recipient`}
+          aria-label={t("chatInput2.recipient.changeAria", {
+            name: recipient.name,
+          })}
           className={cn(
             CHIP_CLASSNAME,
             "group transition-colors hover:bg-background",

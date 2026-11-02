@@ -190,6 +190,20 @@ describe("formatResetHint", () => {
     expect(formatResetHint(Math.floor(Date.now() / 1000) - 60)).toBeNull();
   });
 
+  it("says the wait in Vietnamese", () => {
+    const now = Math.floor(Date.now() / 1000);
+    expect(formatResetHint(now + 30, "vi")).toBe("Còn dưới một phút nữa.");
+    expect(formatResetHint(now + 20 * 60, "vi")).toBe(
+      "Còn khoảng 20 phút nữa.",
+    );
+    expect(formatResetHint(now + 60 * 60, "vi")).toBe(
+      "Còn khoảng một giờ nữa.",
+    );
+    expect(formatResetHint(now + 3 * 60 * 60, "vi")).toBe(
+      "Còn khoảng 3 giờ nữa.",
+    );
+  });
+
   it("rounds to something a person would say", () => {
     const now = Math.floor(Date.now() / 1000);
     expect(formatResetHint(now + 30)).toBe("It resets in under a minute.");

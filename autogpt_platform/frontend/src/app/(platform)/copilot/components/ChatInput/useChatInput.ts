@@ -1,5 +1,6 @@
 import { useCopilotUIStore } from "@/app/(platform)/copilot/store";
 import { isTouchDevice } from "@/lib/platform";
+import { useT } from "@/lib/i18n";
 import { toastSendFailure } from "../../helpers/sendFailureToast";
 import { isFocusInOtherOverlay } from "./helpers";
 import { useChatDraft } from "./useChatDraft";
@@ -34,8 +35,9 @@ export function useChatInput({
   inputId = "chat-input",
   draftKey,
   autoFocus = true,
-  failureTitle = "Couldn't send message",
+  failureTitle,
 }: Args) {
+  const t = useT();
   const [value, setValue] = useChatDraft(draftKey);
   const [isSending, setIsSending] = useState(false);
   const [isEnqueueing, setIsEnqueueing] = useState(false);
@@ -114,9 +116,9 @@ export function useChatInput({
           title:
             typeof failureTitle === "function"
               ? failureTitle(error)
-              : failureTitle,
+              : (failureTitle ?? t("chatInput2.send.failedTitle")),
           error,
-          recovery: "your message is back in the composer",
+          recovery: t("chatInput2.send.failedRecovery"),
         });
       })
       .finally(() => {
@@ -145,9 +147,9 @@ export function useChatInput({
       .catch((error) => {
         setValue((current) => restoreFailedDraft(current, message));
         toastSendFailure({
-          title: "Couldn't send message",
+          title: t("chatInput2.send.failedTitle"),
           error,
-          recovery: "your message is back in the composer",
+          recovery: t("chatInput2.send.failedRecovery"),
         });
       })
       .finally(() => {

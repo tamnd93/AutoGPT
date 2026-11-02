@@ -1,5 +1,7 @@
 import type { AIConnectionOffer } from "@/app/api/__generated__/models/aIConnectionOffer";
 import type { ChangeSessionConnectionRequestLlmAuthProvider } from "@/app/api/__generated__/models/changeSessionConnectionRequestLlmAuthProvider";
+import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/locale";
+import { getMessage } from "@/lib/i18n/translate";
 
 import type { ProviderFailure } from "../../providerFailure";
 
@@ -65,15 +67,22 @@ function isTheOneThatFailed(
  * Only when the provider actually reported a reset time. An invented one is
  * worse than silence, because people plan around it.
  */
-export function formatResetHint(resetsAt: number | null): string | null {
+export function formatResetHint(
+  resetsAt: number | null,
+  locale: Locale = DEFAULT_LOCALE,
+): string | null {
   if (resetsAt === null) return null;
   const seconds = resetsAt - Math.floor(Date.now() / 1000);
   if (seconds <= 0) return null;
-  if (seconds < 90) return "It resets in under a minute.";
+  if (seconds < 90)
+    return getMessage(locale, "chatInput2.providerLimit.resetUnderMinute");
   const minutes = Math.round(seconds / 60);
-  if (minutes < 60) return `It resets in about ${minutes} minutes.`;
+  if (minutes < 60)
+    return getMessage(locale, "chatInput2.providerLimit.resetMinutes", {
+      minutes,
+    });
   const hours = Math.round(minutes / 60);
   return hours === 1
-    ? "It resets in about an hour."
-    : `It resets in about ${hours} hours.`;
+    ? getMessage(locale, "chatInput2.providerLimit.resetHour")
+    : getMessage(locale, "chatInput2.providerLimit.resetHours", { hours });
 }

@@ -5,7 +5,7 @@ import {
   holdsMessage,
   isJoinedSendTooLong,
   returnToDraft,
-  SCHEDULE_FAILED_TITLE,
+  scheduleFailedTitle,
   scheduledSendLabel,
   sendAtResetFailureTitle,
   SentNowError,
@@ -86,7 +86,7 @@ describe("sendAtResetFailureTitle", () => {
 
   it("calls anything else a failed schedule", () => {
     expect(sendAtResetFailureTitle(new Error("409"))).toBe(
-      SCHEDULE_FAILED_TITLE,
+      scheduleFailedTitle(),
     );
   });
 });

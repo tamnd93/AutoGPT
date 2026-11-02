@@ -10,7 +10,7 @@ import {
   InputGroup,
   InputGroupAddon,
 } from "@/components/molecules/InputGroup/InputGroup";
-import { useT } from "@/lib/i18n";
+import { useLocale, useT } from "@/lib/i18n";
 import { containsLikelySecret } from "@/lib/secret-detection";
 import { cn } from "@/lib/utils";
 import { Flag, useGetFlag } from "@/services/feature-flags/use-get-flag";
@@ -55,10 +55,7 @@ import { WorkspaceFilePicker } from "./components/WorkspaceFilePicker/WorkspaceF
 import { useCopilotUIStore } from "../../store";
 import { isTokenDevtoolEnabled } from "../../tokenDevtool/gate";
 import { TokenDevtoolDialog } from "../TokenDevtoolBadge/TokenDevtoolDialog";
-import {
-  sendAtResetFailureTitle,
-  SEND_AT_RESET_LABEL,
-} from "../SendAtReset/helpers";
+import { sendAtResetFailureTitle } from "../SendAtReset/helpers";
 import {
   CARD_ICON_BUTTON_CLASS,
   CARD_SEND_BUTTON_CLASS,
@@ -182,6 +179,7 @@ export const ChatInput = memo(function ChatInput({
   atReset,
 }: Props) {
   const t = useT();
+  const locale = useLocale();
   const isDryRun = useCopilotUIStore((s) => s.isDryRun);
   const setIsDryRun = useCopilotUIStore((s) => s.setIsDryRun);
   // Still the CHAT_MODE_OPTION flag, which no longer names what it gates: the
@@ -287,7 +285,9 @@ export const ChatInput = memo(function ChatInput({
       inputId,
       draftKey,
       autoFocus,
-      failureTitle: atReset ? sendAtResetFailureTitle : undefined,
+      failureTitle: atReset
+        ? (error: unknown) => sendAtResetFailureTitle(error, locale)
+        : undefined,
     });
 
   const integrations = useConnectedIntegrations(expertId);
@@ -654,10 +654,10 @@ export const ChatInput = memo(function ChatInput({
             ) : atReset ? (
               <PromptInputSubmit
                 disabled={!canSend}
-                aria-label={SEND_AT_RESET_LABEL}
+                aria-label={t("chatInput2.sendAtReset.label")}
                 className={cn(sendButtonClass, "!w-auto px-4 font-medium")}
               >
-                {SEND_AT_RESET_LABEL}
+                {t("chatInput2.sendAtReset.label")}
               </PromptInputSubmit>
             ) : hideSubmitWhenEmpty && !canSend ? null : (
               <PromptInputSubmit

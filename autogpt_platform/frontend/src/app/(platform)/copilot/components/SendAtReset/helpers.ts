@@ -1,14 +1,23 @@
 import type { AtResetTurn } from "@/app/api/__generated__/models/atResetTurn";
 import { ApiError } from "@/lib/autogpt-server-api/helpers";
+import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/locale";
+import { getMessage } from "@/lib/i18n/translate";
 import {
   formatResetClock,
   formatWeekday,
 } from "@/services/usageExperience/budget";
 
-export const SEND_AT_RESET_LABEL = "Send at reset";
-export const SCHEDULE_FAILED_TITLE = "Couldn’t schedule your message";
-export const SEND_AT_RESET_PLACEHOLDER =
-  "Write now, and it sends when your budget resets…";
+export function sendAtResetLabel(locale: Locale = DEFAULT_LOCALE) {
+  return getMessage(locale, "chatInput2.sendAtReset.label");
+}
+
+export function scheduleFailedTitle(locale: Locale = DEFAULT_LOCALE) {
+  return getMessage(locale, "chatInput2.sendAtReset.failedTitle");
+}
+
+export function sendAtResetPlaceholder(locale: Locale = DEFAULT_LOCALE) {
+  return getMessage(locale, "chatInput2.sendAtReset.placeholder");
+}
 /** How long after a page sends a message to be set the request may still
  *  land: the server can take seconds over it, and keeps going after a reload
  *  drops the page. */
@@ -24,10 +33,13 @@ export class SentNowError extends Error {
 }
 
 /** What the toast calls a failed Send at reset: a send, if it went out now. */
-export function sendAtResetFailureTitle(error: unknown): string {
+export function sendAtResetFailureTitle(
+  error: unknown,
+  locale: Locale = DEFAULT_LOCALE,
+): string {
   return error instanceof SentNowError
-    ? "Couldn't send message"
-    : SCHEDULE_FAILED_TITLE;
+    ? getMessage(locale, "chatInput2.sendAtReset.sentNowFailed")
+    : scheduleFailedTitle(locale);
 }
 
 /** The input id of an open chat's composer. */
@@ -57,12 +69,19 @@ export function isJoinedSendTooLong(error: unknown) {
   );
 }
 
-export function scheduledSendLabel(runAt: Date | string, now = new Date()) {
+export function scheduledSendLabel(
+  runAt: Date | string,
+  now = new Date(),
+  locale: Locale = DEFAULT_LOCALE,
+) {
   const date = new Date(runAt);
   const clock = formatResetClock(date);
   return date.toDateString() === now.toDateString()
-    ? `Sends at ${clock}`
-    : `Sends ${formatWeekday(date)} at ${clock}`;
+    ? getMessage(locale, "chatInput2.sendAtReset.sendsAt", { clock })
+    : getMessage(locale, "chatInput2.sendAtReset.sendsWeekdayAt", {
+        weekday: formatWeekday(date),
+        clock,
+      });
 }
 
 /** Puts a message back in front of whatever the composer holds now, keeping

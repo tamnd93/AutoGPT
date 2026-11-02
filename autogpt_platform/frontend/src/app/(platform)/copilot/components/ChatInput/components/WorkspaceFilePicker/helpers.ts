@@ -1,4 +1,6 @@
 import type { WorkspaceFileItem } from "@/app/api/__generated__/models/workspaceFileItem";
+import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/locale";
+import { getMessage } from "@/lib/i18n/translate";
 
 export type SelectionModifiers = { shift?: boolean; meta?: boolean };
 
@@ -83,4 +85,73 @@ function toggleOne(
     next.set(file.id, file);
   }
   return next;
+}
+
+export function addLabel(
+  files: number,
+  folders: number,
+  locale: Locale = DEFAULT_LOCALE,
+): string {
+  const parts: string[] = [];
+  if (files > 0) {
+    parts.push(
+      getMessage(
+        locale,
+        files === 1
+          ? "chatInput2.workspacePicker.fileOne"
+          : "chatInput2.workspacePicker.fileMany",
+        { count: files },
+      ),
+    );
+  }
+  if (folders > 0) {
+    parts.push(
+      getMessage(
+        locale,
+        folders === 1
+          ? "chatInput2.workspacePicker.folderOne"
+          : "chatInput2.workspacePicker.folderMany",
+        { count: folders },
+      ),
+    );
+  }
+  if (parts.length === 0)
+    return getMessage(locale, "chatInput2.workspacePicker.add");
+  const items =
+    parts.length === 1
+      ? parts[0]
+      : getMessage(locale, "chatInput2.workspacePicker.addJoin", {
+          first: parts[0],
+          second: parts[1],
+        });
+  return getMessage(locale, "chatInput2.workspacePicker.addPrefix", { items });
+}
+
+export interface EmptyMessageOptions {
+  isExpertOnly?: boolean;
+  who?: string;
+  isSearching?: boolean;
+  isInFolder?: boolean;
+  hasFolderRows?: boolean;
+}
+
+export function emptyMessage(
+  opts: EmptyMessageOptions,
+  locale: Locale = DEFAULT_LOCALE,
+): string {
+  const copy = (key: string, values?: Record<string, string | number>) =>
+    getMessage(locale, key, values);
+  if (opts.isExpertOnly) {
+    return opts.isSearching
+      ? copy("chatInput2.workspacePicker.emptyExpertSearch", {
+          who: opts.who ?? "",
+        })
+      : copy("chatInput2.workspacePicker.emptyExpert", { who: opts.who ?? "" });
+  }
+  if (opts.isSearching) return copy("chatInput2.workspacePicker.emptySearch");
+  if (opts.isInFolder)
+    return opts.hasFolderRows
+      ? copy("chatInput2.workspacePicker.emptyFolderFiles")
+      : copy("chatInput2.workspacePicker.emptyFolder");
+  return copy("chatInput2.workspacePicker.emptyWorkspace");
 }

@@ -11,6 +11,7 @@ import {
 import type { AtResetTurn } from "@/app/api/__generated__/models/atResetTurn";
 import { toast } from "@/components/molecules/Toast/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
+import { useLocale, useT } from "@/lib/i18n";
 import { toastSendFailure } from "../../helpers/sendFailureToast";
 import { describeSendFailure } from "../ChatInput/helpers";
 import { useChatDraftAccess } from "../ChatInput/useChatDraft";
@@ -19,8 +20,8 @@ import {
   isJoinedSendTooLong,
   readHolds,
   returnToDraft,
-  SCHEDULE_FAILED_TITLE,
   SEND_SETTLE_MS,
+  scheduleFailedTitle,
   sendAtResetFailureTitle,
   SentNowError,
   sessionDraftKey,
@@ -51,6 +52,8 @@ function findSend(jobs: AtResetTurn[]) {
 }
 
 export function useScheduledSend({ sessionId, onSendNow, inputId }: Args) {
+  const t = useT();
+  const locale = useLocale();
   const queryClient = useQueryClient();
   const { jobs, writeJobs } = useAtResetJobs(sessionId);
   const draft = useChatDraftAccess(
@@ -93,8 +96,11 @@ export function useScheduledSend({ sessionId, onSendNow, inputId }: Args) {
 
   function toastChangeFailure(error: unknown) {
     toast({
-      title: "Couldn’t change your scheduled message",
-      description: describeSendFailure(error, "it still sends at the reset"),
+      title: t("chatInput2.sendAtReset.changeFailed"),
+      description: describeSendFailure(
+        error,
+        t("chatInput2.sendAtReset.stillSends"),
+      ),
       variant: "destructive",
     });
   }
@@ -102,7 +108,7 @@ export function useScheduledSend({ sessionId, onSendNow, inputId }: Args) {
   /** `onAnswered` hears as soon as the server answers, before a send it
    *  says to make now instead streams its reply. */
   async function schedule(message: string, onAnswered?: () => void) {
-    if (!sessionId) throw new Error("This chat isn’t ready yet");
+    if (!sessionId) throw new Error(t("chatInput2.sendAtReset.chatNotReady"));
     // A chat sends one message at the reset; the server adds this one to
     // any already waiting and answers with the joined message.
     try {
@@ -116,7 +122,7 @@ export function useScheduledSend({ sessionId, onSendNow, inputId }: Args) {
       await writeJobs((all) => [...all.filter((j) => j.kind !== "send"), job]);
     } catch (error) {
       if (isJoinedSendTooLong(error)) {
-        throw new Error("Too long to add to the message already waiting");
+        throw new Error(t("chatInput2.sendAtReset.tooLongJoined"));
       }
       const refusal = atResetRefusal(error);
       if (!refusal) throw error;
@@ -132,8 +138,8 @@ export function useScheduledSend({ sessionId, onSendNow, inputId }: Args) {
       }
       throw new Error(
         refusal === "no_reset"
-          ? "Your budget doesn’t reset on its own"
-          : "Your budget is already back",
+          ? t("chatInput2.sendAtReset.noAutoReset")
+          : t("chatInput2.sendAtReset.budgetBack"),
       );
     }
   }
@@ -146,9 +152,9 @@ export function useScheduledSend({ sessionId, onSendNow, inputId }: Args) {
     } catch (error) {
       draft.write((current) => returnToDraft(current, message));
       toastSendFailure({
-        title: sendAtResetFailureTitle(error),
+        title: sendAtResetFailureTitle(error, locale),
         error,
-        recovery: "your message is back in the composer",
+        recovery: t("chatInput2.sendAtReset.recoveryComposer"),
       });
     }
   }
@@ -176,7 +182,7 @@ export function useScheduledSend({ sessionId, onSendNow, inputId }: Args) {
     }
     // Nor with a copy that can predate a message this page added meanwhile.
     if (read.canHaveMissedAChange) {
-      toastChangeFailure(new Error("It changed just now"));
+      toastChangeFailure(new Error(t("chatInput2.sendAtReset.changedJustNow")));
       return;
     }
     const { send } = read;
@@ -217,11 +223,13 @@ export function useScheduledSend({ sessionId, onSendNow, inputId }: Args) {
     const unread = "error" in read;
     toastSendFailure({
       title: unread
-        ? "Couldn’t check your scheduled message"
-        : SCHEDULE_FAILED_TITLE,
+        ? t("chatInput2.sendAtReset.checkFailedTitle")
+        : scheduleFailedTitle(locale),
       // Sent again, a message the server may hold would be joined on twice.
-      error: unread ? new Error("It may already be set to send") : undefined,
-      recovery: "your message is back in the composer",
+      error: unread
+        ? new Error(t("chatInput2.sendAtReset.mayAlreadySend"))
+        : undefined,
+      recovery: t("chatInput2.sendAtReset.recoveryComposer"),
     });
   }
 

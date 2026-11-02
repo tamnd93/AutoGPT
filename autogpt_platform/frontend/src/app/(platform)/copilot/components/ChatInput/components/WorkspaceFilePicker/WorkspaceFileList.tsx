@@ -11,6 +11,7 @@ import { Button } from "@/components/atoms/Button/Button";
 import { Skeleton } from "@/components/atoms/Skeleton/Skeleton";
 import { Text } from "@/components/atoms/Text/Text";
 import { ErrorCard } from "@/components/molecules/ErrorCard/ErrorCard";
+import { useT } from "@/lib/i18n";
 import { isKey } from "@/lib/keyboard";
 import { cn } from "@/lib/utils";
 import type { SelectionModifiers } from "./helpers";
@@ -52,6 +53,7 @@ export function WorkspaceFileList({
   emptyMessage,
   emptyAction,
 }: Props) {
+  const t = useT();
   const scrollRef = useRef<HTMLDivElement | null>(null);
   // Show the top/bottom scroll-fade only when there's content hidden in that
   // direction — no fade when pinned to the very top or bottom.
@@ -84,7 +86,10 @@ export function WorkspaceFileList({
     return (
       <ErrorCard
         responseError={{
-          message: error instanceof Error ? error.message : "Failed to load",
+          message:
+            error instanceof Error
+              ? error.message
+              : t("chatInput2.workspaceFiles.loadFailed"),
         }}
         context="workspace files"
       />
@@ -183,7 +188,7 @@ export function WorkspaceFileList({
               onClick={onLoadMore}
               loading={isLoadingMore}
             >
-              Load more
+              {t("chatInput2.workspaceFiles.loadMore")}
             </Button>
           </div>
         )}

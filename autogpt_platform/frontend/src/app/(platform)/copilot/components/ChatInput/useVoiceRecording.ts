@@ -1,6 +1,7 @@
 import { useToast } from "@/components/molecules/Toast/use-toast";
 import { useStableCallback } from "@/hooks/useStableCallback";
 import { isKey } from "@/lib/keyboard";
+import { useT } from "@/lib/i18n";
 import { isMicrophonePermissionDenied } from "@/lib/microphone";
 import { isTouchDevice } from "@/lib/platform";
 import React, { KeyboardEvent, useEffect, useRef, useState } from "react";
@@ -23,6 +24,7 @@ export function useVoiceRecording({
   inputId,
   isStreaming = false,
 }: Args) {
+  const t = useT();
   const [isRecording, setIsRecording] = useState(false);
   const [isTranscribing, setIsTranscribing] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -114,7 +116,9 @@ export function useVoiceRecording({
 
       if (!response.ok) {
         const data = await response.json().catch(() => ({}));
-        throw new Error(data.error || "Transcription failed");
+        throw new Error(
+          data.error || t("chatInput2.voice.transcriptionFailed"),
+        );
       }
 
       const data = await response.json();
@@ -136,7 +140,7 @@ export function useVoiceRecording({
         const message =
           err instanceof Error && err.message
             ? err.message
-            : "Transcription failed";
+            : t("chatInput2.voice.transcriptionFailed");
         setTranscriptionError(message);
         setFailedRecording(audioBlob);
       })
@@ -235,9 +239,9 @@ export function useVoiceRecording({
     } catch (err) {
       console.error("Failed to start recording:", err);
       if (isMicrophonePermissionDenied(err)) {
-        setError("Microphone permission denied");
+        setError(t("chatInput2.voice.permissionDenied"));
       } else {
-        setError("Failed to access microphone");
+        setError(t("chatInput2.voice.micFailed"));
       }
       cleanup();
     }
@@ -256,12 +260,12 @@ export function useVoiceRecording({
   useEffect(() => {
     if (error) {
       toast({
-        title: "Voice recording failed",
+        title: t("chatInput2.voice.failedTitle"),
         description: error,
         variant: "destructive",
       });
     }
-  }, [error, toast]);
+  }, [error, toast, t]);
 
   // Not on a phone: there focus opens the keyboard over the thread.
   useEffect(() => {

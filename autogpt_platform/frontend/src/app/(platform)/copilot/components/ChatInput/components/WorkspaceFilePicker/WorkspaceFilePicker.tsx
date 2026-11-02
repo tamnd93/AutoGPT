@@ -6,10 +6,12 @@ import { Input } from "@/components/atoms/Input/Input";
 import { Switch } from "@/components/atoms/Switch/Switch";
 import { Text } from "@/components/atoms/Text/Text";
 import { Dialog } from "@/components/molecules/Dialog/Dialog";
+import { useLocale, useT } from "@/lib/i18n";
 import {
   useWorkspaceFilePicker,
   type PickedItem,
 } from "./useWorkspaceFilePicker";
+import { addLabel, emptyMessage } from "./helpers";
 import { WorkspaceFileList } from "./WorkspaceFileList";
 import { WorkspaceFolderRows } from "./WorkspaceFolderRows";
 import { Search01Icon } from "@hugeicons/core-free-icons";
@@ -31,6 +33,8 @@ export function WorkspaceFilePicker({
   expertId,
   expertName,
 }: Props) {
+  const t = useT();
+  const locale = useLocale();
   const picker = useWorkspaceFilePicker({ enabled: isOpen, expertId });
 
   function handleOpenChange(open: boolean) {
@@ -46,12 +50,12 @@ export function WorkspaceFilePicker({
     onClose();
   }
 
-  const who = expertName ?? "this expert";
+  const who = expertName ?? t("chatInput2.workspacePicker.thisExpert");
   const { selectedFileCount: files, selectedFolderCount: folders } = picker;
 
   return (
     <Dialog
-      title="Use a file from your workspace"
+      title={t("chatInput2.workspacePicker.dialogTitle")}
       styling={{ maxWidth: "48rem" }}
       controlled={{ isOpen, set: handleOpenChange }}
     >
@@ -65,13 +69,13 @@ export function WorkspaceFilePicker({
               className="absolute left-4 top-1/2 z-20 -translate-y-1/2 text-foreground-tertiary"
             />
             <Input
-              label="Search workspace files"
+              label={t("chatInput2.workspacePicker.searchLabel")}
               id="workspace-file-picker-search"
               hideLabel
               type="text"
               value={picker.searchTerm}
               onChange={(e) => picker.setSearchTerm(e.target.value)}
-              placeholder="Search files"
+              placeholder={t("chatInput2.workspacePicker.searchPlaceholder")}
               className="w-full pl-12"
               wrapperClassName="!mb-0"
             />
@@ -91,14 +95,14 @@ export function WorkspaceFilePicker({
                     as="span"
                     className="text-foreground-body"
                   >
-                    Only {who}&rsquo;s files
+                    {t("chatInput2.workspacePicker.onlyWho", { who })}
                   </Text>
                 </label>
               </div>
               <Text variant="small" className="text-foreground-tertiary">
                 {picker.expertOnly
-                  ? `From your chats with ${who}`
-                  : "Plus your own files and folders"}
+                  ? t("chatInput2.workspacePicker.fromChats", { who })
+                  : t("chatInput2.workspacePicker.plusOwn")}
               </Text>
             </div>
           ) : null}
@@ -132,13 +136,16 @@ export function WorkspaceFilePicker({
             hasMore={picker.hasMore}
             isLoadingMore={picker.isLoadingMore}
             onLoadMore={picker.loadMore}
-            emptyMessage={emptyMessage({
-              isExpertOnly: !!expertId && picker.expertOnly,
-              who,
-              isSearching: picker.searchTerm.trim().length > 0,
-              isInFolder: picker.folderId !== null,
-              hasFolderRows: picker.folderRows.length > 0,
-            })}
+            emptyMessage={emptyMessage(
+              {
+                isExpertOnly: !!expertId && picker.expertOnly,
+                who,
+                isSearching: picker.searchTerm.trim().length > 0,
+                isInFolder: picker.folderId !== null,
+                hasFolderRows: picker.folderRows.length > 0,
+              },
+              locale,
+            )}
             emptyAction={
               expertId && picker.expertOnly ? (
                 <Button
@@ -147,7 +154,7 @@ export function WorkspaceFilePicker({
                   size="small"
                   onClick={() => picker.setExpertOnly(false)}
                 >
-                  Show your own files too
+                  {t("chatInput2.workspacePicker.widen")}
                 </Button>
               ) : null
             }
@@ -161,7 +168,7 @@ export function WorkspaceFilePicker({
             size="small"
             onClick={() => handleOpenChange(false)}
           >
-            Cancel
+            {t("chatInput2.workspacePicker.cancel")}
           </Button>
           <Button
             type="button"
@@ -170,37 +177,10 @@ export function WorkspaceFilePicker({
             disabled={files + folders === 0}
             onClick={handleConfirm}
           >
-            {addLabel(files, folders)}
+            {addLabel(files, folders, locale)}
           </Button>
         </Dialog.Footer>
       </Dialog.Content>
     </Dialog>
   );
-}
-
-function addLabel(files: number, folders: number): string {
-  const parts: string[] = [];
-  if (files > 0) parts.push(`${files} ${files === 1 ? "file" : "files"}`);
-  if (folders > 0)
-    parts.push(`${folders} ${folders === 1 ? "folder" : "folders"}`);
-  return parts.length > 0 ? `Add ${parts.join(" and ")}` : "Add";
-}
-
-function emptyMessage(opts: {
-  isExpertOnly: boolean;
-  who: string;
-  isSearching: boolean;
-  isInFolder: boolean;
-  hasFolderRows: boolean;
-}): string {
-  if (opts.isExpertOnly)
-    return opts.isSearching
-      ? `No matching files from ${opts.who}.`
-      : `No files from ${opts.who} yet.`;
-  if (opts.isSearching) return "No matching files.";
-  if (opts.isInFolder)
-    return opts.hasFolderRows
-      ? "No files directly in this folder."
-      : "This folder is empty.";
-  return "No files in your workspace yet.";
 }

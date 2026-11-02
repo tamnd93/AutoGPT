@@ -11,6 +11,7 @@ import {
 } from "@/app/api/__generated__/endpoints/chat/chat";
 import type { AIConnectionOffer } from "@/app/api/__generated__/models/aIConnectionOffer";
 import { toast } from "@/components/molecules/Toast/use-toast";
+import { useLocale, useT } from "@/lib/i18n";
 
 import type { ProviderFailure } from "../../providerFailure";
 import { alternativeConnection, formatResetHint } from "./helpers";
@@ -29,6 +30,8 @@ export function useProviderLimitDialog({
   onDismiss,
   eligible,
 }: Args) {
+  const t = useT();
+  const locale = useLocale();
   const queryClient = useQueryClient();
 
   const connectionsQuery = useGetV2ListChatConnections({
@@ -75,9 +78,8 @@ export function useProviderLimitDialog({
         onError: () => {
           toast({
             variant: "destructive",
-            title: "Could not switch connection",
-            description:
-              "This chat is still on the connection it was. Try again, or pick one in Settings.",
+            title: t("chatInput2.providerLimit.switchFailedTitle"),
+            description: t("chatInput2.providerLimit.switchFailedBody"),
           });
         },
       },
@@ -102,7 +104,7 @@ export function useProviderLimitDialog({
 
   // Relative to the clock, so read on every render rather than cached.
   const resetHint = useReadEveryRender(() =>
-    formatResetHint(failure?.resetsAt ?? null),
+    formatResetHint(failure?.resetsAt ?? null, locale),
   );
 
   return {

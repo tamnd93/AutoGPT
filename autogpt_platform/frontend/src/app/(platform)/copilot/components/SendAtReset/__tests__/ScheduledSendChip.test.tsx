@@ -1,4 +1,5 @@
 import { act, render, screen } from "@/tests/integrations/test-utils";
+import { LocaleProvider } from "@/lib/i18n";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { ScheduledSendChip } from "../ScheduledSendChip";
 
@@ -24,10 +25,31 @@ afterEach(() => {
 });
 
 describe("ScheduledSendChip", () => {
+  it("reads the chip in Vietnamese", () => {
+    render(
+      <LocaleProvider locale="vi">
+        {chip(new Date(2026, 9, 12, 1, 7))}
+      </LocaleProvider>,
+    );
+    expect(screen.getByLabelText("Tin nhắn đã lên lịch")).toBeDefined();
+    expect(screen.getByRole("button", { name: "Sửa" })).toBeDefined();
+    expect(screen.getByRole("button", { name: "Huỷ" })).toBeDefined();
+    expect(screen.getByText(/^Gửi lúc /)).toBeDefined();
+  });
+
   it("offers Edit and Cancel until the send is due", () => {
     render(chip(new Date(2026, 9, 12, 1, 7)));
     expect(screen.getByText("Sends at 1:07 AM")).toBeDefined();
     expect(screen.getByRole("button", { name: "Edit" })).toBeDefined();
+  });
+
+  it("says a due send is going in Vietnamese", () => {
+    render(
+      <LocaleProvider locale="vi">
+        {chip(new Date(2026, 9, 12, 0, 59))}
+      </LocaleProvider>,
+    );
+    expect(screen.getByText("Đang gửi…")).toBeDefined();
   });
 
   it("shows it going, with no Edit, once it is due", () => {

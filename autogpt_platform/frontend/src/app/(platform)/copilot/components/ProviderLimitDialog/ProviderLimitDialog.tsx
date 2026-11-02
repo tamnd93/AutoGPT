@@ -3,6 +3,7 @@
 import { Button } from "@/components/atoms/Button/Button";
 import { Text } from "@/components/atoms/Text/Text";
 import { Dialog } from "@/components/molecules/Dialog/Dialog";
+import { useT } from "@/lib/i18n";
 
 import type { ProviderFailure } from "../../providerFailure";
 import { useProviderLimitDialog } from "./useProviderLimitDialog";
@@ -27,6 +28,7 @@ interface Props {
  * because people plan around it.
  */
 export function ProviderLimitDialog({ failure, sessionId, onDismiss }: Props) {
+  const t = useT();
   const {
     alternative,
     continueHere,
@@ -39,7 +41,7 @@ export function ProviderLimitDialog({ failure, sessionId, onDismiss }: Props) {
 
   return (
     <Dialog
-      title="You've hit this connection's limit"
+      title={t("chatInput2.providerLimit.title")}
       styling={{ maxWidth: "30rem", minWidth: "auto" }}
       controlled={{
         isOpen: Boolean(failure),
@@ -51,45 +53,47 @@ export function ProviderLimitDialog({ failure, sessionId, onDismiss }: Props) {
       <Dialog.Content>
         <Text variant="body" className="text-foreground-secondary">
           {failure?.message?.trim() ||
-            "The connection this chat runs on stopped accepting turns."}
+            t("chatInput2.providerLimit.fallbackBody")}
           {resetHint ? ` ${resetHint}` : ""}
         </Text>
 
         {isLoadingOffers ? (
           <Text variant="small" className="mt-3 !text-foreground-tertiary">
-            Checking what else this chat can run on&hellip;
+            {t("chatInput2.providerLimit.checking")}
           </Text>
         ) : failedToLoadOffers ? (
           <>
             <Text variant="small" className="mt-3 !text-foreground-tertiary">
-              We couldn&apos;t check your other connections just now.
+              {t("chatInput2.providerLimit.checkFailed")}
             </Text>
             <Dialog.Footer>
               <Button variant="secondary" onClick={onDismiss}>
-                Close
+                {t("chatInput2.providerLimit.close")}
               </Button>
               <Button variant="primary" onClick={retryOffers}>
-                Try again
+                {t("chatInput2.providerLimit.tryAgain")}
               </Button>
             </Dialog.Footer>
           </>
         ) : alternative ? (
           <>
             <Text variant="small" className="mt-3 !text-foreground-tertiary">
-              Continuing moves the rest of this chat to{" "}
-              {alternative.display_name}. Everything already said stays as it
-              is, on the connection it ran on.
+              {t("chatInput2.providerLimit.continueBody", {
+                name: alternative.display_name,
+              })}
             </Text>
             <Dialog.Footer>
               <Button variant="secondary" onClick={onDismiss}>
-                Wait for it to reset
+                {t("chatInput2.providerLimit.wait")}
               </Button>
               <Button
                 variant="primary"
                 onClick={continueHere}
                 loading={isSwitching}
               >
-                Continue on {alternative.display_name}
+                {t("chatInput2.providerLimit.continueOn", {
+                  name: alternative.display_name,
+                })}
               </Button>
             </Dialog.Footer>
           </>
@@ -98,12 +102,11 @@ export function ProviderLimitDialog({ failure, sessionId, onDismiss }: Props) {
             {/* Nothing to offer: saying so is better than a button that
                 cannot do anything. */}
             <Text variant="small" className="mt-3 !text-foreground-tertiary">
-              There is no other connection set up to continue on. You can add
-              one in Settings, or wait for this one to reset.
+              {t("chatInput2.providerLimit.noAlternative")}
             </Text>
             <Dialog.Footer>
               <Button variant="primary" onClick={onDismiss}>
-                Close
+                {t("chatInput2.providerLimit.close")}
               </Button>
             </Dialog.Footer>
           </>

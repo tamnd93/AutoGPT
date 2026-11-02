@@ -5,6 +5,7 @@ import { Alert02Icon } from "@hugeicons/core-free-icons";
 
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { AttentionCard } from "@/components/organisms/AttentionCard/AttentionCard";
+import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
 interface Props {
@@ -24,6 +25,8 @@ export function SecretPasteNotice({
   assistantName,
   className,
 }: Props) {
+  const t = useT();
+
   return (
     <div
       role="status"
@@ -38,18 +41,16 @@ export function SecretPasteNotice({
             </AttentionCard.Icon>
             <AttentionCard.Content asChild>
               <span>
-                This looks like an API key or other secret. Anything you send
-                here is saved in the chat. To let {assistantName} use a key, add
-                it under{" "}
+                {t("chatInput2.secret.before", { assistant: assistantName })}{" "}
                 <Link
                   href="/settings/integrations"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="font-medium underline underline-offset-2"
                 >
-                  Integrations
-                </Link>{" "}
-                instead.
+                  {t("chatInput2.secret.link")}
+                </Link>
+                {t("chatInput2.secret.after")}
               </span>
             </AttentionCard.Content>
           </AttentionCard.Row>

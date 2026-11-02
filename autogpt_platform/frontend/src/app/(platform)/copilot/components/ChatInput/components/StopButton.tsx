@@ -5,6 +5,7 @@ import {
   TooltipTrigger,
   TooltipPortal,
 } from "@/components/atoms/Tooltip/BaseTooltip";
+import { useT } from "@/lib/i18n";
 import { useEffect, useState } from "react";
 
 // Stop takes Send's place under the finger that just used it; a stray second
@@ -17,6 +18,7 @@ interface Props {
 }
 
 export function StopButton({ onStop, className }: Props) {
+  const t = useT();
   const [isArmed, setIsArmed] = useState(false);
 
   useEffect(() => {
@@ -35,7 +37,9 @@ export function StopButton({ onStop, className }: Props) {
         />
       </TooltipTrigger>
       <TooltipPortal>
-        <TooltipContent side="top">Stop</TooltipContent>
+        <TooltipContent side="top">
+          {t("chatInput2.stop.tooltip")}
+        </TooltipContent>
       </TooltipPortal>
     </Tooltip>
   );

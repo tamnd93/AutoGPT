@@ -5,6 +5,7 @@ import {
   waitFor,
 } from "@/tests/integrations/test-utils";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { LocaleProvider } from "@/lib/i18n";
 import { WorkspaceFilePicker } from "../WorkspaceFilePicker";
 
 const mockListWorkspaceFiles = vi.fn();
@@ -30,6 +31,34 @@ afterEach(() => {
 });
 
 describe("WorkspaceFilePicker", () => {
+  it("reads the picker in Vietnamese", async () => {
+    mockListWorkspaceFiles.mockResolvedValue({
+      status: 200,
+      data: { files: [], has_more: false },
+    });
+
+    render(
+      <LocaleProvider locale="vi">
+        <WorkspaceFilePicker
+          isOpen={true}
+          onClose={vi.fn()}
+          onConfirm={vi.fn()}
+        />
+      </LocaleProvider>,
+    );
+
+    expect(
+      await screen.findByText("Dùng một tệp từ không gian làm việc của bạn"),
+    ).toBeDefined();
+    expect(screen.getByPlaceholderText("Tìm tệp")).toBeDefined();
+    expect(screen.getByRole("button", { name: "Huỷ" })).toBeDefined();
+    expect(
+      await screen.findByText(
+        "Chưa có tệp nào trong không gian làm việc của bạn.",
+      ),
+    ).toBeDefined();
+  });
+
   it("scopes the listing to the expert the chat is addressed to", async () => {
     mockListWorkspaceFiles.mockResolvedValue({
       status: 200,

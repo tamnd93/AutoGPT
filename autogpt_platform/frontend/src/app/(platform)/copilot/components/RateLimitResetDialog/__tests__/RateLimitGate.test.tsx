@@ -6,6 +6,7 @@ import {
   act,
 } from "@/tests/integrations/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { LocaleProvider } from "@/lib/i18n";
 import { getUsageExperience } from "@/services/usageExperience/helpers";
 const actions = vi.hoisted(() => ({ use: vi.fn() }));
 const provider = vi.hoisted(() => ({ use: vi.fn() }));
@@ -88,6 +89,16 @@ describe("RateLimitGate", () => {
     ).toBeDefined();
     expect(onRefreshingChange).toHaveBeenLastCalledWith(false);
   });
+  it("reads the checking state in Vietnamese", () => {
+    retry.mockReturnValueOnce(new Promise<void>(() => {}));
+    render(
+      <LocaleProvider locale="vi">
+        <RateLimitGate rateLimitMessage="limit" onDismiss={vi.fn()} />
+      </LocaleProvider>,
+    );
+    expect(screen.getByText("Đang làm mới gói và mức dùng…")).toBeDefined();
+  });
+
   it("does not show the dialog without a backend refusal", () => {
     render(<RateLimitGate rateLimitMessage={null} onDismiss={vi.fn()} />);
     expect(screen.queryByRole("dialog")).toBeNull();

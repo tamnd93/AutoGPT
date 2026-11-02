@@ -5,7 +5,7 @@ import { HomeRecap } from "@/app/(platform)/home/components/HomeRecap/HomeRecap"
 import { tourTarget } from "@/lib/tour-targets";
 import { useFirstRunTourAutoStart } from "@/app/(platform)/components/FirstRunTour/useFirstRunTourAutoStart";
 import { useAuth } from "@/lib/auth/hooks/useAuth";
-import { useT } from "@/lib/i18n";
+import { useLocale, useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import type { ComponentProps, ReactNode } from "react";
@@ -14,7 +14,7 @@ import { ConnectionPicker } from "../ChatInput/components/ConnectionPicker/Conne
 import { RecipientChip } from "../ChatInput/components/RecipientChip";
 import { OnboardingIntroCard } from "../OnboardingIntroCard/OnboardingIntroCard";
 import { useOnboardingIntroCard } from "../OnboardingIntroCard/useOnboardingIntroCard";
-import { SEND_AT_RESET_PLACEHOLDER } from "../SendAtReset/helpers";
+import { sendAtResetPlaceholder } from "../SendAtReset/helpers";
 import { SuggestedTasksBlock } from "../SuggestedTasks/SuggestedTasksBlock";
 import { useSuggestedTasks } from "../SuggestedTasks/useSuggestedTasks";
 import { EmptyHero } from "./components/EmptyHero";
@@ -77,6 +77,7 @@ export function EmptySession({
   lowHint,
 }: Props) {
   const t = useT();
+  const locale = useLocale();
   const { user } = useAuth();
   const greetingName = getGreetingName(user);
   const intro = useOnboardingIntroCard();
@@ -189,7 +190,7 @@ export function EmptySession({
                   isUploadingFiles={isUploadingFiles}
                   placeholder={
                     atReset
-                      ? SEND_AT_RESET_PLACEHOLDER
+                      ? sendAtResetPlaceholder(locale)
                       : selectedExpert
                         ? getExpertInputPlaceholder(selectedExpert.name, t)
                         : inputPlaceholder
