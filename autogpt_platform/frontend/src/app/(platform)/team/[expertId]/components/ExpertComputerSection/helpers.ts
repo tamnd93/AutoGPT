@@ -1,16 +1,23 @@
 import type { ComputerInfo } from "@/app/api/__generated__/models/computerInfo";
 import type { SandboxSummary } from "@/app/api/__generated__/models/sandboxSummary";
+import type { Locale } from "@/lib/i18n/locale";
+import { getMessage } from "@/lib/i18n/translate";
 
-export function formatSandboxState(summary: SandboxSummary | null | undefined) {
-  if (!summary) return "Not created yet";
+export function formatSandboxState(
+  summary: SandboxSummary | null | undefined,
+  locale: Locale = "en",
+) {
+  if (!summary) return getMessage(locale, "team2.computer.notCreated");
   if (summary.state === "running") {
     const since = new Date(summary.started_at);
-    return `Running since ${since.toLocaleTimeString([], {
-      hour: "numeric",
-      minute: "2-digit",
-    })}`;
+    return getMessage(locale, "team2.computer.runningSince", {
+      time: since.toLocaleTimeString(locale === "vi" ? "vi-VN" : [], {
+        hour: "numeric",
+        minute: "2-digit",
+      }),
+    });
   }
-  return "Suspended. Resumes in about a second when needed.";
+  return getMessage(locale, "team2.computer.suspendedResume");
 }
 
 export function formatResources(summary: SandboxSummary | null | undefined) {
@@ -25,31 +32,43 @@ export function formatResources(summary: SandboxSummary | null | undefined) {
 
 export function formatScreen(
   computer: Pick<ComputerInfo, "box" | "screen_on">,
+  locale: Locale = "en",
 ) {
-  if (!computer.box) {
-    return "Screen off. It comes on the first time a task needs a browser or GUI app.";
-  }
+  if (!computer.box) return getMessage(locale, "team2.computer.screenNoBox");
   return computer.screen_on
-    ? "Screen on. Open the desktop to watch or take over."
-    : "Screen off. Turning it on happens inside this same machine.";
+    ? getMessage(locale, "team2.computer.screenOn")
+    : getMessage(locale, "team2.computer.screenOff");
 }
 
 export function describeMount(
   path: string,
   computer: Pick<ComputerInfo, "workspace_path" | "shared_path" | "owner_kind">,
+  locale: Locale = "en",
 ) {
   if (path === computer.workspace_path) {
-    return computer.owner_kind === "expert"
-      ? "Its own home. Tools, notes and configs live here."
-      : "Your workspace.";
+    return getMessage(
+      locale,
+      computer.owner_kind === "expert"
+        ? "team2.computer.mountExpertHome"
+        : "team2.computer.mountYourWorkspace",
+    );
   }
   if (path === computer.shared_path) {
-    return "Your workspace, shared. Deliverables dropped here reach your desktop.";
+    return getMessage(locale, "team2.computer.mountShared");
   }
-  return "Mounted volume.";
+  return getMessage(locale, "team2.computer.mountGeneric");
 }
 
-export function desktopActionLabel(computer: ComputerInfo | null | undefined) {
-  if (!computer?.box || !computer.screen_on) return "Turn on screen";
-  return computer.box.state === "running" ? "Open desktop" : "Resume desktop";
+export function desktopActionLabel(
+  computer: ComputerInfo | null | undefined,
+  locale: Locale = "en",
+) {
+  if (!computer?.box || !computer.screen_on)
+    return getMessage(locale, "team2.computer.turnOnScreen");
+  return getMessage(
+    locale,
+    computer.box.state === "running"
+      ? "team2.computer.openDesktop"
+      : "team2.computer.resumeDesktop",
+  );
 }

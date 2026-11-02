@@ -10,6 +10,7 @@ import {
   isDesktopStream,
 } from "@/components/contextual/OutputRenderers/renderers/DesktopStreamRenderer";
 import { ErrorCard } from "@/components/molecules/ErrorCard/ErrorCard";
+import { useLocale, useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import {
   ComputerTerminalIcon,
@@ -34,6 +35,8 @@ interface Props {
 }
 
 export function ExpertComputerSection({ expertId, expertName }: Props) {
+  const t = useT();
+  const locale = useLocale();
   const { computer, isLoading, refetch, stream, openDesktop, isOpening } =
     useExpertComputerSection({ expertId });
 
@@ -52,8 +55,8 @@ export function ExpertComputerSection({ expertId, expertName }: Props) {
     return (
       <ErrorCard
         textSize="body-md"
-        context="this expert's computer"
-        hint="We could not load the sandbox status."
+        context={t("team2.computer.errorContext")}
+        hint={t("team2.computer.errorHint")}
         onRetry={() => refetch()}
       />
     );
@@ -64,21 +67,24 @@ export function ExpertComputerSection({ expertId, expertName }: Props) {
   const resources = formatResources(box);
   const mounts = Object.entries(computer.mounts ?? {});
 
-  const status = running ? "Running" : box ? "Suspended" : "None";
+  const status = running
+    ? t("team2.computer.statusRunning")
+    : box
+      ? t("team2.computer.statusSuspended")
+      : t("team2.computer.statusNone");
 
   return (
     <section className="space-y-4">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
-          <Text variant="large-medium">{`${expertName}'s computer`}</Text>
+          <Text variant="large-medium">
+            {t("team2.computer.title", { name: expertName })}
+          </Text>
           <Text
             variant="small"
             className="mt-1 max-w-prose !text-foreground-tertiary"
           >
-            One persistent cloud machine only {expertName} uses: the shell it
-            runs commands in and, when needed, its screen. It is suspended
-            between turns and costs nothing while suspended; installed tools and
-            files stay put.
+            {t("team2.computer.body", { name: expertName })}
           </Text>
         </div>
       </div>
@@ -86,7 +92,7 @@ export function ExpertComputerSection({ expertId, expertName }: Props) {
       {!computer.e2b_active ? (
         <div className="rounded-xl bg-warning-surface px-4 py-2.5 ring-1 ring-inset ring-warning-border">
           <Text variant="small" className="text-warning-foreground">
-            Cloud sandboxes are not configured on this deployment.
+            {t("team2.computer.sandboxesUnavailable")}
           </Text>
         </div>
       ) : null}
@@ -115,7 +121,7 @@ export function ExpertComputerSection({ expertId, expertName }: Props) {
                 disabled={!computer.e2b_active}
                 onClick={openDesktop}
               >
-                Reconnect desktop
+                {t("team2.computer.reconnectDesktop")}
               </Button>
             </div>
           </div>
@@ -157,7 +163,7 @@ export function ExpertComputerSection({ expertId, expertName }: Props) {
               variant="body-md"
               className="relative max-w-md !text-foreground-disabled"
             >
-              {formatScreen(computer)}
+              {formatScreen(computer, locale)}
             </Text>
             <Button
               variant="secondary"
@@ -167,29 +173,36 @@ export function ExpertComputerSection({ expertId, expertName }: Props) {
               disabled={!computer.e2b_active}
               onClick={openDesktop}
             >
-              {desktopActionLabel(computer)}
+              {desktopActionLabel(computer, locale)}
             </Button>
           </div>
         )}
       </div>
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-        <DetailTile icon={ComputerTerminalIcon} label="Machine">
+        <DetailTile
+          icon={ComputerTerminalIcon}
+          label={t("team2.computer.machineLabel")}
+        >
           {box
-            ? formatSandboxState(box)
-            : "Created on the first message that runs a command."}
+            ? formatSandboxState(box, locale)
+            : t("team2.computer.machineEmpty")}
         </DetailTile>
-        <DetailTile icon={CpuIcon} label="Resources">
+        <DetailTile icon={CpuIcon} label={t("team2.computer.resourcesLabel")}>
           {resources
-            ? `${resources}${box?.mounts_attached === false ? " · no volumes attached" : ""}`
-            : "Assigned when the machine is created."}
+            ? `${resources}${
+                box?.mounts_attached === false
+                  ? t("team2.computer.noVolumes")
+                  : ""
+              }`
+            : t("team2.computer.resourcesEmpty")}
         </DetailTile>
       </div>
 
       {mounts.length > 0 ? (
         <div className="rounded-2xl bg-surface p-4 smooth-shadow-ring-sm">
           <Text variant="small-medium" className="!text-foreground-body">
-            Volumes
+            {t("team2.computer.volumes")}
           </Text>
           <ul className="mt-2 divide-y divide-separator">
             {mounts.map(([path, name]) => (
@@ -202,7 +215,7 @@ export function ExpertComputerSection({ expertId, expertName }: Props) {
                     {path}
                   </Text>
                   <Text variant="small" className="!text-foreground-tertiary">
-                    {describeMount(path, computer)}{" "}
+                    {describeMount(path, computer, locale)}{" "}
                     <Text variant="small-mono-tight" as="span" tone="subtle">
                       {name}
                     </Text>
@@ -221,9 +234,7 @@ export function ExpertComputerSection({ expertId, expertName }: Props) {
           className="mt-0.5 shrink-0 text-foreground-tertiary"
         />
         <Text variant="small" className="!text-foreground-secondary">
-          {expertName} has full access to this machine, so anything signed in on
-          its desktop is visible to the AI. Do not sign into personal accounts
-          there.
+          {t("team2.computer.securityNote", { name: expertName })}
         </Text>
       </div>
     </section>

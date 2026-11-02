@@ -6,6 +6,7 @@ import {
 } from "@/app/api/__generated__/endpoints/experts/experts.msw";
 import type { ComputerInfo } from "@/app/api/__generated__/models/computerInfo";
 import { server } from "@/mocks/mock-server";
+import { LocaleProvider } from "@/lib/i18n";
 import { render, screen, waitFor } from "@/tests/integrations/test-utils";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
@@ -34,6 +35,22 @@ const computer: ComputerInfo = {
 };
 
 describe("ExpertComputerSection", () => {
+  it("reads the computer chrome in Vietnamese", async () => {
+    server.use(getGetV2GetExpertComputerMockHandler(computer));
+
+    render(
+      <LocaleProvider locale="vi">
+        <ExpertComputerSection expertId="expert-1" expertName="Maria" />
+      </LocaleProvider>,
+    );
+
+    expect(await screen.findByText("Máy tính của Maria")).toBeDefined();
+    expect(screen.getByText("Tạm dừng")).toBeDefined();
+    expect(
+      screen.getByRole("button", { name: "Bật màn hình" }),
+    ).toBeDefined();
+  });
+
   it("shows the expert's boxes and volumes without waking anything", async () => {
     server.use(getGetV2GetExpertComputerMockHandler(computer));
 

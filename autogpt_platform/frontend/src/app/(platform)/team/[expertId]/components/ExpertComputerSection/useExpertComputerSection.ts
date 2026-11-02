@@ -8,12 +8,14 @@ import { okData } from "@/app/api/helpers";
 import { useToast } from "@/components/molecules/Toast/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
+import { useT } from "@/lib/i18n";
 
 interface Args {
   expertId: string;
 }
 
 export function useExpertComputerSection({ expertId }: Args) {
+  const t = useT();
   const queryClient = useQueryClient();
   const { toast } = useToast();
   // Kept with the expert it was opened for: the section can be re-rendered
@@ -43,8 +45,8 @@ export function useExpertComputerSection({ expertId }: Args) {
         },
         onError: () => {
           toast({
-            title: "Could not open the desktop",
-            description: "The sandbox did not come up. Try again in a moment.",
+            title: t("team2.computer.openFailedTitle"),
+            description: t("team2.computer.openFailedBody"),
             variant: "destructive",
           });
         },
