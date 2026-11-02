@@ -1,5 +1,6 @@
 import { InformationCircleIcon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 
 type Props = {
   reason?: string;
@@ -7,6 +8,8 @@ type Props = {
 };
 
 export function SharedChatErrorState({ onRetry }: Props) {
+  const t = useT();
+
   return (
     <div className="flex h-full w-full flex-1 items-center justify-center">
       <div className="mx-auto w-full max-w-md p-6">
@@ -19,21 +22,22 @@ export function SharedChatErrorState({ onRetry }: Props) {
             />
           </div>
           <div className="space-y-2">
-            <h3 className="text-lg font-semibold">Share link not found</h3>
+            <h3 className="text-lg font-semibold">
+              {t("sharing1.shareError.title")}
+            </h3>
             <p className="text-sm text-foreground-tertiary">
-              This link is invalid or has been disabled by the owner. Ask the
-              person who shared it for an updated link.
+              {t("sharing1.shareError.body")}
             </p>
           </div>
           <button
             onClick={onRetry}
             className="text-sm text-foreground-body underline hover:text-foreground-strong"
           >
-            Try again
+            {t("sharing1.shareError.retry")}
           </button>
         </div>
         <p className="mt-8 text-center text-xs text-foreground-subtle">
-          Powered by AutoGPT Platform
+          {t("sharing1.shareError.poweredBy")}
         </p>
       </div>
     </div>

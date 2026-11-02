@@ -64,6 +64,7 @@ import { Schedule1En } from "./schedule-1.en";
 import { settingsRest1En } from "./settings-rest-1.en";
 import { settingsRest2En } from "./settings-rest-2.en";
 import { settingsRest3En } from "./settings-rest-3.en";
+import { Sharing1En } from "./sharing-1.en";
 import { Skills1En } from "./skills-1.en";
 import { team1En } from "./team-1.en";
 import { Team2En } from "./team-2.en";
@@ -143,6 +144,7 @@ export const en = {
   ...settingsRest1En,
   ...settingsRest2En,
   ...settingsRest3En,
+  ...Sharing1En,
   ...Skills1En,
   ...team1En,
   ...Team2En,

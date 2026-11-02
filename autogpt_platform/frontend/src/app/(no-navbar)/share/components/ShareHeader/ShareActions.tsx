@@ -6,6 +6,7 @@ import { toast } from "@/components/molecules/Toast/use-toast";
 import { useAuth } from "@/lib/auth/hooks/useAuth";
 import { Copy01Icon, Tick02Icon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 
 // Renders the right-slot CTAs on every ``/share/...`` viewer:
 //
@@ -20,6 +21,7 @@ import { Icon } from "@/components/atoms/Icon/Icon";
 // and chat) plug into the same header.  Keeping the CTAs in one
 // component means a future addition lands in one place.
 export function ShareActions() {
+  const t = useT();
   const { isLoggedIn, isUserLoading } = useAuth();
   const [copied, setCopied] = useState(false);
 
@@ -33,7 +35,7 @@ export function ShareActions() {
       setTimeout(() => setCopied(false), 2000);
     } catch {
       toast({
-        title: "Failed to copy link",
+        title: t("sharing1.actions.copyFailed"),
         variant: "destructive",
       });
     }
@@ -53,14 +55,16 @@ export function ShareActions() {
           )
         }
       >
-        {copied ? "Copied" : "Copy link"}
+        {copied
+          ? t("sharing1.actions.copied")
+          : t("sharing1.actions.copyLink")}
       </Button>
       {/* While the auth state is still loading we suppress the Sign up
           CTA — flickering it in then out on hydration looks broken to
           signed-in users opening their own share. */}
       {!isUserLoading && !isLoggedIn && (
         <Button size="small" variant="primary" as="NextLink" href="/signup">
-          Sign up
+          {t("sharing1.actions.signUp")}
         </Button>
       )}
     </>
