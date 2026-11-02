@@ -100,10 +100,9 @@ export function HeldCallDetail({ held, showArgs = true }: HeldCallDetailProps) {
     <div className="flex flex-col items-start gap-1 rounded-lg border border-border-base px-3 py-2 text-sm text-foreground-secondary">
       {held.state !== "approved" && (
         <p>
-          {t(
-            (held.read && READ_DETAIL[held.state]) || DETAIL[held.state]!,
-            { otto: AUTOPILOT_NAME },
-          )}
+          {t((held.read && READ_DETAIL[held.state]) || DETAIL[held.state]!, {
+            otto: AUTOPILOT_NAME,
+          })}
         </p>
       )}
       {card && (

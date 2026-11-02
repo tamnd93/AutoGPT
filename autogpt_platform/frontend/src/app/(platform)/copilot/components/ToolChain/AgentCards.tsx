@@ -252,10 +252,7 @@ export function SubSessionCard({
         )}
         {status && <StatusPill status={status} />}
         {link && (
-          <CardLink
-            href={link}
-            label={t("chatTools2.agent.openSubSession")}
-          />
+          <CardLink href={link} label={t("chatTools2.agent.openSubSession")} />
         )}
       </div>
       {!minimal && response && (

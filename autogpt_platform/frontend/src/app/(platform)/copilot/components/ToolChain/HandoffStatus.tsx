@@ -141,11 +141,7 @@ function HandoffSentence({ outcome, name, state }: SentenceProps) {
     case "failed":
       return <>{t("chatTools2.handoff.sentenceFailed", { name, task })}</>;
     case "unconfirmed":
-      return (
-        <>
-          {t("chatTools2.handoff.sentenceUnconfirmed", { name, task })}
-        </>
-      );
+      return <>{t("chatTools2.handoff.sentenceUnconfirmed", { name, task })}</>;
     // An idle thread holds a result, a question for the user or an error;
     // the poll can't tell which, so the line doesn't guess.
     case "stopped":
