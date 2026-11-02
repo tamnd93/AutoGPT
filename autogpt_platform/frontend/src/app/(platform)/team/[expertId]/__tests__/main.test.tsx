@@ -1510,6 +1510,21 @@ describe("ExpertDetailPage", () => {
     ).toBeDefined();
   });
 
+  test("reads the overview chrome in Vietnamese", async () => {
+    render(
+      <LocaleProvider locale="vi">
+        <ExpertDetailPage />
+      </LocaleProvider>,
+    );
+
+    expect(
+      await screen.findByText("Hội thoại gần đây"),
+    ).toBeDefined();
+    expect(screen.getByText("Kết quả mới nhất")).toBeDefined();
+    expect(screen.getByText("Hoạt động")).toBeDefined();
+    expect(screen.getAllByText("Hội thoại").length).toBeGreaterThan(0);
+  });
+
   test("hides the Needs you block when nothing is waiting on the user", async () => {
     render(<ExpertDetailPage />);
 

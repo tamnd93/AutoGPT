@@ -11,23 +11,28 @@ import {
 } from "recharts";
 import { Text } from "@/components/atoms/Text/Text";
 import { SERIES_COLORS, type ChartDay } from "../helpers";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   days: ChartDay[];
 }
 
-const SERIES = [
-  { key: "sessions", label: "Conversations" },
-  { key: "runs", label: "Workflow runs" },
-] as const;
-
 /** Conversations and workflow runs per day, stacked: both are counts on one
  *  scale, so one axis carries them. */
 export function ActivityChart({ days }: Props) {
+  const t = useT();
+  const series = [
+    { key: "sessions", label: t("team6.overview.conversations") },
+    { key: "runs", label: t("team6.overview.workflowRuns") },
+  ] as const;
+
   return (
     <div className="flex flex-col gap-3">
-      <ul className="flex items-center gap-4" aria-label="Legend">
-        {SERIES.map((series) => (
+      <ul
+        className="flex items-center gap-4"
+        aria-label={t("team6.chart.legend")}
+      >
+        {series.map((series) => (
           <li key={series.key} className="flex items-center gap-1.5">
             <span
               aria-hidden
@@ -106,6 +111,11 @@ interface TooltipProps {
 }
 
 function ChartTooltip({ active, payload }: TooltipProps) {
+  const t = useT();
+  const series = [
+    { key: "sessions", label: t("team6.overview.conversations") },
+    { key: "runs", label: t("team6.overview.workflowRuns") },
+  ] as const;
   const day = active ? payload?.[0]?.payload : null;
   if (!day) return null;
 
@@ -115,7 +125,7 @@ function ChartTooltip({ active, payload }: TooltipProps) {
       className="rounded-md bg-action-hover px-3 py-2 text-xs text-zinc-50 shadow-sm"
     >
       <p className="mb-1 font-medium">{day.label}</p>
-      {SERIES.map((series) => (
+      {series.map((series) => (
         <p key={series.key} className="flex items-center gap-1.5 tabular-nums">
           <span
             aria-hidden

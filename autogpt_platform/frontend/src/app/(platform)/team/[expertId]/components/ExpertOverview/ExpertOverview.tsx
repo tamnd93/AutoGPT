@@ -17,6 +17,7 @@ import { LatestOutputs } from "./components/LatestOutputs";
 import { OverviewCard } from "./components/OverviewCard";
 import { RecentConversations } from "./components/RecentConversations";
 import { StatTile } from "./components/StatTile";
+import { useLocale, useT } from "@/lib/i18n";
 import { formatDelta, getBioLead } from "./helpers";
 import { useExpertOverview } from "./useExpertOverview";
 
@@ -37,6 +38,8 @@ export function ExpertOverview({
   isActivityError,
   onChat,
 }: Props) {
+  const t = useT();
+  const locale = useLocale();
   const overview = useExpertOverview(expert.id, activity);
 
   return (
@@ -52,45 +55,49 @@ export function ExpertOverview({
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
         <StatTile
-          label="Conversations"
+          label={t("team6.overview.conversations")}
           icon={BubbleChatIcon}
           value={activity ? overview.conversations.current : null}
           detail={
             activity
-              ? formatDelta(overview.conversations.delta)
-              : "Last 30 days"
+              ? formatDelta(overview.conversations.delta, locale)
+              : t("team6.overview.last30")
           }
           isLoading={isActivityLoading}
         />
         <StatTile
-          label="Workflow runs"
+          label={t("team6.overview.workflowRuns")}
           icon={PlayIcon}
           value={activity ? overview.runs.current : null}
-          detail={activity ? formatDelta(overview.runs.delta) : "Last 30 days"}
+          detail={
+            activity
+              ? formatDelta(overview.runs.delta, locale)
+              : t("team6.overview.last30")
+          }
           isLoading={isActivityLoading}
         />
         <StatTile
-          label="Outputs"
+          label={t("team6.overview.outputs")}
           icon={File02Icon}
           value={overview.isOutputsError ? null : overview.outputCount}
           detail={
             overview.isOutputsError
-              ? "Unavailable"
+              ? t("team6.overview.unavailable")
               : overview.hasMoreOutputs
-                ? "Showing the latest 200"
-                : "All time"
+                ? t("team6.overview.showingLatest200")
+                : t("team6.overview.allTime")
           }
           isLoading={overview.isOutputsLoading}
         />
       </div>
 
       <div className="grid gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(280px,1fr)]">
-        <OverviewCard title="Last 30 days">
+        <OverviewCard title={t("team6.overview.last30")}>
           {isActivityLoading ? (
             <Skeleton className="h-56 w-full rounded-lg" />
           ) : isActivityError ? (
             <Text variant="small" tone="muted">
-              Couldn&apos;t load the last 30 days.
+              {t("team6.overview.chartError")}
             </Text>
           ) : overview.hasActivity ? (
             <ActivityChart days={overview.chartDays} />
@@ -120,8 +127,10 @@ export function ExpertOverview({
                   className="text-violet-500"
                 />,
               ]}
-              title="Nothing to chart yet"
-              description={`Once ${expert.name} starts chatting and running workflows, each day shows up here.`}
+              title={t("team6.overview.chartEmptyTitle")}
+              description={t("team6.overview.chartEmptyBody", {
+                name: expert.name,
+              })}
             />
           )}
         </OverviewCard>

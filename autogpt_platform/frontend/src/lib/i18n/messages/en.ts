@@ -69,6 +69,7 @@ import { Team2En } from "./team-2.en";
 import { team3En } from "./team-3.en";
 import { Team4En } from "./team-4.en";
 import { Team5En } from "./team-5.en";
+import { Team6En } from "./team-6.en";
 import { team8En } from "./team-8.en";
 import { Team9En } from "./team-9.en";
 import { voice1En } from "./voice-1.en";
@@ -145,6 +146,7 @@ export const en = {
   ...team3En,
   ...Team4En,
   ...Team5En,
+  ...Team6En,
   ...team8En,
   ...Team9En,
   ...voice1En,

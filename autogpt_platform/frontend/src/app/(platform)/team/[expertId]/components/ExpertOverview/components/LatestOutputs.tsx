@@ -12,6 +12,7 @@ import { Skeleton } from "@/components/atoms/Skeleton/Skeleton";
 import { ExpertFileRow } from "../../ExpertFilesSection/ExpertFileRow";
 import { CardError } from "./CardError";
 import { OverviewCard } from "./OverviewCard";
+import { useT } from "@/lib/i18n";
 
 const VISIBLE_OUTPUTS = 5;
 
@@ -30,15 +31,20 @@ export function LatestOutputs({
   isError,
   onRetry,
 }: Props) {
+  const t = useT();
+
   return (
-    <OverviewCard title="Latest outputs">
+    <OverviewCard title={t("team6.latest.title")}>
       {isLoading ? (
         <div className="flex flex-col gap-2">
           <Skeleton className="h-10 w-full rounded-lg" />
           <Skeleton className="h-10 w-full rounded-lg" />
         </div>
       ) : isError ? (
-        <CardError message="Couldn't load outputs." onRetry={onRetry} />
+        <CardError
+          message={t("team6.latest.error")}
+          onRetry={onRetry}
+        />
       ) : outputs.length === 0 ? (
         <PanelEmptyState
           textSize="body-md"
@@ -65,8 +71,8 @@ export function LatestOutputs({
               className="text-violet-500"
             />,
           ]}
-          title="No outputs yet"
-          description={`Documents and files ${expertName} creates show up here.`}
+          title={t("team6.latest.emptyTitle")}
+          description={t("team6.latest.emptyBody", { name: expertName })}
         />
       ) : (
         <ul className="-mx-2 flex flex-col">

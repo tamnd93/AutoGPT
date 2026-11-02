@@ -70,6 +70,7 @@ import { Team2Vi } from "./team-2.vi";
 import { team3Vi } from "./team-3.vi";
 import { Team4Vi } from "./team-4.vi";
 import { Team5Vi } from "./team-5.vi";
+import { Team6Vi } from "./team-6.vi";
 import { team8Vi } from "./team-8.vi";
 import { Team9Vi } from "./team-9.vi";
 import { voice1Vi } from "./voice-1.vi";
@@ -146,6 +147,7 @@ export const vi: Partial<Record<MessageKey, string>> = {
   ...team3Vi,
   ...Team4Vi,
   ...Team5Vi,
+  ...Team6Vi,
   ...team8Vi,
   ...Team9Vi,
   ...voice1Vi,

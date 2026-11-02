@@ -1,5 +1,7 @@
 import type { ExpertActivityDay } from "@/app/api/__generated__/models/expertActivityDay";
 import { format, parseISO } from "date-fns";
+import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/locale";
+import { getMessage } from "@/lib/i18n/translate";
 
 export const OVERVIEW_WINDOW_DAYS = 30;
 
@@ -60,9 +62,14 @@ export function getWindowStat(
   return { current, delta: current - previous };
 }
 
-export function formatDelta(delta: number): string {
-  if (delta === 0) return "Same as the 30 days before";
-  return `${delta > 0 ? "+" : "−"}${Math.abs(delta)} vs the 30 days before`;
+export function formatDelta(
+  delta: number,
+  locale: Locale = DEFAULT_LOCALE,
+): string {
+  if (delta === 0) return getMessage(locale, "team6.overview.deltaSame");
+  return getMessage(locale, "team6.overview.deltaVs", {
+    delta: `${delta > 0 ? "+" : "−"}${Math.abs(delta)}`,
+  });
 }
 
 /** The bio's opening sentences, whole: the overview leads with these instead

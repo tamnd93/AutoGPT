@@ -15,6 +15,7 @@ import { Skeleton } from "@/components/atoms/Skeleton/Skeleton";
 import { Text } from "@/components/atoms/Text/Text";
 import { CardError } from "./CardError";
 import { OverviewCard } from "./OverviewCard";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   expertName: string;
@@ -33,15 +34,20 @@ export function RecentConversations({
   onRetry,
   onChat,
 }: Props) {
+  const t = useT();
+
   return (
-    <OverviewCard title="Recent conversations">
+    <OverviewCard title={t("team6.recent.title")}>
       {isLoading ? (
         <div className="flex flex-col gap-2">
           <Skeleton className="h-10 w-full rounded-lg" />
           <Skeleton className="h-10 w-full rounded-lg" />
         </div>
       ) : isError ? (
-        <CardError message="Couldn't load conversations." onRetry={onRetry} />
+        <CardError
+          message={t("team6.recent.error")}
+          onRetry={onRetry}
+        />
       ) : sessions.length === 0 ? (
         <PanelEmptyState
           textSize="body-md"
@@ -67,8 +73,8 @@ export function RecentConversations({
               className="text-violet-500"
             />,
           ]}
-          title="No conversations yet"
-          description={`Ask ${expertName} for something and the chat shows up here.`}
+          title={t("team6.recent.emptyTitle")}
+          description={t("team6.recent.emptyBody", { name: expertName })}
         >
           <Button
             variant="primary"
@@ -77,7 +83,7 @@ export function RecentConversations({
             leadingIcon={BubbleChatIcon}
             onClick={onChat}
           >
-            Start a chat
+            {t("team6.recent.startChat")}
           </Button>
         </PanelEmptyState>
       ) : (
@@ -97,7 +103,7 @@ export function RecentConversations({
                     as="span"
                     className="truncate !text-foreground-strong"
                   >
-                    {session.title || "Untitled chat"}
+                    {session.title || t("team6.recent.untitledChat")}
                   </Text>
                   <Text
                     variant="small"
@@ -105,7 +111,7 @@ export function RecentConversations({
                     className="!text-foreground-tertiary"
                   >
                     {session.is_processing
-                      ? "Working now"
+                      ? t("team6.recent.workingNow")
                       : formatRelativeDate(session.updated_at)}
                   </Text>
                 </span>

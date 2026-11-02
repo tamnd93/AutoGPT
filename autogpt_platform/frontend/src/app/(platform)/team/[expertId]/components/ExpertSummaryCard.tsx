@@ -5,6 +5,7 @@ import { Text } from "@/components/atoms/Text/Text";
 import { cn } from "@/lib/utils";
 import { FireIcon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 import { ExpertActivityGraph } from "./ExpertActivityGraph/ExpertActivityGraph";
 import {
   getActivityStreak,
@@ -26,6 +27,7 @@ export function ExpertSummaryCard({
   isActivityLoading,
   isActivityError,
 }: Props) {
+  const t = useT();
   const activityDays = activity ? getYearActivityDays(activity.days) : null;
   const visibleActivityDays = activityDays
     ? getThreeMonthActivityDays(activityDays)
@@ -37,16 +39,16 @@ export function ExpertSummaryCard({
 
   return (
     <aside
-      aria-label={`${expert.name} at a glance`}
+      aria-label={t("team6.summary.glanceAria", { name: expert.name })}
       className="flex flex-col gap-4 self-start"
     >
       <section
-        aria-label={`${expert.name} activity`}
+        aria-label={t("team6.summary.activityAria", { name: expert.name })}
         className="flex flex-col gap-2 rounded-2xl bg-surface p-4 smooth-shadow-ring-sm"
       >
         <div className="flex items-center justify-between gap-2">
           <Text variant="body-md-medium" tone="primary">
-            Activity
+            {t("team6.summary.activity")}
           </Text>
           {summary ? <ActivityStatus isActive={summary.isActive} /> : null}
         </div>
@@ -54,7 +56,7 @@ export function ExpertSummaryCard({
           <Skeleton className="h-[5.25rem] w-full rounded-lg" />
         ) : isActivityError ? (
           <Text variant="small" tone="muted">
-            Activity unavailable
+            {t("team6.summary.activityUnavailable")}
           </Text>
         ) : visibleActivityDays && summary ? (
           <>
@@ -70,14 +72,16 @@ export function ExpertSummaryCard({
       </section>
 
       <section
-        aria-label={`${expert.name} activity streak`}
+        aria-label={t("team6.summary.streakAria", {
+          name: expert.name,
+        })}
         className="flex flex-col rounded-2xl bg-surface p-4 smooth-shadow-ring-sm"
       >
         {isActivityLoading ? (
           <Skeleton className="h-16 w-full rounded-lg" />
         ) : isActivityError ? (
           <Text variant="small" tone="muted">
-            Streak unavailable
+            {t("team6.summary.streakUnavailable")}
           </Text>
         ) : (
           <div className="flex items-center justify-center gap-3 text-center">
@@ -91,7 +95,7 @@ export function ExpertSummaryCard({
                 {streak ?? 0}
               </Text>
               <Text variant="body-md" tone="muted">
-                day streak
+                {t("team6.summary.dayStreak")}
               </Text>
             </div>
           </div>
@@ -106,6 +110,8 @@ interface ActivityStatusProps {
 }
 
 function ActivityStatus({ isActive }: ActivityStatusProps) {
+  const t = useT();
+
   return (
     <span className="flex items-center gap-1.5">
       <span
@@ -117,7 +123,9 @@ function ActivityStatus({ isActive }: ActivityStatusProps) {
         )}
       />
       <Text variant="small" tone="muted">
-        {isActive ? "Active this week" : "Quiet lately"}
+        {isActive
+          ? t("team6.summary.activeThisWeek")
+          : t("team6.summary.quietLately")}
       </Text>
     </span>
   );
