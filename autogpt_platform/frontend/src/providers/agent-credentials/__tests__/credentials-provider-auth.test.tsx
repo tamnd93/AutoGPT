@@ -3,8 +3,14 @@ import { act, render, screen, waitFor } from "@testing-library/react";
 import { useContext, type ReactNode } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const { apiMock, errorHandlerMock, isLoggedIn, onFailToastMock, useAuthMock } =
-  vi.hoisted(() => {
+const {
+  apiMock,
+  errorHandlerMock,
+  isLoggedIn,
+  onFailToastMock,
+  toastMock,
+  useAuthMock,
+} = vi.hoisted(() => {
     const errorHandler = vi.fn();
     return {
       apiMock: {
@@ -16,6 +22,7 @@ const { apiMock, errorHandlerMock, isLoggedIn, onFailToastMock, useAuthMock } =
       errorHandlerMock: errorHandler,
       isLoggedIn: { value: false },
       onFailToastMock: vi.fn(() => errorHandler),
+      toastMock: vi.fn(),
       useAuthMock: vi.fn(),
     };
   });
@@ -29,9 +36,11 @@ vi.mock("@/lib/autogpt-server-api/context", () => ({
 }));
 
 vi.mock("@/components/molecules/Toast/use-toast", () => ({
+  useToast: () => ({ toast: toastMock }),
   useToastOnFail: () => onFailToastMock,
 }));
 
+import { LocaleProvider } from "@/lib/i18n";
 import CredentialsProvider, {
   CredentialsActionsContext,
   CredentialsProvidersContext,
@@ -119,6 +128,28 @@ describe("CredentialsProvider authentication", () => {
     useAuthMock.mockImplementation(() => ({
       isLoggedIn: isLoggedIn.value,
     }));
+  });
+
+  it("reports a failed provider load in vietnamese", async () => {
+    isLoggedIn.value = true;
+    apiMock.listProviders.mockRejectedValueOnce(new Error("boom"));
+
+    render(
+      <LocaleProvider locale="vi">
+        <CredentialsProvider>
+          <span>app content</span>
+        </CredentialsProvider>
+      </LocaleProvider>,
+      { wrapper: TestWrapper },
+    );
+
+    await waitFor(() => {
+      expect(toastMock).toHaveBeenCalledWith(
+        expect.objectContaining({
+          title: "Không tải được tên nhà cung cấp",
+        }),
+      );
+    });
   });
 
   it("waits for authentication before loading protected provider metadata", async () => {

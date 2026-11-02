@@ -25,6 +25,7 @@ vi.mock("@/lib/autogpt-server-api/context", () => ({
 }));
 
 vi.mock("@/components/molecules/Toast/use-toast", () => ({
+  useToast: () => ({ toast: vi.fn() }),
   useToastOnFail: () => onFailToastMock,
 }));
 

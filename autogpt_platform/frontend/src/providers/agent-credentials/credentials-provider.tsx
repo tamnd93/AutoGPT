@@ -1,4 +1,10 @@
-import { useToastOnFail } from "@/components/molecules/Toast/use-toast";
+import {
+  useToast,
+  useToastOnFail,
+} from "@/components/molecules/Toast/use-toast";
+import { useLocale } from "@/lib/i18n";
+import type { MessageKey } from "@/lib/i18n/messages/en";
+import { getMessage } from "@/lib/i18n/translate";
 import type { CredentialsMetaResponse as GeneratedCredentialsMetaResponse } from "@/app/api/__generated__/models/credentialsMetaResponse";
 import {
   APIKeyCredentials,
@@ -166,6 +172,22 @@ export default function CredentialsProvider({
   const { isLoggedIn, isUserLoading } = useAuth();
   const api = useBackendAPI();
   const onFailToast = useToastOnFail();
+  const { toast } = useToast();
+  const locale = useLocale();
+
+  /** A vi failure names the whole toast; en keeps the existing action frame. */
+  function credentialsFailToast(actionKey: MessageKey, englishAction: string) {
+    if (locale !== "vi") return onFailToast(englishAction);
+    return (error: Error) => {
+      toast({
+        title: getMessage(locale, actionKey),
+        description:
+          error?.message ?? getMessage(locale, "credentials2.genericError"),
+        variant: "destructive",
+      });
+    };
+  }
+
   const queryClient = useQueryClient();
 
   // Held until a load returns them: the store can still be null when the upsert
@@ -232,7 +254,10 @@ export default function CredentialsProvider({
         upsertCredentials(provider, credsMeta);
         return credsMeta;
       } catch (error) {
-        onFailToast("complete OAuth authentication")(error);
+        credentialsFailToast(
+        "credentials2.failed.completeOAuth",
+        "complete OAuth authentication",
+      )(error);
         throw error;
       }
     },
@@ -263,7 +288,10 @@ export default function CredentialsProvider({
         upsertCredentials("mcp", credsMeta);
         return credsMeta;
       } catch (error) {
-        onFailToast("complete MCP OAuth authentication")(error);
+        credentialsFailToast(
+        "credentials2.failed.completeMcpOAuth",
+        "complete MCP OAuth authentication",
+      )(error);
         throw error;
       }
     },
@@ -308,7 +336,10 @@ export default function CredentialsProvider({
         upsertCredentials(provider, credsMeta);
         return credsMeta;
       } catch (error) {
-        onFailToast("create API key credentials")(error);
+        credentialsFailToast(
+        "credentials2.failed.createApiKey",
+        "create API key credentials",
+      )(error);
         throw error;
       }
     },
@@ -329,7 +360,10 @@ export default function CredentialsProvider({
         upsertCredentials(provider, credsMeta);
         return credsMeta;
       } catch (error) {
-        onFailToast("create user/password credentials")(error);
+        credentialsFailToast(
+        "credentials2.failed.createPassword",
+        "create user/password credentials",
+      )(error);
         throw error;
       }
     },
@@ -350,7 +384,10 @@ export default function CredentialsProvider({
         upsertCredentials(provider, credsMeta);
         return credsMeta;
       } catch (error) {
-        onFailToast("create host-scoped credentials")(error);
+        credentialsFailToast(
+        "credentials2.failed.createHostScoped",
+        "create host-scoped credentials",
+      )(error);
         throw error;
       }
     },
@@ -402,7 +439,10 @@ export default function CredentialsProvider({
         });
         return result;
       } catch (error) {
-        onFailToast("delete credentials")(error);
+        credentialsFailToast(
+        "credentials2.failed.deleteCredentials",
+        "delete credentials",
+      )(error);
         throw error;
       }
     },
@@ -546,7 +586,12 @@ export default function CredentialsProvider({
           return unchanged ? prev : { ...prev, ...loadedEntries };
         });
       })
-      .catch(onFailToast("load credentials"));
+      .catch(
+        credentialsFailToast(
+          "credentials2.failed.loadCredentials",
+          "load credentials",
+        ),
+      );
   }, [
     api,
     isLoggedIn,
@@ -579,7 +624,12 @@ export default function CredentialsProvider({
         setSystemProviders(new Set(systemList));
       })
       .catch((error) => {
-        if (isCurrent) onFailToast("Load provider names")(error);
+        if (isCurrent) {
+          credentialsFailToast(
+            "credentials2.failed.loadProviderNames",
+            "Load provider names",
+          )(error);
+        }
       });
 
     return () => {
