@@ -5,6 +5,7 @@ import { useQueryClient } from "@tanstack/react-query";
 
 import { deleteV1DeleteCredentials } from "@/app/api/__generated__/endpoints/integrations/integrations";
 import { toast } from "@/components/molecules/Toast/use-toast";
+import { useT } from "@/lib/i18n";
 import { invalidateConnectionQueries } from "@/lib/react-query/invalidateConnections";
 
 export interface DeleteIntegrationTarget {
@@ -20,6 +21,7 @@ interface RemoveResult {
 }
 
 export function useDeleteIntegration() {
+  const t = useT();
   const queryClient = useQueryClient();
   const [isPending, setIsPending] = useState(false);
   const [pendingIds, setPendingIds] = useState<Record<string, true>>({});
@@ -77,7 +79,9 @@ export function useDeleteIntegration() {
       if (successCount === 1) {
         const only = out.succeeded[0];
         toast({
-          title: only.name ? `Removed ${only.name}` : "Integration removed",
+          title: only.name
+            ? t("integrations1.delete.toast.removedOne", { name: only.name })
+            : t("integrations1.delete.toast.removed"),
           variant: "success",
         });
       } else if (successCount > 1) {
@@ -87,7 +91,9 @@ export function useDeleteIntegration() {
           .slice(0, 3)
           .join(", ");
         toast({
-          title: `${successCount} integrations removed`,
+          title: t("integrations1.delete.toast.removedMany", {
+            count: successCount,
+          }),
           description: previewNames || undefined,
           variant: "success",
         });
@@ -102,21 +108,32 @@ export function useDeleteIntegration() {
           .slice(0, 3)
           .join(", ");
         const more =
-          out.failed.length > 3 ? ` +${out.failed.length - 3} more` : "";
+          out.failed.length > 3
+            ? t("integrations1.delete.toast.more", {
+                count: out.failed.length - 3,
+              })
+            : "";
         // needsConfirmation items are pending a force-delete prompt, not
         // failures and not successes — exclude them from the denominator
         // so "X of Y could not be removed" doesn't imply the rest succeeded.
         const attemptableCount = targets.length - out.needsConfirmation.length;
         const allFailedTitle =
           attemptableCount === 1
-            ? "Failed to remove integration"
-            : `Failed to remove ${attemptableCount} integrations`;
+            ? t("integrations1.delete.toast.failedOne")
+            : t("integrations1.delete.toast.failedMany", {
+                count: attemptableCount,
+              });
         toast({
           title:
             out.failed.length === attemptableCount
               ? allFailedTitle
-              : `${out.failed.length} of ${attemptableCount} could not be removed`,
-          description: `${failedNames}${more}. Try again to retry the failed ones.`,
+              : t("integrations1.delete.toast.failedSome", {
+                  failed: out.failed.length,
+                  attemptable: attemptableCount,
+                }),
+          description: t("integrations1.delete.toast.failedBody", {
+            names: `${failedNames}${more}`,
+          }),
           variant: "destructive",
         });
       }

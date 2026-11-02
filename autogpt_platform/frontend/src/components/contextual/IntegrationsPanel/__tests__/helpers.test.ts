@@ -7,6 +7,7 @@ import {
   formatMaskedValue,
   formatProviderName,
   groupCredentialsByProvider,
+  typeBadgeLabel,
   withoutAiSubscriptionCredentials,
   type CredentialView,
   type ProviderGroupView,
@@ -209,6 +210,55 @@ describe("withoutAiSubscriptionCredentials", () => {
     expect(
       withoutAiSubscriptionCredentials(credentials).map((c) => c.id),
     ).toEqual(["tool"]);
+  });
+});
+
+describe("localized credential copy", () => {
+  const credential: CredentialView = {
+    id: "id-1",
+    provider: "github",
+    type: "api_key",
+    title: "Mock",
+    username: null,
+    host: null,
+    isManaged: false,
+    isSignIn: false,
+    blocksNote: null,
+  };
+
+  test("words the masked value and the type badge in Vietnamese", () => {
+    expect(
+      formatMaskedValue({ ...credential, username: "octocat" }, "vi"),
+    ).toBe("Tên đăng nhập: octocat");
+    expect(formatMaskedValue({ ...credential, type: "oauth2" }, "vi")).toBe(
+      "Đã kết nối qua OAuth",
+    );
+    expect(formatMaskedValue(credential, "vi")).toBe("Đã cấu hình khoá API");
+    expect(typeBadgeLabel("api_key", "vi")).toBe("Khoá API");
+    expect(typeBadgeLabel("device_code", "vi")).toBe("Xác thực thiết bị");
+  });
+
+  test("words a sign-in's blocks note in Vietnamese", () => {
+    const groups = groupCredentialsByProvider(
+      [
+        makeCred({
+          id: "mcp-1",
+          provider: "mcp",
+          type: "oauth2",
+          title: "MCP: notion",
+          username: "workspace",
+          service: "notion",
+          service_name: "Notion",
+          service_icon: "notion",
+        }),
+      ],
+      new Set(["notion"]),
+      "vi",
+    );
+
+    expect(groups[0].credentials[0].blocksNote).toBe(
+      "Block Notion trong workflow cần kết nối riêng.",
+    );
   });
 });
 

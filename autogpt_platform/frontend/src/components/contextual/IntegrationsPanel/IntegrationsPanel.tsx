@@ -4,6 +4,7 @@ import type { CredentialsMetaResponse } from "@/app/api/__generated__/models/cre
 import { useState } from "react";
 
 import { Text } from "@/components/atoms/Text/Text";
+import { useT } from "@/lib/i18n";
 
 import { AIConnectionsSection } from "./components/AIConnectionsSection/AIConnectionsSection";
 import { ConnectServiceDialog } from "./components/ConnectServiceDialog/ConnectServiceDialog";
@@ -30,6 +31,7 @@ export function IntegrationsPanel({
   preferMcp,
   onConnected,
 }: Props) {
+  const t = useT();
   const [isConnectOpen, setIsConnectOpen] = useState(false);
   const [selectedProviderId, setSelectedProviderId] = useState<string | null>(
     null,
@@ -55,7 +57,7 @@ export function IntegrationsPanel({
           id="tool-connections-heading"
           className="pb-3 pl-4 uppercase tracking-eyebrow text-foreground-body"
         >
-          Tools your experts and workflows use
+          {t("integrations1.panel.title")}
         </Text>
         <IntegrationsList
           query={query}

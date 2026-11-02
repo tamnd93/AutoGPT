@@ -3,6 +3,7 @@ import { Button } from "@/components/atoms/Button/Button";
 import { Text } from "@/components/atoms/Text/Text";
 import { Delete02Icon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   selectedCount: number;
@@ -21,11 +22,15 @@ export function IntegrationsSelectionBar({
   onDeleteSelected,
   isDeleting = false,
 }: Props) {
+  const t = useT();
+
   return (
     <div className="flex w-full items-center justify-between rounded-[4px] border border-border-base bg-surface-hover px-4 py-2">
       <div className="flex items-center gap-5">
         <Text variant="body" as="span" className="text-foreground-body">
-          {selectedCount} selected
+          {t("integrations1.selection.selected", {
+            count: selectedCount,
+          })}
         </Text>
         {!allSelected && (
           <button
@@ -40,7 +45,7 @@ export function IntegrationsSelectionBar({
               as="span"
               className="text-[#1F1F20]"
             >
-              Select All
+              {t("integrations1.selection.selectAll")}
             </Text>
           </button>
         )}
@@ -56,7 +61,7 @@ export function IntegrationsSelectionBar({
             as="span"
             className="text-[#1F1F20]"
           >
-            Deselect
+            {t("integrations1.selection.deselect")}
           </Text>
         </button>
       </div>
@@ -68,7 +73,7 @@ export function IntegrationsSelectionBar({
         loading={isDeleting}
         disabled={isDeleting}
       >
-        Delete selected
+        {t("integrations1.selection.delete")}
       </Button>
     </div>
   );

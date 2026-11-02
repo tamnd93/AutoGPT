@@ -2,6 +2,7 @@
 
 import { Search01Icon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   value: string;
@@ -10,6 +11,8 @@ interface Props {
 }
 
 export function IntegrationsSearch({ value, onChange, disabled }: Props) {
+  const t = useT();
+
   return (
     <div className="relative w-full">
       <Icon
@@ -21,8 +24,8 @@ export function IntegrationsSearch({ value, onChange, disabled }: Props) {
         type="text"
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        placeholder="Search integrations..."
-        aria-label="Search integrations"
+        placeholder={t("integrations1.search.placeholder")}
+        aria-label={t("integrations1.search.label")}
         disabled={disabled}
         // TODO(tokens): no exact role for focus:border-purple-400 #925cf7, focus:ring-purple-400 #925cf7, text-[#1F1F20]
         className="h-[46px] w-full rounded-3xl border border-border-base bg-surface pl-12 pr-4 text-sm leading-5.5 text-[#1F1F20] placeholder:text-placeholder focus:border-purple-400 focus:outline-none focus:ring-1 focus:ring-purple-400 disabled:cursor-not-allowed disabled:opacity-60"

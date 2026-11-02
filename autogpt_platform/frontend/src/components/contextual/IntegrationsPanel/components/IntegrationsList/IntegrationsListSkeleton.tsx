@@ -4,6 +4,7 @@ import { motion, useReducedMotion } from "framer-motion";
 import type { Variants } from "framer-motion";
 
 import { Skeleton } from "@/components/atoms/Skeleton/Skeleton";
+import { useT } from "@/lib/i18n";
 
 const SKELETON_CONTAINER_VARIANTS: Variants = {
   hidden: {},
@@ -27,13 +28,14 @@ const REDUCED_MOTION_ITEM_VARIANTS: Variants = {
 };
 
 export function IntegrationsListSkeleton() {
+  const t = useT();
   const reduceMotion = useReducedMotion();
 
   return (
     <motion.div
       className="flex flex-col gap-3"
       aria-busy="true"
-      aria-label="Loading integrations"
+      aria-label={t("integrations1.skeleton.loading")}
       initial={reduceMotion ? false : "hidden"}
       animate={reduceMotion ? undefined : "show"}
       variants={reduceMotion ? undefined : SKELETON_CONTAINER_VARIANTS}

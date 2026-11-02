@@ -34,6 +34,7 @@ import { formatEn } from "./format.en";
 import { home1En } from "./home-1.en";
 import { home2En } from "./home-2.en";
 import { integrationsEn } from "./integrations.en";
+import { Integrations1En } from "./integrations-1.en";
 import { library1En } from "./library-1.en";
 import { library2En } from "./library-2.en";
 import { library3En } from "./library-3.en";
@@ -93,6 +94,7 @@ export const en = {
   ...home1En,
   ...home2En,
   ...integrationsEn,
+  ...Integrations1En,
   ...library1En,
   ...library2En,
   ...library3En,

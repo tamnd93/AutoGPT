@@ -1,6 +1,7 @@
 "use client";
 
 import { Text } from "@/components/atoms/Text/Text";
+import { useT } from "@/lib/i18n";
 import { IntegrationsMarquee } from "@/components/molecules/IntegrationsMarquee/IntegrationsMarquee";
 
 interface Props {
@@ -8,6 +9,7 @@ interface Props {
 }
 
 export function IntegrationsListEmpty({ query }: Props) {
+  const t = useT();
   const trimmed = query.trim();
 
   // A search usually lands in Available integrations below, so a miss here
@@ -15,7 +17,7 @@ export function IntegrationsListEmpty({ query }: Props) {
   if (trimmed) {
     return (
       <Text variant="body" className="px-4 text-foreground-tertiary">
-        {`None of your connected integrations match "${trimmed}".`}
+        {t("integrations1.empty.noMatch", { query: trimmed })}
       </Text>
     );
   }
@@ -25,11 +27,10 @@ export function IntegrationsListEmpty({ query }: Props) {
       <IntegrationsMarquee />
       <div className="flex flex-col items-center gap-1">
         <Text variant="large-medium" as="span" className="text-textBlack">
-          No integration connected
+          {t("integrations1.empty.title")}
         </Text>
         <Text variant="body" className="max-w-[360px] text-foreground-tertiary">
-          Connect a service to let your experts and workflows use third-party
-          tools like GitHub, Gmail, or Figma.
+          {t("integrations1.empty.description")}
         </Text>
       </div>
     </div>

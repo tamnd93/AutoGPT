@@ -35,6 +35,7 @@ import { formatVi } from "./format.vi";
 import { home1Vi } from "./home-1.vi";
 import { home2Vi } from "./home-2.vi";
 import { integrationsVi } from "./integrations.vi";
+import { Integrations1Vi } from "./integrations-1.vi";
 import { library1Vi } from "./library-1.vi";
 import { library2Vi } from "./library-2.vi";
 import { library3Vi } from "./library-3.vi";
@@ -94,6 +95,7 @@ export const vi: Partial<Record<MessageKey, string>> = {
   ...home1Vi,
   ...home2Vi,
   ...integrationsVi,
+  ...Integrations1Vi,
   ...library1Vi,
   ...library2Vi,
   ...library3Vi,

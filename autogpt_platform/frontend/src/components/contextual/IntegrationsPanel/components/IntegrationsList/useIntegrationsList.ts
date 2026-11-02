@@ -17,10 +17,12 @@ import {
   useDeleteIntegration,
   type DeleteIntegrationTarget,
 } from "../hooks/useDeleteIntegration";
+import { useLocale } from "@/lib/i18n";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 import { useIntegrationsSelection } from "./useIntegrationsSelection";
 
 export function useIntegrationsList(query: string) {
+  const locale = useLocale();
   const debouncedQuery = useDebouncedValue(query, 250);
 
   const credentialsQuery = useGetV1ListCredentials({
@@ -44,6 +46,7 @@ export function useIntegrationsList(query: string) {
   const allProviders: ProviderGroupView[] = groupCredentialsByProvider(
     credentials,
     blockServiceKeys(providersQuery.data ?? []),
+    locale,
   );
   const providers = filterProviders(allProviders, debouncedQuery);
 

@@ -5,6 +5,7 @@ import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import type { Variants } from "framer-motion";
 
 import { ErrorCard } from "@/components/molecules/ErrorCard/ErrorCard";
+import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
 import { DeleteConfirmDialog } from "../DeleteConfirmDialog/DeleteConfirmDialog";
@@ -48,6 +49,7 @@ export function IntegrationsList({
   onQueryChange: setQuery,
   stickyClassName,
 }: Props) {
+  const t = useT();
   const {
     providers,
     isLoading,
@@ -94,7 +96,7 @@ export function IntegrationsList({
   // removing a ChatGPT connection does: it stops new ChatGPT-backed chats and
   // leaves everything already said in them alone.
   const pendingNotice = pendingTargets.some((t) => t.provider === "codex")
-    ? "New chats can no longer run on your ChatGPT plan — they fall back to the connection AutoGPT picks. Your chat history is kept, and your other integrations are unaffected."
+    ? t("integrations1.list.codexNotice")
     : undefined;
 
   if (isLoading) {

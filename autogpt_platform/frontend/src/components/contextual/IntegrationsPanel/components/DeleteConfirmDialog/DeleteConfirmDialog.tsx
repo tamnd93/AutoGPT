@@ -3,6 +3,7 @@
 import { Button } from "@/components/atoms/Button/Button";
 import { Text } from "@/components/atoms/Text/Text";
 import { Dialog } from "@/components/molecules/Dialog/Dialog";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   open: boolean;
@@ -25,24 +26,28 @@ export function DeleteConfirmDialog({
   variant = "remove",
   notice,
 }: Props) {
+  const t = useT();
   const count = itemNames.length;
   const isBulk = count > 1;
   const isForce = variant === "force";
+  const oneName = itemNames[0] ?? t("integrations1.delete.thisIntegration");
   const title = isForce
     ? isBulk
-      ? `Force remove ${count} integrations?`
-      : `Force remove ${itemNames[0] ?? "this integration"}?`
+      ? t("integrations1.delete.forceTitleMany", { count })
+      : t("integrations1.delete.forceTitleOne", { name: oneName })
     : isBulk
-      ? `Remove ${count} integrations?`
-      : `Remove ${itemNames[0] ?? "this integration"}?`;
+      ? t("integrations1.delete.removeTitleMany", { count })
+      : t("integrations1.delete.removeTitleOne", { name: oneName });
   const message = isForce
     ? isBulk
-      ? "These credentials are referenced by active webhooks or workflows. Forcing removal may break them."
-      : "This credential is referenced by an active webhook or workflow. Forcing removal may break it."
+      ? t("integrations1.delete.forceMessageMany")
+      : t("integrations1.delete.forceMessageOne")
     : isBulk
-      ? "This action cannot be undone. Experts and workflows using these credentials will lose access immediately."
-      : "This action cannot be undone. Experts and workflows using this credential will lose access immediately.";
-  const confirmLabel = isForce ? "Force remove" : "Remove";
+      ? t("integrations1.delete.removeMessageMany")
+      : t("integrations1.delete.removeMessageOne");
+  const confirmLabel = isForce
+    ? t("integrations1.delete.force")
+    : t("integrations1.delete.remove");
 
   return (
     <Dialog
@@ -69,7 +74,7 @@ export function DeleteConfirmDialog({
               onClick={() => onOpenChange(false)}
               disabled={isPending}
             >
-              Cancel
+              {t("integrations1.delete.cancel")}
             </Button>
             <Button
               variant="destructive"

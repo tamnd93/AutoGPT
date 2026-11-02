@@ -4,6 +4,7 @@ import { Button } from "@/components/atoms/Button/Button";
 import { Skeleton } from "@/components/atoms/Skeleton/Skeleton";
 import { Text } from "@/components/atoms/Text/Text";
 import { ErrorCard } from "@/components/molecules/ErrorCard/ErrorCard";
+import { useT } from "@/lib/i18n";
 import { ProviderRow } from "../ConnectServiceDialog/components/ProviderRow";
 import { useAvailableIntegrations } from "./useAvailableIntegrations";
 
@@ -13,6 +14,7 @@ interface Props {
 }
 
 export function AvailableIntegrations({ query, onSelect }: Props) {
+  const t = useT();
   const catalog = useAvailableIntegrations(query);
 
   return (
@@ -27,11 +29,10 @@ export function AvailableIntegrations({ query, onSelect }: Props) {
           id="available-integrations-heading"
           className="uppercase tracking-eyebrow text-foreground-secondary"
         >
-          Available integrations
+          {t("integrations1.available.title")}
         </Text>
         <Text variant="small" className="text-foreground-tertiary">
-          Connect your services, including official vendor integrations. Some
-          services need additional setup.
+          {t("integrations1.available.description")}
         </Text>
       </div>
       {catalog.isLoading ? (
@@ -66,13 +67,16 @@ export function AvailableIntegrations({ query, onSelect }: Props) {
           >
             {catalog.total === 0
               ? query.trim()
-                ? "No available services match your search."
-                : "No available services."
-              : `${catalog.providers.length} of ${catalog.total} services`}
+                ? t("integrations1.available.noMatch")
+                : t("integrations1.available.empty")
+              : t("integrations1.available.count", {
+                  shown: catalog.providers.length,
+                  total: catalog.total,
+                })}
           </Text>
           {catalog.hasMore && (
             <Button variant="secondary" size="small" onClick={catalog.showMore}>
-              Show more services
+              {t("integrations1.available.showMore")}
             </Button>
           )}
         </>

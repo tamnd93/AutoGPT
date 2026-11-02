@@ -2,6 +2,17 @@ import type { ProviderMetadata } from "@/app/api/__generated__/models/providerMe
 import type { CredentialsMetaResponse } from "@/app/api/__generated__/models/credentialsMetaResponse";
 import { CredentialsMetaResponseType } from "@/app/api/__generated__/models/credentialsMetaResponseType";
 import { integrationIconSrc } from "@/components/molecules/IntegrationLogo/helpers";
+import type { Locale } from "@/lib/i18n";
+import type { MessageKey } from "@/lib/i18n/messages/en";
+import { getMessage } from "@/lib/i18n/translate";
+
+function translate(
+  locale: Locale | undefined,
+  key: MessageKey,
+  values?: Record<string, string | number>,
+) {
+  return getMessage(locale ?? "en", key, values);
+}
 
 export type CredentialType = CredentialsMetaResponseType;
 
@@ -26,16 +37,17 @@ export interface ProviderGroupView {
   credentials: CredentialView[];
 }
 
-const TYPE_LABELS: Record<CredentialType, string> = {
-  api_key: "API Key", // pragma: allowlist secret
-  oauth2: "OAuth",
-  user_password: "User/Password", // pragma: allowlist secret
-  host_scoped: "Host-scoped",
-  device_code: "Device auth",
+const TYPE_LABEL_KEYS: Record<CredentialType, MessageKey> = {
+  api_key: "integrations1.credential.type.apiKey", // pragma: allowlist secret
+  oauth2: "integrations1.credential.type.oauth",
+  user_password: "integrations1.credential.type.userPassword", // pragma: allowlist secret
+  host_scoped: "integrations1.credential.type.hostScoped",
+  device_code: "integrations1.credential.type.deviceAuth",
 };
 
-export function typeBadgeLabel(type: CredentialType): string {
-  return TYPE_LABELS[type] ?? type;
+export function typeBadgeLabel(type: CredentialType, locale?: Locale): string {
+  const key = TYPE_LABEL_KEYS[type];
+  return key ? translate(locale, key) : type;
 }
 
 const PROVIDER_DISPLAY_NAME_OVERRIDES: Record<string, string> = {
@@ -103,13 +115,22 @@ export function serviceLabelFromIcon(id: string): string {
     : formatProviderName(id);
 }
 
-export function formatMaskedValue(credential: CredentialView): string {
-  if (credential.username) return `Username: ${credential.username}`;
+export function formatMaskedValue(
+  credential: CredentialView,
+  locale?: Locale,
+): string {
+  if (credential.username)
+    return translate(locale, "integrations1.credential.masked.username", {
+      username: credential.username,
+    });
   if (credential.host) return credential.host;
-  if (credential.type === "api_key") return "API key configured";
-  if (credential.type === "oauth2") return "Connected via OAuth";
-  if (credential.type === "user_password") return "Username/password set";
-  return "Configured";
+  if (credential.type === "api_key")
+    return translate(locale, "integrations1.credential.masked.apiKey");
+  if (credential.type === "oauth2")
+    return translate(locale, "integrations1.credential.masked.oauth");
+  if (credential.type === "user_password")
+    return translate(locale, "integrations1.credential.masked.userPassword");
+  return translate(locale, "integrations1.credential.masked.configured");
 }
 
 export function stripProviderPrefix(title: string, provider: string): string {
@@ -135,6 +156,7 @@ function toCredentialView(
   cred: CredentialsMetaResponse,
   serviceLabel: string,
   hasBlocks: boolean,
+  locale?: Locale,
 ): CredentialView {
   const rawTitle = cred.title ?? serviceName(cred);
   const isSignIn = cred.provider === SIGN_IN_PROVIDER;
@@ -149,7 +171,9 @@ function toCredentialView(
     isSignIn,
     blocksNote:
       isSignIn && hasBlocks
-        ? `${serviceLabel} blocks in workflows need their own connection.`
+        ? translate(locale, "integrations1.credential.blocksNote", {
+            service: serviceLabel,
+          })
         : null,
   };
 }
@@ -169,6 +193,7 @@ export function blockServiceKeys(providers: ProviderMetadata[]): Set<string> {
 export function groupCredentialsByProvider(
   credentials: CredentialsMetaResponse[],
   blockServices: ReadonlySet<string> = new Set(),
+  locale?: Locale,
 ): ProviderGroupView[] {
   const byService = new Map<string, CredentialsMetaResponse[]>();
   for (const cred of credentials) {
@@ -184,7 +209,7 @@ export function groupCredentialsByProvider(
       name: identity.name,
       logoUrl: integrationIconSrc(identity.icon) ?? undefined,
       credentials: creds.map((cred) =>
-        toCredentialView(cred, identity.name, blockServices.has(id)),
+        toCredentialView(cred, identity.name, blockServices.has(id), locale),
       ),
     });
   }

@@ -18,6 +18,7 @@ import {
   SquareIcon,
 } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useLocale, useT } from "@/lib/i18n";
 
 interface Props {
   credential: CredentialView;
@@ -34,6 +35,9 @@ export function CredentialRow({
   onDelete,
   isDeleting = false,
 }: Props) {
+  const t = useT();
+  const locale = useLocale();
+
   return (
     <div
       data-selected={selected}
@@ -47,7 +51,9 @@ export function CredentialRow({
             type="button"
             role="checkbox"
             aria-checked={selected}
-            aria-label={`Select ${credential.title}`}
+            aria-label={t("integrations1.credential.select", {
+              title: credential.title,
+            })}
             onClick={onToggleSelected}
             // TODO(tokens): no exact role for focus-visible:ring-zinc-800 #3E3E43; #3E3E43 is action, the button fill
             className={`shrink-0 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-800 ${
@@ -77,8 +83,8 @@ export function CredentialRow({
               className="inline-flex items-center justify-center rounded-[10px] bg-[#EFF1F4] px-2 py-[2px] text-caption font-medium leading-5 text-foreground-body"
             >
               {credential.isSignIn
-                ? "For chats"
-                : typeBadgeLabel(credential.type)}
+                ? t("integrations1.credential.forChats")
+                : typeBadgeLabel(credential.type, locale)}
             </span>
           </div>
           <div className="flex items-center gap-3 leading-5">
@@ -86,7 +92,7 @@ export function CredentialRow({
               // TODO(tokens): no exact text token for tracking-[1.1px]
               className="text-caption-sm font-medium uppercase leading-inherit tracking-[1.1px] text-foreground-body"
             >
-              {credential.blocksNote ?? formatMaskedValue(credential)}
+              {credential.blocksNote ?? formatMaskedValue(credential, locale)}
             </span>
           </div>
         </div>
@@ -101,11 +107,11 @@ export function CredentialRow({
                 // TODO(tokens): no exact role for focus-visible:ring-zinc-800 #3E3E43; #3E3E43 is action, the button fill; no exact text token for tracking-[1.1px]
                 className="text-caption-sm font-medium uppercase leading-inherit tracking-[1.1px] text-foreground-body focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-800"
               >
-                Managed
+                {t("integrations1.credential.managed")}
               </span>
             </TooltipTrigger>
             <TooltipContent side="top">
-              Managed by AutoGPT — cannot be removed
+              {t("integrations1.credential.managedHint")}
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
@@ -115,7 +121,9 @@ export function CredentialRow({
           onClick={onDelete}
           disabled={isDeleting}
           aria-busy={isDeleting}
-          aria-label={`Delete ${credential.title}`}
+          aria-label={t("integrations1.credential.delete", {
+            title: credential.title,
+          })}
           // TODO(tokens): no exact role for focus-visible:ring-purple-400 #925cf7, text-[#1F1F20], disabled:hover:text-[#1F1F20]
           className="inline-flex size-5 items-center justify-center text-[#1F1F20] transition-colors hover:text-error focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-purple-400 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:text-[#1F1F20]"
         >
