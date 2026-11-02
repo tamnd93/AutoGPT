@@ -1,4 +1,5 @@
 import { fireEvent, render, screen } from "@/tests/integrations/test-utils";
+import { LocaleProvider } from "@/lib/i18n";
 import type { MutableRefObject } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type { WorkspaceFileItem } from "@/app/api/__generated__/models/workspaceFileItem";
@@ -52,6 +53,82 @@ function renderDropdown(
 
 afterEach(() => {
   vi.clearAllMocks();
+});
+
+describe("MentionDropdown — Vietnamese", () => {
+  function renderVi(
+    overrides: Partial<Parameters<typeof MentionDropdown>[0]> = {},
+  ) {
+    const props = {
+      options: [] as MentionOption[],
+      showFiles: true,
+      hasIntegrations: true,
+      isLoading: false,
+      isError: false,
+      highlightedIndex: 0,
+      highlightedRef: {
+        current: null,
+      } as MutableRefObject<HTMLButtonElement | null>,
+      onSelect: vi.fn(),
+      onHighlight: vi.fn(),
+      ...overrides,
+    };
+    render(
+      <LocaleProvider locale="vi">
+        <MentionDropdown {...props} />
+      </LocaleProvider>,
+    );
+    return props;
+  }
+
+  it("reads its headings in Vietnamese", () => {
+    renderVi({ options: [GOOGLE_ITEM, FILE_ITEM] });
+    expect(screen.getByLabelText("Gợi ý nhắc tới")).toBeTruthy();
+    expect(screen.getByText("Tích hợp")).toBeTruthy();
+    expect(screen.getByText("Tệp")).toBeTruthy();
+  });
+
+  it("reads its empty copy in Vietnamese", () => {
+    renderVi();
+    expect(screen.getByText("Không có tệp hay tích hợp phù hợp.")).toBeTruthy();
+  });
+
+  it("reads the loading and error states in Vietnamese", () => {
+    const { unmount } = render(
+      <LocaleProvider locale="vi">
+        <MentionDropdown
+          options={[]}
+          showFiles
+          hasIntegrations={false}
+          isLoading
+          isError={false}
+          highlightedIndex={0}
+          highlightedRef={{ current: null }}
+          onSelect={vi.fn()}
+          onHighlight={vi.fn()}
+        />
+      </LocaleProvider>,
+    );
+    expect(screen.getByText("Đang tìm tệp…")).toBeTruthy();
+    unmount();
+
+    render(
+      <LocaleProvider locale="vi">
+        <MentionDropdown
+          options={[]}
+          showFiles
+          hasIntegrations={false}
+          isLoading={false}
+          isError
+          highlightedIndex={0}
+          highlightedRef={{ current: null }}
+          onSelect={vi.fn()}
+          onHighlight={vi.fn()}
+        />
+      </LocaleProvider>,
+    );
+    expect(screen.getByText("Không tải được tệp. Thử lại.")).toBeTruthy();
+  });
 });
 
 describe("MentionDropdown", () => {

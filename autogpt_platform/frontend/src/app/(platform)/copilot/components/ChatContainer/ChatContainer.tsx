@@ -33,6 +33,7 @@ import { ContextPanelToggle } from "../ContextPanel/ContextPanelToggle";
 import { useShareChatExpert } from "../ContextPanel/useShareChatExpert";
 import { ArchivedExpertNotice } from "./components/ArchivedExpertNotice";
 import { SessionNotFound } from "./components/SessionNotFound";
+import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "../../useIsMobile";
 import { ComposerPanelTab } from "./components/ComposerPanelTab";
@@ -148,7 +149,6 @@ export interface ChatContainerProps {
 }
 
 const NO_OP_SEND = () => undefined;
-const CONTINUE_AFTER_HELD_CALL = "Continue from where you left off.";
 
 export const ChatContainer = ({
   messages,
@@ -195,6 +195,7 @@ export const ChatContainer = ({
   onBackendTurn,
   floatingControls,
 }: ChatContainerProps) => {
+  const t = useT();
   const isTaskBarEnabled = useGetFlag(Flag.TASK_PROGRESS_BAR);
   useAutoOpenArtifacts({
     sessionId,
@@ -421,9 +422,9 @@ export const ChatContainer = ({
     } catch (error) {
       takeVoiceStart();
       toastSendFailure({
-        title: "Could not start a new chat session",
+        title: t("chatInput1.chat.couldNotStartSession"),
         error,
-        recovery: "voice mode did not start",
+        recovery: t("chatInput1.chat.voiceModeDidNotStart"),
       });
     }
   }
@@ -439,7 +440,7 @@ export const ChatContainer = ({
       // A turn an answered card started failed after the call ran: resuming it
       // must not re-send the request that led to the call.
       if (lastRow && isHeldCallRow(lastRow)) {
-        await guardedOnSend(CONTINUE_AFTER_HELD_CALL);
+        await guardedOnSend(t("chatInput1.chat.continueAfterHeldCall"));
         return;
       }
       const lastUserMsg = lastRow;
@@ -475,9 +476,9 @@ export const ChatContainer = ({
     await resend()
       .catch((error) => {
         toastSendFailure({
-          title: "Couldn't retry message",
+          title: t("chatInput1.chat.couldNotRetry"),
           error,
-          recovery: "your previous message is still in the chat",
+          recovery: t("chatInput1.chat.previousMessageStill"),
         });
       })
       .finally(() => {
@@ -610,7 +611,7 @@ export const ChatContainer = ({
                           onEnqueue={onEnqueue ? handleEnqueue : undefined}
                           placeholder={
                             (atReset && composer.placeholder) ||
-                            "What else can I help with?"
+                            t("chatInput1.chat.placeholderFollowUp")
                           }
                           droppedFiles={droppedFiles}
                           onDroppedFilesConsumed={
@@ -630,8 +631,7 @@ export const ChatContainer = ({
                       </div>
                     </TooltipTrigger>
                     <TooltipContent side="top" className="max-w-sm">
-                      Sending is paused. Your draft is saved and you can keep
-                      editing it.
+                      {t("chatInput1.chat.sendingPausedTooltip")}
                     </TooltipContent>
                   </Tooltip>
                   {composer.showLowHint && usage && (

@@ -2,6 +2,7 @@ import {
   getResetWait,
   type UsageBudget,
 } from "@/services/usageExperience/budget";
+import { useT } from "@/lib/i18n";
 import { SEND_AT_RESET_PLACEHOLDER } from "../SendAtReset/helpers";
 import { useScheduledSendHandoff } from "../SendAtReset/scheduledSendHandoff";
 import { useHandedOffSend } from "../SendAtReset/useHandedOffSend";
@@ -30,6 +31,7 @@ export function useComposerBudget({
   onCreateSession,
   inputId,
 }: Args) {
+  const t = useT();
   const isPlatformChat = spendsPlatformBudget(authProvider);
   const canWaitForReset =
     isLimitReached &&
@@ -43,7 +45,8 @@ export function useComposerBudget({
   // message to its composer, which sets the send once the page is on it.
   async function scheduleInNewChat(message: string) {
     const created = await onCreateSession();
-    if (typeof created !== "string") throw new Error("Couldn’t start a chat");
+    if (typeof created !== "string")
+      throw new Error(t("chatInput1.chat.startChatFailed"));
     useScheduledSendHandoff.getState().hold(created, message);
   }
 

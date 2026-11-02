@@ -7,6 +7,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/molecules/Popover/Popover";
+import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { MoreHorizontalIcon } from "@hugeicons/core-free-icons";
 import { ReactNode, useState } from "react";
@@ -32,6 +33,7 @@ export function ComposerOverflowMenu({
   disabled,
   className,
 }: Props) {
+  const t = useT();
   const [isOpen, setIsOpen] = useState(false);
 
   // Forget the open state while forced shut, or the panel pops back open
@@ -45,7 +47,7 @@ export function ComposerOverflowMenu({
           type="button"
           variant="icon"
           size="icon"
-          aria-label="More options"
+          aria-label={t("chatInput1.overflow.moreOptions")}
           data-testid="composer-overflow-button"
           disabled={disabled}
           className={cn(

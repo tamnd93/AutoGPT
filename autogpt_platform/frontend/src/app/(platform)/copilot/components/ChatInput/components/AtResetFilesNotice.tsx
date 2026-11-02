@@ -1,6 +1,7 @@
 "use client";
 
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { Alert02Icon } from "@hugeicons/core-free-icons";
 import { AttentionCard } from "@/components/organisms/AttentionCard/AttentionCard";
@@ -12,6 +13,8 @@ interface Props {
 /** Why Send at reset is off while files are attached: a message set for the
  *  reset carries text only. */
 export function AtResetFilesNotice({ className }: Props) {
+  const t = useT();
+
   return (
     <AttentionCard.Root
       variant="warning"
@@ -24,10 +27,7 @@ export function AtResetFilesNotice({ className }: Props) {
           <Icon icon={Alert02Icon} className="h-4 w-4" aria-hidden />
         </AttentionCard.Icon>
         <AttentionCard.Content asChild>
-          <span>
-            Only text can wait for the reset. Remove the files to schedule this
-            message.
-          </span>
+          <span>{t("chatInput1.atReset.filesOnlyText")}</span>
         </AttentionCard.Content>
       </AttentionCard.Row>
     </AttentionCard.Root>

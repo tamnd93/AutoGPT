@@ -10,6 +10,7 @@ import {
   InputGroup,
   InputGroupAddon,
 } from "@/components/molecules/InputGroup/InputGroup";
+import { useT } from "@/lib/i18n";
 import { containsLikelySecret } from "@/lib/secret-detection";
 import { cn } from "@/lib/utils";
 import { Flag, useGetFlag } from "@/services/feature-flags/use-get-flag";
@@ -158,7 +159,7 @@ export const ChatInput = memo(function ChatInput({
   isUploadingFiles = false,
   onStop,
   onEnqueue,
-  placeholder = "Type your message...",
+  placeholder,
   className,
   inputId = "chat-input",
   draftKey,
@@ -180,6 +181,7 @@ export const ChatInput = memo(function ChatInput({
   canAttachWhileStreaming = false,
   atReset,
 }: Props) {
+  const t = useT();
   const isDryRun = useCopilotUIStore((s) => s.isDryRun);
   const setIsDryRun = useCopilotUIStore((s) => s.setIsDryRun);
   // Still the CHAT_MODE_OPTION flag, which no longer names what it gates: the
@@ -199,10 +201,12 @@ export const ChatInput = memo(function ChatInput({
     const next = !isDryRun;
     setIsDryRun(next);
     toast({
-      title: next ? "Test mode enabled" : "Test mode disabled",
+      title: next
+        ? t("chatInput1.testMode.enabled")
+        : t("chatInput1.testMode.disabled"),
       description: next
-        ? "New chats will run workflows in test mode."
-        : "New chats will run workflows normally.",
+        ? t("chatInput1.testMode.enabledDescription")
+        : t("chatInput1.testMode.disabledDescription"),
     });
   }
 
@@ -217,8 +221,10 @@ export const ChatInput = memo(function ChatInput({
     setRefusedCount(refused);
     if (refusedFolders > 0) {
       toast({
-        title: `Up to ${MAX_FOLDER_ATTACHMENTS} folders per message`,
-        description: `${refusedFolders} not added.`,
+        title: t("chatInput1.folderCap.title", { max: MAX_FOLDER_ATTACHMENTS }),
+        description: t("chatInput1.folderCap.description", {
+          count: refusedFolders,
+        }),
       });
     }
   }
@@ -348,8 +354,8 @@ export const ChatInput = memo(function ChatInput({
   const resolvedPlaceholder = isRecording
     ? ""
     : isTranscribing
-      ? "Transcribing..."
-      : placeholder;
+      ? t("chatInput1.transcribing")
+      : (placeholder ?? t("chatInput1.placeholder"));
 
   // Narrows to string, so the render site needn't re-test sessionId.
   const devtoolSessionId = isTokenDevtoolEnabled() ? sessionId : null;
@@ -400,7 +406,7 @@ export const ChatInput = memo(function ChatInput({
       ? [
           {
             key: "voice",
-            label: "Voice mode",
+            label: t("chatInput1.menu.voiceMode"),
             icon: VoiceIcon,
             disabled: voiceMode.disabled,
             onSelect: voiceMode.onStart,
@@ -411,7 +417,7 @@ export const ChatInput = memo(function ChatInput({
       ? [
           {
             key: "model",
-            label: "Model and connection",
+            label: t("chatInput1.menu.modelAndConnection"),
             icon: FlashIcon,
             onSelect: () => setPlusPanel("model"),
           },
@@ -421,7 +427,7 @@ export const ChatInput = memo(function ChatInput({
       ? [
           {
             key: "devtool",
-            label: "Token usage",
+            label: t("chatInput1.menu.tokenUsage"),
             icon: DashboardSpeed02Icon,
             onSelect: () => setPlusPanel("devtool"),
           },
@@ -621,8 +627,8 @@ export const ChatInput = memo(function ChatInput({
             )}
             {isStreaming && canSend && canQueue && (
               <PromptInputButton
-                aria-label="Queue message"
-                tooltip="Queue message"
+                aria-label={t("chatInput1.queueMessage")}
+                tooltip={t("chatInput1.queueMessage")}
                 variant="default"
                 disabled={isEnqueueing}
                 type={hasAttachments ? "submit" : "button"}
@@ -640,7 +646,7 @@ export const ChatInput = memo(function ChatInput({
             {isStreaming && isTurnStarting ? (
               <PromptInputSubmit
                 status="submitted"
-                aria-label="Sending"
+                aria-label={t("chatInput1.sending")}
                 className={sendButtonClass}
               />
             ) : isStreaming ? (
@@ -663,7 +669,7 @@ export const ChatInput = memo(function ChatInput({
         </div>
 
         <span id={`${inputId}-hint`} className="sr-only">
-          Press Enter to send, Shift+Enter for new line, Space to record voice
+          {t("chatInput1.composerHint")}
         </span>
       </InputGroup>
       {showModelControl && (

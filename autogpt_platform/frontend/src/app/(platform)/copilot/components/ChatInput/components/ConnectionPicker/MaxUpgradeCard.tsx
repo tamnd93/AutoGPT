@@ -6,6 +6,7 @@ import {
 
 import { Button } from "@/components/atoms/Button/Button";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   label: string;
@@ -16,6 +17,8 @@ interface Props {
 }
 
 export function MaxUpgradeCard({ label, name, model, reason, href }: Props) {
+  const t = useT();
+
   return (
     <div
       // TODO(tokens): no exact role for border-purple-200/40, bg-purple-50
@@ -25,7 +28,7 @@ export function MaxUpgradeCard({ label, name, model, reason, href }: Props) {
         role="radio"
         aria-checked={false}
         aria-disabled="true"
-        aria-label={`${label} — ${reason}`}
+        aria-label={t("chatInput1.picker.tierAria", { label, reason })}
         tabIndex={-1}
         className="flex items-start gap-3"
       >
@@ -54,7 +57,7 @@ export function MaxUpgradeCard({ label, name, model, reason, href }: Props) {
         </span>
       </div>
       <p className="mb-2 mt-5 text-lg font-medium leading-snug tracking-tight text-foreground-strong">
-        Unlock {name} with Max.
+        {t("chatInput1.upgrade.unlockWithMax", { name })}
       </p>
       <p className="text-xs leading-relaxed text-foreground-secondary">
         {reason}
@@ -67,7 +70,7 @@ export function MaxUpgradeCard({ label, name, model, reason, href }: Props) {
         // TODO(tokens): no exact role for hover:border-purple-700, hover:bg-purple-700; no fitting role for border-purple-600 #6C2EDF; #6C2EDF is brand-hover (a fill)
         className="mt-5 h-11 w-full rounded-lg border-purple-600 bg-brand-hover text-action-foreground hover:border-purple-700 hover:bg-purple-700"
       >
-        Upgrade to Max
+        {t("chatInput1.upgrade.upgradeToMax")}
         <Icon icon={ArrowRight02Icon} size={16} aria-hidden />
       </Button>
     </div>

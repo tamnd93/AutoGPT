@@ -9,6 +9,7 @@ import {
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
 } from "@/components/molecules/DropdownMenu/DropdownMenu";
+import { useLocale, useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import type { AutopilotMode } from "../../../../autopilotModeStore";
 import {
@@ -39,6 +40,8 @@ export function AutopilotModeSelector({
     cancelUnsupervised,
     assistantName,
   } = useAutopilotModeSelector({ sessionId, persistedMode });
+  const t = useT();
+  const locale = useLocale();
   const current = getModeOption(mode);
 
   return (
@@ -47,8 +50,12 @@ export function AutopilotModeSelector({
         <DropdownMenuTrigger asChild disabled={disabled}>
           <button
             type="button"
-            aria-label={`Approval mode: ${current.label}. Change mode`}
-            title={`Approval mode: ${current.label}`}
+            aria-label={t("chatInput1.mode.approvalModeAria", {
+              mode: t(current.labelKey),
+            })}
+            title={t("chatInput1.mode.approvalModeTitle", {
+              mode: t(current.labelKey),
+            })}
             className={cn(
               // TODO(tokens): no fitting role for focus-visible:ring-zinc-400 #ADADB3; #ADADB3 is foreground-subtle (a text colour)
               "inline-flex h-8 items-center justify-center gap-1 rounded-full text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-400",
@@ -64,12 +71,12 @@ export function AutopilotModeSelector({
             )}
           >
             <Icon icon={current.icon} size={16} aria-hidden="true" />
-            {!isDefault && <span>{current.label}</span>}
+            {!isDefault && <span>{t(current.labelKey)}</span>}
           </button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-72">
           <DropdownMenuLabel className="text-xs font-medium text-foreground-tertiary">
-            Approvals in this chat
+            {t("chatInput1.mode.approvalsInChat")}
           </DropdownMenuLabel>
           <DropdownMenuRadioGroup value={mode} onValueChange={selectMode}>
             {AUTOPILOT_MODE_OPTIONS.map((option) => (
@@ -80,10 +87,10 @@ export function AutopilotModeSelector({
               >
                 <span className="flex flex-col gap-0.5">
                   <span className="font-medium text-foreground-strong">
-                    {option.label}
+                    {t(option.labelKey)}
                   </span>
                   <span className="text-xs text-foreground-tertiary">
-                    {option.description}
+                    {t(option.descriptionKey)}
                   </span>
                 </span>
               </DropdownMenuRadioItem>
@@ -95,7 +102,7 @@ export function AutopilotModeSelector({
         isOpen={isConfirmOpen}
         onConfirm={confirmUnsupervised}
         onCancel={cancelUnsupervised}
-        description={unsupervisedChatDescription(assistantName)}
+        description={unsupervisedChatDescription(assistantName, locale)}
       />
     </>
   );

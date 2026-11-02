@@ -2,6 +2,7 @@
 
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { MAX_ATTACHMENTS } from "../../../helpers/workspaceAttachments";
+import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { Alert02Icon } from "@hugeicons/core-free-icons";
 import { AttentionCard } from "@/components/organisms/AttentionCard/AttentionCard";
@@ -22,6 +23,8 @@ export function AttachmentCapNotice({
   onDismiss,
   className,
 }: Props) {
+  const t = useT();
+
   return (
     <AttentionCard.Root
       variant="warning"
@@ -35,12 +38,14 @@ export function AttachmentCapNotice({
         </AttentionCard.Icon>
         <AttentionCard.Content asChild>
           <span>
-            Up to {MAX_ATTACHMENTS} attachments per message — {refusedCount} not
-            added
+            {t("chatInput1.attach.limit", {
+              max: MAX_ATTACHMENTS,
+              refused: refusedCount,
+            })}
           </span>
         </AttentionCard.Content>
         <AttentionCard.Dismiss
-          aria-label="Dismiss attachment limit notice"
+          aria-label={t("chatInput1.attach.limitDismiss")}
           onClick={onDismiss}
         />
       </AttentionCard.Row>

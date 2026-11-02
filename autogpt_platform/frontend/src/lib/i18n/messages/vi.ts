@@ -1,4 +1,5 @@
 import type { MessageKey } from "./en";
+import { chatInput1Vi } from "./chat-input-1.vi";
 import { formatVi } from "./format.vi";
 import { home1Vi } from "./home-1.vi";
 import { integrationsVi } from "./integrations.vi";
@@ -15,5 +16,6 @@ export const vi: Partial<Record<MessageKey, string>> = {
   ...home1Vi,
   ...nav2Vi,
   ...nav3Vi,
+  ...chatInput1Vi,
   "common.planSuffix": "gói {plan}",
 };

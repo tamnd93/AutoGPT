@@ -2,10 +2,12 @@ import { Button } from "@/components/atoms/Button/Button";
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { Text } from "@/components/atoms/Text/Text";
 import { AppSidebarTrigger } from "@/components/layout/AppSidebar/components/AppSidebarTrigger/AppSidebarTrigger";
+import { useT } from "@/lib/i18n";
 import { BubbleChatBlockedIcon } from "@hugeicons/core-free-icons";
 import { parseAsString, useQueryState } from "nuqs";
 
 export function SessionNotFound() {
+  const t = useT();
   const [, setSessionId] = useQueryState("sessionId", parseAsString);
   const [, setExpertId] = useQueryState("expertId", parseAsString);
 
@@ -34,10 +36,10 @@ export function SessionNotFound() {
           className="text-muted-foreground"
         />
         <Text variant="large-medium" as="h2">
-          This chat isn&apos;t available on this account
+          {t("chatInput1.chat.sessionNotFoundTitle")}
         </Text>
         <Text variant="body" className="text-muted-foreground">
-          It may belong to another account you use, or it no longer exists.
+          {t("chatInput1.chat.sessionNotFoundBody")}
         </Text>
         <Button
           type="button"
@@ -46,7 +48,7 @@ export function SessionNotFound() {
           className="mt-2"
           onClick={handleNewChat}
         >
-          Start a new chat
+          {t("chatInput1.chat.startNewChat")}
         </Button>
       </div>
     </div>

@@ -2,6 +2,7 @@
 
 import { Skeleton } from "@/components/atoms/Skeleton/Skeleton";
 import { Dialog } from "@/components/molecules/Dialog/Dialog";
+import { useT } from "@/lib/i18n";
 import Link from "next/link";
 
 import { ConnectionPickerPanel } from "./ConnectionPickerPanel";
@@ -24,10 +25,11 @@ export function ConnectionPickerDialog({
   // Mounted while closed too: the hook also drops a lapsed Advanced tier,
   // which has to happen whether or not anyone opens the sheet.
   const picker = useConnectionPicker();
+  const t = useT();
 
   return (
     <Dialog
-      title="Model and connection"
+      title={t("chatInput1.picker.dialogTitle")}
       controlled={{ isOpen: open, set: onOpenChange }}
       styling={{ maxWidth: "26rem" }}
     >
@@ -44,6 +46,7 @@ interface BodyProps {
 }
 
 function DialogBody({ picker, connectionLocked }: BodyProps) {
+  const t = useT();
   const { offers, active, isLoading, isError } = picker;
 
   if (isLoading && offers.length === 0) {
@@ -53,7 +56,7 @@ function DialogBody({ picker, connectionLocked }: BodyProps) {
   if (isError) {
     return (
       <p className="text-sm text-foreground-secondary">
-        AI connections are unavailable right now. Try again in a moment.
+        {t("chatInput1.picker.unavailable")}
       </p>
     );
   }
@@ -61,9 +64,9 @@ function DialogBody({ picker, connectionLocked }: BodyProps) {
   if (offers.length === 0) {
     return (
       <p className="text-sm text-foreground-secondary">
-        No AI connection is set up yet.{" "}
+        {t("chatInput1.picker.noConnection")}{" "}
         <Link href="/settings/integrations" className="underline">
-          Set one up
+          {t("chatInput1.picker.setOneUp")}
         </Link>
       </p>
     );

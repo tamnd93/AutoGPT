@@ -1,4 +1,6 @@
 import type { AIConnectionOffer } from "@/app/api/__generated__/models/aIConnectionOffer";
+import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/locale";
+import { getMessage } from "@/lib/i18n/translate";
 import type { CopilotLlmAuthSelection } from "../../../../store";
 
 export function offerToSelection(
@@ -72,10 +74,16 @@ function tierOf(offer: AIConnectionOffer | undefined, tier: string) {
 export function tierName(
   offer: AIConnectionOffer | undefined,
   tier: string,
+  locale: Locale = DEFAULT_LOCALE,
 ): string {
   return (
     tierOf(offer, tier)?.label ??
-    (tier === "advanced" ? "Advanced" : "Balanced")
+    getMessage(
+      locale,
+      tier === "advanced"
+        ? "chatInput1.picker.tierAdvanced"
+        : "chatInput1.picker.tierBalanced",
+    )
   );
 }
 
@@ -90,9 +98,10 @@ export function tierModel(
 export function tierLabel(
   offer: AIConnectionOffer | undefined,
   tier: string,
+  locale: Locale = DEFAULT_LOCALE,
 ): string {
   const model = tierModel(offer, tier);
-  const name = tierName(offer, tier);
+  const name = tierName(offer, tier, locale);
   return model ? `${name} · ${model}` : name;
 }
 

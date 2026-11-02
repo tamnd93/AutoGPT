@@ -7,6 +7,7 @@ import {
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type { ReactElement } from "react";
 import { TooltipProvider } from "@/components/atoms/Tooltip/BaseTooltip";
+import { LocaleProvider } from "@/lib/i18n";
 import { DryRunToggleButton } from "../DryRunToggleButton";
 
 afterEach(cleanup);
@@ -30,6 +31,23 @@ describe("DryRunToggleButton", () => {
   it("names the idle state for assistive tech when isDryRun is false", () => {
     render(<DryRunToggleButton isDryRun={false} onToggle={vi.fn()} />);
     expect(screen.getByLabelText("Enable Test mode")).toBeTruthy();
+  });
+
+  it("reads its active and idle states in Vietnamese", () => {
+    render(
+      <LocaleProvider locale="vi">
+        <DryRunToggleButton isDryRun={true} onToggle={vi.fn()} />
+      </LocaleProvider>,
+    );
+    expect(screen.getByLabelText("Chế độ thử nghiệm đang bật")).toBeTruthy();
+    cleanup();
+
+    render(
+      <LocaleProvider locale="vi">
+        <DryRunToggleButton isDryRun={false} onToggle={vi.fn()} />
+      </LocaleProvider>,
+    );
+    expect(screen.getByLabelText("Bật chế độ thử nghiệm")).toBeTruthy();
   });
 
   it("tints the glyph so the active state is visible without a tooltip", () => {

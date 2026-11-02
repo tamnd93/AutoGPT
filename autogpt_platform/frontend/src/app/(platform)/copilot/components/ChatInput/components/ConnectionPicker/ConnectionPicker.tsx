@@ -22,6 +22,7 @@ import Link from "next/link";
 import { Button } from "@/components/atoms/Button/Button";
 import { Text } from "@/components/atoms/Text/Text";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useLocale, useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
 import { ConnectionPickerPanel } from "./ConnectionPickerPanel";
@@ -57,6 +58,8 @@ export function ConnectionPicker({
   connectionLocked = false,
   className,
 }: Props) {
+  const t = useT();
+  const locale = useLocale();
   const picker = useConnectionPicker();
   const {
     offers,
@@ -78,14 +81,16 @@ export function ConnectionPicker({
       <Text
         variant="small-medium-tight"
         as="span"
-        aria-label="AI connections unavailable"
+        aria-label={t("chatInput1.connection.unavailableAria")}
         className={cn(
           "inline-flex h-9 items-center gap-1.5 rounded-full border border-destructive/20 bg-destructive/10 px-2.5 text-destructive",
           className,
         )}
       >
         <Icon icon={AlertCircleIcon} size={14} />
-        <span className="hidden sm:inline">Connections unavailable</span>
+        <span className="hidden sm:inline">
+          {t("chatInput1.connection.unavailable")}
+        </span>
       </Text>
     );
   }
@@ -94,7 +99,7 @@ export function ConnectionPicker({
     return (
       <Link
         href="/settings/integrations"
-        aria-label="Set up an AI connection"
+        aria-label={t("chatInput1.connection.setUpAria")}
         className={cn(
           "inline-flex h-9 items-center gap-1.5 rounded-full border border-border bg-muted px-2.5 text-foreground transition-colors hover:bg-muted/80",
           className,
@@ -107,7 +112,7 @@ export function ConnectionPicker({
           tone="inherit"
           className="hidden sm:inline"
         >
-          Set up AI connection
+          {t("chatInput1.connection.setUp")}
         </Text>
       </Link>
     );
@@ -139,13 +144,15 @@ export function ConnectionPicker({
     (connectionLocked && Boolean(active)) ||
     (!hasConnectionChoice && Boolean(active));
   const label = showsTier
-    ? tierName(active, tier)
-    : (active?.display_name ?? "Choose connection");
+    ? tierName(active, tier, locale)
+    : (active?.display_name ?? t("chatInput1.connection.choose"));
   // "ChatGPT · your plan". Spending your own subscription rather than the
   // platform's is the thing worth noticing before sending, so the chip says
   // so.
   const triggerLabel =
-    runsOnOwnPlan && !showsTier ? `${label} · your plan` : label;
+    runsOnOwnPlan && !showsTier
+      ? `${label} ${t("chatInput1.connection.yourPlan")}`
+      : label;
 
   // Naming only the tier, the chip folds down to its glyph among the other
   // quiet icons on the composer's right; the tier and its model wait in the
@@ -159,8 +166,8 @@ export function ConnectionPicker({
         size={showsTier ? "icon" : "small"}
         aria-label={
           showsTier
-            ? `Model tier ${label} — change`
-            : `Runs on ${triggerLabel} — change`
+            ? t("chatInput1.connection.modelTierAria", { label })
+            : t("chatInput1.connection.runsOnAria", { label: triggerLabel })
         }
         className={cn(
           showsTier
@@ -201,7 +208,7 @@ export function ConnectionPicker({
           <TooltipTrigger asChild>{trigger}</TooltipTrigger>
           <TooltipPortal>
             <TooltipContent side="top">
-              {tierLabel(active, tier)}
+              {tierLabel(active, tier, locale)}
             </TooltipContent>
           </TooltipPortal>
         </Tooltip>

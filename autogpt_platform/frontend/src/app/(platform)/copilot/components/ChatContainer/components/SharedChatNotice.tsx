@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useGetV2GetChatShareState } from "@/app/api/__generated__/endpoints/chat/chat";
 import { Button } from "@/components/atoms/Button/Button";
 import { useToast } from "@/components/molecules/Toast/use-toast";
+import { useT } from "@/lib/i18n";
 import { chatShareUrl } from "@/lib/share/routes";
 import { Copy01Icon, Tick02Icon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
@@ -14,6 +15,7 @@ interface Props {
 }
 
 export function SharedChatNotice({ sessionId }: Props) {
+  const t = useT();
   const { toast } = useToast();
   const [copied, setCopied] = useState(false);
   const { data: shareState } = useGetV2GetChatShareState(sessionId, {
@@ -34,7 +36,7 @@ export function SharedChatNotice({ sessionId }: Props) {
       setTimeout(() => setCopied(false), 2000);
     } catch {
       toast({
-        title: "Failed to copy link",
+        title: t("chatInput1.chat.copyLinkFailed"),
         variant: "destructive",
       });
     }
@@ -47,7 +49,7 @@ export function SharedChatNotice({ sessionId }: Props) {
       className="mb-2"
     >
       <AttentionCard.Row align="center" justify="between">
-        <span className="font-medium">This chat is shared</span>
+        <span className="font-medium">{t("chatInput1.chat.shared")}</span>
         <Button
           size="small"
           variant="secondary"
@@ -60,7 +62,7 @@ export function SharedChatNotice({ sessionId }: Props) {
             )
           }
         >
-          {copied ? "Copied" : "Copy link"}
+          {copied ? t("chatInput1.chat.copied") : t("chatInput1.chat.copyLink")}
         </Button>
       </AttentionCard.Row>
     </AttentionCard.Root>

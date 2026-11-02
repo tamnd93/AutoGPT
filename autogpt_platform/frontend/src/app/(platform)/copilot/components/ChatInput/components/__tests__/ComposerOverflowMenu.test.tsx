@@ -1,4 +1,5 @@
 import { fireEvent, render, screen } from "@/tests/integrations/test-utils";
+import { LocaleProvider } from "@/lib/i18n";
 import { describe, expect, it } from "vitest";
 import { ComposerOverflowMenu } from "../ComposerOverflowMenu";
 
@@ -16,6 +17,20 @@ describe("ComposerOverflowMenu", () => {
 
     expect(screen.queryByText("Inner control")).toBeNull();
     expect(screen.getByRole("button", { name: "More options" })).toBeDefined();
+  });
+
+  it("reads the options button in Vietnamese", async () => {
+    render(
+      <LocaleProvider locale="vi">
+        <ComposerOverflowMenu>
+          <button>Inner control</button>
+        </ComposerOverflowMenu>
+      </LocaleProvider>,
+    );
+
+    expect(screen.getByRole("button", { name: "Tuỳ chọn khác" })).toBeDefined();
+    fireEvent.click(screen.getByTestId("composer-overflow-button"));
+    expect(await screen.findByText("Inner control")).toBeDefined();
   });
 
   it("reveals its controls when the button is pressed", async () => {

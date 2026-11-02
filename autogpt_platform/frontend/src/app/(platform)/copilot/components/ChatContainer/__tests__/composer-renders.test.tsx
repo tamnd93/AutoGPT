@@ -8,6 +8,7 @@ import {
   waitFor,
 } from "@/tests/integrations/test-utils";
 import type { UIMessage } from "ai";
+import { LocaleProvider } from "@/lib/i18n";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { ChatContainer, type ChatContainerProps } from "../ChatContainer";
 
@@ -107,6 +108,44 @@ function renderContainer(initial: Partial<ChatContainerProps> = {}) {
 function update(props: Partial<ChatContainerProps>) {
   act(() => setProps(props));
 }
+
+describe("ChatContainer in Vietnamese", () => {
+  beforeEach(() => {
+    vi.stubGlobal("ResizeObserver", MockResizeObserver);
+  });
+
+  afterEach(() => {
+    cleanup();
+    vi.unstubAllGlobals();
+  });
+
+  it("reads the follow-up placeholder and the missing-chat screen in Vietnamese", () => {
+    render(
+      <LocaleProvider locale="vi">
+        <Harness {...baseProps} status="ready" />
+      </LocaleProvider>,
+    );
+    expect(
+      screen.getByPlaceholderText("Tôi có thể giúp gì thêm?"),
+    ).toBeDefined();
+    cleanup();
+
+    render(
+      <LocaleProvider locale="vi">
+        <Harness
+          {...baseProps}
+          status="ready"
+          isSessionNotFound
+          sessionId="session-123"
+        />
+      </LocaleProvider>,
+    );
+    expect(
+      screen.getByText("Chat này không khả dụng trên tài khoản này"),
+    ).toBeDefined();
+    expect(screen.getByText("Bắt đầu chat mới")).toBeDefined();
+  });
+});
 
 describe("ChatContainer composer renders", () => {
   beforeEach(() => {

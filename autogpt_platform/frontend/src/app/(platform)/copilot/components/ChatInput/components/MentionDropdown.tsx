@@ -5,6 +5,8 @@ import { folderSummary } from "@/app/(platform)/artifacts/components/WorkspaceFo
 import type { WorkspaceFileItem } from "@/app/api/__generated__/models/workspaceFileItem";
 import type { WorkspaceFolder } from "@/app/api/__generated__/models/workspaceFolder";
 import { IntegrationLogo } from "@/components/molecules/IntegrationLogo/IntegrationLogo";
+import { useT } from "@/lib/i18n";
+import type { MessageKey } from "@/lib/i18n/messages/en";
 import { cn } from "@/lib/utils";
 import type { MutableRefObject, ReactNode } from "react";
 import {
@@ -44,6 +46,7 @@ export function MentionDropdown({
   onSelect,
   onHighlight,
 }: Props) {
+  const t = useT();
   const showEmpty = !isLoading && !isError && options.length === 0;
   const integrationCount = options.filter(
     (option) => option.kind === "integration",
@@ -91,14 +94,16 @@ export function MentionDropdown({
   return (
     <div
       role="listbox"
-      aria-label="Mention suggestions"
+      aria-label={t("chatInput1.mention.listAria")}
       // preventDefault on mousedown keeps focus in the textarea when clicking
       // non-interactive areas (padding, empty/loading/error states) so the
       // textarea's onBlur doesn't close the dropdown before a selection.
       onMouseDown={(e) => e.preventDefault()}
       className="absolute bottom-full left-0 z-50 mb-2 max-h-80 w-80 max-w-full overflow-y-auto rounded-2xl border border-border-base bg-surface p-1.5 shadow-md"
     >
-      {showHeadings && <SectionHeading label="Integrations" />}
+      {showHeadings && (
+        <SectionHeading label={t("chatInput1.mention.integrationsHeading")} />
+      )}
       {options.map((option, index) =>
         option.kind === "integration"
           ? renderOption(
@@ -108,7 +113,9 @@ export function MentionDropdown({
             )
           : null,
       )}
-      {showFilesHeading && <SectionHeading label="Files" />}
+      {showFilesHeading && (
+        <SectionHeading label={t("chatInput1.mention.filesHeading")} />
+      )}
       {options.map((option, index) => {
         if (option.kind === "folder") {
           const count = folderSummary(
@@ -119,7 +126,10 @@ export function MentionDropdown({
             option,
             index,
             <FolderOption folder={option.folder} count={count} />,
-            `Folder ${option.folder.name}, ${count}`,
+            t("chatInput1.mention.folderAria", {
+              name: option.folder.name,
+              count,
+            }),
           );
         }
         if (option.kind === "file") {
@@ -133,7 +143,7 @@ export function MentionDropdown({
           className="flex items-center gap-2 px-3 py-2 text-sm text-red-600"
         >
           <Icon icon={AlertCircleIcon} className="h-4 w-4 shrink-0" />
-          Couldn&apos;t load files. Try again.
+          {t("chatInput1.mention.loadError")}
         </p>
       ) : isLoading ? (
         <p className="flex items-center gap-2 px-3 py-2 text-sm text-foreground-tertiary">
@@ -141,12 +151,12 @@ export function MentionDropdown({
             icon={Loading03Icon}
             className="h-4 w-4 shrink-0 animate-spin"
           />
-          Searching files…
+          {t("chatInput1.mention.searching")}
         </p>
       ) : null}
       {showEmpty && (
         <p className="px-3 py-2 text-sm text-foreground-tertiary">
-          {emptyMessage(showFiles, hasIntegrations)}
+          {emptyMessage(showFiles, hasIntegrations, t)}
         </p>
       )}
     </div>
@@ -229,10 +239,17 @@ function mentionOptionKey(option: MentionOption): string {
   return `integration:${option.integration.credentialId}`;
 }
 
-function emptyMessage(showFiles: boolean, hasIntegrations: boolean): string {
-  if (showFiles && hasIntegrations) return "No matching files or integrations.";
-  if (showFiles) return "No matching files.";
+type Translate = (key: MessageKey) => string;
+
+function emptyMessage(
+  showFiles: boolean,
+  hasIntegrations: boolean,
+  t: Translate,
+): string {
+  if (showFiles && hasIntegrations)
+    return t("chatInput1.mention.emptyFilesAndIntegrations");
+  if (showFiles) return t("chatInput1.mention.emptyFiles");
   return hasIntegrations
-    ? "No matching integrations."
-    : "No connected integrations to mention.";
+    ? t("chatInput1.mention.emptyIntegrations")
+    : t("chatInput1.mention.emptyNoIntegrations");
 }

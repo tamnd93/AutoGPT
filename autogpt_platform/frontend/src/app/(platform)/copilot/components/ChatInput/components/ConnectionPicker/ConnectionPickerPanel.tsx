@@ -3,6 +3,7 @@
 import type { AIConnectionOffer } from "@/app/api/__generated__/models/aIConnectionOffer";
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { IntegrationLogo } from "@/components/molecules/IntegrationLogo/IntegrationLogo";
+import { useLocale, useT } from "@/lib/i18n";
 import { isComposingEvent } from "@/lib/keyboard";
 import { cn } from "@/lib/utils";
 import { CloudServerIcon } from "@hugeicons/core-free-icons";
@@ -34,6 +35,8 @@ interface Props {
 
 /** The picker's sheet: which connection a turn runs on and at what tier. */
 export function ConnectionPickerPanel({ picker, rows }: Props) {
+  const t = useT();
+  const locale = useLocale();
   const {
     active,
     chooseConnection,
@@ -56,10 +59,10 @@ export function ConnectionPickerPanel({ picker, rows }: Props) {
     <>
       {rows.length > 0 && (
         <>
-          <SectionLabel>Runs on</SectionLabel>
+          <SectionLabel>{t("chatInput1.picker.runsOn")}</SectionLabel>
           <div
             role="radiogroup"
-            aria-label="Connection this chat runs on"
+            aria-label={t("chatInput1.picker.connectionGroupAria")}
             // The connections read as plain rows on the sheet: a card around
             // them would frame the choice twice, once here and once around
             // the tiers below.
@@ -94,7 +97,11 @@ export function ConnectionPickerPanel({ picker, rows }: Props) {
                 leading={<OfferMark offer={offer} />}
                 title={offer.display_name}
                 subtitle={offerSubtitle(offer)}
-                badge={isLinkedAccount(offer) ? "Connected" : undefined}
+                badge={
+                  isLinkedAccount(offer)
+                    ? t("chatInput1.picker.connected")
+                    : undefined
+                }
                 // A selectable row's models are named by the tier toggle
                 // right below it, so repeating them here only crowds the
                 // choice. A locked row has no toggle, so it keeps them.
@@ -121,7 +128,7 @@ export function ConnectionPickerPanel({ picker, rows }: Props) {
 
       {showTiers && (
         <>
-          <SectionLabel>Model tier</SectionLabel>
+          <SectionLabel>{t("chatInput1.picker.modelTier")}</SectionLabel>
           <div
             className={cn(
               // TODO(tokens): no exact role for border-neutral-200
@@ -135,8 +142,8 @@ export function ConnectionPickerPanel({ picker, rows }: Props) {
               advancedUpgrade={
                 showMaxUpgrade && advancedLock?.href ? (
                   <MaxUpgradeCard
-                    label={tierLabel(active, "advanced")}
-                    name={tierName(active, "advanced")}
+                    label={tierLabel(active, "advanced", locale)}
+                    name={tierName(active, "advanced", locale)}
                     model={tierModel(active, "advanced")}
                     reason={advancedLock.reason}
                     href={advancedLock.href}
@@ -145,8 +152,8 @@ export function ConnectionPickerPanel({ picker, rows }: Props) {
               }
               segments={TIERS.map((candidate) => ({
                 tier: candidate,
-                label: tierLabel(active, candidate),
-                name: tierName(active, candidate),
+                label: tierLabel(active, candidate, locale),
+                name: tierName(active, candidate, locale),
                 model: tierModel(active, candidate),
                 lock: tierLock(active, candidate),
               }))}
@@ -162,7 +169,7 @@ export function ConnectionPickerPanel({ picker, rows }: Props) {
             showMaxUpgrade && "border-t border-border-base pt-4",
           )}
         >
-          <SectionLabel>Add a connection</SectionLabel>
+          <SectionLabel>{t("chatInput1.picker.addConnection")}</SectionLabel>
           <ConnectAccountRow
             onConnect={connectChatGPT}
             isConnecting={isConnecting}

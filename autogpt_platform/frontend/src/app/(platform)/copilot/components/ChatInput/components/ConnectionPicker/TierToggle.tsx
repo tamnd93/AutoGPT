@@ -10,6 +10,7 @@ import Link from "next/link";
 import { Fragment, type ReactNode } from "react";
 
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
 import type { CopilotLlmModel } from "../../../../store";
@@ -53,6 +54,7 @@ export function TierToggle({
   onSelect,
   advancedUpgrade,
 }: Props) {
+  const t = useT();
   const options = segments.map((segment) => ({
     value: segment.tier,
     disabled: Boolean(segment.lock),
@@ -76,7 +78,7 @@ export function TierToggle({
   return (
     <div
       role="radiogroup"
-      aria-label="Model tier"
+      aria-label={t("chatInput1.picker.modelTier")}
       onKeyDown={handleKeyDown}
       className={cn(
         // TODO(tokens): no exact role for divide-neutral-200
@@ -144,6 +146,8 @@ export function TierToggle({
  * below the name has room to explain the barrier.
  */
 function LockedSegment({ segment }: { segment: Segment }) {
+  const t = useT();
+
   return (
     /* The upgrade link is a sibling of the radio, not a child of it: a radio's
        descendants are presentational to assistive technology, so a link nested
@@ -154,7 +158,11 @@ function LockedSegment({ segment }: { segment: Segment }) {
         role="radio"
         aria-checked={false}
         aria-disabled="true"
-        aria-label={`${segment.label} — ${segment.lock?.reason ?? "unavailable"}`}
+        aria-label={t("chatInput1.picker.tierAria", {
+          label: segment.label,
+          reason:
+            segment.lock?.reason ?? t("chatInput1.picker.unavailableTier"),
+        })}
         tabIndex={-1}
         className="flex items-start gap-2.5"
       >
@@ -188,7 +196,7 @@ function LockedSegment({ segment }: { segment: Segment }) {
           // answers, the way it reads when it follows that sentence inline.
           className="ml-6 mt-1 w-fit text-caption-sm font-medium leading-inherit text-foreground-strong underline underline-offset-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-strong"
         >
-          See plans
+          {t("chatInput1.picker.seePlans")}
         </Link>
       )}
     </div>

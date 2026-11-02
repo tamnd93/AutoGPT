@@ -15,6 +15,7 @@ import {
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it } from "vitest";
 
+import { LocaleProvider } from "@/lib/i18n";
 import { useCopilotUIStore } from "../../../../store";
 import { ConnectionPicker } from "../ConnectionPicker/ConnectionPicker";
 import { ConnectionPickerDialog } from "../ConnectionPicker/ConnectionPickerDialog";
@@ -172,6 +173,33 @@ describe("ConnectionPickerDialog", () => {
       ).toBe("true");
     },
   );
+});
+
+describe("ConnectionPicker in Vietnamese", () => {
+  it("reads the picker chrome in Vietnamese", async () => {
+    mockOffers([offer(), chatgpt()]);
+
+    render(
+      <LocaleProvider locale="vi">
+        <ConnectionPicker />
+      </LocaleProvider>,
+    );
+    const trigger = await screen.findByRole("button", {
+      name: /Chạy trên .* — đổi/,
+    });
+    await userEvent.click(trigger);
+
+    expect(
+      await screen.findByRole("radiogroup", { name: "Mức model" }),
+    ).toBeDefined();
+    expect(screen.getByText("Chạy trên")).toBeDefined();
+    expect(
+      screen.getByRole("radiogroup", {
+        name: "Kết nối chat này chạy trên",
+      }),
+    ).toBeDefined();
+    expect(screen.getByText("Đã kết nối")).toBeDefined();
+  });
 });
 
 describe("ConnectionPicker", () => {

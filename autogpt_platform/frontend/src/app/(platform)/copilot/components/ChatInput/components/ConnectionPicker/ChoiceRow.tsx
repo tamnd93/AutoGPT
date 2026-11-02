@@ -1,5 +1,6 @@
 "use client";
 
+import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { LockIcon, Tick02Icon } from "@hugeicons/core-free-icons";
@@ -137,6 +138,8 @@ interface LockedProps {
  * unavailable, and the one action that changes that.
  */
 function LockedRow({ title, subtitle, notes, lock }: LockedProps) {
+  const t = useT();
+
   return (
     <div className="flex items-start gap-2.5 px-3 py-2.5">
       <Icon
@@ -170,7 +173,7 @@ function LockedRow({ title, subtitle, notes, lock }: LockedProps) {
             href={lock.href}
             className="mt-1 w-fit text-caption-sm font-medium leading-inherit text-foreground-strong underline underline-offset-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-strong"
           >
-            See plans
+            {t("chatInput1.picker.seePlans")}
           </Link>
         )}
       </span>

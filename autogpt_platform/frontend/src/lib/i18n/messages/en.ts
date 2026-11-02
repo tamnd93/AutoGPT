@@ -1,3 +1,4 @@
+import { chatInput1En } from "./chat-input-1.en";
 import { formatEn } from "./format.en";
 import { home1En } from "./home-1.en";
 import { integrationsEn } from "./integrations.en";
@@ -14,6 +15,7 @@ export const en = {
   ...home1En,
   ...nav2En,
   ...nav3En,
+  ...chatInput1En,
   "common.planSuffix": "{plan} plan",
 } as const;
 

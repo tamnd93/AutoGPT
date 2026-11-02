@@ -12,6 +12,7 @@ import {
 import type { UIMessage } from "ai";
 import { useRef } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { LocaleProvider } from "@/lib/i18n";
 import { ChatInput } from "../ChatInput";
 import { sdkStopStream, useCopilotStop } from "../../../useCopilotStop";
 import { toast } from "@/components/molecules/Toast/use-toast";
@@ -272,6 +273,46 @@ afterEach(() => {
   mockTranscriptionError = null;
   mockHasFailedRecording = false;
   mockIsTranscribing = false;
+});
+
+describe("ChatInput in Vietnamese", () => {
+  it("reads the placeholder, composer hint and queue button in Vietnamese", async () => {
+    render(
+      <LocaleProvider locale="vi">
+        <ChatInput onSend={mockOnSend} onEnqueue={vi.fn()} isStreaming />
+      </LocaleProvider>,
+    );
+
+    expect(screen.getByPlaceholderText("Nhập tin nhắn...")).toBeDefined();
+    expect(
+      screen.getByText(
+        "Nhấn Enter để gửi, Shift+Enter để xuống dòng, Space để ghi âm",
+      ),
+    ).toBeDefined();
+    fireEvent.change(screen.getByTestId("textarea"), {
+      target: { value: "hello" },
+    });
+    expect(
+      screen.getByRole("button", { name: "Xếp hàng tin nhắn" }),
+    ).toBeDefined();
+  });
+
+  it("reads the test-mode toast in Vietnamese", () => {
+    mockFlagValue = true;
+    render(
+      <LocaleProvider locale="vi">
+        <ChatInput onSend={mockOnSend} />
+      </LocaleProvider>,
+    );
+
+    openOverflow();
+    fireEvent.click(screen.getByTestId("dry-run-toggle"));
+
+    expect(toast).toHaveBeenCalledWith({
+      title: "Đã bật chế độ thử nghiệm",
+      description: "Chat mới sẽ chạy workflow ở chế độ thử nghiệm.",
+    });
+  });
 });
 
 describe("ChatInput composer row", () => {

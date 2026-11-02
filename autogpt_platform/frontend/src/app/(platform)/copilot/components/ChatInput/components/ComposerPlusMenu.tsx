@@ -9,6 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/molecules/DropdownMenu/DropdownMenu";
 import type { IconSvgElement } from "@hugeicons/react";
+import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { MAX_ATTACHMENTS } from "../../../helpers/workspaceAttachments";
 import { useComposerPlusMenu } from "./useComposerPlusMenu";
@@ -54,6 +55,7 @@ export function ComposerPlusMenu({
   className,
   extraItems = [],
 }: Props) {
+  const t = useT();
   const {
     fileInputRef,
     openModal,
@@ -94,7 +96,7 @@ export function ComposerPlusMenu({
             type="button"
             variant="icon"
             size="icon"
-            aria-label="Add files and more"
+            aria-label={t("chatInput1.plus.addFilesAndMore")}
             data-testid="composer-plus-button"
             disabled={disabled}
             className={cn(
@@ -115,7 +117,7 @@ export function ComposerPlusMenu({
             }}
           >
             <Icon icon={Attachment01Icon} className="mr-2 h-4 w-4" />
-            Attach file
+            {t("chatInput1.plus.attachFile")}
             {isAtCap && <CapLabel />}
           </DropdownMenuItem>
           {showCameraOption && (
@@ -127,7 +129,7 @@ export function ComposerPlusMenu({
               }}
             >
               <Icon icon={Camera01Icon} className="mr-2 h-4 w-4" />
-              Take photo
+              {t("chatInput1.plus.takePhoto")}
               {isAtCap && <CapLabel />}
             </DropdownMenuItem>
           )}
@@ -140,7 +142,7 @@ export function ComposerPlusMenu({
               }}
             >
               <Icon icon={FolderOpenIcon} className="mr-2 h-4 w-4" />
-              Use File from Workspace
+              {t("chatInput1.plus.workspaceFile")}
               {isAtCap && <CapLabel />}
             </DropdownMenuItem>
           )}
@@ -151,15 +153,15 @@ export function ComposerPlusMenu({
             }}
           >
             <Icon icon={PlugSocketIcon} className="mr-2 h-4 w-4" />
-            Connect service
+            {t("chatInput1.plus.connectService")}
           </DropdownMenuItem>
           <DropdownMenuItem onSelect={() => openModal("skills")}>
             <Icon icon={BookOpen01Icon} className="mr-2 h-4 w-4" />
-            Skills
+            {t("chatInput1.plus.skills")}
           </DropdownMenuItem>
           <DropdownMenuItem onSelect={() => openModal("scheduled")}>
             <Icon icon={Calendar03Icon} className="mr-2 h-4 w-4" />
-            Scheduled
+            {t("chatInput1.plus.scheduled")}
           </DropdownMenuItem>
           {extraItems.length > 0 && <DropdownMenuSeparator />}
           {extraItems.map((item) => (
@@ -179,9 +181,11 @@ export function ComposerPlusMenu({
 }
 
 function CapLabel() {
+  const t = useT();
+
   return (
     <span className="ml-auto pl-3 text-xs text-foreground-tertiary">
-      {MAX_ATTACHMENTS} max
+      {t("chatInput1.plus.cap", { max: MAX_ATTACHMENTS })}
     </span>
   );
 }

@@ -5,6 +5,7 @@ import {
   waitFor,
 } from "@/tests/integrations/test-utils";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { LocaleProvider } from "@/lib/i18n";
 import { useCopilotModal } from "../../../../useCopilotModal";
 import { MAX_ATTACHMENTS } from "../../../../helpers/workspaceAttachments";
 import { ComposerPlusMenu } from "../ComposerPlusMenu";
@@ -63,6 +64,29 @@ describe("ComposerPlusMenu", () => {
       expect(onStart).toHaveBeenCalledTimes(disabled ? 0 : 1);
     },
   );
+
+  it("reads its menu in Vietnamese", async () => {
+    mockWorkspaceFilesFlag = true;
+    render(
+      <LocaleProvider locale="vi">
+        <ComposerPlusMenu
+          onFilesSelected={vi.fn()}
+          onUseWorkspaceFile={vi.fn()}
+        />
+      </LocaleProvider>,
+    );
+    openMenu();
+
+    expect(screen.getByTestId("composer-plus-button")).toBeDefined();
+    const items = await screen.findAllByRole("menuitem");
+    expect(items.map((item) => item.textContent)).toEqual([
+      "Đính kèm tệp",
+      "Dùng tệp từ Không gian làm việc",
+      "Kết nối dịch vụ",
+      "Kỹ năng",
+      "Đã lên lịch",
+    ]);
+  });
 
   it("lists the four actions in fixed order", async () => {
     render(<ComposerPlusMenu onFilesSelected={vi.fn()} />);

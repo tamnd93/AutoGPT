@@ -7,6 +7,7 @@ import {
   TooltipPortal,
 } from "@/components/atoms/Tooltip/BaseTooltip";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { FlaskConicalIcon } from "@hugeicons/core-free-icons";
 
@@ -20,10 +21,13 @@ interface Props {
 }
 
 export function DryRunToggleButton({ isDryRun, onToggle }: Props) {
+  const t = useT();
   const tooltip = isDryRun
-    ? "Test mode on — new sessions run without performing real actions (click to turn off)."
-    : "Turn on test mode to try prompts without performing real actions.";
-  const ariaLabel = isDryRun ? "Test mode active" : "Enable Test mode";
+    ? t("chatInput1.dryRun.onTooltip")
+    : t("chatInput1.dryRun.offTooltip");
+  const ariaLabel = isDryRun
+    ? t("chatInput1.dryRun.activeAria")
+    : t("chatInput1.dryRun.enableAria");
 
   return (
     <Tooltip inheritDelay>
