@@ -65,6 +65,7 @@ import { settingsRest1En } from "./settings-rest-1.en";
 import { settingsRest2En } from "./settings-rest-2.en";
 import { settingsRest3En } from "./settings-rest-3.en";
 import { Shared1En } from "./shared-1.en";
+import { shared2En } from "./shared-2.en";
 import { Shared3En } from "./shared-3.en";
 import { Shared4En } from "./shared-4.en";
 import { Shared5En } from "./shared-5.en";
@@ -150,6 +151,7 @@ export const en = {
   ...settingsRest2En,
   ...settingsRest3En,
   ...Shared1En,
+  ...shared2En,
   ...Shared3En,
   ...Shared4En,
   ...Shared5En,

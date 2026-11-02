@@ -9,9 +9,11 @@ import {
   Cancel01Icon,
   NewsIcon,
 } from "@hugeicons/core-free-icons";
+import { useT } from "@/lib/i18n";
 import { useChangelog } from "./useChangelog";
 
 export function ChangelogPopup() {
+  const t = useT();
   const {
     isVisible,
     isFading,
@@ -54,7 +56,7 @@ export function ChangelogPopup() {
         }
       }}
       role="dialog"
-      aria-label="What's new"
+      aria-label={t("shared2.changelog.title")}
     >
       <div
         data-slot="changelog-popup-card"
@@ -80,7 +82,7 @@ export function ChangelogPopup() {
               data-slot="changelog-popup-title"
               className="text-foreground"
             >
-              What&apos;s new
+              {t("shared2.changelog.title")}
             </Text>
             <Text
               variant="small"
@@ -98,7 +100,7 @@ export function ChangelogPopup() {
             onClick={dismiss}
             data-slot="changelog-popup-dismiss"
             className="-mr-1 -mt-1 text-muted-foreground hover:text-foreground"
-            aria-label="Dismiss changelog"
+            aria-label={t("shared2.changelog.dismiss")}
           >
             <Icon
               data-slot="changelog-popup-dismiss-icon"
