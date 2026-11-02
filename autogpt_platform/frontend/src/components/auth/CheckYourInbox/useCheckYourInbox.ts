@@ -2,11 +2,7 @@ import { useToast } from "@/components/molecules/Toast/use-toast";
 import { authClient } from "@/lib/auth/client";
 import { useT } from "@/lib/i18n";
 import { getEmailVerificationCallbackURL } from "@/lib/auth/email-verification";
-import {
-  UNDELIVERABLE_EMAIL_CODE,
-  UNDELIVERABLE_EMAIL_HINT,
-  UNDELIVERABLE_EMAIL_TITLE,
-} from "@/lib/auth/undeliverable-email";
+import { UNDELIVERABLE_EMAIL_CODE } from "@/lib/auth/undeliverable-email";
 import { useEffect, useState } from "react";
 import {
   CHECK_YOUR_INBOX_HEADING_ID,
@@ -46,8 +42,8 @@ export function useCheckYourInbox({ email, next, marketingOptOut }: Args) {
       });
       if (error?.code === UNDELIVERABLE_EMAIL_CODE) {
         toast({
-          title: UNDELIVERABLE_EMAIL_TITLE,
-          description: UNDELIVERABLE_EMAIL_HINT,
+          title: t("runtimeErrors2.undeliverableTitle"),
+          description: t("runtimeErrors2.undeliverableHint"),
           variant: "destructive",
         });
         return;

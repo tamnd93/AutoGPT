@@ -10,6 +10,7 @@ import {
 } from "@/tests/integrations/test-utils";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { Toaster } from "@/components/molecules/Toast/toaster";
+import { LocaleProvider } from "@/lib/i18n";
 import { UNDELIVERABLE_EMAIL_CODE } from "@/lib/auth/undeliverable-email";
 import SignupPage from "../page";
 
@@ -210,6 +211,57 @@ describe("SignupPage with email verification required", () => {
       await screen.findByRole("button", { name: "Resend email in 60s" }),
     ).toHaveProperty("disabled", true);
     expect(await screen.findByText(`Email sent to ${email}`)).toBeDefined();
+  });
+
+  test("says the address can't receive mail in Vietnamese", async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+    server.use(
+      http.post("*/api/auth/send-verification-email", () =>
+        HttpResponse.json(
+          {
+            code: UNDELIVERABLE_EMAIL_CODE,
+            message:
+              "We can't deliver email to this address. Check it, or use a different one.",
+          },
+          { status: 400 },
+        ),
+      ),
+    );
+    verificationRequired();
+    render(
+      <LocaleProvider locale="vi">
+        <SignupPage />
+        <Toaster />
+      </LocaleProvider>,
+    );
+
+    fireEvent.change(screen.getByLabelText("Email"), {
+      target: { value: email },
+    });
+    fireEvent.change(screen.getByLabelText("Mật khẩu", { selector: "input" }), {
+      target: { value: password },
+    });
+    fireEvent.change(
+      screen.getByLabelText("Xác nhận mật khẩu", { selector: "input" }),
+      { target: { value: password } },
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Đăng ký" }));
+
+    await screen.findByRole("heading", { name: "Kiểm tra hộp thư của bạn" });
+    for (let second = 0; second < 65; second++) {
+      if (screen.queryByRole("button", { name: "Gửi lại email" })) break;
+      await act(async () => {
+        vi.advanceTimersByTime(1000);
+      });
+    }
+    fireEvent.click(screen.getByRole("button", { name: "Gửi lại email" }));
+
+    expect(
+      await screen.findByText("Không gửi được email tới địa chỉ này"),
+    ).toBeDefined();
+    expect(
+      screen.getByText("Kiểm tra lại, hoặc dùng địa chỉ khác."),
+    ).toBeDefined();
   });
 
   test("says the address can't receive mail, not that it sent, when Resend is refused", async () => {
