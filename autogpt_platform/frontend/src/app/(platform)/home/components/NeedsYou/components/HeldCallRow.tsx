@@ -4,6 +4,7 @@ import type { HomeAttentionItem } from "@/app/api/__generated__/models/homeAtten
 import { Button } from "@/components/atoms/Button/Button";
 import { Text } from "@/components/atoms/Text/Text";
 import { AUTOPILOT_NAME } from "@/components/molecules/AutopilotAvatar/helpers";
+import { useT } from "@/lib/i18n";
 import type { CardStatus } from "@/app/(platform)/copilot/components/ApprovalQueue/components/ApprovalCard/ApprovalCard";
 import { HeadlineText } from "@/app/(platform)/copilot/components/ApprovalQueue/components/ApprovalHeadline";
 import {
@@ -35,13 +36,14 @@ export function HeldCallRow({
   onOpen,
   onDecide,
 }: Props) {
+  const t = useT();
   const [confirmReject, setConfirmReject] = useState(false);
   const read = isHeldRead(approval);
   const reason = reasonLine(approval);
   const mode = approval.reasonKind === "mode" ? modeLabel(approval.mode) : null;
   const busy = status !== "idle";
-  const approveLabel = read ? "Release" : "Approve";
-  const rejectLabel = read ? "Keep it out" : "Reject";
+  const approveLabel = read ? t("home1.held.release") : t("home1.held.approve");
+  const rejectLabel = read ? t("home1.held.keepOut") : t("home1.held.reject");
 
   function handleReject() {
     if (!confirmReject) {
@@ -74,7 +76,7 @@ export function HeldCallRow({
             </button>
             {approval.subject.irreversible && (
               <Tag className="bg-error-surface text-error-foreground">
-                Can&apos;t be undone
+                {t("home1.held.cantUndo")}
               </Tag>
             )}
             {mode && (
@@ -87,7 +89,7 @@ export function HeldCallRow({
                 // TODO(tokens): no exact role (ring-amber-600/10 #D97706)
                 className="bg-warning-surface text-warning-foreground ring-1 ring-inset ring-amber-600/10"
               >
-                Waiting
+                {t("home1.attention.waiting")}
               </Tag>
             )}
           </div>
@@ -98,7 +100,7 @@ export function HeldCallRow({
               role="alert"
               className="!text-red-600"
             >
-              Couldn&apos;t send your answer. Nothing ran. Try again.
+              {t("home1.held.sendFailed")}
             </Text>
           ) : reason ? (
             <Text
@@ -138,7 +140,10 @@ export function HeldCallRow({
             leadingIcon={Tick02Icon}
             loading={status === "approving"}
             disabled={busy}
-            aria-label={`${approveLabel}: ${item.title}`}
+            aria-label={t("home1.aria.action", {
+              action: approveLabel,
+              title: item.title,
+            })}
             onClick={() => onDecide(true)}
           />
         ) : (
@@ -147,10 +152,13 @@ export function HeldCallRow({
             size="small"
             className="h-8 min-w-0 px-3"
             disabled={busy}
-            aria-label={`Review: ${item.title}`}
+            aria-label={t("home1.aria.action", {
+              action: t("home1.held.review"),
+              title: item.title,
+            })}
             onClick={onOpen}
           >
-            Review
+            {t("home1.held.review")}
           </Button>
         )}
         <Button
@@ -159,14 +167,25 @@ export function HeldCallRow({
           leadingIcon={Cancel01Icon}
           loading={status === "rejecting"}
           disabled={busy}
-          aria-label={`${confirmReject ? `Confirm ${rejectLabel.toLowerCase()}` : rejectLabel}: ${item.title}`}
+          aria-label={t("home1.aria.action", {
+            action: confirmReject
+              ? t("home1.held.confirm", {
+                  action: rejectLabel.toLowerCase(),
+                })
+              : rejectLabel,
+            title: item.title,
+          })}
           onClick={handleReject}
           onBlur={() => setConfirmReject(false)}
         />
       </div>
       <span className="sr-only" aria-live="polite">
         {confirmReject
-          ? `Press again to ${rejectLabel.toLowerCase()} ${item.title}. ${read ? approval.reader : AUTOPILOT_NAME} will be told it didn't run.`
+          ? t("home1.held.confirmPrompt", {
+              action: rejectLabel.toLowerCase(),
+              title: item.title,
+              who: read ? approval.reader : AUTOPILOT_NAME,
+            })
           : ""}
       </span>
     </article>

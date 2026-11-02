@@ -7,6 +7,7 @@ import {
 import type { SuggestedTask } from "@/app/api/__generated__/models/suggestedTask";
 import { Button } from "@/components/atoms/Button/Button";
 import { toast } from "@/components/molecules/Toast/use-toast";
+import { useT } from "@/lib/i18n";
 import { trackFunnel } from "@/services/experts/experts-analytics";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
@@ -35,6 +36,7 @@ const UNDO_TOAST_MS = 6000;
 const QUERY_KEY = getGetBrainDumpSuggestedTasksQueryKey();
 
 export function useSuggestedTasks({ surface, onSend, enabled }: Args) {
+  const t = useT();
   const queryClient = useQueryClient();
   const [sendingId, setSendingId] = useState<string | null>(null);
 
@@ -68,8 +70,8 @@ export function useSuggestedTasks({ surface, onSend, enabled }: Args) {
       onError: () => {
         void queryClient.invalidateQueries({ queryKey: QUERY_KEY });
         toast({
-          title: "Couldn't update your suggestions",
-          description: "Please try again.",
+          title: t("home1.suggested.updateFailed"),
+          description: t("home1.suggested.tryAgain"),
           variant: "destructive",
         });
       },
@@ -117,7 +119,7 @@ export function useSuggestedTasks({ surface, onSend, enabled }: Args) {
     await startChat()
       .catch((error) => {
         toastSendFailure({
-          title: "Could not start that task",
+          title: t("home1.suggested.startFailed"),
           error,
           recovery: "it is still in your suggestions",
         });
@@ -146,7 +148,10 @@ export function useSuggestedTasks({ surface, onSend, enabled }: Args) {
 
     const toastId = `suggestion-hidden-${ids.join("-")}`;
     toast({
-      title: scope === "all" ? "Suggestions hidden" : "Suggestion hidden",
+      title:
+        scope === "all"
+          ? t("home1.suggested.hiddenAll")
+          : t("home1.suggested.hidden"),
       duration: UNDO_TOAST_MS,
       replaceKey: toastId,
       action: (
@@ -158,7 +163,7 @@ export function useSuggestedTasks({ surface, onSend, enabled }: Args) {
             undoHide(before, ids);
           }}
         >
-          Undo
+          {t("home1.suggested.undo")}
         </Button>
       ),
     });

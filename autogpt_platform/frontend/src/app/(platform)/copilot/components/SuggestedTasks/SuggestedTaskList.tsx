@@ -4,6 +4,7 @@ import type { SuggestedTask } from "@/app/api/__generated__/models/suggestedTask
 import { Button } from "@/components/atoms/Button/Button";
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { Text } from "@/components/atoms/Text/Text";
+import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import {
   ArrowRight01Icon,
@@ -35,6 +36,7 @@ export function SuggestedTaskList({
   onHide,
   className,
 }: Props) {
+  const t = useT();
   const prefersReducedMotion = useReducedMotion();
   const isBusy = disabled || sendingId !== null;
 
@@ -82,7 +84,7 @@ export function SuggestedTaskList({
                     tone="muted"
                     className="ml-auto shrink-0 whitespace-nowrap"
                   >
-                    In progress
+                    {t("home1.suggested.inProgress")}
                   </Text>
                 </NextLink>
               ) : (
@@ -113,7 +115,7 @@ export function SuggestedTaskList({
                       icon={Loading03Icon}
                       size={15}
                       className="ml-auto shrink-0 animate-spin text-foreground-subtle"
-                      aria-label="Starting"
+                      aria-label={t("home1.suggested.starting")}
                     />
                   ) : (
                     <Icon
@@ -129,7 +131,7 @@ export function SuggestedTaskList({
                 variant="ghost"
                 size="icon-xs"
                 withTooltip={false}
-                aria-label={`Hide: ${task.title}`}
+                aria-label={t("home1.suggested.hide", { title: task.title })}
                 disabled={sendingId !== null}
                 onClick={() => onHide(task)}
                 className="mr-2 shrink-0 text-foreground-subtle opacity-0 transition-opacity duration-150 hover:text-foreground-body focus-visible:opacity-100 group-hover/row:opacity-100 [@media(hover:none)]:opacity-100"

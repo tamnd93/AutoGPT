@@ -9,6 +9,7 @@ import {
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { Text } from "@/components/atoms/Text/Text";
 import { useToast } from "@/components/molecules/Toast/use-toast";
+import { useT } from "@/lib/i18n";
 import {
   Tooltip,
   TooltipContent,
@@ -58,6 +59,7 @@ export function OnboardingIntroCard({
   transcript = "",
   disabled = false,
 }: Props) {
+  const t = useT();
   const prefersReducedMotion = useReducedMotion();
   const [isCopied, setIsCopied] = useState(false);
   const { toast } = useToast();
@@ -69,8 +71,8 @@ export function OnboardingIntroCard({
       await navigator.clipboard.writeText(transcript);
     } catch {
       toast({
-        title: "Could not copy the transcript",
-        description: "Your browser blocked clipboard access.",
+        title: t("home1.introCard.copyFailed"),
+        description: t("home1.introCard.clipboardBlocked"),
         variant: "destructive",
       });
       return;
@@ -116,13 +118,14 @@ export function OnboardingIntroCard({
         </motion.span>
         <motion.div {...reveal(HEADING_START)}>
           <Text variant="large-medium" tone="primary">
-            Hey
+            {t("home1.greeting.hey")}
             {name ? (
               <>
-                , <span className="text-foreground-strong">{name}</span>
+                {t("home1.greeting.nameJoin")}
+                <span className="text-foreground-strong">{name}</span>
               </>
             ) : (
-              " there"
+              <> {t("home1.greeting.there")}</>
             )}
           </Text>
         </motion.div>
@@ -133,7 +136,7 @@ export function OnboardingIntroCard({
                 <button
                   type="button"
                   onClick={handleCopyTranscript}
-                  aria-label="Copy your recording's transcript"
+                  aria-label={t("home1.introCard.copyAria")}
                   className="rounded-full p-2 text-foreground-subtle transition-colors hover:bg-surface-hover hover:text-foreground-body"
                 >
                   {isCopied ? (
@@ -150,7 +153,9 @@ export function OnboardingIntroCard({
               </TooltipTrigger>
               <TooltipPortal>
                 <TooltipContent>
-                  {isCopied ? "Copied!" : "Copy everything you told me"}
+                  {isCopied
+                    ? t("home1.introCard.copied")
+                    : t("home1.introCard.copyTooltip")}
                 </TooltipContent>
               </TooltipPortal>
             </Tooltip>
@@ -179,8 +184,8 @@ export function OnboardingIntroCard({
       <motion.div {...reveal(footerStart)}>
         <Text variant="body" tone="muted" className="mt-5">
           {suggestions.tasks.length > 0
-            ? "Want to do something else? Just write it in the textbox below."
-            : "Tell me what you'd like to start with in the textbox below."}
+            ? t("home1.introCard.footerWithTasks")
+            : t("home1.introCard.footerNoTasks")}
         </Text>
       </motion.div>
     </div>

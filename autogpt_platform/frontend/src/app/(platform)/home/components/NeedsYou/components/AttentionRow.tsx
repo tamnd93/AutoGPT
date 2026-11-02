@@ -10,6 +10,7 @@ import { useState } from "react";
 import type { HomeAttentionItem } from "@/app/api/__generated__/models/homeAttentionItem";
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { Text } from "@/components/atoms/Text/Text";
+import { useT } from "@/lib/i18n";
 import { attentionReason } from "@/app/(platform)/copilot/components/ApprovalQueue/helpers";
 import { ExpertAvatar } from "@/components/molecules/ExpertAvatar/ExpertAvatar";
 import { AttentionRowActions } from "./AttentionRowActions";
@@ -30,6 +31,7 @@ const ICONS: Record<HomeAttentionItem["kind"], IconSvgElement> = {
 };
 
 export function AttentionRow({ item, isProcessing, onDecision }: Props) {
+  const t = useT();
   const [confirmDecline, setConfirmDecline] = useState(false);
   const reason = attentionReason(item.review);
 
@@ -68,7 +70,7 @@ export function AttentionRow({ item, isProcessing, onDecision }: Props) {
                 // TODO(tokens): no exact role (ring-amber-600/10 #D97706)
                 className="rounded bg-warning-surface px-1.5 py-px text-warning-foreground ring-1 ring-inset ring-amber-600/10"
               >
-                Waiting
+                {t("home1.attention.waiting")}
               </Text>
             ) : null}
           </div>
@@ -96,7 +98,9 @@ export function AttentionRow({ item, isProcessing, onDecision }: Props) {
         />
       </div>
       <span className="sr-only" aria-live="polite">
-        {confirmDecline ? `Press again to decline ${item.title}` : ""}
+        {confirmDecline
+          ? t("home1.attention.pressAgainDecline", { title: item.title })
+          : ""}
       </span>
     </article>
   );

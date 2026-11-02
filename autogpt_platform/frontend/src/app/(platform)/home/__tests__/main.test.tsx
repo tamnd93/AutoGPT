@@ -6,6 +6,7 @@ import type { HomeAgentStatus } from "@/app/api/__generated__/models/homeAgentSt
 import type { HomeAttentionItem } from "@/app/api/__generated__/models/homeAttentionItem";
 import type { HomeBriefingOutcome } from "@/app/api/__generated__/models/homeBriefingOutcome";
 import type { HomeDashboardResponse } from "@/app/api/__generated__/models/homeDashboardResponse";
+import { LocaleProvider } from "@/lib/i18n";
 import { server } from "@/mocks/mock-server";
 import {
   render,
@@ -616,6 +617,47 @@ test("emits the home_viewed funnel event once the dashboard mounts", async () =>
 
   await screen.findByRole("heading", { name: "Needs you" });
   await waitFor(() => expect(funnelEventNames()).toContain("home_viewed"));
+});
+
+test("reads the recap, the team and Needs you in Vietnamese", async () => {
+  mockDashboard(dashboard);
+
+  render(
+    <LocaleProvider locale="vi">
+      <HomeRecap />
+    </LocaleProvider>,
+  );
+
+  expect(
+    await screen.findByRole("heading", { name: "Tóm tắt của bạn" }),
+  ).toBeDefined();
+  expect(screen.getByRole("heading", { name: "Cần bạn" })).toBeDefined();
+  expect(screen.getByLabelText("1 mục cần bạn xử lý")).toBeDefined();
+  expect(screen.getByRole("heading", { name: "Đội của bạn" })).toBeDefined();
+  expect(
+    screen.getByRole("link", { name: "Xem tất cả 10 expert" }),
+  ).toBeDefined();
+  expect(screen.getByText("1 đang làm · 7 sẵn sàng")).toBeDefined();
+  expect(screen.getByText("Đang làm")).toBeDefined();
+  expect(screen.getByText("Đang chờ")).toBeDefined();
+});
+
+test("reports a failed recap in Vietnamese", async () => {
+  server.use(
+    http.get(/\/api\/proxy\/api\/home(?:\?.*)?$/, () =>
+      HttpResponse.json({ detail: "boom" }, { status: 500 }),
+    ),
+  );
+
+  render(
+    <LocaleProvider locale="vi">
+      <HomeRecap />
+    </LocaleProvider>,
+  );
+
+  expect(
+    await screen.findByText("Không tải được bản tóm tắt Trang chủ"),
+  ).toBeDefined();
 });
 
 test("view events fire exactly once under StrictMode effect replay", async () => {

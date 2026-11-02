@@ -1,5 +1,6 @@
 import type { HomeDashboardResponse } from "@/app/api/__generated__/models/homeDashboardResponse";
 import { Text } from "@/components/atoms/Text/Text";
+import { useT } from "@/lib/i18n";
 import { formatHeaderDate, getHomeStatusLine } from "../../helpers";
 
 interface Props {
@@ -7,6 +8,7 @@ interface Props {
 }
 
 export function HomeHeader({ dashboard }: Props) {
+  const t = useT();
   const date = formatHeaderDate(dashboard.generated_at, dashboard.timezone);
   const status = getHomeStatusLine(dashboard);
 
@@ -19,7 +21,7 @@ export function HomeHeader({ dashboard }: Props) {
           tone="primary"
           className="text-pretty tracking-title"
         >
-          Your recap
+          {t("home1.header.title")}
         </Text>
         <Text variant="body" tone="primary" className="mt-0.5 text-pretty">
           {status.split(/(\d+)/).map((part, index) =>

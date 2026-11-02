@@ -3,6 +3,7 @@ import { Button } from "@/components/atoms/Button/Button";
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { Text } from "@/components/atoms/Text/Text";
 import { IntegrationLogo } from "@/components/molecules/IntegrationLogo/IntegrationLogo";
+import { useT } from "@/lib/i18n";
 import { tourStartingPoint } from "@/lib/tour-targets";
 import { cn } from "@/lib/utils";
 import { Cancel01Icon, Loading03Icon } from "@hugeicons/core-free-icons";
@@ -34,6 +35,7 @@ export function SuggestedTaskCard({
   onSend,
   onHide,
 }: Props) {
+  const t = useT();
   const isSent = getTaskState(task) === "sent";
 
   return (
@@ -52,7 +54,7 @@ export function SuggestedTaskCard({
             tone="muted"
             className="mt-auto self-start rounded-full bg-surface-hover px-2 py-0.5"
           >
-            In progress
+            {t("home1.suggested.inProgress")}
           </Text>
         </NextLink>
       ) : (
@@ -77,7 +79,7 @@ export function SuggestedTaskCard({
         variant="secondary"
         size="icon-xs"
         withTooltip={false}
-        aria-label={`Hide: ${task.title}`}
+        aria-label={t("home1.suggested.hide", { title: task.title })}
         disabled={!canHide}
         onClick={() => onHide(task)}
         className="absolute -right-2 -top-2 text-foreground-subtle opacity-0 transition-opacity duration-150 hover:text-foreground-body focus-visible:opacity-100 group-hover/card:opacity-100 [@media(hover:none)]:opacity-100"
@@ -95,6 +97,7 @@ interface CardTopProps {
 }
 
 function CardTop({ task, isSending = false, muted = false }: CardTopProps) {
+  const t = useT();
   const providers = getMentionedProviders(task.title);
 
   return (
@@ -111,7 +114,7 @@ function CardTop({ task, isSending = false, muted = false }: CardTopProps) {
           icon={isSending ? Loading03Icon : getPromptIcon(task.icon)}
           size={18}
           className={cn(isSending && "animate-spin")}
-          aria-label={isSending ? "Starting" : undefined}
+          aria-label={isSending ? t("home1.suggested.starting") : undefined}
         />
       </span>
       {providers.length > 0 && (

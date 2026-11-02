@@ -5,6 +5,7 @@ import { Input } from "@/components/atoms/Input/Input";
 import { Dialog } from "@/components/molecules/Dialog/Dialog";
 import { useToast } from "@/components/molecules/Toast/use-toast";
 import { useAuth } from "@/lib/auth/hooks/useAuth";
+import { useT } from "@/lib/i18n";
 import { useState } from "react";
 import { PencilIcon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
@@ -15,6 +16,7 @@ interface Props {
 }
 
 export function EditNameDialog({ currentName }: Props) {
+  const t = useT();
   const [isOpen, setIsOpen] = useState(false);
   const [name, setName] = useState(currentName);
   const [isSaving, setIsSaving] = useState(false);
@@ -42,8 +44,8 @@ export function EditNameDialog({ currentName }: Props) {
       if (!res.ok) {
         const body = await res.json();
         toast({
-          title: "Failed to update name",
-          description: body.error ?? "Unknown error",
+          title: t("home1.editName.saveFailed"),
+          description: body.error ?? t("home1.editName.unknownError"),
           variant: "destructive",
         });
         return;
@@ -52,7 +54,7 @@ export function EditNameDialog({ currentName }: Props) {
       const session = await refreshSession();
       if (session?.error) {
         toast({
-          title: "Name saved, but session refresh failed",
+          title: t("home1.editName.sessionFailed"),
           description: session.error,
           variant: "destructive",
         });
@@ -60,7 +62,7 @@ export function EditNameDialog({ currentName }: Props) {
         return;
       }
       setIsOpen(false);
-      toast({ title: "Name updated" });
+      toast({ title: t("home1.editName.saved") });
     }
     await save().finally(() => {
       setIsSaving(false);
@@ -69,7 +71,7 @@ export function EditNameDialog({ currentName }: Props) {
 
   return (
     <Dialog
-      title="Edit display name"
+      title={t("home1.editName.title")}
       styling={{ maxWidth: "24rem" }}
       controlled={{ isOpen, set: handleOpenChange }}
     >
@@ -86,8 +88,8 @@ export function EditNameDialog({ currentName }: Props) {
         <div className="flex flex-col gap-4 px-1">
           <Input
             id="display-name"
-            label="Display name"
-            placeholder="Your name"
+            label={t("home1.editName.label")}
+            placeholder={t("home1.editName.placeholder")}
             value={name}
             onChange={(e) => setName(e.target.value)}
             onKeyDown={(e) => {
@@ -103,7 +105,7 @@ export function EditNameDialog({ currentName }: Props) {
             disabled={!name.trim() || isSaving}
             loading={isSaving}
           >
-            Save
+            {t("home1.editName.save")}
           </Button>
         </div>
       </Dialog.Content>

@@ -4,6 +4,7 @@ import { QueryClient } from "@tanstack/react-query";
 import { afterEach, expect, test, vi } from "vitest";
 import { getGetHomeDashboardQueryKey } from "@/app/api/__generated__/endpoints/home/home";
 import type { HomeAttentionItem } from "@/app/api/__generated__/models/homeAttentionItem";
+import { LocaleProvider } from "@/lib/i18n";
 import { server } from "@/mocks/mock-server";
 import { render, screen, waitFor } from "@/tests/integrations/test-utils";
 import {
@@ -303,6 +304,29 @@ test("a mode-held call wears its mode and no reason; a subject-held call the rev
   expect(modedRow.textContent).not.toContain("waiting for your approval");
   expect(subjectRow.textContent).not.toContain("Ask First");
   expect(subjectRow.textContent).toContain("Deleting a file can't be undone.");
+});
+
+test("a held read's row reads its waiting tag and its buttons in Vietnamese", () => {
+  const item = homeHeldItem(heldRead("r1", "docs.northwind.io/billing"), {
+    priority: "high",
+  });
+  render(
+    <LocaleProvider locale="vi">
+      <NeedsYou dashboard={makeDashboard([item])} />
+    </LocaleProvider>,
+  );
+
+  expect(screen.getByText("Đang chờ")).toBeDefined();
+  expect(
+    screen.getByRole("status", { name: "1 mục cần bạn xử lý" }),
+  ).toBeDefined();
+  expect(
+    screen.getByRole("button", { name: `Cho đọc: ${item.title}` }),
+  ).toBeDefined();
+  expect(
+    screen.getByRole("button", { name: `Giữ ngoài: ${item.title}` }),
+  ).toBeDefined();
+  expect(screen.getByLabelText("Nội dung ghi")).toBeDefined();
 });
 
 afterEach(() => {

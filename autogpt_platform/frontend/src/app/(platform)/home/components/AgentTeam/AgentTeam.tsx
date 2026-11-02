@@ -3,6 +3,7 @@ import Link from "next/link";
 import type { HomeDashboardResponse } from "@/app/api/__generated__/models/homeDashboardResponse";
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { Text } from "@/components/atoms/Text/Text";
+import { useT } from "@/lib/i18n";
 import { formatWeeklySpend } from "../../helpers";
 import { HomeTileEmpty } from "../HomeTileEmpty/HomeTileEmpty";
 import { HomeTile } from "../HomeTile/HomeTile";
@@ -17,18 +18,22 @@ interface Props {
 }
 
 export function AgentTeam({ dashboard, className }: Props) {
+  const t = useT();
   const { team, agents } = dashboard;
   const teamSpend = formatWeeklySpend(team.spend_cents);
   const statusLine =
     team.working > 0
-      ? `${team.working} working now · ${team.ready} ready`
-      : `${team.ready} ready for work`;
+      ? t("home1.team.statusWorking", {
+          working: team.working,
+          ready: team.ready,
+        })
+      : t("home1.team.statusReady", { ready: team.ready });
 
   return (
     <HomeTile
       className={className}
       icon={AiEraserIcon}
-      title="Your team"
+      title={t("home1.team.title")}
       meta={
         team.total > 0 ? (
           <span className="tabular-nums">
@@ -39,9 +44,9 @@ export function AgentTeam({ dashboard, className }: Props) {
     >
       {agents.length === 0 ? (
         <HomeTileEmpty
-          title="Build your team"
-          description="Hire an expert to start delegating work."
-          action={{ href: "/marketplace", label: "Browse experts" }}
+          title={t("home1.team.emptyTitle")}
+          description={t("home1.team.emptyBody")}
+          action={{ href: "/marketplace", label: t("home1.team.browse") }}
         />
       ) : (
         <div className="divide-y divide-separator">
@@ -63,8 +68,8 @@ export function AgentTeam({ dashboard, className }: Props) {
             className="transition-colors group-hover:text-foreground-strong"
           >
             {team.total > LISTED_EXPERTS
-              ? `View all ${team.total} experts`
-              : "Open team"}
+              ? t("home1.team.viewAll", { total: team.total })
+              : t("home1.team.open")}
           </Text>
           <Icon icon={ArrowRight01Icon} size={14} aria-hidden="true" />
         </Link>

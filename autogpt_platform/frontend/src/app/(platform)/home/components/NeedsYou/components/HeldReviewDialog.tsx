@@ -18,6 +18,7 @@ import {
   modeLine,
   toApprovalItem,
 } from "@/app/(platform)/copilot/components/ApprovalQueue/helpers";
+import { useT } from "@/lib/i18n";
 import { isKey } from "@/lib/keyboard";
 import { reviewTally, shortAge } from "../helpers";
 import type { useHeldReview } from "../useHeldReview";
@@ -35,6 +36,7 @@ interface Props {
 
 // Every held call on the page, one at a time: the chat's card, a sidebar, and ‹ › to move.
 export function HeldReviewDialog({ carousel, held, chatLink = true }: Props) {
+  const t = useT();
   const { current } = carousel;
   const approval = current ? toApprovalItem(current.item.review!) : null;
 
@@ -63,7 +65,7 @@ export function HeldReviewDialog({ carousel, held, chatLink = true }: Props) {
             <ReviewSidebar carousel={carousel} />
           </div>
           <section
-            aria-label="Held call"
+            aria-label={t("home1.review.dialogLabel")}
             className="flex min-w-0 flex-1 flex-col"
           >
             <header className="flex min-h-16 shrink-0 items-center gap-2 border-b border-separator py-3 pl-4 pr-16">
@@ -71,7 +73,7 @@ export function HeldReviewDialog({ carousel, held, chatLink = true }: Props) {
                 variant="secondary"
                 size="icon-sm"
                 className="lg:hidden"
-                aria-label="All held calls"
+                aria-label={t("home1.review.allHeld")}
                 aria-expanded={carousel.sheetOpen}
                 leadingIcon={Menu01Icon}
                 onClick={() => carousel.setSheetOpen(!carousel.sheetOpen)}
@@ -79,7 +81,7 @@ export function HeldReviewDialog({ carousel, held, chatLink = true }: Props) {
               <Button
                 variant="secondary"
                 size="icon-sm"
-                aria-label="Previous"
+                aria-label={t("home1.review.previous")}
                 disabled={!carousel.canPrev}
                 leadingIcon={ArrowLeft01Icon}
                 onClick={() => carousel.move(-1)}
@@ -90,12 +92,15 @@ export function HeldReviewDialog({ carousel, held, chatLink = true }: Props) {
                 aria-live="polite"
                 className="tabular-nums"
               >
-                {carousel.position} of {carousel.total}
+                {t("home1.review.position", {
+                  position: carousel.position,
+                  total: carousel.total,
+                })}
               </Text>
               <Button
                 variant="secondary"
                 size="icon-sm"
-                aria-label="Next"
+                aria-label={t("home1.review.next")}
                 disabled={!carousel.canNext}
                 leadingIcon={ArrowRight01Icon}
                 onClick={() => carousel.move(1)}
@@ -156,7 +161,7 @@ export function HeldReviewDialog({ carousel, held, chatLink = true }: Props) {
             {carousel.finished ? (
               <PaneFooter>
                 <Button size="small" variant="primary" onClick={carousel.close}>
-                  Done
+                  {t("home1.review.done")}
                 </Button>
               </PaneFooter>
             ) : current && approval && !current.receipt ? (
@@ -176,7 +181,7 @@ export function HeldReviewDialog({ carousel, held, chatLink = true }: Props) {
                         href={current.item.primary_action.href}
                         className="rounded-sm text-sm font-medium text-foreground-emphasis underline underline-offset-4 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-strong"
                       >
-                        Open chat
+                        {t("home1.review.openChat")}
                       </Link>
                     ) : null
                   }
@@ -200,11 +205,13 @@ function Finished({
 }: {
   carousel: ReturnType<typeof useReviewCarousel>;
 }) {
+  const t = useT();
+
   return (
     <div className="flex h-full flex-col items-center justify-center gap-2 px-6 text-center">
       <Icon icon={Tick02Icon} size={20} className="text-success" aria-hidden />
       <Text variant="h4" as="h3" data-pane-focus>
-        All {carousel.total} reviewed
+        {t("home1.review.finished", { total: carousel.total })}
       </Text>
       <Text variant="body" tone="secondary">
         {reviewTally(carousel.order)}

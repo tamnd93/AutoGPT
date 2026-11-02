@@ -5,6 +5,7 @@ import { HomeRecap } from "@/app/(platform)/home/components/HomeRecap/HomeRecap"
 import { tourTarget } from "@/lib/tour-targets";
 import { useFirstRunTourAutoStart } from "@/app/(platform)/components/FirstRunTour/useFirstRunTourAutoStart";
 import { useAuth } from "@/lib/auth/hooks/useAuth";
+import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import type { ComponentProps, ReactNode } from "react";
@@ -75,6 +76,7 @@ export function EmptySession({
   usageNotice,
   lowHint,
 }: Props) {
+  const t = useT();
   const { user } = useAuth();
   const greetingName = getGreetingName(user);
   const intro = useOnboardingIntroCard();
@@ -96,7 +98,7 @@ export function EmptySession({
     onSend: onStartTask ?? onSend,
     enabled: !intro.isAwaitingGreeting,
   });
-  const introLine = isLoadingRecipient ? null : getIntroLine(selectedExpert);
+  const introLine = isLoadingRecipient ? null : getIntroLine(selectedExpert, t);
   const recipientPicker = (
     <RecipientChip
       recipient={recipient}
@@ -189,7 +191,7 @@ export function EmptySession({
                     atReset
                       ? SEND_AT_RESET_PLACEHOLDER
                       : selectedExpert
-                        ? getExpertInputPlaceholder(selectedExpert.name)
+                        ? getExpertInputPlaceholder(selectedExpert.name, t)
                         : inputPlaceholder
                   }
                   className={cn(

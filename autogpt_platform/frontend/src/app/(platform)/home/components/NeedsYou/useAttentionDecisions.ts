@@ -4,9 +4,11 @@ import { getGetHomeDashboardQueryKey } from "@/app/api/__generated__/endpoints/h
 import type { HomeAttentionItem } from "@/app/api/__generated__/models/homeAttentionItem";
 import { useToast } from "@/components/molecules/Toast/use-toast";
 import { useProcessReviews } from "@/hooks/useProcessReviews";
+import { useT } from "@/lib/i18n";
 import { trackFunnel } from "@/services/experts/experts-analytics";
 
 export function useAttentionDecisions() {
+  const t = useT();
   const queryClient = useQueryClient();
   const { processReviews } = useProcessReviews();
   const { toast } = useToast();
@@ -37,20 +39,25 @@ export function useAttentionDecisions() {
       );
       if (response.status !== 200 || response.data.failed_count > 0) {
         const message = response.status === 200 ? response.data.error : null;
-        throw new Error(message || "The review could not be processed.");
+        throw new Error(message || t("home1.toast.reviewFailed"));
       }
       trackFunnel("home_attention_actioned", {
         kind: item.kind,
         action: approved ? "approve" : "decline",
       });
-      toast({ title: approved ? "Approved" : "Declined" });
+      toast({
+        title: approved ? t("home1.toast.approved") : t("home1.toast.declined"),
+      });
       await queryClient.invalidateQueries({
         queryKey: getGetHomeDashboardQueryKey(),
       });
     } catch (error) {
       toast({
-        title: approved ? "Could not approve" : "Could not decline",
-        description: error instanceof Error ? error.message : "Try again.",
+        title: approved
+          ? t("home1.toast.approveFailed")
+          : t("home1.toast.declineFailed"),
+        description:
+          error instanceof Error ? error.message : t("home1.toast.tryAgain"),
         variant: "destructive",
       });
     } finally {

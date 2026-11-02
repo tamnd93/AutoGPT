@@ -6,6 +6,7 @@ import {
   waitFor,
 } from "@/tests/integrations/test-utils";
 import { server } from "@/mocks/mock-server";
+import { LocaleProvider } from "@/lib/i18n";
 import { http, HttpResponse } from "msw";
 import { EditNameDialog } from "../EditNameDialog";
 
@@ -127,6 +128,54 @@ describe("EditNameDialog", () => {
       );
     });
     expect(mockToast).not.toHaveBeenCalledWith({ title: "Name updated" });
+  });
+
+  test("reads its dialog and its success toast in Vietnamese", async () => {
+    mockUpdateNameSuccess();
+    render(
+      <LocaleProvider locale="vi">
+        <EditNameDialog currentName="Alice" />
+      </LocaleProvider>,
+    );
+
+    fireEvent.click(screen.getByRole("button"));
+    expect(await screen.findByLabelText("Tên hiển thị")).toBeDefined();
+    expect(
+      screen.getByRole("heading", { name: "Sửa tên hiển thị" }),
+    ).toBeDefined();
+
+    const input =
+      document.querySelector<HTMLInputElement>("input#display-name")!;
+    fireEvent.change(input, { target: { value: "Bob" } });
+    fireEvent.click(screen.getByRole("button", { name: "Lưu" }));
+
+    await waitFor(() => {
+      expect(mockToast).toHaveBeenCalledWith({ title: "Đã cập nhật tên" });
+    });
+  });
+
+  test("reports a failed save in Vietnamese", async () => {
+    mockUpdateNameError("Network error");
+    render(
+      <LocaleProvider locale="vi">
+        <EditNameDialog currentName="Alice" />
+      </LocaleProvider>,
+    );
+
+    fireEvent.click(screen.getByRole("button"));
+    const input = await screen.findByLabelText("Tên hiển thị");
+    fireEvent.change(input, { target: { value: "Bob" } });
+    fireEvent.click(screen.getByRole("button", { name: "Lưu" }));
+
+    await waitFor(() => {
+      expect(mockToast).toHaveBeenCalledWith(
+        expect.objectContaining({
+          title: "Không cập nhật được tên",
+          description: "Network error",
+          variant: "destructive",
+        }),
+      );
+    });
   });
 
   test("disables Save button while input is empty", async () => {

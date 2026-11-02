@@ -8,6 +8,7 @@ import { Text } from "@/components/atoms/Text/Text";
 import { AUTOPILOT_NAME } from "@/components/molecules/AutopilotAvatar/helpers";
 import { HeadlineText } from "@/app/(platform)/copilot/components/ApprovalQueue/components/ApprovalHeadline";
 import { toApprovalItem } from "@/app/(platform)/copilot/components/ApprovalQueue/helpers";
+import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import type { useReviewCarousel } from "../useReviewCarousel";
 import { HeldAvatar } from "./HeldAvatar";
@@ -25,14 +26,18 @@ const OUTCOME_ICONS = {
 } as const;
 
 export function ReviewSidebar({ carousel, sheet = false }: Props) {
+  const t = useT();
+
   return (
     <nav
-      aria-label={sheet ? "All held calls" : "Held calls"}
+      aria-label={
+        sheet ? t("home1.review.allHeld") : t("home1.review.heldCalls")
+      }
       className="flex min-h-0 w-full flex-col"
     >
       <div className="flex items-baseline gap-2 px-4 pb-2 pt-4">
         <Text variant="body-medium" as="h2">
-          To review
+          {t("home1.review.toReview")}
         </Text>
         <Text
           variant="small"
@@ -40,7 +45,10 @@ export function ReviewSidebar({ carousel, sheet = false }: Props) {
           tone="secondary"
           className="tabular-nums"
         >
-          {carousel.left} of {carousel.total} left
+          {t("home1.review.left", {
+            left: carousel.left,
+            total: carousel.total,
+          })}
         </Text>
       </div>
       <ul className="min-h-0 flex-1 overflow-y-auto overscroll-contain pb-2">
@@ -90,7 +98,7 @@ export function ReviewSidebar({ carousel, sheet = false }: Props) {
                     // TODO(tokens): no fitting role for text-blue-700 #1D4ED8; #1D4ED8 is sidebar-primary, a dark-theme sidebar fill (light #18181B)
                     className="shrink-0 rounded bg-info-surface px-1.5 text-xs font-medium text-blue-700"
                   >
-                    new
+                    {t("home1.review.new")}
                   </span>
                 ) : null}
               </button>
@@ -103,7 +111,7 @@ export function ReviewSidebar({ carousel, sheet = false }: Props) {
         tone="secondary"
         className="border-t border-separator px-4 py-3"
       >
-        {sheet ? "Tap an item to jump to it" : "← → move · Esc close"}
+        {sheet ? t("home1.review.jumpHint") : t("home1.review.keysHint")}
       </Text>
     </nav>
   );

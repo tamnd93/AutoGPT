@@ -1,3 +1,4 @@
+import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
 interface Props {
@@ -7,9 +8,11 @@ interface Props {
 }
 
 export function HeldPassageQuote({ passage, clamp = true }: Props) {
+  const t = useT();
+
   return (
     <blockquote
-      aria-label="What it says"
+      aria-label={t("home1.held.passageLabel")}
       className={cn(
         // TODO(tokens): no exact role (border-amber-400 #FBBF24)
         "mt-1 border-l-2 border-amber-400 pl-2 text-sm text-foreground-secondary [overflow-wrap:anywhere]",

@@ -2,6 +2,7 @@
 
 import { Skeleton } from "@/components/atoms/Skeleton/Skeleton";
 import { ErrorCard } from "@/components/molecules/ErrorCard/ErrorCard";
+import { useT } from "@/lib/i18n";
 import { useTrackFunnelViewOnce } from "@/services/experts/use-track-funnel-view-once";
 import { useHomePage } from "../../useHomePage";
 import { AgentTeam } from "../AgentTeam/AgentTeam";
@@ -15,6 +16,7 @@ const CONTENT_CLASS = "relative mx-auto w-full max-w-[1120px]";
 const GRID_CLASS = "grid grid-cols-1 items-start gap-4 xl:grid-cols-12";
 
 export function HomeRecap() {
+  const t = useT();
   const { dashboard, isLoading, isError, refetch } = useHomePage();
 
   useTrackFunnelViewOnce(
@@ -32,7 +34,7 @@ export function HomeRecap() {
         <div className={CONTENT_CLASS}>
           <ErrorCard
             context="home"
-            httpError={{ message: "Your Home briefing could not be loaded" }}
+            httpError={{ message: t("home1.recap.error") }}
             onRetry={() => refetch()}
           />
         </div>
@@ -62,8 +64,10 @@ export function HomeRecap() {
 }
 
 function HomeSkeleton() {
+  const t = useT();
+
   return (
-    <section className={SHELL_CLASS} aria-label="Loading Home…">
+    <section className={SHELL_CLASS} aria-label={t("home1.recap.loading")}>
       <div className={CONTENT_CLASS}>
         <div className="flex items-end justify-between gap-6 px-1 pb-5 pt-1">
           <div className="space-y-2">

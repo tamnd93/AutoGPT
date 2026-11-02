@@ -1,5 +1,6 @@
 import { useLayoutEffect, useState } from "react";
 import { useHomePage } from "@/app/(platform)/home/useHomePage";
+import { useT } from "@/lib/i18n";
 import { getInputPlaceholder } from "./helpers";
 
 interface Args {
@@ -8,11 +9,8 @@ interface Args {
   greetingPath?: string | null;
 }
 
-const TEAM_PLACEHOLDER =
-  "What should the team work on? e.g. 'Follow up with yesterday's leads'";
-const AFTER_DUMP_PLACEHOLDER = "What should Otto take on first?";
-
 export function useHomeComposer({ enabled, greetingPath = null }: Args) {
+  const t = useT();
   const { dashboard } = useHomePage({ enabled });
   const hasExistingWork = Boolean(
     enabled &&
@@ -25,13 +23,13 @@ export function useHomeComposer({ enabled, greetingPath = null }: Args) {
         (dashboard.recent_work?.total_count ?? 0) > 0 ||
         (dashboard.recent_work?.groups?.length ?? 0) > 0),
   );
-  const [discoveryPlaceholder, setDiscoveryPlaceholder] = useState(
-    getInputPlaceholder(),
-  );
+  // The width is the state and the wording is derived per render, so the
+  // placeholder follows the locale as well as the breakpoint.
+  const [discoveryWidth, setDiscoveryWidth] = useState<number>();
 
   useLayoutEffect(() => {
     function handleResize() {
-      setDiscoveryPlaceholder(getInputPlaceholder(window.innerWidth));
+      setDiscoveryWidth(window.innerWidth);
     }
     handleResize();
     const queries = [
@@ -47,9 +45,11 @@ export function useHomeComposer({ enabled, greetingPath = null }: Args) {
   }, []);
 
   if (greetingPath === "A") {
-    return { inputPlaceholder: AFTER_DUMP_PLACEHOLDER };
+    return { inputPlaceholder: t("home1.placeholder.afterDump") };
   }
   return {
-    inputPlaceholder: hasExistingWork ? TEAM_PLACEHOLDER : discoveryPlaceholder,
+    inputPlaceholder: hasExistingWork
+      ? t("home1.placeholder.team")
+      : getInputPlaceholder(discoveryWidth, t),
   };
 }

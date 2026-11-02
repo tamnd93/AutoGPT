@@ -3,6 +3,7 @@ import { Button } from "@/components/atoms/Button/Button";
 import { BubbleChatIcon, Settings01Icon } from "@hugeicons/core-free-icons";
 import { Text } from "@/components/atoms/Text/Text";
 import { ExpertAvatar } from "@/components/molecules/ExpertAvatar/ExpertAvatar";
+import { useT } from "@/lib/i18n";
 import { trackFunnel } from "@/services/experts/experts-analytics";
 import { formatWeeklySpend } from "../../../helpers";
 import { formatUntil } from "../../NowNext/helpers";
@@ -15,9 +16,10 @@ interface Props {
 /** One expert with its status and two ways in. The detail line is gone:
  *  anything that needs doing is already spelled out under Needs you. */
 export function AgentRow({ agent }: Props) {
+  const t = useT();
   const spend = formatWeeklySpend(agent.spend_cents);
   const nextRun = agent.next_run_time
-    ? `Next run ${formatUntil(agent.next_run_time)}`
+    ? t("home1.agent.nextRun", { when: formatUntil(agent.next_run_time) })
     : null;
   const secondLine = [spend, nextRun].filter(Boolean).join(" · ");
 
@@ -40,14 +42,14 @@ export function AgentRow({ agent }: Props) {
           <StatusBadge status={agent.status} />
         </div>
         <Text variant="small" tone="secondary" className="break-words">
-          {agent.detail || "No status details available."}{" "}
+          {agent.detail || t("home1.agent.noDetail")}{" "}
           {agent.status === "failed"
-            ? "Open Manage to inspect recent work."
+            ? t("home1.agent.manageFailed")
             : agent.status === "needs_setup"
-              ? "Open Manage to finish setup."
+              ? t("home1.agent.manageSetup")
               : agent.status === "paused"
-                ? "Open Manage to review settings."
-                : "Open Chat to give instructions."}
+                ? t("home1.agent.managePaused")
+                : t("home1.agent.openChat")}
         </Text>
         {secondLine ? (
           <Text
@@ -67,7 +69,7 @@ export function AgentRow({ agent }: Props) {
           variant="icon"
           size="icon-sm"
           leadingIcon={BubbleChatIcon}
-          aria-label={`Chat with ${agent.expert.name}`}
+          aria-label={t("home1.agent.chatAria", { name: agent.expert.name })}
         />
         <Button
           as="NextLink"
@@ -75,7 +77,7 @@ export function AgentRow({ agent }: Props) {
           variant="icon"
           size="icon-sm"
           leadingIcon={Settings01Icon}
-          aria-label={`Manage ${agent.expert.name}`}
+          aria-label={t("home1.agent.manageAria", { name: agent.expert.name })}
           onClick={() =>
             trackFunnel("home_team_member_clicked", {
               expert_id: agent.expert.id,

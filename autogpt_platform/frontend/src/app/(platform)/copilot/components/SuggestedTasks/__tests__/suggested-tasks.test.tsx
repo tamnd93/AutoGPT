@@ -3,6 +3,7 @@ import { getListExpertIdentitiesMockHandler } from "@/app/api/__generated__/endp
 import type { SuggestedTask } from "@/app/api/__generated__/models/suggestedTask";
 import type { SuggestedTasksUpdate } from "@/app/api/__generated__/models/suggestedTasksUpdate";
 import { Toaster } from "@/components/molecules/Toast/toaster";
+import { LocaleProvider } from "@/lib/i18n";
 import { server } from "@/mocks/mock-server";
 import {
   act,
@@ -123,13 +124,14 @@ function renderHome(
   args: {
     searchParams?: string;
     onStartTask?: (message: string) => Promise<string | undefined>;
+    locale?: "en" | "vi";
   } = {},
 ) {
   const Wrapper = withNuqsTestingAdapter({
     searchParams: args.searchParams ?? "",
     hasMemory: true,
   });
-  return render(
+  const session = (
     <Wrapper>
       <EmptySession
         isCreatingSession={false}
@@ -138,7 +140,14 @@ function renderHome(
         onStartTask={args.onStartTask ?? vi.fn(async () => "session-1")}
       />
       <Toaster />
-    </Wrapper>,
+    </Wrapper>
+  );
+  return render(
+    args.locale ? (
+      <LocaleProvider locale={args.locale}>{session}</LocaleProvider>
+    ) : (
+      session
+    ),
   );
 }
 
@@ -339,6 +348,24 @@ describe("Suggested first tasks — the greeting page", () => {
   });
 });
 
+describe("Suggested first tasks — the greeting page in Vietnamese", () => {
+  it("writes the greeting page's prompts and footer in Vietnamese", async () => {
+    withGreeting();
+    renderHome({ locale: "vi" });
+
+    await screen.findByTestId("onboarding-intro-card");
+    // The prompt list lands with the greeting, so its footer follows it.
+    expect(
+      await screen.findByText(
+        "Muốn làm việc khác? Chỉ cần viết vào ô bên dưới.",
+      ),
+    ).toBeDefined();
+    expect(
+      await screen.findByRole("button", { name: `Ẩn: ${TASKS[0].title}` }),
+    ).toBeDefined();
+  });
+});
+
 describe("Suggested first tasks — while the greeting is being written", () => {
   it("shows the personalised list once the greeting lands, never the generic set before it", async () => {
     const generic: SuggestedTask[] = [
@@ -449,6 +476,26 @@ describe("Suggested first tasks — Home after the first message", () => {
     expect(
       within(block).queryByRole("button", { name: TASKS[2].title }),
     ).toBeNull();
+  });
+
+  it("reads the suggestion list, its hides and its Undo in Vietnamese", async () => {
+    renderHome({ locale: "vi" });
+    const block = await screen.findByRole("region", {
+      name: "Việc nên làm trước",
+    });
+
+    await userEvent.click(
+      within(block).getByRole("button", { name: `Ẩn: ${TASKS[1].title}` }),
+    );
+
+    await screen.findByText("Đã ẩn gợi ý");
+    await userEvent.click(
+      await screen.findByRole("button", { name: "Hoàn tác" }),
+    );
+
+    expect(
+      await within(block).findByRole("button", { name: TASKS[1].title }),
+    ).toBeDefined();
   });
 
   it("Hide all empties the block in one write, and Undo restores it", async () => {

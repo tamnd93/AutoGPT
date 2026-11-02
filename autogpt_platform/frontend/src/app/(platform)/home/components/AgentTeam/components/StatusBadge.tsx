@@ -1,20 +1,30 @@
 import type { HomeAgentStatus } from "@/app/api/__generated__/models/homeAgentStatus";
 import { Text } from "@/components/atoms/Text/Text";
+import { useT } from "@/lib/i18n";
+import type { MessageKey } from "@/lib/i18n/messages/en";
 import { cn } from "@/lib/utils";
 
 const STATUS_CONFIG = {
-  working: { label: "Working", dot: "bg-primary", pulse: true },
-  ready: { label: "Ready", dot: "bg-emerald-500", pulse: false },
-  needs_setup: { label: "Finish setup", dot: "bg-warning", pulse: false },
-  paused: { label: "Paused", dot: "bg-zinc-400", pulse: false },
-  failed: { label: "Failed", dot: "bg-error", pulse: false },
-};
+  working: { labelKey: "home1.status.working", dot: "bg-primary", pulse: true },
+  ready: {
+    labelKey: "home1.status.ready",
+    dot: "bg-emerald-500",
+    pulse: false,
+  },
+  needs_setup: {
+    labelKey: "home1.status.needsSetup",
+    dot: "bg-warning",
+    pulse: false,
+  },
+  paused: { labelKey: "home1.status.paused", dot: "bg-zinc-400", pulse: false },
+  failed: { labelKey: "home1.status.failed", dot: "bg-error", pulse: false },
+} as const;
 
 const UNKNOWN_STATUS_CONFIG = {
-  label: "Unknown",
+  labelKey: "home1.status.unknown",
   dot: "bg-zinc-300",
   pulse: false,
-};
+} as const;
 
 interface Props {
   status: HomeAgentStatus["status"];
@@ -23,7 +33,11 @@ interface Props {
 /** A dot and a word: the status reads at a glance without a filled pill
  *  competing with the name beside it. */
 export function StatusBadge({ status }: Props) {
-  const config = STATUS_CONFIG[status] ?? UNKNOWN_STATUS_CONFIG;
+  const t = useT();
+  const config =
+    STATUS_CONFIG[status as keyof typeof STATUS_CONFIG] ??
+    UNKNOWN_STATUS_CONFIG;
+  const labelKey: MessageKey = config.labelKey;
 
   return (
     <Text
@@ -40,7 +54,7 @@ export function StatusBadge({ status }: Props) {
         )}
         aria-hidden="true"
       />
-      {config.label}
+      {t(labelKey)}
     </Text>
   );
 }

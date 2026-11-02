@@ -5,6 +5,7 @@ import { makeDashboard } from "@/app/(platform)/home/__tests__/heldItems";
 import { getGetBrainDumpIntroMockHandler200 } from "@/app/api/__generated__/endpoints/brain-dump/brain-dump.msw";
 import { getListExpertIdentitiesMockHandler } from "@/app/api/__generated__/endpoints/experts/experts.msw";
 import type { Expert } from "@/app/api/__generated__/models/expert";
+import { LocaleProvider } from "@/lib/i18n";
 import { server } from "@/mocks/mock-server";
 import {
   normalizeWhitespace,
@@ -62,19 +63,30 @@ const mariaExpert = makeExpert({
 const maxExpert = makeExpert({ id: "expert-max", name: "Max", role: "" });
 const samExpert = makeExpert({ id: "expert-sam", name: "Sam", role: "Sales" });
 
-function renderEmptySession(searchParams: string, onSend = vi.fn()) {
+function renderEmptySession(
+  searchParams: string,
+  onSend = vi.fn(),
+  locale?: "en" | "vi",
+) {
   server.use(
     getListExpertIdentitiesMockHandler([mariaExpert, maxExpert, samExpert]),
   );
   const Wrapper = withNuqsTestingAdapter({ searchParams, hasMemory: true });
-  return render(
+  const session = (
     <Wrapper>
       <EmptySession
         isCreatingSession={false}
         onCreateSession={() => {}}
         onSend={onSend}
       />
-    </Wrapper>,
+    </Wrapper>
+  );
+  return render(
+    locale ? (
+      <LocaleProvider locale={locale}>{session}</LocaleProvider>
+    ) : (
+      session
+    ),
   );
 }
 
@@ -132,6 +144,41 @@ beforeEach(() => {
     http.get(/\/api\/proxy\/api\/home(?:\?.*)?$/, () =>
       HttpResponse.json(makeDashboard([])),
     ),
+  );
+});
+
+it("introduces the expert and its composer in Vietnamese", async () => {
+  const { container } = renderEmptySession(
+    "?expertId=expert-maria",
+    vi.fn(),
+    "vi",
+  );
+
+  await waitFor(() =>
+    expect(normalizeWhitespace(container)).toContain(
+      "Tôi là Maria, Marketing Strategist của bạn. Tôi nên nhận việc gì?",
+    ),
+  );
+  expect(screen.getByPlaceholderText("Maria nên làm gì?")).toBeDefined();
+});
+
+it("names the kickoff in Vietnamese", () => {
+  const Wrapper = withNuqsTestingAdapter({ searchParams: "" });
+  render(
+    <LocaleProvider locale="vi">
+      <Wrapper>
+        <EmptySession
+          isCreatingSession={false}
+          onCreateSession={() => {}}
+          onSend={() => {}}
+          isKickoffStarting
+          expertName="Maria"
+        />
+      </Wrapper>
+    </LocaleProvider>,
+  );
+  expect(screen.getByRole("status").textContent).toContain(
+    "Đang mở không gian làm việc của Maria",
   );
 });
 

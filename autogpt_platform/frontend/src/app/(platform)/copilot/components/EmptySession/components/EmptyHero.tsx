@@ -1,5 +1,6 @@
 "use client";
 
+import { useT } from "@/lib/i18n";
 import type { ReactNode } from "react";
 import { Text } from "@/components/atoms/Text/Text";
 import { TextGenerateEffect } from "./TextGenerateEffect/TextGenerateEffect";
@@ -26,17 +27,20 @@ export function EmptyHero({
   isExpert,
   expertRole,
 }: Props) {
+  const t = useT();
+
   return (
     <>
       <div className="mb-1 flex items-center justify-center gap-3 pt-8 md:pt-0">
         <Text variant="h4" tone="primary">
-          Hey
+          {t("home1.greeting.hey")}
           {name ? (
             <>
-              , <span className="text-foreground-strong">{name}</span>
+              {t("home1.greeting.nameJoin")}
+              <span className="text-foreground-strong">{name}</span>
             </>
           ) : (
-            " there"
+            <> {t("home1.greeting.there")}</>
           )}
           <EditNameDialog currentName={name ?? ""} />
         </Text>
@@ -47,16 +51,18 @@ export function EmptyHero({
         </div>
       ) : recipientPicker ? (
         <div className="mb-8 text-heading-sm leading-relaxed tracking-normal text-foreground-strong">
-          {isExpert ? "I'm" : "Tell"}{" "}
+          {isExpert ? t("home1.hero.expertPrefix") : t("home1.hero.ottoPrefix")}{" "}
           <span
             // TODO(tokens): no role holds 18px (text-lg); the type scale goes 16px (body-lg) to 20px (lead). SECRT-3152
             className="mr-1 inline-block align-middle [&_button]:ml-0 [&_button]:text-lg"
           >
             {recipientPicker}
           </span>
-          {isExpert
-            ? getExpertIntroSuffix(expertRole ?? null)
-            : " about your work, and it will find what to automate."}
+          {isExpert ? (
+            getExpertIntroSuffix(expertRole ?? null, t)
+          ) : (
+            <> {t("home1.hero.ottoSuffix")}</>
+          )}
         </div>
       ) : (
         // Keyed on the text so switching recipient re-types the line.

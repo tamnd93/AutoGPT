@@ -1,3 +1,4 @@
+import { useT } from "@/lib/i18n";
 import { OrbitLoader } from "../../../OrbitLoader/OrbitLoader";
 
 interface Props {
@@ -5,6 +6,8 @@ interface Props {
 }
 
 export function ExpertKickoffLoader({ expertName }: Props) {
+  const t = useT();
+
   return (
     <div
       role="status"
@@ -18,14 +21,14 @@ export function ExpertKickoffLoader({ expertName }: Props) {
           className="text-base font-medium text-neutral-900"
         >
           {expertName
-            ? `Opening ${expertName}'s workspace`
-            : "Opening workspace"}
+            ? t("home1.kickoff.openingExpert", { name: expertName })
+            : t("home1.kickoff.opening")}
         </p>
         <p
           // TODO(tokens): no exact role for text-neutral-500
           className="mt-1 text-sm text-neutral-500"
         >
-          Your expert is getting ready to start.
+          {t("home1.kickoff.starting")}
         </p>
       </div>
     </div>

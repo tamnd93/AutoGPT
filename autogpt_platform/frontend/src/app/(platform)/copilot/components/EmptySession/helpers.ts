@@ -1,8 +1,12 @@
 import type { User } from "@/lib/auth/types";
+import type { MessageKey } from "@/lib/i18n/messages/en";
+import { getMessage, type MessageValues } from "@/lib/i18n/translate";
 import { getExpertRoleLabel as getExpertDisplayRoleLabel } from "@/services/experts/expert-role-label";
 
-export const AUTOPILOT_INTRO =
-  "Tell me about your work — I'll find what to automate.";
+export type Translate = (key: MessageKey, values?: MessageValues) => string;
+
+// The panels pass useT(); a call without one reads English, as the unit tests do.
+const english: Translate = (key, values) => getMessage("en", key, values);
 
 // A role is free text, and the hire flow's own presets come in both shapes:
 // some name a person ("Marketer", "Analyst"), others just a domain ("Sales",
@@ -39,32 +43,42 @@ export function getExpertRoleLabel(role: string) {
 
 export function getIntroLine(
   expert: { name: string; role: string | null } | null,
+  t: Translate = english,
 ) {
-  if (!expert) return AUTOPILOT_INTRO;
-  return `I'm ${expert.name}${getExpertIntroSuffix(expert.role)}`;
+  if (!expert) return t("home1.intro.otto");
+  return t("home1.intro.expert", {
+    name: expert.name,
+    suffix: getExpertIntroSuffix(expert.role, t),
+  });
 }
 
-export function getExpertIntroSuffix(role: string | null) {
+export function getExpertIntroSuffix(
+  role: string | null,
+  t: Translate = english,
+) {
   const trimmedRole = role?.trim();
   return trimmedRole
-    ? `, your ${getExpertRoleLabel(trimmedRole)}. What should I take on?`
-    : ". What should I take on?";
+    ? t("home1.intro.withRole", { role: getExpertRoleLabel(trimmedRole) })
+    : t("home1.intro.noRole");
 }
 
-export function getExpertInputPlaceholder(expertName: string) {
-  return `What should ${expertName} work on?`;
+export function getExpertInputPlaceholder(
+  expertName: string,
+  t: Translate = english,
+) {
+  return t("home1.placeholder.expert", { name: expertName });
 }
 
-export function getInputPlaceholder(width?: number) {
-  if (!width) return "What's your role and what eats up most of your day?";
+export function getInputPlaceholder(width?: number, t: Translate = english) {
+  if (!width) return t("home1.placeholder.discovery");
 
   if (width < 500) {
-    return "I'm a chef and I hate...";
+    return t("home1.placeholder.discoveryShort");
   }
   if (width <= 1080) {
-    return "What's your role and what eats up most of your day?";
+    return t("home1.placeholder.discovery");
   }
-  return "What's your role and what eats up most of your day? e.g. 'I'm a recruiter and I hate...'";
+  return t("home1.placeholder.discoveryLong");
 }
 
 export function getGreetingName(user?: User | null): string | null {

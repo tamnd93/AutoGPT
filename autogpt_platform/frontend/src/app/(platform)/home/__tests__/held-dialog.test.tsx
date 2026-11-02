@@ -2,6 +2,7 @@ import userEvent from "@testing-library/user-event";
 import { http, HttpResponse } from "msw";
 import { expect, test } from "vitest";
 import type { HomeAttentionItem } from "@/app/api/__generated__/models/homeAttentionItem";
+import { LocaleProvider } from "@/lib/i18n";
 import { server } from "@/mocks/mock-server";
 import {
   render,
@@ -154,6 +155,29 @@ test("a decision advances to the next undecided item, wrapping, and moves focus 
   await waitFor(() =>
     expect(paneHeading(dialog)).toBe("Create library folder Leads"),
   );
+});
+
+test("the review dialog reads its chrome in Vietnamese", async () => {
+  const [a0, l0, a1] = queue();
+  render(
+    <LocaleProvider locale="vi">
+      <NeedsYou dashboard={makeDashboard([a0, l0, a1])} />
+    </LocaleProvider>,
+  );
+
+  await userEvent.click(
+    screen.getByRole("button", {
+      name: `Create library folder ${a0.headline!.object}`,
+    }),
+  );
+  const dialog = await screen.findByRole("dialog");
+
+  expect(within(dialog).getByText("1/3")).toBeDefined();
+  expect(within(dialog).getByRole("button", { name: "Tiếp" })).toBeDefined();
+  expect(within(dialog).getByRole("button", { name: "Trước" })).toBeDefined();
+  const nav = within(dialog).getByRole("navigation", { name: "Mục đang chờ" });
+  expect(within(nav).getByText("Cần xem xét")).toBeDefined();
+  expect(within(nav).getByText("Còn 3/3")).toBeDefined();
 });
 
 test("the sidebar jumps to an item", async () => {
