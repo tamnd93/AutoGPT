@@ -5,6 +5,8 @@ import {
   DownloadContent,
   CopyContent,
 } from "../types";
+import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/locale";
+import { getMessage } from "@/lib/i18n/translate";
 
 const imageExtensions = [
   ".jpg",
@@ -106,9 +108,11 @@ function canRenderImage(value: unknown, metadata?: OutputMetadata): boolean {
 function renderImage(
   value: unknown,
   metadata?: OutputMetadata,
+  locale: Locale = DEFAULT_LOCALE,
 ): React.ReactNode {
   const imageUrl = String(value);
-  const altText = metadata?.filename || "Output image";
+  const altText =
+    metadata?.filename || getMessage(locale, "shared1.image.outputAlt");
 
   return (
     <div className="group relative">

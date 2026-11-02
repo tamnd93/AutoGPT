@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { useT } from "@/lib/i18n";
 import {
   ChevronDownIcon,
   ChevronLeftIcon,
@@ -185,6 +186,7 @@ const CustomDropdown = ({
   name,
   disabled,
 }: DropdownProps) => {
+  const t = useT();
   const handleValueChange = (newValue: string) => {
     if (onChange) {
       const syntheticEvent = {
@@ -207,7 +209,10 @@ const CustomDropdown = ({
         data-slot="calendar-dropdown-trigger"
         className="w-[120px] space-x-2 bg-surface"
       >
-        <SelectValue data-slot="calendar-dropdown-value" placeholder="Select" />
+        <SelectValue
+          data-slot="calendar-dropdown-value"
+          placeholder={t("shared1.calendar.select")}
+        />
       </SelectTrigger>
       <SelectContent data-slot="calendar-dropdown-popup" className="bg-surface">
         {options?.map((option) => (

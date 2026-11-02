@@ -6,6 +6,7 @@ import { Text } from "../Text/Text";
 import type { Variant } from "../Text/helpers";
 import { InformationTooltip } from "@/components/molecules/InformationTooltip/InformationTooltip";
 import { BaseInput, type BaseInputProps } from "./BaseInput";
+import { useT } from "@/lib/i18n";
 import { useInput } from "./useInput";
 import {
   BareInput,
@@ -102,6 +103,7 @@ const TextField = forwardRef<InputElement, TextFieldProps>(function TextField(
   },
   ref,
 ) {
+  const t = useT();
   // Consumers never see keydowns an IME is still composing; see AGENTS.md
   // "Keyboard handling". Left undefined when the consumer passes no handler, so
   // we don't attach a listener that does nothing.
@@ -287,7 +289,11 @@ const TextField = forwardRef<InputElement, TextFieldProps>(function TextField(
           onClick={handleTogglePassword}
           disabled={props.disabled}
           className="absolute right-4 top-1/2 -translate-y-1/2 text-foreground-subtle transition-colors hover:text-foreground-secondary disabled:cursor-not-allowed disabled:opacity-50"
-          aria-label={showPassword ? "Hide password" : "Show password"}
+          aria-label={
+            showPassword
+              ? t("shared1.input.hidePassword")
+              : t("shared1.input.showPassword")
+          }
           aria-pressed={showPassword}
           aria-controls={inputId}
         >

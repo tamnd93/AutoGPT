@@ -9,6 +9,9 @@ import { parseWorkspaceURI, isWorkspaceURI } from "@/lib/workspace-uri";
 import { Skeleton } from "@/components/atoms/Skeleton/Skeleton";
 import { Download04Icon, File02Icon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
+import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/locale";
+import { getMessage } from "@/lib/i18n/translate";
 
 const imageMimeTypes = [
   "image/jpeg",
@@ -49,11 +52,16 @@ function canRenderWorkspaceFile(value: unknown): boolean {
   return isWorkspaceURI(value);
 }
 
-function getFileTypeLabel(mimeType: string | null): string {
-  if (!mimeType) return "File";
+function getFileTypeLabel(
+  mimeType: string | null,
+  locale: Locale = DEFAULT_LOCALE,
+): string {
+  if (!mimeType) return getMessage(locale, "shared1.workspaceFile.file");
   const sub = mimeType.split("/")[1];
-  if (!sub) return "File";
-  return `${sub.toUpperCase()} file`;
+  if (!sub) return getMessage(locale, "shared1.workspaceFile.file");
+  return getMessage(locale, "shared1.workspaceFile.subtypeFile", {
+    type: sub.toUpperCase(),
+  });
 }
 
 function WorkspaceImage({ src, alt }: { src: string; alt: string }) {
@@ -79,6 +87,7 @@ function WorkspaceImage({ src, alt }: { src: string; alt: string }) {
 }
 
 function WorkspaceVideo({ src, mimeType }: { src: string; mimeType: string }) {
+  const t = useT();
   const [loaded, setLoaded] = useState(false);
 
   return (
@@ -95,13 +104,14 @@ function WorkspaceVideo({ src, mimeType }: { src: string; mimeType: string }) {
         onError={() => setLoaded(true)}
       >
         <source src={src} type={mimeType} />
-        Your browser does not support the video tag.
+        {t("shared1.markdown.videoFallback")}
       </video>
     </div>
   );
 }
 
 function WorkspaceAudio({ src, mimeType }: { src: string; mimeType: string }) {
+  const t = useT();
   const [loaded, setLoaded] = useState(false);
 
   return (
@@ -117,7 +127,7 @@ function WorkspaceAudio({ src, mimeType }: { src: string; mimeType: string }) {
         onError={() => setLoaded(true)}
       >
         <source src={src} type={mimeType} />
-        Your browser does not support the audio tag.
+        {t("shared1.workspaceFile.audioFallback")}
       </audio>
     </div>
   );
@@ -126,6 +136,7 @@ function WorkspaceAudio({ src, mimeType }: { src: string; mimeType: string }) {
 function renderWorkspaceFile(
   value: unknown,
   metadata?: OutputMetadata,
+  locale: Locale = DEFAULT_LOCALE,
 ): ReactNode {
   const uri = parseWorkspaceURI(String(value));
   if (!uri) return null;
@@ -135,7 +146,13 @@ function renderWorkspaceFile(
 
   if (mimeType && imageMimeTypes.includes(mimeType)) {
     return (
-      <WorkspaceImage src={downloadURL} alt={metadata?.filename || "Image"} />
+      <WorkspaceImage
+        src={downloadURL}
+        alt={
+          metadata?.filename ||
+          getMessage(locale, "shared1.workspaceFile.imageAlt")
+        }
+      />
     );
   }
 
@@ -148,7 +165,7 @@ function renderWorkspaceFile(
   }
 
   // Generic file card with icon and download link
-  const label = getFileTypeLabel(mimeType);
+  const label = getFileTypeLabel(mimeType, locale);
   return (
     <div
       // TODO(tokens): no exact role for border-gray-200 #e5e7eb, bg-gray-50 #f9fafb; #e5e7eb is sidebar-border, the sidebar only

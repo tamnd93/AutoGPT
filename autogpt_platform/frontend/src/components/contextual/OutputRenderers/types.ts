@@ -21,11 +21,13 @@ export interface CopyContent {
   alternativeMimeTypes?: string[]; // Alternative MIME types to try if primary isn't supported
 }
 
+import type { Locale } from "@/lib/i18n/locale";
+
 export interface OutputRenderer {
   name: string;
   priority: number;
   canRender(value: any, metadata?: OutputMetadata): boolean;
-  render(value: any, metadata?: OutputMetadata): ReactNode;
+  render(value: any, metadata?: OutputMetadata, locale?: Locale): ReactNode;
   getCopyContent(value: any, metadata?: OutputMetadata): CopyContent | null;
   getDownloadContent(
     value: any,

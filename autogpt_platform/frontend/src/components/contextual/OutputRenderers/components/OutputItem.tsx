@@ -2,6 +2,7 @@
 
 import { Text } from "@/components/atoms/Text/Text";
 import { OutputMetadata, OutputRenderer } from "../types";
+import { useLocale } from "@/lib/i18n";
 
 interface OutputItemProps {
   value: any;
@@ -16,6 +17,7 @@ export function OutputItem({
   renderer,
   label,
 }: OutputItemProps) {
+  const locale = useLocale();
   return (
     <div className="relative">
       {label && (
@@ -24,7 +26,9 @@ export function OutputItem({
         </Text>
       )}
 
-      <div className="relative">{renderer.render(value, metadata)}</div>
+      <div className="relative">
+        {renderer.render(value, metadata, locale)}
+      </div>
     </div>
   );
 }

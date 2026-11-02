@@ -4,6 +4,7 @@ import {
   desktopStreamRenderer,
   DesktopStreamPreview,
 } from "../DesktopStreamRenderer";
+import { LocaleProvider } from "@/lib/i18n";
 
 const streamValue = {
   kind: "desktop_stream" as const,
@@ -16,6 +17,24 @@ const streamValue = {
 describe("DesktopStreamRenderer", () => {
   afterEach(() => {
     cleanup();
+  });
+
+  it("speaks vietnamese with a provider", () => {
+    render(
+      <LocaleProvider locale="vi">
+        {
+          desktopStreamRenderer.render(
+            streamValue,
+            undefined,
+            "vi",
+          ) as React.ReactElement
+        }
+      </LocaleProvider>,
+    );
+
+    expect(screen.getByText("Máy tính tương tác")).toBeDefined();
+    expect(screen.getByText("Toàn màn hình")).toBeDefined();
+    expect(screen.getByRole("link", { name: /Mở tab mới/i })).toBeDefined();
   });
 
   it("canRender matches desktop_stream objects only", () => {

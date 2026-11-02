@@ -5,6 +5,7 @@ import {
   DownloadContent,
   CopyContent,
 } from "../types";
+import { useT } from "@/lib/i18n";
 
 function normalizeMime(mime?: string): string | undefined {
   return mime?.toLowerCase().split(";")[0]?.trim();
@@ -86,6 +87,7 @@ function CSVTable({
   value: string;
   delimiter: "," | "\t";
 }) {
+  const t = useT();
   const { headers, rows } = useMemo(
     () => parseDelimitedText(value, delimiter),
     [delimiter, value],
@@ -117,7 +119,11 @@ function CSVTable({
   }
 
   if (headers.length === 0) {
-    return <p className="p-4 text-sm text-foreground-tertiary">Empty CSV</p>;
+    return (
+      <p className="p-4 text-sm text-foreground-tertiary">
+        {t("shared1.csv.empty")}
+      </p>
+    );
   }
 
   return (

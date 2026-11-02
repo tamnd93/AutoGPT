@@ -11,6 +11,8 @@ import {
   DownloadContent,
   CopyContent,
 } from "../types";
+import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/locale";
+import { getMessage } from "@/lib/i18n/translate";
 
 const videoExtensions = [
   ".mp4",
@@ -101,6 +103,7 @@ function canRenderVideo(value: unknown, metadata?: OutputMetadata): boolean {
 function renderVideo(
   value: unknown,
   metadata?: OutputMetadata,
+  locale: Locale = DEFAULT_LOCALE,
 ): React.ReactNode {
   const videoUrl = String(value);
 
@@ -142,7 +145,7 @@ function renderVideo(
           allow="autoplay; fullscreen; picture-in-picture"
           allowFullScreen
           sandbox="allow-scripts allow-same-origin allow-presentation allow-fullscreen allow-popups"
-          title="Vimeo video"
+          title={getMessage(locale, "shared1.video.vimeoTitle")}
         />
       </div>
     );
@@ -157,7 +160,7 @@ function renderVideo(
         preload="metadata"
       >
         <source src={videoUrl} type={metadata?.mimeType || "video/mp4"} />
-        Your browser does not support the video tag.
+        {getMessage(locale, "shared1.markdown.videoFallback")}
       </video>
     </div>
   );

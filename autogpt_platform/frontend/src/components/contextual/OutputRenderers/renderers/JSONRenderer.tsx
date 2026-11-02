@@ -9,6 +9,7 @@ import {
 } from "../types";
 import { ArrowDown01Icon, ArrowRight01Icon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 
 function canRenderJSON(value: unknown, _metadata?: OutputMetadata): boolean {
   if (_metadata?.type === "json") {
@@ -96,6 +97,7 @@ export const jsonRenderer: OutputRenderer = {
 };
 
 function JSONViewer({ data }: { data: any }) {
+  const t = useT();
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
 
   const toggleCollapse = (key: string) => {
@@ -177,7 +179,9 @@ function JSONViewer({ data }: { data: any }) {
             ) : (
               <Icon icon={ArrowDown01Icon} className="size-3" />
             )}
-            <span className="ml-1 text-muted-foreground">Object</span>
+            <span className="ml-1 text-muted-foreground">
+              {t("shared1.json.object")}
+            </span>
           </button>
           {!isCollapsed && (
             <div className="ml-4 mt-1">

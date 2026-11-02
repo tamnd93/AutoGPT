@@ -1,5 +1,6 @@
 import { render, screen } from "@testing-library/react";
-import type React from "react";
+import { LocaleProvider } from "@/lib/i18n";
+import React from "react";
 import { describe, expect, it } from "vitest";
 import { csvRenderer } from "../CSVRenderer";
 
@@ -94,5 +95,16 @@ describe("csvRenderer.render (parse via render output smoke)", () => {
     );
 
     expect(screen.getByText("Empty CSV")).toBeDefined();
+  });
+  it("speaks vietnamese when the file is empty", () => {
+    render(
+      React.createElement(
+        LocaleProvider,
+        { locale: "vi" },
+        csvRenderer.render("", { filename: "empty.csv" }, "vi") as React.ReactElement,
+      ),
+    );
+
+    expect(screen.getByText("CSV trống")).toBeDefined();
   });
 });

@@ -1,3 +1,5 @@
+import { useT } from "@/lib/i18n";
+
 interface Props extends React.SVGProps<SVGSVGElement> {
   hideText?: boolean;
 }
@@ -9,13 +11,15 @@ export function AutoGPTLogoWhite({
   className,
   ...props
 }: Props) {
+  const t = useT();
+
   return (
     <svg
       data-slot="autogpt-logo"
       viewBox={hideText ? "63 0 57 54" : "0 0 119 54"}
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      aria-label="AutoGPT Logo"
+      aria-label={t("shared1.logo.aria")}
       className={className ?? "h-[3.375rem] w-auto"}
       {...props}
     >

@@ -10,8 +10,10 @@ import {
   DownloadContent,
   CopyContent,
 } from "../types";
+import { useT } from "@/lib/i18n";
 
 function HTMLPreview({ value }: { value: string }) {
+  const t = useT();
   // Inject Tailwind CDN — no CSP (see iframe-sandbox-csp.ts for why)
   const tailwindScript = `<script src="${TAILWIND_CDN_URL}"></script>`;
   const srcDoc = wrapWithHeadInjection(
@@ -23,7 +25,7 @@ function HTMLPreview({ value }: { value: string }) {
       sandbox="allow-scripts"
       srcDoc={srcDoc}
       className="h-96 w-full rounded border border-border-base"
-      title="HTML preview"
+      title={t("shared1.html.previewTitle")}
     />
   );
 }

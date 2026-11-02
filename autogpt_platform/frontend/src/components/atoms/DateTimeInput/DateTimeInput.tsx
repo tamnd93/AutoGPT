@@ -6,6 +6,7 @@ import { Button } from "@/components/atoms/Button/Button";
 import { cn } from "@/lib/utils";
 
 import { Text } from "../Text/Text";
+import { useT } from "@/lib/i18n";
 import {
   Popover,
   PopoverContent,
@@ -69,6 +70,7 @@ export const DateTimeInput = ({
   "aria-labelledby": ariaLabelledBy,
   "aria-describedby": ariaDescribedBy,
 }: DateTimeInputProps) => {
+  const t = useT();
   const selected = React.useMemo(() => parseISODateTimeString(value), [value]);
   const [open, setOpen] = React.useState(false);
   const [timeValue, setTimeValue] = React.useState("");
@@ -128,7 +130,7 @@ export const DateTimeInput = ({
         hour: "2-digit",
         minute: "2-digit",
       })
-    : placeholder || "Pick date and time";
+    : placeholder || t("shared1.dateTimeInput.pickDateTime");
 
   const isDisabled = disabled || readonly;
 

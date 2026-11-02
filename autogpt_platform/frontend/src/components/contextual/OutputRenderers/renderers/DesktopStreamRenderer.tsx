@@ -6,6 +6,7 @@ import {
 } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { Text } from "@/components/atoms/Text/Text";
+import { useT } from "@/lib/i18n";
 import {
   OutputRenderer,
   OutputMetadata,
@@ -61,6 +62,7 @@ export function DesktopStreamPreview({
   ownerView = true,
   textSize = "body",
 }: PreviewProps) {
+  const t = useT();
   const frameRef = useRef<HTMLIFrameElement>(null);
   const ownerOnly = value.requires_auth === true && !ownerView;
 
@@ -81,7 +83,7 @@ export function DesktopStreamPreview({
             as="span"
             tone="body"
           >
-            Interactive Desktop
+            {t("shared1.desktop.interactive")}
           </Text>
           <span className="flex rounded bg-surface-active px-1.5 py-0.5">
             <Text variant="small-uppercase-tight" as="span" tone="secondary">
@@ -95,11 +97,11 @@ export function DesktopStreamPreview({
               type="button"
               onClick={handleFullscreen}
               className="flex items-center gap-1 rounded px-2 py-1 text-foreground-secondary hover:bg-surface-active"
-              aria-label="Fullscreen"
+              aria-label={t("shared1.desktop.fullscreen")}
             >
               <Icon icon={ArrowExpandIcon} size={14} />
               <Text variant="small-tight" as="span" tone="secondary">
-                Fullscreen
+                {t("shared1.desktop.fullscreen")}
               </Text>
             </button>
             <a
@@ -110,7 +112,7 @@ export function DesktopStreamPreview({
             >
               <Icon icon={ArrowUpRight01Icon} size={14} />
               <Text variant="small-tight" as="span" tone="secondary">
-                Open in new tab
+                {t("shared1.desktop.openInNewTab")}
               </Text>
             </a>
           </div>
@@ -123,7 +125,7 @@ export function DesktopStreamPreview({
             tone="subtle"
             className="text-center"
           >
-            The live desktop is only visible to the owner of this chat.
+            {t("shared1.desktop.ownerOnlyCard")}
           </Text>
         </div>
       ) : (
@@ -133,16 +135,17 @@ export function DesktopStreamPreview({
           sandbox="allow-scripts allow-same-origin allow-popups"
           allow="clipboard-read; clipboard-write; fullscreen"
           className="aspect-video w-full bg-action-hover"
-          title={`Interactive desktop (${value.sandbox_id})`}
+          title={t("shared1.desktop.iframeTitle", {
+            id: value.sandbox_id,
+          })}
         />
       )}
       <div className="border-t border-border-base bg-surface-muted px-3 py-2">
         <Text variant="small-medium-tight" tone="body">
           {value.requires_auth
-            ? "Only the owner of this chat can view the live desktop. "
+            ? t("shared1.desktop.ownerOnlyPrefix")
             : ""}
-          The AI works on this desktop with full access, so anything signed in
-          here is visible to it. Do not sign into personal accounts.
+          {t("shared1.desktop.riskWarning")}
         </Text>
       </div>
     </div>

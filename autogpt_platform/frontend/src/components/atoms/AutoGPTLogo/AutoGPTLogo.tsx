@@ -1,4 +1,5 @@
 import { useId } from "react";
+import { useT } from "@/lib/i18n";
 
 interface Props extends React.SVGProps<SVGSVGElement> {
   hideText?: boolean;
@@ -13,6 +14,7 @@ export function AutoGPTLogo({
   className,
   ...props
 }: Props) {
+  const t = useT();
   const uid = useId().replace(/:/g, "");
   const clipId = `clip-${uid}`;
   const gradId = (n: number) => `paint${n}-${uid}`;
@@ -23,7 +25,7 @@ export function AutoGPTLogo({
       viewBox="0 0 89 40"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      aria-label="AutoGPT Logo"
+      aria-label={t("shared1.logo.aria")}
       className={className ?? "h-10 w-[5.5rem]"}
       {...props}
     >

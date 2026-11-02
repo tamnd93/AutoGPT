@@ -8,6 +8,9 @@ import rehypeKatex from "rehype-katex";
 import rehypeHighlight from "rehype-highlight";
 import rehypeSlug from "rehype-slug";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
+import { useLocale } from "@/lib/i18n";
+import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/locale";
+import { getMessage } from "@/lib/i18n/translate";
 import {
   OutputRenderer,
   OutputMetadata,
@@ -105,14 +108,18 @@ interface MarkdownVideoImageProps {
 // link only its text is shown: a player or a second link can't sit in an
 // anchor.
 function MarkdownVideoImage({ src, alt }: MarkdownVideoImageProps) {
+  const locale = useLocale();
   const insideLink = React.useContext(InsideLinkContext);
   if (insideLink) return <>{alt || src}</>;
-  if (isVideoUrl(src)) return renderVideoEmbed(src);
+  if (isVideoUrl(src)) return renderVideoEmbed(src, locale);
   // Written without a scheme, the link would resolve against this site.
   return renderPlainLink(getYouTubeWatchUrl(src) ?? src, alt || src);
 }
 
-function renderVideoEmbed(url: string): React.ReactNode {
+function renderVideoEmbed(
+  url: string,
+  locale: Locale = DEFAULT_LOCALE,
+): React.ReactNode {
   if (getYouTubeVideoId(url)) {
     return (
       <div className="my-4">
@@ -141,7 +148,7 @@ function renderVideoEmbed(url: string): React.ReactNode {
           preload="metadata"
         >
           <source src={embedUrl} />
-          Your browser does not support the video tag.
+          {getMessage(locale, "shared1.markdown.videoFallback")}
         </video>
       </div>
     );
@@ -152,7 +159,7 @@ function renderVideoEmbed(url: string): React.ReactNode {
       <div className="relative aspect-video">
         <iframe
           src={embedUrl}
-          title="Embedded video player"
+          title={getMessage(locale, "shared1.markdown.videoTitle")}
           className="absolute left-0 top-0 h-full w-full rounded-lg shadow-md"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowFullScreen
@@ -196,6 +203,41 @@ function canRenderMarkdown(value: unknown, metadata?: OutputMetadata): boolean {
 
 // Module-level, so each render passes the same component types and React
 // keeps the subtree (a playing video, a one-off "Load video") mounted.
+// Custom paragraph to handle standalone video URLs; a named component so the
+// locale hook is legal here.
+function MarkdownParagraph({
+  children,
+  ...props
+}: React.ComponentPropsWithoutRef<"p">) {
+  const locale = useLocale();
+  if (typeof children === "string" && isVideoUrl(children.trim())) {
+    return renderVideoEmbed(children.trim(), locale);
+  }
+
+  if (React.Children.count(children) === 1) {
+    const child = React.Children.toArray(children)[0];
+    if (
+      React.isValidElement<{ href?: string }>(child) &&
+      child.type === "a"
+    ) {
+      const href = child.props.href;
+      if (href && isVideoUrl(href)) {
+        return renderVideoEmbed(href, locale);
+      }
+    }
+  }
+
+  return (
+    <p
+      // TODO(tokens): no exact role for text-gray-700 #374151
+      className="my-3 leading-relaxed text-gray-700"
+      {...props}
+    >
+      {children}
+    </p>
+  );
+}
+
 const MARKDOWN_COMPONENTS: Components = {
   // Custom components for better rendering
   pre: ({ children, ...props }) => (
@@ -420,36 +462,7 @@ const MARKDOWN_COMPONENTS: Components = {
     );
   },
   // Custom paragraph to handle standalone video URLs
-  p: ({ children, ...props }) => {
-    // Check if paragraph contains just a video URL
-    if (typeof children === "string" && isVideoUrl(children.trim())) {
-      return renderVideoEmbed(children.trim());
-    }
-
-    // Check for video URLs in link children
-    if (React.Children.count(children) === 1) {
-      const child = React.Children.toArray(children)[0];
-      if (
-        React.isValidElement<{ href?: string }>(child) &&
-        child.type === "a"
-      ) {
-        const href = child.props.href;
-        if (href && isVideoUrl(href)) {
-          return renderVideoEmbed(href);
-        }
-      }
-    }
-
-    return (
-      <p
-        // TODO(tokens): no exact role for text-gray-700 #374151
-        className="my-3 leading-relaxed text-gray-700"
-        {...props}
-      >
-        {children}
-      </p>
-    );
-  },
+  p: MarkdownParagraph,
 };
 
 function renderMarkdown(

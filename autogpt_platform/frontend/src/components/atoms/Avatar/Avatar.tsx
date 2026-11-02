@@ -10,6 +10,7 @@ import React, {
 import BoringAvatar from "boring-avatars";
 
 import Image, { ImageProps } from "next/image";
+import { useT } from "@/lib/i18n";
 import { isLocalStoreMediaUrl } from "@/lib/store-media";
 import { cn } from "@/lib/utils";
 
@@ -100,6 +101,7 @@ export function AvatarImage({
   unoptimized,
   ...rest
 }: AvatarImageProps): React.JSX.Element | null {
+  const t = useT();
   const { setIsLoaded, setHasImage, hasImage } = useAvatarContext();
 
   const normalizedSrc = typeof src === "string" ? src.trim() : src;
@@ -133,7 +135,7 @@ export function AvatarImage({
       <img
         data-slot="avatar-image"
         src={normalizedSrc}
-        alt={alt ?? "Avatar image"}
+        alt={alt ?? t("shared1.avatar.imageAlt")}
         className={cn("h-full w-full object-cover", className)}
         width={computedWidth}
         height={computedHeight}
@@ -157,7 +159,7 @@ export function AvatarImage({
       data-slot="avatar-image"
       {...rest}
       src={normalizedSrc}
-      alt={alt ?? "Avatar image"}
+      alt={alt ?? t("shared1.avatar.imageAlt")}
       className={cn("h-full w-full object-cover", className)}
       width={fill ? undefined : computedWidth}
       height={fill ? undefined : computedHeight}
@@ -195,6 +197,7 @@ export function AvatarFallback({
   accessibleLabel,
   ...props
 }: AvatarFallbackProps): React.JSX.Element | null {
+  const t = useT();
   const { isLoaded, hasImage } = useAvatarContext();
   const show = !isLoaded || !hasImage;
   if (!show) return null;
@@ -218,7 +221,9 @@ export function AvatarFallback({
   const hasCustomFallback = typeof children !== "string" && children != null;
   // Trim the seed so call sites with padded names render the same gradient
   const name =
-    typeof children === "string" && children.trim() ? children.trim() : "User";
+    typeof children === "string" && children.trim()
+      ? children.trim()
+      : t("shared1.avatar.userFallback");
   return (
     <span
       data-slot="avatar-fallback"

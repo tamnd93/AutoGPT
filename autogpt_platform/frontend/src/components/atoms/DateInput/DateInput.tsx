@@ -4,6 +4,7 @@ import * as React from "react";
 import { Calendar as CalendarIcon } from "lucide-react";
 import { Button } from "@/components/atoms/Button/Button";
 import { cn } from "@/lib/utils";
+import { useT } from "@/lib/i18n";
 import {
   Popover,
   PopoverContent,
@@ -63,6 +64,7 @@ export const DateInput = ({
   "aria-labelledby": ariaLabelledBy,
   "aria-describedby": ariaDescribedBy,
 }: DateInputProps) => {
+  const t = useT();
   const selected = React.useMemo(() => parseISODateString(value), [value]);
   const [open, setOpen] = React.useState(false);
 
@@ -78,7 +80,7 @@ export const DateInput = ({
       day: "numeric",
     }) ||
     placeholder ||
-    "Pick a date";
+    t("shared1.dateInput.pickDate");
 
   const isDisabled = disabled || readonly;
 
