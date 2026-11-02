@@ -10,7 +10,7 @@ import { useState } from "react";
 import type { HomeAttentionItem } from "@/app/api/__generated__/models/homeAttentionItem";
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { Text } from "@/components/atoms/Text/Text";
-import { useT } from "@/lib/i18n";
+import { useLocale, useT } from "@/lib/i18n";
 import { attentionReason } from "@/app/(platform)/copilot/components/ApprovalQueue/helpers";
 import { ExpertAvatar } from "@/components/molecules/ExpertAvatar/ExpertAvatar";
 import { AttentionRowActions } from "./AttentionRowActions";
@@ -32,8 +32,9 @@ const ICONS: Record<HomeAttentionItem["kind"], IconSvgElement> = {
 
 export function AttentionRow({ item, isProcessing, onDecision }: Props) {
   const t = useT();
+  const locale = useLocale();
   const [confirmDecline, setConfirmDecline] = useState(false);
-  const reason = attentionReason(item.review);
+  const reason = attentionReason(item.review, locale);
 
   function handleDecline() {
     if (!confirmDecline) {

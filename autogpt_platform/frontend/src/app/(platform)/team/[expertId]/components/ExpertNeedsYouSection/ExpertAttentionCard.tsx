@@ -3,6 +3,7 @@
 import { AttentionRowActions } from "@/app/(platform)/home/components/NeedsYou/components/AttentionRowActions";
 import { HeldPassageQuote } from "@/app/(platform)/home/components/NeedsYou/components/HeldPassageQuote";
 import { attentionReason } from "@/app/(platform)/copilot/components/ApprovalQueue/helpers";
+import { useLocale, useT } from "@/lib/i18n";
 import type { HomeAttentionItem } from "@/app/api/__generated__/models/homeAttentionItem";
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { Text } from "@/components/atoms/Text/Text";
@@ -34,8 +35,10 @@ const ICONS: Record<HomeAttentionItem["kind"], IconSvgElement> = {
 /** Compact card version of the home page's AttentionRow, styled like the
  *  chat sidebar's mini cards. */
 export function ExpertAttentionCard({ item, isProcessing, onDecision }: Props) {
+  const t = useT();
+  const locale = useLocale();
   const [confirmDecline, setConfirmDecline] = useState(false);
-  const reason = attentionReason(item.review);
+  const reason = attentionReason(item.review, locale);
 
   function handleDecline() {
     if (!confirmDecline) {
@@ -81,7 +84,7 @@ export function ExpertAttentionCard({ item, isProcessing, onDecision }: Props) {
                 // TODO(tokens): no exact role: ring-amber-600/10 #D97706
                 className="rounded bg-warning-surface px-1.5 py-px text-warning-foreground ring-1 ring-inset ring-amber-600/10"
               >
-                Waiting
+                {t("home1.attention.waiting")}
               </Text>
             ) : null}
           </div>
@@ -109,7 +112,9 @@ export function ExpertAttentionCard({ item, isProcessing, onDecision }: Props) {
         />
       </div>
       <span className="sr-only" aria-live="polite">
-        {confirmDecline ? `Press again to decline ${item.title}` : ""}
+        {confirmDecline
+          ? t("home1.attention.pressAgainDecline", { title: item.title })
+          : ""}
       </span>
     </article>
   );

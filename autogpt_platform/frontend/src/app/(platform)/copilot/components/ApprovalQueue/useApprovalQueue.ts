@@ -7,12 +7,9 @@ import type { PendingHumanReviewModel } from "@/app/api/__generated__/models/pen
 import { ReviewStatus } from "@/app/api/__generated__/models/reviewStatus";
 import { toast } from "@/components/molecules/Toast/use-toast";
 import { useProcessReviews } from "@/hooks/useProcessReviews";
-import {
-  receiptLabelKey,
-  receiptText as heldReceiptText,
-} from "@/app/(platform)/home/components/NeedsYou/helpers";
+import { receiptLabelKey } from "@/app/(platform)/home/components/NeedsYou/helpers";
 import type { HeldReceipt } from "@/app/(platform)/home/components/NeedsYou/useHeldReview";
-import { useLocale, useT } from "@/lib/i18n";
+import { useLocale, useT, type Locale } from "@/lib/i18n";
 import { getMessage } from "@/lib/i18n/translate";
 import { HeldOutcomesContext } from "../ChatMessagesContainer/HeldOutcomesContext";
 import { useHeldAnswersStore } from "./heldAnswersStore";
@@ -270,11 +267,7 @@ function isTurnStarting(
 }
 
 // The chat's receipt is the short word, where Home's is a sentence.
-function receiptText(
-  item: ApprovalItem,
-  approved: boolean,
-  locale: Parameters<typeof heldReceiptText>[2],
-) {
+function receiptText(item: ApprovalItem, approved: boolean, locale: Locale) {
   if (isHeldRead(item))
     return getMessage(
       locale,

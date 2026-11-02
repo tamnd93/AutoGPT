@@ -361,6 +361,17 @@ test("a call that leaves the feed reads answered elsewhere in Vietnamese", async
   expect(await screen.findByText("· Đã trả lời ở nơi khác")).toBeDefined();
 });
 
+test("a held call's mode reads in Vietnamese", () => {
+  const item = homeHeldItem(referenceCard("Pause schedule"));
+  render(
+    <LocaleProvider locale="vi">
+      <NeedsYou dashboard={makeDashboard([item])} />
+    </LocaleProvider>,
+  );
+
+  expect(screen.getAllByRole("article")[0].textContent).toContain("Hỏi trước");
+});
+
 afterEach(() => {
   vi.restoreAllMocks();
 });

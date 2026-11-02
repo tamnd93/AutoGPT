@@ -3,6 +3,7 @@ import { http, HttpResponse } from "msw";
 import { expect, test, vi } from "vitest";
 import type { HomeAttentionItem } from "@/app/api/__generated__/models/homeAttentionItem";
 import type { HomeDashboardResponse } from "@/app/api/__generated__/models/homeDashboardResponse";
+import { LocaleProvider } from "@/lib/i18n";
 import { server } from "@/mocks/mock-server";
 import { render, screen, waitFor } from "@/tests/integrations/test-utils";
 import {
@@ -282,6 +283,33 @@ function heldReadItem(id: string, judged: boolean): HomeAttentionItem {
     },
   };
 }
+
+test("a supervisor-held call's reason reads in Vietnamese", async () => {
+  const review = heldReview({
+    id: "vi-supervisor",
+    tool: "send_email",
+    reason: "It sends mail.",
+    reasonKind: "supervisor",
+  });
+  mockDashboard([
+    {
+      ...makeApproval(0),
+      id: "approval-vi",
+      description: "It sends mail.",
+      review,
+    },
+  ]);
+
+  render(
+    <LocaleProvider locale="vi">
+      <HomeRecap />
+    </LocaleProvider>,
+  );
+
+  expect(
+    await screen.findByText("Không chắc việc này an toàn: It sends mail."),
+  ).toBeDefined();
+});
 
 test("a held read's row gives its reason in plain words and quotes the passage", async () => {
   mockDashboard([

@@ -37,6 +37,7 @@ interface Props {
 // Every held call on the page, one at a time: the chat's card, a sidebar, and ‹ › to move.
 export function HeldReviewDialog({ carousel, held, chatLink = true }: Props) {
   const t = useT();
+  const locale = useLocale();
   const { current } = carousel;
   const approval = current ? toApprovalItem(current.item.review!) : null;
 
@@ -147,7 +148,7 @@ export function HeldReviewDialog({ carousel, held, chatLink = true }: Props) {
                   expertName={current.item.expert?.name ?? null}
                   note={
                     approval.reasonKind === "mode"
-                      ? modeLine(approval.mode)
+                      ? modeLine(approval.mode, locale)
                       : null
                   }
                   onApprove={(rule, scope) =>

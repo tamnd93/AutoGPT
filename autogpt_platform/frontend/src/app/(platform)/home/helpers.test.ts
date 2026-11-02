@@ -58,6 +58,7 @@ describe("getHomeStatusLine in Vietnamese", () => {
     attention: [{}, {}],
     active_tasks: [{}],
   } as HomeDashboardResponse;
+  const running = {} as HomeDashboardResponse["active_tasks"][number];
 
   it("counts decisions and running workflows in Vietnamese", () => {
     expect(getHomeStatusLine(dashboard, "vi")).toBe(
@@ -68,7 +69,7 @@ describe("getHomeStatusLine in Vietnamese", () => {
     );
     expect(
       getHomeStatusLine(
-        { ...dashboard, attention: [], active_tasks: [{}] },
+        { ...dashboard, attention: [], active_tasks: [running] },
         "vi",
       ),
     ).toBe("Đã xong · 1 workflow đang chạy");

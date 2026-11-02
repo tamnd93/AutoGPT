@@ -4,7 +4,7 @@ import type { HomeAttentionItem } from "@/app/api/__generated__/models/homeAtten
 import { Button } from "@/components/atoms/Button/Button";
 import { Text } from "@/components/atoms/Text/Text";
 import { AUTOPILOT_NAME } from "@/components/molecules/AutopilotAvatar/helpers";
-import { useT } from "@/lib/i18n";
+import { useLocale, useT } from "@/lib/i18n";
 import type { CardStatus } from "@/app/(platform)/copilot/components/ApprovalQueue/components/ApprovalCard/ApprovalCard";
 import { HeadlineText } from "@/app/(platform)/copilot/components/ApprovalQueue/components/ApprovalHeadline";
 import {
@@ -37,10 +37,12 @@ export function HeldCallRow({
   onDecide,
 }: Props) {
   const t = useT();
+  const locale = useLocale();
   const [confirmReject, setConfirmReject] = useState(false);
   const read = isHeldRead(approval);
-  const reason = reasonLine(approval);
-  const mode = approval.reasonKind === "mode" ? modeLabel(approval.mode) : null;
+  const reason = reasonLine(approval, locale);
+  const mode =
+    approval.reasonKind === "mode" ? modeLabel(approval.mode, locale) : null;
   const busy = status !== "idle";
   const approveLabel = read ? t("home1.held.release") : t("home1.held.approve");
   const rejectLabel = read ? t("home1.held.keepOut") : t("home1.held.reject");
