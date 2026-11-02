@@ -1,3 +1,6 @@
+import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/locale";
+import { getMessage } from "@/lib/i18n/translate";
+
 type APIErrorPayload = {
   status?: unknown;
   message?: unknown;
@@ -13,10 +16,13 @@ export function getErrorStatus(error: unknown): number | null {
 
 export function getErrorMessage(
   error: unknown,
-  fallback = "Something went wrong. Please try again.",
+  fallback?: string,
+  locale: Locale = DEFAULT_LOCALE,
 ): string {
+  const resolvedFallback =
+    fallback ?? getMessage(locale, "runtimeErrors3.mcp.genericError");
   if (error instanceof Error && error.message) return error.message;
-  if (typeof error !== "object" || error === null) return fallback;
+  if (typeof error !== "object" || error === null) return resolvedFallback;
   const { message, detail } = error as APIErrorPayload;
   if (typeof detail === "string" && detail) return detail;
   // Routes that need the client to branch on the failure send
@@ -26,8 +32,8 @@ export function getErrorMessage(
   if (typeof structured === "string" && structured) return structured;
   if (typeof message === "string" && message) return message;
   const value = detail ?? message;
-  if (value === undefined || value === null) return fallback;
-  return JSON.stringify(value) || fallback;
+  if (value === undefined || value === null) return resolvedFallback;
+  return JSON.stringify(value) || resolvedFallback;
 }
 
 /** The machine-readable `code` a route attached to its error, when it sent one.

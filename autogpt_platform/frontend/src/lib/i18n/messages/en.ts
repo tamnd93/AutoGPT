@@ -62,6 +62,7 @@ import { profile3En } from "./profile-3.en";
 import { Profile4En } from "./profile-4.en";
 import { profile5En } from "./profile-5.en";
 import { RuntimeErrors2En } from "./runtime-errors-2.en";
+import { runtimeErrors3En } from "./runtime-errors-3.en";
 import { Schedule1En } from "./schedule-1.en";
 import { settingsRest1En } from "./settings-rest-1.en";
 import { settingsRest2En } from "./settings-rest-2.en";
@@ -150,6 +151,7 @@ export const en = {
   ...Profile4En,
   ...profile5En,
   ...RuntimeErrors2En,
+  ...runtimeErrors3En,
   ...Schedule1En,
   ...settingsRest1En,
   ...settingsRest2En,

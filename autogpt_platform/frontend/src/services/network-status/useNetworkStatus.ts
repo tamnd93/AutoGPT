@@ -1,5 +1,7 @@
 "use client";
 
+import { useLocale } from "@/lib/i18n";
+import { getMessage } from "@/lib/i18n/translate";
 import { useEffect } from "react";
 import { toast } from "sonner";
 
@@ -12,19 +14,24 @@ const NETWORK_TOAST = { id: "network-status", position: "top-center" } as const;
 const RESTORED_DURATION_MS = 4_000;
 
 export function useNetworkStatus() {
-  useEffect(function monitorNetworkStatus() {
+  const locale = useLocale();
+  useEffect(
+    function monitorNetworkStatus() {
     function handleOnline() {
-      toast.success("Connection restored", {
+      toast.success(getMessage(locale, "runtimeErrors3.network.restored"), {
         ...NETWORK_TOAST,
-        description: "You're back online",
+        description: getMessage(locale, "runtimeErrors3.network.backOnline"),
         duration: RESTORED_DURATION_MS,
       });
     }
 
     function handleOffline() {
-      toast.error("You're offline", {
+      toast.error(getMessage(locale, "runtimeErrors3.network.offline"), {
         ...NETWORK_TOAST,
-        description: "Check your internet connection",
+        description: getMessage(
+          locale,
+          "runtimeErrors3.network.checkConnection",
+        ),
         duration: Infinity,
       });
     }
@@ -36,5 +43,7 @@ export function useNetworkStatus() {
       window.removeEventListener("online", handleOnline);
       window.removeEventListener("offline", handleOffline);
     };
-  }, []);
+    },
+    [locale],
+  );
 }

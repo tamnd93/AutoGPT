@@ -17,6 +17,8 @@ import {
 } from "@/lib/autogpt-server-api";
 import { useBackendAPI } from "@/lib/autogpt-server-api/context";
 import { useAuth } from "@/lib/auth/hooks/useAuth";
+import { useLocale } from "@/lib/i18n";
+import { getMessage } from "@/lib/i18n/translate";
 import { usePathname, useRouter } from "next/navigation";
 import {
   createContext,
@@ -109,6 +111,7 @@ export default function OnboardingProvider({
   const isMounted = useRef(true);
   const pendingUpdatesRef = useRef<Set<Promise<void>>>(new Set());
   const { toast } = useToast();
+  const locale = useLocale();
 
   const api = useBackendAPI();
   const pathname = usePathname();
@@ -235,7 +238,7 @@ export default function OnboardingProvider({
         console.error("Failed to initialize onboarding:", error);
 
         toast({
-          title: "Failed to initialize onboarding",
+          title: getMessage(locale, "runtimeErrors3.onboarding.initFailed"),
           variant: "destructive",
         });
 
@@ -254,6 +257,7 @@ export default function OnboardingProvider({
     pathname,
     isOnPublicTour,
     isOnPasswordResetRoute,
+    locale,
   ]);
 
   const handleOnboardingNotification = useCallback(
@@ -303,7 +307,10 @@ export default function OnboardingProvider({
           console.error("Failed to update user onboarding:", error);
 
           toast({
-            title: "Failed to update user onboarding",
+            title: getMessage(
+              locale,
+              "runtimeErrors3.onboarding.updateFailed",
+            ),
             variant: "destructive",
           });
         }
@@ -315,7 +322,7 @@ export default function OnboardingProvider({
         pendingUpdatesRef.current.delete(updatePromise);
       });
     },
-    [toast, isLoggedIn, fetchOnboarding, api, setState],
+    [toast, isLoggedIn, fetchOnboarding, api, setState, locale],
   );
 
   const completeStep = useCallback(
@@ -334,7 +341,10 @@ export default function OnboardingProvider({
           }
 
           toast({
-            title: "Failed to complete onboarding step",
+            title: getMessage(
+              locale,
+              "runtimeErrors3.onboarding.stepFailed",
+            ),
             variant: "destructive",
           });
         }
@@ -345,7 +355,7 @@ export default function OnboardingProvider({
         pendingUpdatesRef.current.delete(completionPromise);
       });
     },
-    [isLoggedIn, state?.completedSteps, fetchOnboarding, toast],
+    [isLoggedIn, state?.completedSteps, fetchOnboarding, toast, locale],
   );
 
   const value = useMemo(
