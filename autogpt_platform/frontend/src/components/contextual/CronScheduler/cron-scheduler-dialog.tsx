@@ -200,6 +200,7 @@ export function ScheduleTaskDialog({
   defaultCronExpression?: string;
   title?: string;
 }) {
+  const t = useT();
   return (
     <CronSchedulerDialog
       open={open}
