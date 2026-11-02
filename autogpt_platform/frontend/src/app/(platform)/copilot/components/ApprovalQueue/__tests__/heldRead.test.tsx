@@ -2,6 +2,7 @@ import userEvent from "@testing-library/user-event";
 import { http, HttpResponse } from "msw";
 import { expect, test, vi } from "vitest";
 import type { PendingHumanReviewModel } from "@/app/api/__generated__/models/pendingHumanReviewModel";
+import { LocaleProvider } from "@/lib/i18n";
 import { server } from "@/mocks/mock-server";
 import { render, screen, waitFor } from "@/tests/integrations/test-utils";
 import { CopilotChatActionsProvider } from "../../CopilotChatActionsProvider/CopilotChatActionsProvider";
@@ -34,6 +35,16 @@ function renderQueue() {
   );
 }
 
+function renderQueueVi() {
+  return render(
+    <LocaleProvider locale="vi">
+      <CopilotChatActionsProvider onSend={vi.fn()} onBackendTurn={vi.fn()}>
+        <CopilotPendingReviews chatSessionId={CHAT_SESSION} />
+      </CopilotChatActionsProvider>
+    </LocaleProvider>,
+  );
+}
+
 test("a held read asks to let Otto read its source and quotes the flagged passage", async () => {
   serve([heldRead("a", "docs.northwind.io/billing")]);
   renderQueue();
@@ -52,6 +63,24 @@ test("a held read asks to let Otto read its source and quotes the flagged passag
   expect(screen.getByRole("button", { name: "Keep it out" })).toBeDefined();
   expect(screen.queryByRole("button", { name: "Approve" })).toBeNull();
   expect(screen.queryByText("Url")).toBeNull();
+});
+
+test("a held read asks and gets released in Vietnamese", async () => {
+  serve([heldRead("vi", "docs.northwind.io/billing")]);
+  renderQueueVi();
+
+  expect(await screen.findByText("Nội dung ghi")).toBeDefined();
+  expect(
+    screen.getByText(
+      "Nội dung có chỉ dẫn nhắm tới Otto nên đã bị giữ lại. Otto chưa thấy nội dung đó.",
+    ),
+  ).toBeDefined();
+  expect(screen.getByRole("button", { name: "Cho Otto đọc" })).toBeDefined();
+  expect(screen.getByRole("button", { name: "Giữ ngoài" })).toBeDefined();
+
+  await userEvent.click(screen.getByRole("button", { name: "Cho Otto đọc" }));
+
+  expect(await screen.findByText("· Đã cho đọc")).toBeDefined();
 });
 
 test("two held reads of the same tool are never released together", async () => {

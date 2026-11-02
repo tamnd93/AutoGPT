@@ -14,6 +14,7 @@ import {
   prepareMCPAuthCredential,
   validateMCPAuthCredential,
 } from "@/lib/mcp-auth";
+import { useT } from "@/lib/i18n";
 import { isKey } from "@/lib/keyboard";
 import { CheckmarkCircle02Icon } from "@hugeicons/core-free-icons";
 import { useId, useState } from "react";
@@ -31,6 +32,7 @@ function hostOf(serverUrl: string): string | null {
  *  ConnectorRow but connects through the MCP OAuth/token flow the hidden
  *  MCPSetupCard drives via the request callbacks. */
 export function McpConnectorRow({ request }: { request: McpConnectorRequest }) {
+  const t = useT();
   const hintId = useId();
   const errorId = useId();
   const [token, setToken] = useState("");
@@ -78,7 +80,7 @@ export function McpConnectorRow({ request }: { request: McpConnectorRequest }) {
         {request.connected ? (
           <span className="flex shrink-0 items-center gap-1.5 text-sm font-medium text-foreground-tertiary">
             <Icon icon={CheckmarkCircle02Icon} size={16} />
-            Connected
+            {t("chatTools1.connector.connected")}
           </span>
         ) : request.grantable ? (
           <Button
@@ -88,7 +90,9 @@ export function McpConnectorRow({ request }: { request: McpConnectorRequest }) {
             disabled={request.granting || request.loading}
             onClick={request.onGrant}
           >
-            {request.granting ? "Granting…" : "Grant access"}
+            {request.granting
+              ? t("chatTools1.mcp.granting")
+              : t("chatTools1.connector.grantAccess")}
           </Button>
         ) : (
           <Button
@@ -98,7 +102,9 @@ export function McpConnectorRow({ request }: { request: McpConnectorRequest }) {
             disabled={request.loading}
             onClick={request.onConnect}
           >
-            {request.loading ? "Connecting…" : "Connect"}
+            {request.loading
+              ? t("chatTools1.mcp.connecting")
+              : t("chatTools1.connector.connect")}
           </Button>
         )}
       </div>
@@ -155,7 +161,7 @@ export function McpConnectorRow({ request }: { request: McpConnectorRequest }) {
               disabled={request.loading || !token.trim()}
               onClick={submitCredential}
             >
-              Use Token
+              {t("chatTools1.mcp.useToken")}
             </Button>
           </div>
           {validationError && (

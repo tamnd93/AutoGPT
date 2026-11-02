@@ -1,5 +1,7 @@
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { Table01Icon } from "@hugeicons/core-free-icons";
+import { useT } from "@/lib/i18n";
+import type { MessageKey } from "@/lib/i18n/messages/en";
 import type { PreviewTable } from "../../helpers";
 
 interface Props {
@@ -21,7 +23,10 @@ export function ChangePreview({ tables }: Props) {
 }
 
 function TablePreview({ table }: { table: PreviewTable }) {
-  const label = table.name ? `Fields in ${table.name}` : "New fields";
+  const t = useT();
+  const label = table.name
+    ? t("chatTools1.preview.fieldsIn", { name: table.name })
+    : t("chatTools1.preview.newFields");
   return (
     <section className="overflow-hidden rounded-xl border border-border-base">
       {table.name && (
@@ -39,7 +44,9 @@ function TablePreview({ table }: { table: PreviewTable }) {
               {table.name}
             </span>
             <span className="ms-auto shrink-0 text-foreground-tertiary">
-              {fieldCount(table.fields.length)}
+              {t(fieldCountKey(table.fields.length), {
+                count: table.fields.length,
+              })}
             </span>
           </div>
           {table.description && (
@@ -80,6 +87,8 @@ function TablePreview({ table }: { table: PreviewTable }) {
   );
 }
 
-function fieldCount(count: number) {
-  return count === 1 ? "1 field" : `${count} fields`;
+function fieldCountKey(count: number): MessageKey {
+  return count === 1
+    ? "chatTools1.preview.fieldOne"
+    : "chatTools1.preview.fieldMany";
 }

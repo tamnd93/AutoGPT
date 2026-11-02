@@ -1,22 +1,26 @@
 import { http, HttpResponse } from "msw";
 import { expect, test, vi } from "vitest";
 import type { PendingHumanReviewModel } from "@/app/api/__generated__/models/pendingHumanReviewModel";
+import { LocaleProvider } from "@/lib/i18n";
 import { server } from "@/mocks/mock-server";
 import { render, screen } from "@/tests/integrations/test-utils";
 import { CopilotChatActionsProvider } from "../../CopilotChatActionsProvider/CopilotChatActionsProvider";
 import { CopilotPendingReviews } from "../../CopilotPendingReviews/CopilotPendingReviews";
 import { CHAT_SESSION, spendCard } from "./fixtures";
 
-function renderQueue(reviews: PendingHumanReviewModel[]) {
+function renderQueue(reviews: PendingHumanReviewModel[], locale?: "en" | "vi") {
   server.use(
     http.get(`*/api/review/session/${CHAT_SESSION}`, () =>
       HttpResponse.json(reviews),
     ),
   );
-  render(
+  const queue = (
     <CopilotChatActionsProvider onSend={vi.fn()} onBackendTurn={vi.fn()}>
       <CopilotPendingReviews chatSessionId={CHAT_SESSION} />
-    </CopilotChatActionsProvider>,
+    </CopilotChatActionsProvider>
+  );
+  render(
+    locale ? <LocaleProvider locale={locale}>{queue}</LocaleProvider> : queue,
   );
 }
 
@@ -38,6 +42,23 @@ test("a spend card shows this step's cost, the chat's spend against its ceiling,
   ).toBeDefined();
   // The money block says it; the model's sentence is not repeated on the card.
   expect(screen.queryByText(/costs about/)).toBeNull();
+});
+
+test("a spend card reads in Vietnamese", async () => {
+  renderQueue([spendCard()], "vi");
+
+  expect(await screen.findByText("khoảng $0.05")).toBeDefined();
+  expect(screen.getByText("$2.41 / $2.00")).toBeDefined();
+  expect(
+    screen.getByText(
+      "Duyệt sẽ chạy bước này và cộng $1.00 vào hạn mức của đoạn chat.",
+    ),
+  ).toBeDefined();
+  expect(
+    screen.getByRole("progressbar", {
+      name: "Đã chi so với hạn mức đoạn chat",
+    }),
+  ).toBeDefined();
 });
 
 test("a chat with a $0 ceiling shows a full bar, not an empty one", async () => {

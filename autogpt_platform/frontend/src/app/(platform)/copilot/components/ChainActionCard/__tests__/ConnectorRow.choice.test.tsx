@@ -2,6 +2,7 @@ import type { ExistingCredentialsOffer } from "@/components/contextual/Credentia
 import { CredentialsProvidersContext } from "@/providers/agent-credentials/credentials-provider";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { LocaleProvider } from "@/lib/i18n";
 import { useState, type ReactNode } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { ConnectorRow } from "../ConnectorRow";
@@ -104,7 +105,7 @@ function StatefulRow({ current }: { current: Row }) {
   );
 }
 
-function renderRow(current: Row, saved: (typeof work)[]) {
+function renderRow(current: Row, saved: (typeof work)[], locale?: "en" | "vi") {
   const client = new QueryClient({
     defaultOptions: { queries: { retry: false } },
   });
@@ -112,7 +113,11 @@ function renderRow(current: Row, saved: (typeof work)[]) {
     return (
       <QueryClientProvider client={client}>
         <CredentialsProvidersContext.Provider value={providers(saved)}>
-          {children}
+          {locale ? (
+            <LocaleProvider locale={locale}>{children}</LocaleProvider>
+          ) : (
+            children
+          )}
         </CredentialsProvidersContext.Provider>
       </QueryClientProvider>
     );
@@ -147,6 +152,17 @@ describe("ConnectorRow with several saved accounts for one provider", () => {
     expect(current.onConnected).toHaveBeenCalled();
     // Two accounts still match, which used to clear the selection again.
     expect(screen.getByText("Connected")).toBeDefined();
+  });
+
+  it("offers its accounts in Vietnamese", () => {
+    const current = row();
+    renderRow(current, [work, personal], "vi");
+
+    fireEvent.click(screen.getByText("Chọn tài khoản"));
+    fireEvent.click(screen.getByText("use-personal"));
+
+    expect(current.onConnected).toHaveBeenCalled();
+    expect(screen.getByText("Đã kết nối")).toBeDefined();
   });
 
   it("still connects a single saved account on its own", () => {

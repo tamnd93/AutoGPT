@@ -8,8 +8,19 @@ import {
   type Reference,
   visibleKeys,
 } from "@/components/organisms/ApprovalFields/helpers";
+import type { Locale } from "@/lib/i18n";
+import type { MessageKey } from "@/lib/i18n/messages/en";
+import { getMessage, type MessageValues } from "@/lib/i18n/translate";
 import { beautifyString } from "@/lib/utils";
 import { asObject, str } from "../ToolChain/resultHelpers";
+
+function translate(
+  locale: Locale | undefined,
+  key: MessageKey,
+  values?: MessageValues,
+) {
+  return getMessage(locale ?? "en", key, values);
+}
 
 export type ReasonKind =
   | "mode"
@@ -179,8 +190,10 @@ export function ruleSubjectName(subject: ApprovalItem["subject"]) {
 }
 
 // A row the server wrote no headline for still names its tool.
-export function fallbackAsk(toolName: string) {
-  return `Run ${beautifyString(toolName.replace(/^run_/, "")).toLowerCase()}`;
+export function fallbackAsk(toolName: string, locale?: Locale) {
+  return translate(locale, "chatTools1.fallbackAsk", {
+    tool: beautifyString(toolName.replace(/^run_/, "")).toLowerCase(),
+  });
 }
 
 export function approvalCardId(reviewId: string) {
@@ -193,14 +206,21 @@ export function isHeldRead(item: ApprovalItem) {
 }
 
 // Said once in the queue header; per card only a reason about this call.
-export function reasonLine(item: ApprovalItem): string | null {
+export function reasonLine(item: ApprovalItem, locale?: Locale): string | null {
   if (isHeldRead(item) && item.unjudged)
-    return `${AUTOPILOT_NAME} could not check this, so he asks. ${item.reader} hasn't seen it.`;
+    return translate(locale, "chatTools1.reason.unjudged", {
+      otto: AUTOPILOT_NAME,
+      reader: item.reader,
+    });
   if (isHeldRead(item))
-    return `It contains instructions aimed at ${item.reader}, so it was held back. ${item.reader} hasn't seen it.`;
+    return translate(locale, "chatTools1.reason.heldRead", {
+      reader: item.reader,
+    });
   if (!item.reason) return null;
   if (item.reasonKind === "supervisor")
-    return `Not sure this is safe: ${item.reason}`;
+    return translate(locale, "chatTools1.reason.supervisor", {
+      reason: item.reason,
+    });
   if (item.reasonKind === "subject" || item.reasonKind === "rule")
     return item.reason;
   return null;
@@ -209,26 +229,33 @@ export function reasonLine(item: ApprovalItem): string | null {
 // Home and an expert's page say a held call's reason in its card's words.
 export function attentionReason(
   review: PendingHumanReviewModel | null | undefined,
+  locale?: Locale,
 ) {
   if (!review || !isGateReview(review)) return null;
   const item = toApprovalItem(review);
   return {
-    line: reasonLine(item),
+    line: reasonLine(item, locale),
     passage: isHeldRead(item) ? item.passage : null,
   };
 }
 
-export function modeLabel(mode: string | null) {
-  if (mode === "ask_first") return "Ask First";
-  if (mode === "unsupervised") return "Unsupervised";
-  if (mode === "auto") return "Auto";
-  return null;
+const MODE_LABELS: Record<string, MessageKey> = {
+  ask_first: "chatTools1.mode.askFirst",
+  unsupervised: "chatTools1.mode.unsupervised",
+  auto: "chatTools1.mode.auto",
+};
+
+export function modeLabel(mode: string | null, locale?: Locale) {
+  const key = mode ? MODE_LABELS[mode] : undefined;
+  return key ? translate(locale, key) : null;
 }
 
-export function modeLine(mode: string | null) {
-  if (mode === "ask_first")
-    return `Ask First is on, so ${AUTOPILOT_NAME} asks before he changes anything outside his workspace.`;
-  return `${AUTOPILOT_NAME} asks before anything that reaches outside the platform.`;
+export function modeLine(mode: string | null, locale?: Locale) {
+  const key: MessageKey =
+    mode === "ask_first"
+      ? "chatTools1.modeLine.askFirst"
+      : "chatTools1.modeLine.other";
+  return translate(locale, key, { otto: AUTOPILOT_NAME });
 }
 
 export function shownFieldKeys(item: ApprovalItem) {
@@ -275,8 +302,10 @@ export function canApproveAll(items: ApprovalItem[], compact: boolean) {
   );
 }
 
-export function approveAllLabel(count: number) {
-  return count === 2 ? "Approve both" : `Approve all ${count}`;
+export function approveAllLabel(count: number, locale?: Locale) {
+  return count === 2
+    ? translate(locale, "chatTools1.queue.approveBoth")
+    : translate(locale, "chatTools1.queue.approveAll", { count });
 }
 
 // Told apart only by ids, so a set of them cannot be approved as one.

@@ -8,6 +8,7 @@ import {
   SentIcon,
 } from "@hugeicons/core-free-icons";
 import { m } from "framer-motion";
+import { useT } from "@/lib/i18n";
 import { useId, useState } from "react";
 import {
   isAnswered,
@@ -29,6 +30,7 @@ interface Props {
  *  moves between questions, and the round action button advances and, on the
  *  last step, sends every answer as one message. */
 export function QuestionsSection({ requests, isReady, onProceed }: Props) {
+  const t = useT();
   const [step, setStep] = useState(0);
   const sectionId = useId();
   // Keyed by position, not keyword: keywords are unique only within a request,
@@ -68,7 +70,7 @@ export function QuestionsSection({ requests, isReady, onProceed }: Props) {
             className="text-foreground-subtle"
           />
           <span className="text-sm font-medium text-foreground-strong">
-            Answer a few questions
+            {t("chatTools1.questions.answerFew")}
           </span>
         </span>
         <button
@@ -76,7 +78,7 @@ export function QuestionsSection({ requests, isReady, onProceed }: Props) {
           onClick={() => requests.forEach((req) => req.onSkip())}
           className="rounded-full px-2 py-0.5 text-xs text-foreground-subtle transition-colors hover:bg-surface-hover hover:text-foreground-secondary"
         >
-          Skip
+          {t("chatTools1.questions.skip")}
         </button>
       </div>
 
@@ -123,7 +125,7 @@ export function QuestionsSection({ requests, isReady, onProceed }: Props) {
         <span className="flex items-center gap-2">
           <button
             type="button"
-            aria-label="Previous question"
+            aria-label={t("chatTools1.questions.previous")}
             disabled={current === 0}
             onClick={() => setStep(current - 1)}
             className="flex size-6 items-center justify-center rounded-lg text-foreground-subtle transition-colors enabled:hover:bg-surface-hover enabled:hover:text-foreground-secondary disabled:opacity-35"
@@ -135,7 +137,9 @@ export function QuestionsSection({ requests, isReady, onProceed }: Props) {
               <button
                 key={questionId}
                 type="button"
-                aria-label={`Go to question ${i + 1}`}
+                aria-label={t("chatTools1.questions.goTo", {
+                  number: i + 1,
+                })}
                 aria-current={i === current ? "step" : undefined}
                 onClick={() => setStep(i)}
                 className={
@@ -152,7 +156,7 @@ export function QuestionsSection({ requests, isReady, onProceed }: Props) {
           </span>
           <button
             type="button"
-            aria-label="Next question"
+            aria-label={t("chatTools1.questions.next")}
             disabled={isLast}
             onClick={() => setStep(current + 1)}
             className="flex size-6 items-center justify-center rounded-lg text-foreground-subtle transition-colors enabled:hover:bg-surface-hover enabled:hover:text-foreground-secondary disabled:opacity-35"
@@ -163,7 +167,11 @@ export function QuestionsSection({ requests, isReady, onProceed }: Props) {
 
         <button
           type="button"
-          aria-label={isLast ? "Send answers" : "Next question"}
+          aria-label={
+            isLast
+              ? t("chatTools1.questions.sendAnswers")
+              : t("chatTools1.questions.next")
+          }
           disabled={!actionEnabled}
           onClick={handleAction}
           className={

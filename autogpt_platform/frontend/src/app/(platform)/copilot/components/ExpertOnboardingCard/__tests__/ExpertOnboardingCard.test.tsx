@@ -11,6 +11,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { PendingAnswerContexts } from "../../ChatMessagesContainer/components/PendingAnswerContexts";
 import { CopilotChatActionsProvider } from "../../CopilotChatActionsProvider/CopilotChatActionsProvider";
 import { AnsweredQuestionsContext } from "../../QuestionDock/AnsweredQuestionsContext";
+import { LocaleProvider } from "@/lib/i18n";
 import { ExpertOnboardingCard } from "../ExpertOnboardingCard";
 import { buildOnboardingAnswersMessage } from "../helpers";
 import { PendingOnboardingContext } from "../PendingOnboardingContext";
@@ -150,7 +151,53 @@ function multiSelectPart() {
   });
 }
 
+function renderCardVi(part: ToolUIPart, onSend = createSendMock()) {
+  return render(
+    <LocaleProvider locale="vi">
+      {cardTree(part, CALL_ID, onSend, "stream")}
+    </LocaleProvider>,
+  );
+}
+
 describe("ExpertOnboardingCard", () => {
+  it("reads its question chrome and controls in Vietnamese", () => {
+    renderCardVi(onboardingPart());
+
+    expect(questionNumber()).toBe("Câu 1/2");
+    expect(screen.getByRole("button", { name: "Khác" })).toBeDefined();
+    expect(
+      screen.getByRole("button", { name: "Bỏ qua câu hỏi" }),
+    ).toBeDefined();
+    expect(actionButton("Câu hỏi tiếp theo").disabled).toBe(true);
+  });
+
+  it("sends from a Vietnamese review step while keeping Otto's answers frame", async () => {
+    const onSend = createSendMock();
+    onSend.mockResolvedValue(undefined);
+    renderCardVi(onboardingPart(), onSend);
+
+    fireEvent.click(screen.getByRole("radio", { name: /Social listening/ }));
+    await screen.findByText("Which service should I be connected to?");
+    fireEvent.click(screen.getByRole("radio", { name: /Linear/ }));
+
+    expect(await screen.findByText("Xem lại câu trả lời")).toBeDefined();
+    fireEvent.click(actionButton("Gửi câu trả lời"));
+
+    expect(onSend).toHaveBeenCalledTimes(1);
+    expect(onSend.mock.calls[0][0]).toContain("**Here are my answers:**");
+  });
+
+  it("skips in Vietnamese but still sends the backend's skip sentence", () => {
+    const onSend = createSendMock();
+    renderCardVi(onboardingPart(), onSend);
+
+    fireEvent.click(screen.getByRole("button", { name: "Bỏ qua câu hỏi" }));
+
+    expect(onSend).toHaveBeenCalledWith(
+      "Let's skip the setup questions for now.",
+    );
+  });
+
   it("leaves the expert's name and greeting to the thread header", () => {
     renderCard(onboardingPart());
 

@@ -1,3 +1,4 @@
+import { useT } from "@/lib/i18n";
 import type { ApprovalSpend } from "../../helpers";
 
 interface Props {
@@ -14,25 +15,31 @@ function dollars(microdollars: number) {
 }
 
 export function MoneyBlock({ spend }: Props) {
+  const t = useT();
   const share =
     spend.ceiling > 0 ? Math.min(1, spend.spent / spend.ceiling) : 1;
   return (
     <div className="flex flex-col gap-1.5 rounded-lg border border-border-base px-3 py-2.5 text-sm tabular-nums">
       <div className="flex justify-between gap-3 text-foreground-tertiary">
-        <span>This step</span>
+        <span>{t("chatTools1.money.thisStep")}</span>
         <span className="text-foreground-strong">
-          about {dollars(spend.estimate)}
+          {t("chatTools1.money.about", {
+            amount: dollars(spend.estimate),
+          })}
         </span>
       </div>
       <div className="flex justify-between gap-3 text-foreground-tertiary">
-        <span>Spent in this chat</span>
+        <span>{t("chatTools1.money.spentInChat")}</span>
         <span className="text-foreground-strong">
-          {dollars(spend.spent)} of {dollars(spend.ceiling)}
+          {t("chatTools1.money.spentOf", {
+            spent: dollars(spend.spent),
+            ceiling: dollars(spend.ceiling),
+          })}
         </span>
       </div>
       <div
         role="progressbar"
-        aria-label="Spent of this chat's ceiling"
+        aria-label={t("chatTools1.money.progressLabel")}
         aria-valuenow={Math.round(share * 100)}
         aria-valuemin={0}
         aria-valuemax={100}
@@ -44,8 +51,7 @@ export function MoneyBlock({ spend }: Props) {
         />
       </div>
       <p className="text-xs text-foreground-tertiary">
-        Approving runs this step and adds {dollars(spend.unit)} to this
-        chat&apos;s ceiling.
+        {t("chatTools1.money.note", { amount: dollars(spend.unit) })}
       </p>
     </div>
   );

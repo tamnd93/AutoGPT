@@ -3,6 +3,7 @@
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { PencilEdit02Icon, Tick02Icon } from "@hugeicons/core-free-icons";
 import { useEffect, useRef } from "react";
+import { useT } from "@/lib/i18n";
 import { isKey } from "@/lib/keyboard";
 
 interface Props {
@@ -31,6 +32,7 @@ export function QuestionOptionList({
   onEdit,
   onSubmit,
 }: Props) {
+  const t = useT();
   const refs = useRef<(HTMLButtonElement | null)[]>([]);
   const selected = options.indexOf(value.trim());
   const active = selected === -1 ? 0 : selected;
@@ -105,8 +107,8 @@ export function QuestionOptionList({
             </button>
             <button
               type="button"
-              aria-label={`Edit ${option}`}
-              title="Edit before sending"
+              aria-label={t("chatTools1.questions.editOption", { option })}
+              title={t("chatTools1.questions.editBeforeSending")}
               onClick={() => onEdit(option)}
               className="absolute right-2 top-1/2 flex size-8 -translate-y-1/2 items-center justify-center rounded-xl text-foreground-subtle transition-colors hover:bg-surface-active/60 hover:text-foreground-body"
             >

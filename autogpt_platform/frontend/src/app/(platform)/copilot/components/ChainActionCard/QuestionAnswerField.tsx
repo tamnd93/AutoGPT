@@ -3,6 +3,7 @@
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { PencilEdit02Icon } from "@hugeicons/core-free-icons";
 import { useRef, useState } from "react";
+import { useT } from "@/lib/i18n";
 import type { ClarifyingQuestion } from "../../tools/clarifying-questions";
 import { QuestionOptionList } from "./QuestionOptionList";
 import { isKey } from "@/lib/keyboard";
@@ -32,6 +33,7 @@ export function QuestionAnswerField({
   onChange,
   onSubmit,
 }: Props) {
+  const t = useT();
   const options = question.options ?? [];
   const isCustom = value.trim().length > 0 && !options.includes(value.trim());
   const [typing, setTyping] = useState(() => options.length > 0 && isCustom);
@@ -60,8 +62,8 @@ export function QuestionAnswerField({
       // those same options would only be noise.
       placeholder={
         options.length === 0 && question.example
-          ? `e.g. ${question.example}`
-          : "Type your answer"
+          ? t("chatTools1.questions.example", { example: question.example })
+          : t("chatTools1.questions.typeAnswer")
       }
       className="resize-none rounded-2xl bg-surface-muted px-4 py-3 text-base leading-relaxed text-foreground-emphasis ring-1 ring-separator transition-shadow placeholder:text-foreground-subtle focus:outline-none focus:ring-border-strong"
     />
@@ -111,7 +113,7 @@ export function QuestionAnswerField({
           className="flex items-center gap-2.5 rounded-2xl border border-dashed border-border-base px-4 py-3 text-left text-base text-foreground-tertiary transition-colors hover:border-border-strong hover:text-foreground-body"
         >
           <Icon icon={PencilEdit02Icon} size={16} className="shrink-0" />
-          Type something…
+          {t("chatTools1.questions.typeSomething")}
         </button>
       )}
     </div>

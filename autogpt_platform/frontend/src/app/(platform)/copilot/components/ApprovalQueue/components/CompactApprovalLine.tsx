@@ -1,4 +1,5 @@
 import { Button } from "@/components/atoms/Button/Button";
+import { useT } from "@/lib/i18n";
 import type { ApprovalItem } from "../helpers";
 import type { CardStatus } from "./ApprovalCard/ApprovalCard";
 import { ApprovalHeadline } from "./ApprovalHeadline";
@@ -21,6 +22,7 @@ export function CompactApprovalLine({
   onApprove,
   onReject,
 }: Props) {
+  const t = useT();
   const busy = status !== "idle";
   return (
     <div className="flex items-center gap-3 px-4 py-2">
@@ -41,7 +43,7 @@ export function CompactApprovalLine({
             disabled={busy}
             onClick={onApprove}
           >
-            Approve
+            {t("chatTools1.approve")}
           </Button>
           <Button
             size="xs"
@@ -51,7 +53,7 @@ export function CompactApprovalLine({
             disabled={busy}
             onClick={onReject}
           >
-            Reject
+            {t("chatTools1.reject")}
           </Button>
         </div>
       ) : (
@@ -61,7 +63,7 @@ export function CompactApprovalLine({
           className="shrink-0 rounded-full"
           onClick={onOpen}
         >
-          Review
+          {t("chatTools1.review")}
         </Button>
       )}
     </div>

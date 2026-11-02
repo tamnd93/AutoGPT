@@ -1,12 +1,16 @@
+import { useT } from "@/lib/i18n";
+
 interface Props {
   passage: string;
 }
 
 export function HeldPassage({ passage }: Props) {
+  const t = useT();
+
   return (
     <figure className="flex flex-col gap-1">
       <figcaption className="text-xs text-foreground-tertiary">
-        What it says
+        {t("chatTools1.passage.caption")}
       </figcaption>
       <blockquote
         // TODO(tokens): no exact role for border-amber-400

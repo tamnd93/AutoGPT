@@ -192,13 +192,13 @@ test("the finished tally reads in Vietnamese", async () => {
   const dialog = await openAt(a0);
 
   const pane = within(dialog).getByRole("region", { name: "Mục đang chờ" });
-  await user.click(within(dialog).getByRole("button", { name: "Approve" }));
+  await user.click(within(dialog).getByRole("button", { name: "Duyệt" }));
   await waitFor(() =>
     expect(pane.querySelector("h3")?.textContent).toBe(
       "Create library folder Leads",
     ),
   );
-  await user.click(within(dialog).getByRole("button", { name: "Reject" }));
+  await user.click(within(dialog).getByRole("button", { name: "Từ chối" }));
 
   expect(await within(dialog).findByText("Đã xem xét tất cả 2")).toBeDefined();
   expect(within(dialog).getByText("1 đã duyệt · 1 đã từ chối")).toBeDefined();

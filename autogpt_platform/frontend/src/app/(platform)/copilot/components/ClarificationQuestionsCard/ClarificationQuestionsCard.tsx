@@ -4,6 +4,7 @@ import { Button } from "@/components/atoms/Button/Button";
 import { Card } from "@/components/atoms/Card/Card";
 import { Input } from "@/components/atoms/Input/Input";
 import { Text } from "@/components/atoms/Text/Text";
+import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { useEffect, useRef, useState } from "react";
 import type { ClarifyingQuestion } from "../../tools/clarifying-questions";
@@ -32,6 +33,7 @@ export function ClarificationQuestionsCard({
   isAnswered = false,
   className,
 }: Props) {
+  const t = useT();
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [isSubmitted, setIsSubmitted] = useState(false);
   const lastSessionIdRef = useRef<string | undefined>(undefined);
@@ -127,14 +129,14 @@ export function ClarificationQuestionsCard({
                 variant="h4"
                 className="mb-1 text-slate-900"
               >
-                Answers submitted
+                {t("chatTools1.clarify.submitted")}
               </Text>
               <Text
                 // TODO(tokens): no exact role for text-slate-600
                 variant="small"
                 className="text-slate-600"
               >
-                Processing your responses...
+                {t("chatTools1.clarify.processing")}
               </Text>
             </Card>
           </div>
@@ -161,7 +163,7 @@ export function ClarificationQuestionsCard({
                   variant="h4"
                   className="mb-1 text-slate-900"
                 >
-                  I need more information
+                  {t("chatTools1.clarify.needInfo")}
                 </Text>
               </div>
               <Text
@@ -219,7 +221,9 @@ export function ClarificationQuestionsCard({
                             // TODO(tokens): no exact role for text-slate-500
                             className="mb-2 italic text-slate-500"
                           >
-                            Example: {q.example}
+                            {t("chatTools1.clarify.example", {
+                              example: q.example,
+                            })}
                           </Text>
                         )}
                         <Input
@@ -227,7 +231,7 @@ export function ClarificationQuestionsCard({
                           id={`clarification-${q.keyword}-${index}`}
                           label={q.question}
                           hideLabel
-                          placeholder="Your answer..."
+                          placeholder={t("chatTools1.clarify.placeholder")}
                           rows={2}
                           value={answers[q.keyword] || ""}
                           onChange={(e) =>
@@ -248,11 +252,11 @@ export function ClarificationQuestionsCard({
                 className="w-auto flex-1"
                 variant="primary"
               >
-                Submit Answers
+                {t("chatTools1.clarify.submit")}
               </Button>
               {onCancel && (
                 <Button onClick={onCancel} variant="outline">
-                  Cancel
+                  {t("chatTools1.clarify.cancel")}
                 </Button>
               )}
             </div>

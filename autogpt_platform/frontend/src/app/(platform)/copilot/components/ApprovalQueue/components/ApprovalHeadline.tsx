@@ -1,5 +1,6 @@
 import { ReferenceLink } from "@/components/organisms/ApprovalFields/components/ReferenceLink";
 import { Text } from "@/components/atoms/Text/Text";
+import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { COPILOT_TOOL_CATALOG } from "../../ToolChain/toolCatalog";
 import { RowIcon } from "../../ToolChain/RowIcon";
@@ -12,6 +13,7 @@ interface Props {
 }
 
 export function ApprovalHeadline({ item, compact = false }: Props) {
+  const t = useT();
   const category = COPILOT_TOOL_CATALOG[item.toolName]?.category ?? "other";
   return (
     <div className="flex min-w-0 items-start gap-2.5">
@@ -35,7 +37,7 @@ export function ApprovalHeadline({ item, compact = false }: Props) {
       </Text>
       {item.subject.irreversible && (
         <span className="mt-0.5 shrink-0 rounded-md bg-error-surface px-1.5 py-0.5 text-xs font-medium text-error-foreground">
-          Can&apos;t be undone
+          {t("chatTools1.cantUndo")}
         </span>
       )}
     </div>

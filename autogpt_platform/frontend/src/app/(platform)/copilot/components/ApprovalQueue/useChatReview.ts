@@ -100,5 +100,11 @@ function toAttentionItem(
 }
 
 function heldReceipt(receipt: Receipt | undefined) {
-  return receipt ? { outcome: receipt.outcome, text: receipt.text } : null;
+  return receipt
+    ? {
+        outcome: receipt.outcome,
+        text: receipt.text,
+        labelKey: receipt.labelKey,
+      }
+    : null;
 }

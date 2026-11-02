@@ -15,6 +15,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/molecules/DropdownMenu/DropdownMenu";
 import { AUTOPILOT_NAME } from "@/components/molecules/AutopilotAvatar/helpers";
+import { useT } from "@/lib/i18n";
+import type { MessageKey } from "@/lib/i18n/messages/en";
+import type { MessageValues } from "@/lib/i18n/translate";
 import type { ChatRule, RuleScope } from "../../helpers";
 
 interface Props {
@@ -36,6 +39,7 @@ export function ApproveSplitButton({
   disabled,
   onApprove,
 }: Props) {
+  const t = useT();
   const [scope, setScope] = useState<RuleScope>("expert");
   const who = expertName ?? AUTOPILOT_NAME;
   const main = (
@@ -49,7 +53,7 @@ export function ApproveSplitButton({
         rules.length > 0 ? "min-w-0 flex-1 rounded-r-none pr-2.5" : "min-w-0"
       }
     >
-      {loading ? "Approving…" : label}
+      {loading ? t("chatTools1.approving") : label}
     </Button>
   );
   if (rules.length === 0) return main;
@@ -63,7 +67,7 @@ export function ApproveSplitButton({
             size="small"
             variant="primary"
             disabled={disabled}
-            aria-label="More ways to approve"
+            aria-label={t("chatTools1.moreWays")}
             withTooltip={false}
             // TODO(tokens): no fitting role for border-l-zinc-600 #68686F; #68686F is foreground-secondary (a text colour)
             className="min-w-0 rounded-l-none border-l-zinc-600 px-2"
@@ -73,7 +77,7 @@ export function ApproveSplitButton({
         </DropdownMenuTrigger>
         <DropdownMenuContent align="start" className="w-80">
           {rules.map((rule) => {
-            const [title, detail] = ruleCopy(rule, scope, subjectName, who);
+            const [title, detail] = ruleCopy(rule, scope, subjectName, who, t);
             return (
               <DropdownMenuItem
                 key={rule}
@@ -89,7 +93,7 @@ export function ApproveSplitButton({
           })}
           <DropdownMenuSeparator />
           <DropdownMenuLabel className="text-xs font-normal text-foreground-tertiary">
-            Applies to
+            {t("chatTools1.appliesTo")}
           </DropdownMenuLabel>
           <DropdownMenuRadioGroup
             value={scope}
@@ -103,7 +107,7 @@ export function ApproveSplitButton({
                 onSelect={(event) => event.preventDefault()}
                 className="text-sm text-foreground-strong"
               >
-                {scopeLabel(option, who)}
+                {scopeLabel(option, who, t)}
               </DropdownMenuRadioItem>
             ))}
           </DropdownMenuRadioGroup>
@@ -115,34 +119,42 @@ export function ApproveSplitButton({
 
 const SCOPES: RuleScope[] = ["chat", "expert", "team"];
 
-function scopeLabel(scope: RuleScope, who: string) {
-  if (scope === "chat") return "This chat";
-  if (scope === "expert") return `${who}, every chat`;
-  return "Every Expert on my team";
+type Translate = (key: MessageKey, values?: MessageValues) => string;
+
+function scopeLabel(scope: RuleScope, who: string, t: Translate) {
+  if (scope === "chat") return t("chatTools1.scope.chat");
+  if (scope === "expert") return t("chatTools1.scope.expert", { who });
+  return t("chatTools1.scope.team");
 }
 
 // The supervisor is always Otto, whichever Expert's chat the card is in.
+const ALLOW_DETAILS: Record<RuleScope, MessageKey> = {
+  chat: "chatTools1.rule.allowDetail.chat",
+  expert: "chatTools1.rule.allowDetail.expert",
+  team: "chatTools1.rule.allowDetail.team",
+};
+
+const JUDGE_RUNS: Record<RuleScope, MessageKey> = {
+  chat: "chatTools1.rule.judgeRuns.chat",
+  expert: "chatTools1.rule.judgeRuns.expert",
+  team: "chatTools1.rule.judgeRuns.team",
+};
+
 function ruleCopy(
   rule: ChatRule,
   scope: RuleScope,
   subject: string,
   who: string,
+  t: Translate,
 ): [string, string] {
   if (rule === "allow") {
-    const detail = {
-      chat: `${who} won't ask again for this in this chat`,
-      expert: `${who} won't ask again for this in any chat`,
-      team: "No Expert on your team will ask again for this",
-    }[scope];
-    return [`Approve ${subject} from now on`, detail];
+    return [
+      t("chatTools1.rule.allowTitle", { subject }),
+      t(ALLOW_DETAILS[scope], { who }),
+    ];
   }
-  const runs = {
-    chat: "each time it runs in this chat",
-    expert: `each time ${who} runs it, in any chat`,
-    team: "each time any Expert on your team runs it",
-  }[scope];
   return [
-    `Let ${AUTOPILOT_NAME} judge ${subject} from now on`,
-    `A check decides ${runs}, and asks you only when it isn't sure`,
+    t("chatTools1.rule.judgeTitle", { otto: AUTOPILOT_NAME, subject }),
+    t("chatTools1.rule.judgeDetail", { runs: t(JUDGE_RUNS[scope], { who }) }),
   ];
 }

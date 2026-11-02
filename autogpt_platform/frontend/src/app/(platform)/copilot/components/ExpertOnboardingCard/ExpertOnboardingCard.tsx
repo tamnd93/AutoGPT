@@ -7,6 +7,7 @@ import {
 } from "@hugeicons/core-free-icons";
 import type { ToolUIPart } from "ai";
 import { domAnimation, LazyMotion, m } from "framer-motion";
+import { useT } from "@/lib/i18n";
 import { useContext, useId } from "react";
 import { useExpertMap } from "../../useExpertMap";
 import { AnsweredQuestions } from "../AnsweredQuestions/AnsweredQuestions";
@@ -28,6 +29,7 @@ interface Props {
  *  outside the tool chain because a chain collapses on top of its rows, and
  *  this one is the only thing on screen the user is meant to act on. */
 export function ExpertOnboardingCard({ part }: Props) {
+  const t = useT();
   const pendingCallId = useContext(PendingOnboardingContext);
   const onboarding = parseExpertOnboarding(part);
 
@@ -39,13 +41,13 @@ export function ExpertOnboardingCard({ part }: Props) {
     if (isSettled) {
       return (
         <div className="py-2 text-sm text-foreground-tertiary">
-          Couldn&apos;t open the setup questions.
+          {t("chatTools1.onboarding.couldNotOpen")}
         </div>
       );
     }
     return (
       <div className="flex items-center gap-2 py-2 text-sm text-muted-foreground">
-        <MorphingTextAnimation text="Getting set up…" />
+        <MorphingTextAnimation text={t("chatTools1.onboarding.gettingSetUp")} />
       </div>
     );
   }
@@ -66,6 +68,7 @@ interface FormProps {
 }
 
 function OnboardingForm({ callId, onboarding, isLive }: FormProps) {
+  const t = useT();
   const { expertsById } = useExpertMap();
   // What the user's reply in the chat said, as opposed to the form's answers.
   const sentAnswers = useContext(AnsweredQuestionsContext).get(callId);
@@ -97,7 +100,7 @@ function OnboardingForm({ callId, onboarding, isLive }: FormProps) {
   const expert = onboarding.expertId
     ? expertsById.get(onboarding.expertId)
     : undefined;
-  const name = expert?.name ?? "Your new hire";
+  const name = expert?.name ?? t("chatTools1.onboarding.newHire");
   const labelId = `${sectionId}-${currentStep?.keyword ?? "review"}`;
 
   if (isDone) {
@@ -116,7 +119,7 @@ function OnboardingForm({ callId, onboarding, isLive }: FormProps) {
             size={16}
             className="shrink-0 text-foreground-subtle"
           />
-          Setup questions from {name}
+          {t("chatTools1.onboarding.setupFrom", { name })}
         </div>
         {answered.length > 0 && <AnsweredQuestions items={answered} />}
       </div>
@@ -136,12 +139,14 @@ function OnboardingForm({ callId, onboarding, isLive }: FormProps) {
     >
       <div
         role="progressbar"
-        aria-label="Setup progress"
+        aria-label={t("chatTools1.onboarding.progressLabel")}
         aria-valuemin={1}
         aria-valuemax={total}
         aria-valuenow={shown}
         aria-valuetext={
-          isReview ? "Check your answers" : `Question ${shown} of ${total}`
+          isReview
+            ? t("chatTools1.onboarding.checkAnswers")
+            : t("chatTools1.onboarding.questionProgress", { shown, total })
         }
         className="h-1 bg-surface-hover"
       >
@@ -176,7 +181,7 @@ function OnboardingForm({ callId, onboarding, isLive }: FormProps) {
                 </span>
                 {currentStep.allow_multiple && (
                   <span className="text-sm text-foreground-tertiary">
-                    Choose as many as you like
+                    {t("chatTools1.onboarding.chooseMany")}
                   </span>
                 )}
               </span>

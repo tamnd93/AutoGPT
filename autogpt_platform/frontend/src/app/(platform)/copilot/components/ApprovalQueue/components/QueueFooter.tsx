@@ -1,5 +1,6 @@
 import { Button } from "@/components/atoms/Button/Button";
 import { AUTOPILOT_NAME } from "@/components/molecules/AutopilotAvatar/helpers";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   rejectAll: {
@@ -15,13 +16,17 @@ interface Props {
 }
 
 export function QueueFooter({ rejectAll, onContinue, busy }: Props) {
+  const t = useT();
+
   return (
     <div className="flex flex-wrap items-center gap-2 border-t border-separator bg-surface-muted/60 px-4 py-2 text-sm">
       {rejectAll?.confirming ? (
         <>
           <span role="alert" className="text-foreground-body">
-            Reject all {rejectAll.count}? {AUTOPILOT_NAME} will be told none of
-            them ran.
+            {t("chatTools1.footer.rejectAllQuestion", {
+              count: rejectAll.count,
+              otto: AUTOPILOT_NAME,
+            })}
           </span>
           <Button
             size="xs"
@@ -30,7 +35,7 @@ export function QueueFooter({ rejectAll, onContinue, busy }: Props) {
             disabled={busy}
             onClick={rejectAll.onConfirm}
           >
-            Reject all
+            {t("chatTools1.footer.rejectAll")}
           </Button>
           <Button
             size="xs"
@@ -38,7 +43,7 @@ export function QueueFooter({ rejectAll, onContinue, busy }: Props) {
             className="rounded-full"
             onClick={rejectAll.onCancel}
           >
-            Cancel
+            {t("chatTools1.footer.cancel")}
           </Button>
         </>
       ) : rejectAll ? (
@@ -49,7 +54,7 @@ export function QueueFooter({ rejectAll, onContinue, busy }: Props) {
           disabled={busy}
           onClick={rejectAll.onAsk}
         >
-          Reject all {rejectAll.count}…
+          {t("chatTools1.footer.rejectAllCount", { count: rejectAll.count })}
         </Button>
       ) : null}
       {onContinue && !rejectAll?.confirming && (
@@ -61,7 +66,7 @@ export function QueueFooter({ rejectAll, onContinue, busy }: Props) {
           disabled={busy}
           onClick={onContinue}
         >
-          Close and continue
+          {t("chatTools1.footer.closeAndContinue")}
         </Button>
       )}
     </div>

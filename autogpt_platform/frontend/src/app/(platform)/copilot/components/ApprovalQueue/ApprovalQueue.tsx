@@ -3,6 +3,7 @@
 import type { HomeExpert } from "@/app/api/__generated__/models/homeExpert";
 import type { PendingHumanReviewModel } from "@/app/api/__generated__/models/pendingHumanReviewModel";
 import { HeldReviewDialog } from "@/app/(platform)/home/components/NeedsYou/components/HeldReviewDialog";
+import { useLocale, useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { ApprovalCard } from "./components/ApprovalCard/ApprovalCard";
 import { CompactApprovalLine } from "./components/CompactApprovalLine";
@@ -45,6 +46,8 @@ export function ApprovalQueue({
   onAnswered,
   onContinued,
 }: Props) {
+  const t = useT();
+  const locale = useLocale();
   const queue = useApprovalQueue({ items, answered, onAnswered, onContinued });
   const review = useChatReview({ queue, reviews, expert });
   const { pending, receipts, leaving } = queue;
@@ -70,7 +73,7 @@ export function ApprovalQueue({
   if (queue.collapsed)
     return (
       <section
-        aria-label="Waiting for you"
+        aria-label={t("chatTools1.queue.waitingForYou")}
         className="overflow-hidden rounded-xl border border-border-base bg-surface"
       >
         <QueueHeader
@@ -86,7 +89,7 @@ export function ApprovalQueue({
 
   return (
     <section
-      aria-label="Waiting for you"
+      aria-label={t("chatTools1.queue.waitingForYou")}
       className={cn(
         "overflow-hidden rounded-xl border border-border-base bg-surface transition-opacity duration-200 motion-reduce:transition-none",
         leaving && "opacity-0",
@@ -111,7 +114,7 @@ export function ApprovalQueue({
       />
       {showModeLine && pending.length > 0 && (
         <p className="border-b border-separator px-4 py-2 text-sm text-foreground-tertiary">
-          {modeLine(mode)}
+          {modeLine(mode, locale)}
         </p>
       )}
       <ol className="divide-y divide-separator">

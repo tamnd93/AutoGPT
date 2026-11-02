@@ -1,4 +1,5 @@
 import { Button } from "@/components/atoms/Button/Button";
+import { useLocale, useT } from "@/lib/i18n";
 import { approveAllLabel, modeLabel } from "../helpers";
 
 interface Props {
@@ -17,16 +18,19 @@ export function QueueHeader({
   onReviewAll,
   onShow,
 }: Props) {
+  const t = useT();
+  const locale = useLocale();
+
   return (
     <div className="flex min-h-11 flex-wrap items-center justify-between gap-x-3 gap-y-2 border-b border-separator bg-surface-muted/60 px-4 py-2">
       <span className="flex items-baseline gap-2 text-sm font-medium text-foreground-strong">
-        Waiting for you
+        {t("chatTools1.queue.waitingForYou")}
         <span className="tabular-nums text-foreground-tertiary">{count}</span>
       </span>
       <div className="flex items-center gap-3">
-        {modeLabel(mode) && (
+        {modeLabel(mode, locale) && (
           <span className="text-xs text-foreground-tertiary">
-            {modeLabel(mode)}
+            {modeLabel(mode, locale)}
           </span>
         )}
         {onShow ? (
@@ -35,13 +39,13 @@ export function QueueHeader({
             size="small"
             variant="secondary"
             className="min-w-0"
-            aria-label="Show waiting cards"
+            aria-label={t("chatTools1.queue.showWaiting")}
             aria-expanded={false}
             // Close and continue removed the button that had focus.
             autoFocus
             onClick={onShow}
           >
-            Show
+            {t("chatTools1.queue.show")}
           </Button>
         ) : (
           <>
@@ -53,7 +57,7 @@ export function QueueHeader({
                 className="min-w-0"
                 onClick={onReviewAll}
               >
-                Review all
+                {t("chatTools1.queue.reviewAll")}
               </Button>
             )}
             {approveAll && (
@@ -64,7 +68,7 @@ export function QueueHeader({
                 disabled={approveAll.busy}
                 onClick={approveAll.onClick}
               >
-                {approveAllLabel(approveAll.count)}
+                {approveAllLabel(approveAll.count, locale)}
               </Button>
             )}
           </>

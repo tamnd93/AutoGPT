@@ -7,7 +7,13 @@ import type { PendingHumanReviewModel } from "@/app/api/__generated__/models/pen
 import { ReviewStatus } from "@/app/api/__generated__/models/reviewStatus";
 import { toast } from "@/components/molecules/Toast/use-toast";
 import { useProcessReviews } from "@/hooks/useProcessReviews";
+import {
+  receiptLabelKey,
+  receiptText as heldReceiptText,
+} from "@/app/(platform)/home/components/NeedsYou/helpers";
 import type { HeldReceipt } from "@/app/(platform)/home/components/NeedsYou/useHeldReview";
+import { useLocale, useT } from "@/lib/i18n";
+import { getMessage } from "@/lib/i18n/translate";
 import { HeldOutcomesContext } from "../ChatMessagesContainer/HeldOutcomesContext";
 import { useHeldAnswersStore } from "./heldAnswersStore";
 import type { CardStatus } from "./components/ApprovalCard/ApprovalCard";
@@ -41,6 +47,8 @@ export function useApprovalQueue({
   onAnswered,
   onContinued,
 }: Args) {
+  const t = useT();
+  const locale = useLocale();
   const outcomes = useContext(HeldOutcomesContext);
   const { processReviews } = useProcessReviews();
   const { mutateAsync: continueChat, isPending: isContinuing } =
@@ -76,12 +84,13 @@ export function useApprovalQueue({
           return {
             item,
             outcome: approved ? ("approved" as const) : ("rejected" as const),
-            text: receiptText(item, approved),
+            text: receiptText(item, approved, locale),
+            labelKey: receiptLabelKey(item, approved),
           };
         }),
       ...prev,
     ]);
-  }, [answered]);
+  }, [answered, locale]);
 
   // A card that leaves the poll without an answer from here was answered on Home or another tab.
   useEffect(() => {
@@ -96,12 +105,13 @@ export function useApprovalQueue({
         ...gone.map((item) => ({
           item,
           outcome: "elsewhere" as const,
-          text: "Answered elsewhere",
+          text: getMessage(locale, "chatTools1.receipt.elsewhere"),
+          labelKey: "home2.receipt.tallyElsewhere" as const,
         })),
       ]);
     }
     seen.current = new Map(items.map((item) => [item.reviewId, item]));
-  }, [items]);
+  }, [items, locale]);
 
   async function answer(
     batch: ApprovalItem[],
@@ -144,7 +154,8 @@ export function useApprovalQueue({
         ...batch.map((item) => ({
           item,
           outcome: approved ? ("approved" as const) : ("rejected" as const),
-          text: receiptText(item, approved),
+          text: receiptText(item, approved, locale),
+          labelKey: receiptLabelKey(item, approved),
         })),
       ]);
       setConfirmRejectAll(false);
@@ -169,8 +180,8 @@ export function useApprovalQueue({
       assertContinued(await continueChat({ chatSessionId }));
     } catch {
       toast({
-        title: "Could not continue",
-        description: "Try again, or send a message to continue.",
+        title: t("chatTools1.continue.failed"),
+        description: t("chatTools1.continue.failedHint"),
         variant: "destructive",
       });
       return;
@@ -258,9 +269,21 @@ function isTurnStarting(
   return !(res.status === 200 && res.data.awaiting_other_cards);
 }
 
-function receiptText(item: ApprovalItem, approved: boolean) {
-  if (isHeldRead(item)) return approved ? "Released" : "Kept out";
-  return approved ? "Approved" : "Rejected";
+// The chat's receipt is the short word, where Home's is a sentence.
+function receiptText(
+  item: ApprovalItem,
+  approved: boolean,
+  locale: Parameters<typeof heldReceiptText>[2],
+) {
+  if (isHeldRead(item))
+    return getMessage(
+      locale,
+      approved ? "chatTools1.receipt.released" : "chatTools1.receipt.keptOut",
+    );
+  return getMessage(
+    locale,
+    approved ? "chatTools1.receipt.approved" : "chatTools1.receipt.rejected",
+  );
 }
 
 function prefersReducedMotion() {

@@ -3,6 +3,7 @@
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { FormRenderer } from "@/components/renderers/InputRenderer/FormRenderer";
 import { PencilEdit02Icon } from "@hugeicons/core-free-icons";
+import { useT } from "@/lib/i18n";
 import { formatInputsTitle, type InputsRequest } from "./helpers";
 
 interface Props {
@@ -12,6 +13,7 @@ interface Props {
 /** One card per block/agent asking for inputs, titled by its name so two
  *  blocks' forms never blend into one table. */
 export function InputsSection({ requests }: Props) {
+  const t = useT();
   const visible = requests.filter(
     (request) => request.schema !== null || request.hasAdvanced,
   );
@@ -33,11 +35,11 @@ export function InputsSection({ requests }: Props) {
             <span className="text-sm font-medium text-foreground-strong">
               {request.title
                 ? formatInputsTitle(request.title)
-                : "Fill in the details"}
+                : t("chatTools1.inputs.fillDetails")}
             </span>
             {request.title && (
               <span className="ml-auto text-xs text-foreground-subtle">
-                Fill in the details
+                {t("chatTools1.inputs.fillDetails")}
               </span>
             )}
           </div>
@@ -68,8 +70,8 @@ export function InputsSection({ requests }: Props) {
                 onClick={request.onToggleAdvanced}
               >
                 {request.showAdvanced
-                  ? "Hide advanced fields"
-                  : "Show advanced fields"}
+                  ? t("chatTools1.inputs.hideAdvanced")
+                  : t("chatTools1.inputs.showAdvanced")}
               </button>
             )}
           </div>

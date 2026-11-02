@@ -1,6 +1,7 @@
 "use client";
 
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import {
   ArrowLeft01Icon,
@@ -34,19 +35,24 @@ export function OnboardingFooter({
   onSkip,
   onNext,
 }: Props) {
+  const t = useT();
   const isEnabled = isReady && !isSending;
-  const label = isReview ? "Send" : isNextReview ? "Review" : "Next";
-  const ariaLabel = isReview
-    ? "Send answers"
+  const label = isReview
+    ? t("chatTools1.onboarding.labelSend")
     : isNextReview
-      ? "Review answers"
-      : "Next question";
+      ? t("chatTools1.onboarding.labelReview")
+      : t("chatTools1.onboarding.labelNext");
+  const ariaLabel = isReview
+    ? t("chatTools1.onboarding.ariaSend")
+    : isNextReview
+      ? t("chatTools1.onboarding.ariaReview")
+      : t("chatTools1.onboarding.ariaNext");
 
   return (
     <div className="flex items-center justify-between gap-2 px-4 pb-4 pt-4 [container-type:inline-size] sm:px-5">
       <button
         type="button"
-        aria-label="Previous question"
+        aria-label={t("chatTools1.onboarding.back")}
         aria-keyshortcuts="Backspace"
         disabled={!canGoBack}
         onClick={onBack}
@@ -64,7 +70,7 @@ export function OnboardingFooter({
           // TODO(tokens): no fitting role for focus-visible:ring-zinc-400 #ADADB3; #ADADB3 is foreground-subtle (a text colour)
           className="flex h-8 items-center gap-2 whitespace-nowrap rounded-md border border-border-base bg-surface px-3.5 text-sm font-medium text-foreground-body outline-none transition-colors focus-visible:ring-2 focus-visible:ring-zinc-400 enabled:hover:border-border-strong enabled:hover:bg-surface-muted disabled:opacity-50 [@media(hover:none)]:h-11"
         >
-          Skip questions
+          {t("chatTools1.onboarding.skip")}
           <kbd aria-hidden="true" className={KEY_HINT}>
             Esc
           </kbd>

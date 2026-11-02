@@ -2,6 +2,7 @@
 
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { PencilEdit02Icon } from "@hugeicons/core-free-icons";
+import { useT } from "@/lib/i18n";
 import type { QuestionAnswer } from "../../../tools/clarifying-questions";
 import { getAnswerSummary, type ExpertOnboardingStep } from "../helpers";
 
@@ -15,13 +16,15 @@ interface Props {
 /** The step before Send: every answer on one screen, each a way back to its
  *  question, since sending is the one move the user can't take back. */
 export function OnboardingReview({ steps, answers, labelId, onEdit }: Props) {
+  const t = useT();
+
   return (
     <div className="flex flex-col gap-4">
       <span
         id={labelId}
         className="text-base font-medium leading-snug text-foreground-strong sm:text-lg"
       >
-        Check your answers
+        {t("chatTools1.onboarding.checkAnswers")}
       </span>
       <ul aria-labelledby={labelId} className="flex flex-col gap-2">
         {steps.map((step, index) => (
@@ -33,12 +36,15 @@ export function OnboardingReview({ steps, answers, labelId, onEdit }: Props) {
               className="group flex w-full items-start gap-3 rounded-md bg-surface-muted px-3 py-2.5 text-left outline-none ring-1 ring-separator transition-colors hover:bg-surface-hover focus-visible:ring-2 focus-visible:ring-zinc-400 focus-visible:ring-offset-1 [@media(hover:none)]:min-h-11"
             >
               <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-                <span className="sr-only">Change your answer to </span>
+                <span className="sr-only">
+                  {t("chatTools1.onboarding.changeAnswerPrefix")}
+                </span>
                 <span className="text-sm text-foreground-tertiary">
                   {step.question}
                 </span>
                 <span className="break-words text-base text-foreground-strong sm:text-body-md">
-                  {getAnswerSummary(answers[step.keyword]) || "No answer yet"}
+                  {getAnswerSummary(answers[step.keyword]) ||
+                    t("chatTools1.onboarding.noAnswer")}
                 </span>
               </span>
               <Icon

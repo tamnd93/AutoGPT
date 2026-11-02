@@ -4,6 +4,7 @@ import { useGetV1ListProviders } from "@/app/api/__generated__/endpoints/integra
 import { Button } from "@/components/atoms/Button/Button";
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { PlugSocketIcon } from "@hugeicons/core-free-icons";
+import { useT } from "@/lib/i18n";
 import { isAnswered } from "../../tools/clarifying-questions";
 import { useCopilotModal } from "../../useCopilotModal";
 import { ConnectorRow } from "./ConnectorRow";
@@ -44,6 +45,7 @@ export function ChainActionCard({
   isReady,
   onProceed,
 }: Props) {
+  const t = useT();
   const { openModal } = useCopilotModal();
   const providersQuery = useGetV1ListProviders({
     query: {
@@ -91,7 +93,7 @@ export function ChainActionCard({
               className="text-foreground-subtle"
             />
             <span className="text-sm font-medium text-foreground-strong">
-              Plug in what this needs
+              {t("chatTools1.chain.plugIn")}
             </span>
           </div>
           {rows.map((row) => (
@@ -103,19 +105,21 @@ export function ChainActionCard({
           {remaining.length > 0 && rows.length + mcpRows.length > 1 && (
             <div className="border-t border-separator px-4 py-2.5">
               <span className="text-sm text-foreground-tertiary">
-                Still to connect: {remaining.join(", ")}
+                {t("chatTools1.chain.stillToConnect", {
+                  list: remaining.join(", "),
+                })}
               </span>
             </div>
           )}
           <div className="border-t border-separator px-4 py-3">
             <span className="text-sm text-foreground-tertiary">
-              Looking for something else?{" "}
+              {t("chatTools1.chain.lookingElse")}{" "}
               <button
                 type="button"
                 onClick={() => openModal("integrations")}
                 className="font-medium text-foreground-strong underline underline-offset-2"
               >
-                Browse all connectors
+                {t("chatTools1.chain.browseAll")}
               </button>
             </span>
           </div>
@@ -142,7 +146,7 @@ export function ChainActionCard({
           disabled={!isReady}
           onClick={onProceed}
         >
-          Proceed
+          {t("chatTools1.chain.proceed")}
         </Button>
       )}
     </div>

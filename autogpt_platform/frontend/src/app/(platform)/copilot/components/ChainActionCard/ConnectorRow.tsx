@@ -1,6 +1,9 @@
 "use client";
 
 import { useStableCallback } from "@/hooks/useStableCallback";
+import { useT } from "@/lib/i18n";
+import type { MessageKey } from "@/lib/i18n/messages/en";
+import type { MessageValues } from "@/lib/i18n/translate";
 import { useGrantExpertCredentials } from "@/app/api/__generated__/endpoints/experts/experts";
 import type { CredentialsMetaResponse } from "@/app/api/__generated__/models/credentialsMetaResponse";
 import { Button } from "@/components/atoms/Button/Button";
@@ -31,11 +34,9 @@ type Grantable = ExpertGrant["credentials"][number];
 type SavedCredential = CredentialsProviderData["savedCredentials"][number];
 
 const AYRSHARE = "ayrshare";
-const UNUSABLE_ACCOUNT_ERROR =
-  "That account is missing the access this needs. Try connecting again.";
-const GRANT_FAILED_ERROR = "Couldn't grant access. Try again.";
 
 export function ConnectorRow({ row }: Props) {
+  const t = useT();
   const [isDialogOpen, setDialogOpen] = useState(false);
   // A sign-in finished without reporting its credential, so the account it
   // added is found by diffing the provider list against `knownIds`.
@@ -101,7 +102,7 @@ export function ConnectorRow({ row }: Props) {
         (saved) => saved.id === credential.id,
       );
     if (!account || !grantableAmong(row, [account])) {
-      setGrantError(UNUSABLE_ACCOUNT_ERROR);
+      setGrantError(t("chatTools1.connector.unusableAccount"));
       return false;
     }
     let response: Awaited<ReturnType<typeof grantCredentials>>;
@@ -112,12 +113,14 @@ export function ConnectorRow({ row }: Props) {
       });
     } catch (error) {
       setGrantError(
-        error instanceof ApiError ? error.message : GRANT_FAILED_ERROR,
+        error instanceof ApiError
+          ? error.message
+          : t("chatTools1.connector.grantFailed"),
       );
       return false;
     }
     if (!grantedCredentials.confirmGrant(credential.id, response)) {
-      setGrantError(GRANT_FAILED_ERROR);
+      setGrantError(t("chatTools1.connector.grantFailed"));
       return false;
     }
     setConnected(null);
@@ -302,8 +305,8 @@ export function ConnectorRow({ row }: Props) {
         ) : expertGrant && !isSatisfied ? (
           <span className="truncate text-xs text-foreground-tertiary">
             {grantableOptions.length > 0
-              ? "Needs this expert's access"
-              : "This expert needs its own access"}
+              ? t("chatTools1.connector.needsExpertAccess")
+              : t("chatTools1.connector.needsOwnAccess")}
           </span>
         ) : (
           row.description && (
@@ -317,7 +320,9 @@ export function ConnectorRow({ row }: Props) {
       {isSatisfied && !linksOnAyrshare ? (
         <span className="flex shrink-0 items-center gap-1.5 text-sm font-medium text-foreground-tertiary">
           <Icon icon={CheckmarkCircle02Icon} size={16} />
-          {expertGrant ? "Granted" : "Connected"}
+          {expertGrant
+            ? t("chatTools1.connector.granted")
+            : t("chatTools1.connector.connected")}
         </span>
       ) : (
         <Button
@@ -334,12 +339,15 @@ export function ConnectorRow({ row }: Props) {
           onClick={linksOnAyrshare ? ayrshare.connect : openDialog}
         >
           {linksOnAyrshare
-            ? "Connect"
-            : buttonLabel({
-                canGrant: grantableOptions.length > 0,
-                awaitingReconnect,
-                hasChoice,
-              })}
+            ? t("chatTools1.connector.connect")
+            : buttonLabel(
+                {
+                  canGrant: grantableOptions.length > 0,
+                  awaitingReconnect,
+                  hasChoice,
+                },
+                t,
+              )}
         </Button>
       )}
 
@@ -400,7 +408,7 @@ export function ConnectorRow({ row }: Props) {
           const account = toSavedCredential(credential);
           const usable = grantableAmong(row, [account]);
           if (!usable) {
-            setGrantError(UNUSABLE_ACCOUNT_ERROR);
+            setGrantError(t("chatTools1.connector.unusableAccount"));
             return;
           }
           setConnected(usable);
@@ -437,19 +445,22 @@ function grantableAmong(
 
 /** A refused account is named as such even when other accounts are offered
  *  beside it: the dialog lists them and its Add new signs in again. */
-function buttonLabel({
-  canGrant,
-  awaitingReconnect,
-  hasChoice,
-}: {
-  canGrant: boolean;
-  awaitingReconnect: boolean;
-  hasChoice: boolean;
-}) {
-  if (canGrant) return "Grant access";
-  if (awaitingReconnect) return "Reconnect";
-  if (hasChoice) return "Choose account";
-  return "Connect";
+function buttonLabel(
+  {
+    canGrant,
+    awaitingReconnect,
+    hasChoice,
+  }: {
+    canGrant: boolean;
+    awaitingReconnect: boolean;
+    hasChoice: boolean;
+  },
+  t: (key: MessageKey, values?: MessageValues) => string,
+) {
+  if (canGrant) return t("chatTools1.connector.grantAccess");
+  if (awaitingReconnect) return t("chatTools1.connector.reconnect");
+  if (hasChoice) return t("chatTools1.connector.chooseAccount");
+  return t("chatTools1.connector.connect");
 }
 
 /** `allProviders` without the credentials in `ids`. Keeps the `null` loading

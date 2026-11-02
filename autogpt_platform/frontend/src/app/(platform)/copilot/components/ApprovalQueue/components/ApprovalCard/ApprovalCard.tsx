@@ -3,6 +3,7 @@
 import type { ReactNode } from "react";
 import { Button } from "@/components/atoms/Button/Button";
 import { ApprovalFields } from "@/components/organisms/ApprovalFields/ApprovalFields";
+import { useLocale, useT } from "@/lib/i18n";
 import {
   type ApprovalItem,
   type ChatRule,
@@ -45,8 +46,10 @@ export function ApprovalCard({
   note = null,
   hideActions = false,
 }: Props) {
+  const t = useT();
+  const locale = useLocale();
   const fields = useApprovalFields(item);
-  const reason = reasonLine(item) ?? note;
+  const reason = reasonLine(item, locale) ?? note;
   const read = isHeldRead(item);
   const busy = status !== "idle";
 
@@ -85,7 +88,7 @@ export function ApprovalCard({
             role="alert"
             className="text-sm text-red-600"
           >
-            Couldn&apos;t send your answer. Nothing ran. Try again.
+            {t("chatTools1.sendFailed")}
           </p>
         )}
         {reason && (
@@ -129,12 +132,17 @@ export function ApprovalActions({
   onReject,
   aside = null,
 }: ActionsProps) {
+  const t = useT();
   const read = isHeldRead(item);
   const busy = status !== "idle";
   return (
     <div className="grid grid-cols-2 gap-2 sm:flex sm:shrink-0 sm:flex-wrap">
       <ApproveSplitButton
-        label={read ? `Release to ${item.reader}` : "Approve"}
+        label={
+          read
+            ? t("chatTools1.releaseTo", { reader: item.reader })
+            : t("chatTools1.approve")
+        }
         subjectName={ruleSubjectName(item.subject)}
         expertName={expertName}
         rules={read || item.spend ? [] : item.chatRulesAllowed}
@@ -151,10 +159,10 @@ export function ApprovalActions({
         onClick={onReject}
       >
         {status === "rejecting"
-          ? "Rejecting…"
+          ? t("chatTools1.rejecting")
           : read
-            ? "Keep it out"
-            : "Reject"}
+            ? t("chatTools1.keepOut")
+            : t("chatTools1.reject")}
       </Button>
       {aside && (
         <div className="col-span-2 flex justify-end sm:ml-auto sm:self-center">

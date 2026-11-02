@@ -1,6 +1,7 @@
 import userEvent from "@testing-library/user-event";
 import { http, HttpResponse } from "msw";
 import { expect, test, vi } from "vitest";
+import { LocaleProvider } from "@/lib/i18n";
 import { server } from "@/mocks/mock-server";
 import { render, screen, waitFor } from "@/tests/integrations/test-utils";
 import { CopilotChatActionsProvider } from "../../CopilotChatActionsProvider/CopilotChatActionsProvider";
@@ -36,14 +37,20 @@ function serve(
   return sent;
 }
 
-function renderQueue(expertName: string | null = "Frankie") {
-  render(
+function renderQueue(
+  expertName: string | null = "Frankie",
+  locale?: "en" | "vi",
+) {
+  const queue = (
     <CopilotChatActionsProvider onSend={vi.fn()} onBackendTurn={vi.fn()}>
       <CopilotPendingReviews
         chatSessionId={CHAT_SESSION}
         expertName={expertName}
       />
-    </CopilotChatActionsProvider>,
+    </CopilotChatActionsProvider>
+  );
+  render(
+    locale ? <LocaleProvider locale={locale}>{queue}</LocaleProvider> : queue,
   );
 }
 
@@ -83,6 +90,32 @@ test.each([
     ]);
   },
 );
+
+test("the rule menu words both actions and its scopes in Vietnamese", async () => {
+  serve();
+  renderQueue("Frankie", "vi");
+
+  await userEvent.click(
+    await screen.findByRole("button", { name: "Cách duyệt khác" }),
+  );
+
+  expect(await screen.findByText("Duyệt Gmail Send từ giờ")).toBeDefined();
+  expect(screen.getByText("Để Otto tự xét Gmail Send từ giờ")).toBeDefined();
+  expect(
+    screen.getByText(
+      "Frankie sẽ không hỏi lại việc này ở bất kỳ đoạn chat nào",
+    ),
+  ).toBeDefined();
+  expect(
+    screen.getByRole("menuitemradio", { name: "Đoạn chat này" }),
+  ).toBeDefined();
+  expect(
+    screen.getByRole("menuitemradio", { name: "Frankie, mọi đoạn chat" }),
+  ).toBeDefined();
+  expect(
+    screen.getByRole("menuitemradio", { name: "Mọi expert trong đội của tôi" }),
+  ).toBeDefined();
+});
 
 test("a plain approve sets no rule", async () => {
   const sent = serve();
