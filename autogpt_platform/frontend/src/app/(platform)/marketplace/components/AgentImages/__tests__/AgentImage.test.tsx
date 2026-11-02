@@ -12,6 +12,7 @@ import {
   removeCookiebot,
 } from "@/tests/integrations/cookiebot";
 
+import { LocaleProvider } from "@/lib/i18n";
 import { AgentImages } from "../AgentImage";
 
 const IMAGES = ["https://cdn.test/one.png", "https://cdn.test/two.png"];
@@ -42,6 +43,32 @@ describe("AgentImages thumbnails", () => {
 
     const replacement = screen.getByAltText("Thumbnail 2") as HTMLImageElement;
     expect(replacement.src).toBe("https://cdn.test/replacement.png");
+  });
+});
+
+describe("AgentImages in Vietnamese", () => {
+  afterEach(() => {
+    removeCookiebot();
+    vi.unstubAllEnvs();
+  });
+
+  test("reads the thumbnails and the consent placeholder in Vietnamese", () => {
+    configureCookiebot();
+    installCookiebot({ marketing: false });
+
+    render(
+      <LocaleProvider locale="vi">
+        <AgentImages
+          images={[
+            "https://cdn.test/one.png",
+            "https://www.youtube.com/shorts/dQw4w9WgXcQ",
+          ]}
+        />
+      </LocaleProvider>,
+    );
+
+    expect(screen.getByAltText("Ảnh thu nhỏ 1")).toBeDefined();
+    expect(screen.getByText("Video YouTube")).toBeDefined();
   });
 });
 

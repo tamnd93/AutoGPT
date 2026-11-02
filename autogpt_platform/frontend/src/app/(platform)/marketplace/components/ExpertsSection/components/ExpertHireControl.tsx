@@ -7,6 +7,7 @@ import { Icon } from "@/components/atoms/Icon/Icon";
 import { Dialog } from "@/components/molecules/Dialog/Dialog";
 import { VoicePicker } from "@/components/organisms/VoicePicker/VoicePicker";
 import { useAuth } from "@/lib/auth/hooks/useAuth";
+import { useT } from "@/lib/i18n";
 import { trackFunnel } from "@/services/experts/experts-analytics";
 import { useHireFlow } from "@/services/experts/useHireFlow";
 import { AddTeamIcon, CheckmarkCircle02Icon } from "@hugeicons/core-free-icons";
@@ -27,6 +28,7 @@ interface Props {
  *  hand-off to the expert's first thread — would unmount with it. Here the
  *  flow runs the expert page's own hook and outlives the swap. */
 export function ExpertHireControl({ expert, isHired }: Props) {
+  const t = useT();
   const { isLoggedIn } = useAuth();
   const {
     hire,
@@ -59,7 +61,7 @@ export function ExpertHireControl({ expert, isHired }: Props) {
         className="rounded-full px-2.5 py-1 shadow-[0_1px_2px_rgba(16,24,40,0.05)]"
       >
         <Icon icon={CheckmarkCircle02Icon} size={14} aria-hidden />
-        On your team
+        {t("marketplace1.expertHire.onTeam")}
       </Badge>
     );
   } else if (!isLoggedIn) {
@@ -72,7 +74,7 @@ export function ExpertHireControl({ expert, isHired }: Props) {
         size="small"
         leftIcon={HIRE_ICON}
       >
-        Hire
+        {t("marketplace1.expertHire.hire")}
       </Button>
     );
   } else {
@@ -84,7 +86,7 @@ export function ExpertHireControl({ expert, isHired }: Props) {
         leftIcon={HIRE_ICON}
         onClick={handleHire}
       >
-        Hire
+        {t("marketplace1.expertHire.hire")}
       </Button>
     );
   }

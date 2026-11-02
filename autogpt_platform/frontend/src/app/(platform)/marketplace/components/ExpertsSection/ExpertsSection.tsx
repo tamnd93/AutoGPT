@@ -1,13 +1,13 @@
 "use client";
 
 import { Skeleton } from "@/components/atoms/Skeleton/Skeleton";
+import { useT } from "@/lib/i18n";
 import { Button } from "@/components/atoms/Button/Button";
 import { useTrackFunnelViewOnce } from "@/services/experts/use-track-funnel-view-once";
 import { SectionHeader } from "../SectionHeader";
 import { ExpertCard } from "./components/ExpertCard";
 import { useExpertsSection } from "./useExpertsSection";
 
-const RAISE_LABEL = "Create an Expert";
 const RAISE_HREF = "/raise";
 
 interface Props {
@@ -15,6 +15,7 @@ interface Props {
 }
 
 export function ExpertsSection({ category }: Props) {
+  const t = useT();
   const { isLoggedIn, templates, hiredTemplateIds, isLoading, isError } =
     useExpertsSection({ category });
 
@@ -41,7 +42,7 @@ export function ExpertsSection({ category }: Props) {
           variant="secondary"
           size="small"
         >
-          {RAISE_LABEL}
+          {t("marketplace1.experts.createExpert")}
         </Button>
       </section>
     );
@@ -50,8 +51,8 @@ export function ExpertsSection({ category }: Props) {
   return (
     <section id="experts" className="mb-20 scroll-mt-24">
       <SectionHeader
-        title="Meet the AI Experts"
-        subtitle="Hire a ready-made specialist — competent on day one, working for you in minutes."
+        title={t("marketplace1.experts.heading")}
+        subtitle={t("marketplace1.experts.subtitle")}
         actions={
           isLoggedIn ? (
             <div className="flex items-center gap-2">
@@ -61,10 +62,10 @@ export function ExpertsSection({ category }: Props) {
                 variant="secondary"
                 size="small"
               >
-                View your team
+                {t("marketplace1.experts.viewTeam")}
               </Button>
               <Button as="NextLink" href={RAISE_HREF} size="small">
-                {RAISE_LABEL}
+                {t("marketplace1.experts.createExpert")}
               </Button>
             </div>
           ) : undefined

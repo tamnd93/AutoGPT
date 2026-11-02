@@ -7,6 +7,7 @@ import {
   CarouselItem,
 } from "@/components/molecules/Carousel/Carousel";
 import { Text } from "@/components/atoms/Text/Text";
+import { useT } from "@/lib/i18n";
 import { ReactNode } from "react";
 import { SectionHeader } from "../SectionHeader";
 import { StoreCard } from "../StoreCard/StoreCard";
@@ -43,6 +44,7 @@ export function AgentsSection({
   hideAvatars = false,
   children,
 }: Props) {
+  const t = useT();
   const displayedAgents = allAgents;
   const { handleCardClick } = useAgentsSection();
 
@@ -68,7 +70,7 @@ export function AgentsSection({
             variant="body"
             className="ml-4 mt-8 text-gray-500"
           >
-            No workflows found
+            {t("marketplace1.agentsSection.empty")}
           </Text>
         ) : (
           <>

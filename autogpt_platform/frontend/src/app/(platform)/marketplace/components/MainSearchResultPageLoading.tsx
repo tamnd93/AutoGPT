@@ -1,12 +1,15 @@
 import { Skeleton } from "@/components/atoms/Skeleton/Skeleton";
+import { useT } from "@/lib/i18n";
 
 export function MainSearchResultPageLoading() {
+  const t = useT();
+
   return (
     <div
       className="w-full"
       role="status"
       aria-busy="true"
-      aria-label="Loading search results"
+      aria-label={t("marketplace1.loading.searchResults")}
     >
       <div className="mx-auto min-h-screen w-full max-w-[1440px] px-6 md:px-10">
         {/* Go back button */}

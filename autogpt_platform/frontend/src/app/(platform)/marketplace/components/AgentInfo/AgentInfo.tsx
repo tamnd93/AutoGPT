@@ -13,7 +13,7 @@ import { Badge } from "@/components/atoms/Badge/Badge";
 import { Button } from "@/components/atoms/Button/Button";
 import { Text } from "@/components/atoms/Text/Text";
 import { Dialog } from "@/components/molecules/Dialog/Dialog";
-import { useLocale } from "@/lib/i18n";
+import { useLocale, useT } from "@/lib/i18n";
 import { formatTimeAgo } from "@/lib/utils/time";
 import type { User } from "@/lib/auth/types";
 import Link from "next/link";
@@ -62,6 +62,7 @@ export const AgentInfo = ({
     isAddingAgentToLibrary,
   } = useAgentInfo({ storeListingVersionId });
   const locale = useLocale();
+  const t = useT();
 
   // Get store agent data for version history
   const params: GetV2GetSpecificAgentParams = { include_changelog: true };
@@ -110,14 +111,16 @@ export const AgentInfo = ({
               variant="body"
               className="font-semibold text-neutral-900"
             >
-              Version {versionInfo.version}.0
+              {t("marketplace1.agentInfo.version", {
+                version: versionInfo.version,
+              })}
             </Text>
             {versionInfo.isCurrentVersion && (
               <span
                 // TODO(tokens): no exact role: bg-blue-100 #DBEAFE, text-blue-800 #1E40AF
                 className="rounded bg-blue-100 px-1.5 py-0.5 text-xs font-medium text-blue-800"
               >
-                Current
+                {t("marketplace1.agentInfo.current")}
               </span>
             )}
           </div>
@@ -174,12 +177,15 @@ export const AgentInfo = ({
           >
             <Avatar className="h-7 w-7 shrink-0">
               {creatorAvatar && (
-                <AvatarImage src={creatorAvatar} alt={`${creator} avatar`} />
+                <AvatarImage
+                  src={creatorAvatar}
+                  alt={t("marketplace1.agentInfo.avatarAlt", { creator })}
+                />
               )}
               <AvatarFallback size={28}>{creator}</AvatarFallback>
             </Avatar>
             <Text variant="body" className="text-md">
-              by
+              {t("marketplace1.agentInfo.by")}
             </Text>
             <Link
               href={`/marketplace/creator/${encodeURIComponent(creatorSlug ?? creator)}`}
@@ -223,10 +229,10 @@ export const AgentInfo = ({
                 }
               >
                 {isAddingAgentToLibrary
-                  ? "Adding..."
+                  ? t("marketplace1.agentInfo.adding")
                   : isAgentAddedToLibrary
-                    ? "See runs"
-                    : "Add to library"}
+                    ? t("marketplace1.agentInfo.seeRuns")
+                    : t("marketplace1.agentInfo.addToLibrary")}
               </Button>
             )}
             <InstallOnExpertButton
@@ -242,7 +248,7 @@ export const AgentInfo = ({
                 variant="body"
                 className="text-neutral-500"
               >
-                Want to use this workflow locally?
+                {t("marketplace1.agentInfo.localQuestion")}
               </Text>
               <Button
                 variant="ghost"
@@ -252,13 +258,19 @@ export const AgentInfo = ({
                 data-testid="agent-download-button"
                 className="underline"
               >
-                {isDownloadingAgent ? "Downloading..." : "Download here"}
+                {isDownloadingAgent
+                  ? t("marketplace1.agentInfo.downloading")
+                  : t("marketplace1.agentInfo.downloadHere")}
               </Button>
             </div>
             <Text variant="body" className="shrink-0 whitespace-nowrap">
               {runs === 0
-                ? "No runs"
-                : `${runs.toLocaleString()} run${runs > 1 ? "s" : ""}`}
+                ? t("marketplace1.agentInfo.noRuns")
+                : runs === 1
+                  ? t("marketplace1.agentInfo.runOne")
+                  : t("marketplace1.agentInfo.runs", {
+                      count: runs.toLocaleString(),
+                    })}
             </Text>
           </div>
         </div>
@@ -273,7 +285,7 @@ export const AgentInfo = ({
               variant="h5"
               className="mb-1.5 text-[1.3rem]"
             >
-              Description
+              {t("marketplace1.agentInfo.description")}
             </Text>
             <Text
               variant="body"
@@ -292,7 +304,7 @@ export const AgentInfo = ({
               variant="h5"
               className="mb-1.5 text-[1.3rem]"
             >
-              Categories
+              {t("marketplace1.agentInfo.categories")}
             </Text>
             {categories.filter((c) => c.trim()).length > 0 ? (
               <div className="flex flex-wrap gap-1.5 sm:gap-2">
@@ -315,7 +327,7 @@ export const AgentInfo = ({
                 variant="body"
                 className="text-neutral-400"
               >
-                None
+                {t("marketplace1.agentInfo.none")}
               </Text>
             )}
           </div>
@@ -328,11 +340,11 @@ export const AgentInfo = ({
                 variant="h5"
                 className="text-[1.3rem]"
               >
-                Version
+                {t("marketplace1.agentInfo.versionLabel")}
               </Text>
               {allVersions.length > 0 && (
                 <Dialog
-                  title="Changelog"
+                  title={t("marketplace1.agentInfo.changelog")}
                   styling={{
                     maxWidth: "30rem",
                   }}
@@ -344,7 +356,7 @@ export const AgentInfo = ({
                       // TODO(tokens): no exact role: text-violet-600 #7C3AED, hover:text-violet-500 #8B5CF6
                       className="text-violet-600 hover:text-violet-500"
                     >
-                      (Changelog)
+                      {t("marketplace1.agentInfo.changelogLink")}
                     </Button>
                   </Dialog.Trigger>
                   <Dialog.Content>
@@ -368,7 +380,9 @@ export const AgentInfo = ({
                 variant="body"
                 className="text-neutral-600"
               >
-                Last updated {formatTimeAgo(lastUpdated, locale)}
+                {t("marketplace1.agentInfo.lastUpdated", {
+                  ago: formatTimeAgo(lastUpdated, locale),
+                })}
               </Text>
             </div>
           </div>

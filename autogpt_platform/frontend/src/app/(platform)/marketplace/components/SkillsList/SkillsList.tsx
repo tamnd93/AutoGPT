@@ -13,6 +13,7 @@ import { ShelfMoreButton } from "../Shelf/ShelfMoreButton";
 import { SkillTopicChips } from "../SkillTopicChips/SkillTopicChips";
 import { formatCategoryLabel } from "../SkillsSection/helpers";
 import { useSkillsSection } from "../SkillsSection/useSkillsSection";
+import { useT } from "@/lib/i18n";
 import { SkillDialog } from "./components/SkillDialog";
 import { SkillTile } from "./components/SkillTile";
 
@@ -23,6 +24,7 @@ interface Props {
 }
 
 export function SkillsList({ category }: Props) {
+  const t = useT();
   // Seeded from the page filter and reset with it by the parent's `key`, so
   // the chips narrow the shelf further without fighting the page.
   const [topic, setTopic] = useState(category ?? null);
@@ -52,9 +54,9 @@ export function SkillsList({ category }: Props) {
       className="mb-16 scroll-mt-24"
     >
       <SectionHeader
-        title="Skills"
+        title={t("marketplace1.skills.heading")}
         titleId={HEADING_ID}
-        subtitle="Playbooks your experts pick up as they work."
+        subtitle={t("marketplace1.skills.subtitle")}
         filters={
           <SkillTopicChips
             selected={topic}
@@ -67,7 +69,7 @@ export function SkillsList({ category }: Props) {
         <div
           role="status"
           aria-busy="true"
-          aria-label="Loading skills"
+          aria-label={t("marketplace1.skills.loadingAria")}
           className={SHELF_GRID}
         >
           {Array.from({ length: SHELF_PREVIEW_SIZE }, (_, i) => (
@@ -76,21 +78,23 @@ export function SkillsList({ category }: Props) {
         </div>
       ) : isError ? (
         <div className="flex items-center gap-2 text-sm text-foreground-secondary">
-          <span>Couldn&apos;t load skills right now.</span>
+          <span>{t("marketplace1.skills.loadFailed")}</span>
           <button
             type="button"
             onClick={() => refetch()}
             className="font-medium text-accent underline-offset-2 transition-colors hover:underline"
           >
-            Retry
+            {t("marketplace1.skills.retry")}
           </button>
         </div>
       ) : isEmpty ? (
         <div className="flex items-center gap-2 text-sm text-foreground-secondary">
           <span>
             {topic
-              ? `No ${formatCategoryLabel(topic).toLowerCase()} skills yet.`
-              : "No skills yet."}
+              ? t("marketplace1.skills.emptyTopic", {
+                  topic: formatCategoryLabel(topic).toLowerCase(),
+                })
+              : t("marketplace1.skills.empty")}
           </span>
           {topic ? (
             <button
@@ -98,7 +102,7 @@ export function SkillsList({ category }: Props) {
               onClick={() => selectTopic(null)}
               className="font-medium text-accent underline-offset-2 transition-colors hover:underline"
             >
-              Show all
+              {t("marketplace1.skills.showAll")}
             </button>
           ) : null}
         </div>
@@ -136,7 +140,7 @@ export function SkillsList({ category }: Props) {
           variant="secondary"
           size="small"
         >
-          Browse all skills
+          {t("marketplace1.skills.browseAll")}
         </Button>
       </div>
       {openSlug ? (

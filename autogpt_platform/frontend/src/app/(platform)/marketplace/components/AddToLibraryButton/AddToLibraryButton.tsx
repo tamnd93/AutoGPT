@@ -12,6 +12,7 @@ import { LibraryAgentResponse } from "@/app/api/__generated__/models/libraryAgen
 import { Button } from "@/components/atoms/Button/Button";
 import { useToast } from "@/components/molecules/Toast/use-toast";
 import { useAuth } from "@/lib/auth/hooks/useAuth";
+import { useT } from "@/lib/i18n";
 import * as Sentry from "@sentry/nextjs";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
@@ -27,6 +28,7 @@ function UndoActions({
   libraryHref: string;
   onUndo: (id: string) => Promise<void>;
 }) {
+  const t = useT();
   const [isUndoing, setIsUndoing] = useState(false);
 
   return (
@@ -39,7 +41,7 @@ function UndoActions({
         className="bg-neutral-200 text-foreground-strong hover:bg-neutral-300 hover:text-foreground-emphasis"
         href={libraryHref}
       >
-        Open workflow
+        {t("marketplace1.addToLibrary.open")}
       </Button>
       <Button
         variant="ghost"
@@ -56,7 +58,9 @@ function UndoActions({
           }
         }}
       >
-        {isUndoing ? "Undoing..." : "Undo"}
+        {isUndoing
+          ? t("marketplace1.addToLibrary.undoing")
+          : t("marketplace1.addToLibrary.undo")}
       </Button>
     </div>
   );
@@ -80,6 +84,7 @@ export function AddToLibraryButton({
   isInLibrary,
 }: Props) {
   const { isLoggedIn } = useAuth();
+  const t = useT();
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [justAdded, setJustAdded] = useState(false);
@@ -120,7 +125,7 @@ export function AddToLibraryButton({
       const details = await getV2GetSpecificAgent(creatorSlug, agentSlug);
 
       if (details.status !== 200) {
-        throw new Error("Failed to fetch workflow details");
+        throw new Error(t("marketplace1.addToLibrary.fetchFailed"));
       }
 
       const { data: response } = await addToLibrary({
@@ -137,7 +142,7 @@ export function AddToLibraryButton({
       });
 
       const addedToast = toast({
-        title: `Workflow ${agentName} added to your library.`,
+        title: t("marketplace1.addToLibrary.added", { name: agentName }),
         description: (
           <UndoActions
             libraryAgentID={data.id}
@@ -151,14 +156,14 @@ export function AddToLibraryButton({
                 setJustAdded(false);
                 addedToast.dismiss();
                 toast({
-                  title: "Action undone.",
+                  title: t("marketplace1.addToLibrary.undone"),
                   variant: "info",
                   duration: 3000,
                 });
               } catch (undoError) {
                 Sentry.captureException(undoError);
                 toast({
-                  title: "Failed to undo. Please try again.",
+                  title: t("marketplace1.addToLibrary.undoFailed"),
                   variant: "destructive",
                 });
               }
@@ -171,8 +176,8 @@ export function AddToLibraryButton({
     } catch (error) {
       Sentry.captureException(error);
       toast({
-        title: "Error",
-        description: "Failed to add workflow to library. Please try again.",
+        title: t("marketplace1.addToLibrary.error"),
+        description: t("marketplace1.addToLibrary.addFailed"),
         variant: "destructive",
       });
     }
@@ -186,9 +191,11 @@ export function AddToLibraryButton({
       leftIcon={<Icon icon={PlusSignIcon} size={14} />}
       onClick={handleClick}
       className={`z-10 ${className ?? ""}`}
-      aria-label={`Add ${agentName} to library`}
+      aria-label={t("marketplace1.addToLibrary.aria", { name: agentName })}
     >
-      {isPending ? "Adding..." : "Add"}
+      {isPending
+        ? t("marketplace1.addToLibrary.adding")
+        : t("marketplace1.addToLibrary.add")}
     </Button>
   );
 }

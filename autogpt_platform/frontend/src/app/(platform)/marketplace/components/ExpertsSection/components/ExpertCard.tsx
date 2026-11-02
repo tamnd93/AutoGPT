@@ -14,6 +14,7 @@ import {
 import { ExpertAvatar } from "@/components/molecules/ExpertAvatar/ExpertAvatar";
 import { ExpertIdentityDetails } from "@/components/molecules/ExpertIdentityDetails/ExpertIdentityDetails";
 import { ExpertTagline } from "@/components/molecules/ExpertIdentityDetails/components/ExpertTagline";
+import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { ArrowRight02Icon, Book04Icon } from "@hugeicons/core-free-icons";
 import Link from "next/link";
@@ -36,6 +37,7 @@ interface Props {
  *  behind its contents: a card that is itself a link cannot hold the hire
  *  button, since an anchor may not contain one. */
 export function ExpertCard({ expert, isHired, category }: Props) {
+  const t = useT();
   const selectedCategory =
     category && expert.categories?.includes(category) ? category : undefined;
   // The expert's own visual family, whatever filter the shelf is under: the
@@ -90,7 +92,9 @@ export function ExpertCard({ expert, isHired, category }: Props) {
 
         {skills.length > 0 ? (
           <div>
-            <div className="mb-1 text-sm text-foreground-tertiary">Skills:</div>
+            <div className="mb-1 text-sm text-foreground-tertiary">
+              {t("marketplace1.expertCard.skills")}
+            </div>
             <div className="flex flex-col items-start">
               {named.map((skill) => (
                 <span
@@ -123,7 +127,9 @@ export function ExpertCard({ expert, isHired, category }: Props) {
                         "h-6 cursor-default border-transparent px-0 text-foreground-tertiary outline-none focus-visible:ring-2 focus-visible:ring-violet-600",
                       )}
                     >
-                      +{restSkills.length} skills
+                      {t("marketplace1.expertCard.moreSkills", {
+                        count: restSkills.length,
+                      })}
                     </span>
                   </TooltipTrigger>
                   <TooltipPortal>
@@ -143,7 +149,7 @@ export function ExpertCard({ expert, isHired, category }: Props) {
 
         <div className="mt-auto flex items-center justify-end pt-2">
           <span className="flex items-center gap-1.5 text-base font-medium text-foreground-subtle transition-colors duration-200 group-hover:text-foreground-strong">
-            View
+            {t("marketplace1.expertCard.view")}
             <Icon
               icon={ArrowRight02Icon}
               size={16}

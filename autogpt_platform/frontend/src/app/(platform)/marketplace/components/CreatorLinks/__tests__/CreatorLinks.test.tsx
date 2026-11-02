@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it } from "vitest";
 import { cleanup, render, screen } from "@testing-library/react";
+import { LocaleProvider } from "@/lib/i18n";
 import { CreatorLinks } from "../CreatorLinks";
 
 afterEach(cleanup);
@@ -23,6 +24,18 @@ function renderLink(url: string) {
   unmount();
   return g;
 }
+
+describe("CreatorLinks in Vietnamese", () => {
+  it("reads the links heading in Vietnamese", () => {
+    render(
+      <LocaleProvider locale="vi">
+        <CreatorLinks links={["https://github.com/acme"]} />
+      </LocaleProvider>,
+    );
+
+    expect(screen.getByText("Liên kết")).toBeDefined();
+  });
+});
 
 describe("CreatorLinks", () => {
   it("renders nothing when there are no links", () => {

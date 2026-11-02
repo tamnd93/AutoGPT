@@ -3,6 +3,7 @@ import { PublishAgentModal } from "@/components/contextual/PublishAgentModal/Pub
 import type { PublishState } from "@/components/contextual/PublishAgentModal/usePublishAgentModal";
 import { ErrorCard } from "@/components/molecules/ErrorCard/ErrorCard";
 import { useAuth } from "@/lib/auth/hooks/useAuth";
+import { useT } from "@/lib/i18n";
 import { useState } from "react";
 import { BecomeACreator } from "../BecomeACreator/BecomeACreator";
 import { CategoryFilter } from "../CategoryFilter/CategoryFilter";
@@ -16,6 +17,7 @@ import { WorkflowsShelf } from "../WorkflowsShelf/WorkflowsShelf";
 import { useMainMarketplacePage } from "./useMainMarketplacePage";
 
 export function MainMarkeplacePage() {
+  const t = useT();
   const [publishState, setPublishState] = useState<PublishState>({
     isOpen: false,
     step: "select",
@@ -52,7 +54,9 @@ export function MainMarkeplacePage() {
           <div className="flex min-h-[400px] items-center justify-center">
             <ErrorCard
               isSuccess={false}
-              responseError={{ message: "Failed to load marketplace data" }}
+              responseError={{
+                message: t("marketplace1.mainMarketplacePage.loadFailed"),
+              }}
               context="marketplace page"
               onRetry={() => window.location.reload()}
               className="w-full max-w-md"
@@ -88,8 +92,8 @@ export function MainMarkeplacePage() {
             shelf instead, where it cannot outshout the shelf itself. */}
         {!hasWorkflowShelf ? (
           <BecomeACreator
-            description="Join our ever-growing community of hackers and tinkerers"
-            buttonText="Publish your workflows"
+            description={t("marketplace1.mainMarketplacePage.joinCommunity")}
+            buttonText={t("marketplace1.mainMarketplacePage.publishWorkflows")}
             onPublish={openPublishing}
           />
         ) : null}

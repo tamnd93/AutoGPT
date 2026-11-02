@@ -1,5 +1,6 @@
 "use client";
 import { okData } from "@/app/api/helpers";
+import { useT } from "@/lib/i18n";
 import { Separator } from "@/components/atoms/Separator/Separator";
 import { Button } from "@/components/atoms/Button/Button";
 import { Breadcrumbs } from "@/components/molecules/Breadcrumbs/Breadcrumbs";
@@ -19,6 +20,7 @@ interface Props {
 }
 
 export function MainAgentPage({ params }: Props) {
+  const t = useT();
   const {
     agent,
     user,
@@ -40,7 +42,9 @@ export function MainAgentPage({ params }: Props) {
           <div className="flex min-h-[400px] items-center justify-center">
             <ErrorCard
               isSuccess={false}
-              responseError={{ message: "Failed to load workflow data" }}
+              responseError={{
+                message: t("marketplace1.mainAgentPage.loadFailed"),
+              }}
               context="workflow page"
               onRetry={() => window.location.reload()}
               className="w-full max-w-md"
@@ -59,7 +63,9 @@ export function MainAgentPage({ params }: Props) {
           <div className="flex min-h-[400px] items-center justify-center">
             <ErrorCard
               isSuccess={false}
-              responseError={{ message: "Workflow not found" }}
+              responseError={{
+                message: t("marketplace1.mainAgentPage.notFound"),
+              }}
               context="workflow page"
             />
           </div>
@@ -89,7 +95,7 @@ export function MainAgentPage({ params }: Props) {
             className="relative -left-2 lg:!-left-4"
             leftIcon={<Icon icon={ArrowLeft02Icon} size={16} />}
           >
-            Go back
+            {t("marketplace1.mainAgentPage.goBack")}
           </Button>
           <div className="hidden md:block">
             <Breadcrumbs items={breadcrumbs} />
@@ -156,14 +162,16 @@ export function MainAgentPage({ params }: Props) {
         {otherAgents && (
           <AgentsSection
             agents={otherAgents.agents}
-            sectionTitle={`Other AI workflows by ${agentData.creator ?? ""}`}
+            sectionTitle={t("marketplace1.mainAgentPage.othersBy", {
+              creator: agentData.creator ?? "",
+            })}
           />
         )}
         <Separator className="mb-[25px] mt-[60px] bg-transparent" />
         {similarAgents && similarAgents.agents.length > 0 ? (
           <AgentsSection
             agents={similarAgents.agents}
-            sectionTitle="Similar AI workflows"
+            sectionTitle={t("marketplace1.mainAgentPage.similar")}
           />
         ) : null}
         <BecomeACreator />

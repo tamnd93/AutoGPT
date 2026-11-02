@@ -1,5 +1,6 @@
 import { Button } from "@/components/atoms/Button/Button";
 import { Text } from "@/components/atoms/Text/Text";
+import { useT } from "@/lib/i18n";
 import {
   Facebook02Icon,
   GithubIcon,
@@ -64,11 +65,12 @@ function getSocialIcon(url: string) {
 }
 
 export function CreatorLinks({ links }: CreatorLinksProps) {
+  const t = useT();
   if (!links || links.length === 0) return null;
 
   return (
     <div className="flex flex-col items-start gap-3">
-      <Text variant="h5">Links</Text>
+      <Text variant="h5">{t("marketplace1.creatorLinks.heading")}</Text>
       <div className="flex flex-wrap gap-2">
         {links.map((link) => (
           <Button

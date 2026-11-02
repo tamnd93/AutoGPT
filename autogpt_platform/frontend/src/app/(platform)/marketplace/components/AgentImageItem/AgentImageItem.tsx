@@ -10,6 +10,7 @@ import { Icon } from "@/components/atoms/Icon/Icon";
 import { useImageFallback } from "@/hooks/useImageFallback";
 import { YouTubeEmbed } from "@/components/molecules/YouTubeEmbed/YouTubeEmbed";
 import { isYouTubeUrl } from "@/components/molecules/YouTubeEmbed/helpers";
+import { useT } from "@/lib/i18n";
 
 interface AgentImageItemProps {
   image: string;
@@ -26,6 +27,7 @@ export function AgentImageItem({
   handlePlay,
   handlePause,
 }: AgentImageItemProps) {
+  const t = useT();
   const { videoRef } = useAgentImageItem({ playingVideoIndex, index });
   const isVideoFile = isValidVideoFile(image);
   const [imageLoaded, setImageLoaded] = useState(false);
@@ -56,10 +58,10 @@ export function AgentImageItem({
                 onPlay={() => handlePlay(index)}
                 onPause={() => handlePause(index)}
                 autoPlay={false}
-                title="Video"
+                title={t("marketplace1.images.videoTitle")}
               >
                 <source src={image} type="video/mp4" />
-                Your browser does not support the video tag.
+                {t("marketplace1.images.videoUnsupported")}
               </video>
             </div>
           )
@@ -73,7 +75,7 @@ export function AgentImageItem({
                 <Image
                   src={image}
                   unoptimized={isLocalStoreMediaUrl(image)}
-                  alt="Image"
+                  alt={t("marketplace1.images.imageAlt")}
                   fill
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                   className="rounded-xl object-cover"
@@ -110,7 +112,7 @@ export function AgentImageItem({
               />
             }
           >
-            Play demo
+            {t("marketplace1.images.playDemo")}
           </Button>
         </div>
       )}

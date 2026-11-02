@@ -6,6 +6,7 @@ import {
   within,
 } from "@/tests/integrations/test-utils";
 import userEvent from "@testing-library/user-event";
+import { LocaleProvider } from "@/lib/i18n";
 import { MainMarkeplacePage } from "../MainMarketplacePage";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -75,6 +76,39 @@ describe("MainMarketplacePage", () => {
       isLoading: false,
       hasError: false,
     });
+  });
+
+  test("reads the marketplace chrome and its calls to action in Vietnamese", () => {
+    render(
+      <LocaleProvider locale="vi">
+        <MainMarkeplacePage />
+      </LocaleProvider>,
+    );
+
+    const search = screen.getByTestId("store-search-input");
+    expect(search.getAttribute("placeholder")).toBe(
+      'Tìm việc như "tối ưu SEO"',
+    );
+    expect(search.getAttribute("aria-label")).toBe('Tìm việc như "tối ưu SEO"');
+  });
+
+  test("reads the load failure in Vietnamese", () => {
+    mockUseMainMarketplacePage.mockReturnValue({
+      featuredAgents: undefined,
+      topAgents: undefined,
+      isLoading: false,
+      hasError: true,
+    });
+
+    render(
+      <LocaleProvider locale="vi">
+        <MainMarkeplacePage />
+      </LocaleProvider>,
+    );
+
+    expect(
+      screen.getByText("Không tải được dữ liệu Marketplace"),
+    ).toBeDefined();
   });
 
   test("renders the expert layout and workflow shelf before flags answer", () => {

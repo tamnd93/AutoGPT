@@ -6,6 +6,7 @@ import {
   removeCookiebot,
 } from "@/tests/integrations/cookiebot";
 
+import { LocaleProvider } from "@/lib/i18n";
 import { AgentImageItem } from "../AgentImageItem";
 
 function renderItem(image: string) {
@@ -19,6 +20,29 @@ function renderItem(image: string) {
     />,
   );
 }
+
+describe("AgentImageItem in Vietnamese", () => {
+  afterEach(() => {
+    removeCookiebot();
+    vi.unstubAllEnvs();
+  });
+
+  test("reads the preview and its fallback in Vietnamese", () => {
+    render(
+      <LocaleProvider locale="vi">
+        <AgentImageItem
+          image="https://cdn.test/preview.png"
+          index={0}
+          playingVideoIndex={null}
+          handlePlay={() => {}}
+          handlePause={() => {}}
+        />
+      </LocaleProvider>,
+    );
+
+    expect(screen.getByAltText("Hình ảnh")).toBeDefined();
+  });
+});
 
 describe("AgentImageItem", () => {
   afterEach(() => {

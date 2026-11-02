@@ -1,4 +1,5 @@
 "use client";
+import { useT } from "@/lib/i18n";
 import { useSearchbar } from "./useSearchBar";
 import { Search01Icon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
@@ -12,12 +13,15 @@ interface SearchBarProps {
 }
 
 export function SearchBar({
-  placeholder = 'Search for tasks like "optimize SEO"',
+  placeholder,
   width = "w-full lg:w-[56.25rem]",
   height = "h-[3.8rem]",
   defaultValue,
   onSubmit,
 }: SearchBarProps) {
+  const t = useT();
+  const resolvedPlaceholder =
+    placeholder ?? t("marketplace1.search.placeholder");
   const { handleSubmit, setSearchQuery, searchQuery } = useSearchbar({
     defaultValue,
     onSubmit,
@@ -38,10 +42,10 @@ export function SearchBar({
       />
       <input
         type="text"
-        aria-label={placeholder}
+        aria-label={resolvedPlaceholder}
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
-        placeholder={placeholder}
+        placeholder={resolvedPlaceholder}
         className="flex-grow border-none bg-transparent text-base font-normal text-foreground-base placeholder:text-base placeholder:font-normal placeholder:text-foreground-subtle focus:outline-none md:text-lg md:placeholder:text-lg"
         data-testid="store-search-input"
       />

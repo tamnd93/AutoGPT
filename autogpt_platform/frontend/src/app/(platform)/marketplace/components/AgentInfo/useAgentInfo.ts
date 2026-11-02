@@ -9,6 +9,7 @@ import { useGetV2DownloadAgentFile } from "@/app/api/__generated__/endpoints/sto
 import { LibraryAgent } from "@/app/api/__generated__/models/libraryAgent";
 import { agentGraphExportFilename, exportAsJSONFile } from "@/lib/utils";
 import { useQueryClient } from "@tanstack/react-query";
+import { useT } from "@/lib/i18n";
 
 interface UseAgentInfoProps {
   storeListingVersionId: string;
@@ -16,6 +17,7 @@ interface UseAgentInfoProps {
 
 export const useAgentInfo = ({ storeListingVersionId }: UseAgentInfoProps) => {
   const { toast } = useToast();
+  const t = useT();
   const router = useRouter();
   const queryClient = useQueryClient();
 
@@ -55,16 +57,16 @@ export const useAgentInfo = ({ storeListingVersionId }: UseAgentInfoProps) => {
       router.push(`/library/agents/${data.id}`);
 
       toast({
-        title: "Workflow Added",
-        description: "Redirecting to your library...",
+        title: t("marketplace1.agentInfo.addedTitle"),
+        description: t("marketplace1.agentInfo.addedRedirect"),
         duration: 2000,
       });
     } catch (error) {
       Sentry.captureException(error);
 
       toast({
-        title: "Error",
-        description: "Failed to add workflow to library. Please try again.",
+        title: t("marketplace1.addToLibrary.error"),
+        description: t("marketplace1.addToLibrary.addFailed"),
         variant: "destructive",
       });
     }
@@ -80,14 +82,14 @@ export const useAgentInfo = ({ storeListingVersionId }: UseAgentInfoProps) => {
       );
 
       toast({
-        title: "Download Complete",
-        description: "Your workflow has been successfully downloaded.",
+        title: t("marketplace1.agentInfo.downloadComplete"),
+        description: t("marketplace1.agentInfo.downloadSuccess"),
       });
     } catch (error) {
       Sentry.captureException(error);
       toast({
-        title: "Error",
-        description: "Failed to download workflow. Please try again.",
+        title: t("marketplace1.addToLibrary.error"),
+        description: t("marketplace1.agentInfo.downloadFailed"),
         variant: "destructive",
       });
     }

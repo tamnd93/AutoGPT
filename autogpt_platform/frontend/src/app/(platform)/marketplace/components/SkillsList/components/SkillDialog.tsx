@@ -6,6 +6,7 @@ import { Dialog } from "@/components/molecules/Dialog/Dialog";
 import { SkillActions } from "../../../skills/[slug]/components/SkillActions";
 import { SkillBody } from "../../../skills/[slug]/components/SkillBody";
 import { useSkillPage } from "../../../skills/[slug]/components/useSkillPage";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   slug: string;
@@ -13,6 +14,7 @@ interface Props {
 }
 
 export function SkillDialog({ slug, onClose }: Props) {
+  const t = useT();
   const {
     skill,
     isLoggedIn,
@@ -34,7 +36,7 @@ export function SkillDialog({ slug, onClose }: Props) {
   return (
     <>
       <Dialog
-        title={skill?.title ?? "Skill"}
+        title={skill?.title ?? t("marketplace1.skillDialog.title")}
         styling={{ width: "760px" }}
         controlled={{
           isOpen: true,
@@ -53,13 +55,13 @@ export function SkillDialog({ slug, onClose }: Props) {
               </div>
             ) : isError || !skill ? (
               <div className="flex items-center gap-2 text-sm text-foreground-secondary">
-                <span>Couldn&apos;t load this skill right now.</span>
+                <span>{t("marketplace1.skillDialog.loadFailed")}</span>
                 <button
                   type="button"
                   onClick={() => refetch()}
                   className="font-medium text-accent underline-offset-2 transition-colors hover:underline"
                 >
-                  Retry
+                  {t("marketplace1.skills.retry")}
                 </button>
               </div>
             ) : (
@@ -88,7 +90,7 @@ export function SkillDialog({ slug, onClose }: Props) {
                   />
                 ) : (
                   <p className="text-sm text-foreground-tertiary">
-                    This skill has no instructions yet.
+                    {t("marketplace1.skillDialog.noInstructions")}
                   </p>
                 )}
               </>

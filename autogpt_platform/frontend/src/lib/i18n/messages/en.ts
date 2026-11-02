@@ -6,6 +6,7 @@ import { formatEn } from "./format.en";
 import { home1En } from "./home-1.en";
 import { home2En } from "./home-2.en";
 import { integrationsEn } from "./integrations.en";
+import { marketplace1En } from "./marketplace-1.en";
 import { navEn } from "./nav.en";
 import { nav1En } from "./nav-1.en";
 import { nav2En } from "./nav-2.en";
@@ -23,6 +24,7 @@ export const en = {
   ...home1En,
   ...home2En,
   ...integrationsEn,
+  ...marketplace1En,
   ...navEn,
   ...nav1En,
   ...nav2En,

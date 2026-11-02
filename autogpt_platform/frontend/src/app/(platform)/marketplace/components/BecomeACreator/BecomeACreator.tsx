@@ -1,6 +1,7 @@
 "use client";
 
 import { PublishAgentModal } from "@/components/contextual/PublishAgentModal/PublishAgentModal";
+import { useT } from "@/lib/i18n";
 
 interface BecomeACreatorProps {
   title?: string;
@@ -10,17 +11,18 @@ interface BecomeACreatorProps {
 }
 
 export function BecomeACreator({
-  description = "Join a community where your workflows can inspire, engage, and be installed by users around the world.",
-  buttonText = "Publish your workflow",
+  description,
+  buttonText,
   onPublish,
 }: BecomeACreatorProps) {
+  const t = useT();
   const publishTrigger = (
     <button
       // TODO(tokens): no exact role: shadow-[…] #101828, hover:shadow-[…] #101828
       className="inline-flex h-12 cursor-pointer items-center justify-center rounded-full bg-action-hover px-8 text-body-md font-medium leading-inherit text-action-foreground shadow-[0_1px_2px_rgba(16,24,40,0.1)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-action hover:shadow-[0_10px_24px_-10px_rgba(16,24,40,0.4)]"
       onClick={onPublish}
     >
-      {buttonText}
+      {buttonText ?? t("marketplace1.becomeACreator.button")}
     </button>
   );
 
@@ -28,13 +30,16 @@ export function BecomeACreator({
     <div className="relative mx-auto w-full max-w-[1360px] py-24">
       <div className="mx-auto w-full max-w-2xl px-4 text-center">
         <h2 className="mb-4 text-3xl font-semibold tracking-heading text-foreground-strong md:text-4xl">
-          Build AI workflows and share{" "}
+          {t("marketplace1.becomeACreator.headingBefore")}
           {/* TODO(tokens): no exact role: text-violet-600 #7C3AED */}
-          <span className="text-violet-600">your</span> vision
+          <span className="text-violet-600">
+            {t("marketplace1.becomeACreator.headingHighlight")}
+          </span>
+          {t("marketplace1.becomeACreator.headingAfter")}
         </h2>
 
         <p className="mx-auto mb-8 max-w-xl text-body-md leading-relaxed text-foreground-tertiary md:text-lg">
-          {description}
+          {description ?? t("marketplace1.becomeACreator.description")}
         </p>
 
         {onPublish ? (

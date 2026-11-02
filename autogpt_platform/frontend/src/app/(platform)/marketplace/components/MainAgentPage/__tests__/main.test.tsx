@@ -6,6 +6,7 @@ import {
 } from "@/app/api/__generated__/endpoints/store/store.msw";
 import { server } from "@/mocks/mock-server";
 import { render, screen } from "@/tests/integrations/test-utils";
+import { LocaleProvider } from "@/lib/i18n";
 import { MainAgentPage } from "../MainAgentPage";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -20,6 +21,39 @@ describe("MainAgentPage", () => {
     mockUseAuth.mockReturnValue({
       user: null,
     });
+  });
+
+  test("reads the workflow page chrome in Vietnamese", async () => {
+    const agentDetails = getGetV2GetSpecificAgentResponseMock({
+      agent_name: "Deterministic Agent",
+      creator: "AutoGPT",
+      creator_avatar: "",
+      sub_heading: "A stable marketplace listing",
+      description: "This agent is used for integration coverage.",
+      categories: ["demo"],
+      versions: ["1"],
+      active_version_id: "store-version-1",
+      store_listing_version_id: "listing-1",
+      agent_image: ["https://example.com/agent.png"],
+      agent_output_demo: "",
+      agent_video: "",
+    });
+    server.use(
+      getGetV2GetSpecificAgentMockHandler(agentDetails),
+      getGetV2ListStoreAgentsMockHandler(() => {
+        return getGetV2ListStoreAgentsResponseMock({ agents: [] });
+      }),
+    );
+
+    render(
+      <LocaleProvider locale="vi">
+        <MainAgentPage
+          params={{ creator: "autogpt", slug: "deterministic-agent" }}
+        />
+      </LocaleProvider>,
+    );
+
+    expect(await screen.findByText("Quay lại")).toBeDefined();
   });
 
   test("renders the marketplace agent details and related sections", async () => {

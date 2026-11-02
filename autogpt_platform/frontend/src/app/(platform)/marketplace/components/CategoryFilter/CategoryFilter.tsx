@@ -3,6 +3,7 @@
 import { getCategoryHex } from "@/components/molecules/ExpertAvatar/colors";
 import { useStoreCategories } from "@/hooks/useStoreCategories";
 import { CategoryChip } from "../CategoryChip/CategoryChip";
+import { useT } from "@/lib/i18n";
 import { getCategoryAccent } from "../ExpertsSection/helpers";
 
 interface Props {
@@ -11,6 +12,7 @@ interface Props {
 }
 
 export function CategoryFilter({ selected, onSelect }: Props) {
+  const t = useT();
   const { categories } = useStoreCategories();
 
   if (categories.length === 0) return null;
@@ -25,16 +27,16 @@ export function CategoryFilter({ selected, onSelect }: Props) {
     <div
       className="mb-8 flex flex-wrap items-center gap-x-4 gap-y-2.5"
       role="group"
-      aria-label="Browse experts by category"
+      aria-label={t("marketplace1.categoryFilter.label")}
     >
       <span className="text-sm font-medium text-foreground-tertiary">
-        Browse experts by category
+        {t("marketplace1.categoryFilter.label")}
       </span>
       {/* One flex item, so the whole list drops below the label before it
           breaks within itself. */}
       <div className="flex flex-wrap gap-2">
         <CategoryChip
-          label="All"
+          label={t("marketplace1.all")}
           isSelected={selected === null}
           onClick={() => onSelect(null)}
         />
