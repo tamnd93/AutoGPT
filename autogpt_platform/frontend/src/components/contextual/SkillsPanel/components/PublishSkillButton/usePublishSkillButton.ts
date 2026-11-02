@@ -3,6 +3,7 @@ import { useGetV1ListProviders } from "@/app/api/__generated__/endpoints/integra
 import { formatProviderName } from "@/components/contextual/IntegrationsPanel/helpers";
 import { useToast } from "@/components/molecules/Toast/use-toast";
 import { useStoreCategories } from "@/hooks/useStoreCategories";
+import { useT } from "@/lib/i18n";
 import { useState } from "react";
 
 interface Args {
@@ -10,6 +11,7 @@ interface Args {
 }
 
 export function usePublishSkillButton({ skillName }: Args) {
+  const t = useT();
   const { toast } = useToast();
   const { categories } = useStoreCategories();
   const [isOpen, setIsOpen] = useState(false);
@@ -32,9 +34,11 @@ export function usePublishSkillButton({ skillName }: Args) {
       },
       onError: (error) =>
         toast({
-          title: "Couldn't publish this skill",
+          title: t("skills1.publish.toastFailed"),
           description:
-            error instanceof Error ? error.message : "Please try again.",
+            error instanceof Error
+              ? error.message
+              : t("skills1.publish.tryAgain"),
           variant: "destructive",
         }),
     },

@@ -12,6 +12,7 @@ import userEvent from "@testing-library/user-event";
 const user = () => userEvent.setup({ pointerEventsCheck: 0 });
 import { http, HttpResponse } from "msw";
 import { beforeEach, describe, expect, test, vi } from "vitest";
+import { LocaleProvider } from "@/lib/i18n";
 import { PublishSkillButton } from "../PublishSkillButton";
 
 vi.mock("next/navigation", () => ({
@@ -35,6 +36,21 @@ describe("PublishSkillButton", () => {
       ]),
       getPostV2PublishSkillToMarketplaceMockHandler201(),
     );
+  });
+
+  test("reads the publish dialog in Vietnamese when the app is set to Vietnamese", async () => {
+    render(
+      <LocaleProvider locale="vi">
+        <PublishSkillButton skillName="brand-voice-guide" />
+      </LocaleProvider>,
+    );
+
+    await user().click(screen.getByTestId("skill-publish-button"));
+    expect(
+      await screen.findByRole("heading", { name: "Đăng lên marketplace" }),
+    ).toBeDefined();
+    expect(screen.getByLabelText("Danh mục")).toBeDefined();
+    expect(screen.getByText("Gửi duyệt")).toBeDefined();
   });
 
   test("will not submit until a category is chosen", async () => {

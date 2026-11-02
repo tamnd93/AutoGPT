@@ -8,12 +8,14 @@ import { Dialog } from "@/components/molecules/Dialog/Dialog";
 import { MultiToggle } from "@/components/molecules/MultiToggle/MultiToggle";
 import { CheckmarkCircle02Icon, Store01Icon } from "@hugeicons/core-free-icons";
 import { usePublishSkillButton } from "./usePublishSkillButton";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   skillName: string;
 }
 
 export function PublishSkillButton({ skillName }: Props) {
+  const t = useT();
   const {
     isOpen,
     setIsOpen,
@@ -37,7 +39,7 @@ export function PublishSkillButton({ skillName }: Props) {
         size="icon"
         onClick={open}
         data-testid="skill-publish-button"
-        aria-label="Publish skill to marketplace"
+        aria-label={t("skills1.publish.aria")}
       >
         <Icon icon={Store01Icon} className="h-4 w-4" />
       </Button>
@@ -45,7 +47,7 @@ export function PublishSkillButton({ skillName }: Props) {
       <Dialog
         controlled={{ isOpen, set: setIsOpen }}
         styling={{ maxWidth: "32rem" }}
-        title="Publish to marketplace"
+        title={t("skills1.publish.title")}
       >
         <Dialog.Content>
           {submitted ? (
@@ -60,37 +62,36 @@ export function PublishSkillButton({ skillName }: Props) {
                 className="mt-0.5 text-emerald-600"
               />
               <Text variant="body">
-                Submitted for review. Your skill appears in the marketplace once
-                it is approved; what you published is a copy, so editing it here
-                changes nothing until you publish again.
+                {t("skills1.publish.submitted")}
               </Text>
             </div>
           ) : (
             <div className="flex flex-col gap-4">
               <Text variant="body" className="!text-foreground-tertiary">
-                Publishing sends a copy of <strong>{skillName}</strong> for
-                review. Say where it belongs and what it expects to be
-                connected.
+                {t("skills1.publish.introPrefix")}{" "}
+                <strong>{skillName}</strong>
+                {t("skills1.publish.introSuffix")}
               </Text>
               <Select
                 id="skill-category"
-                label="Category"
-                placeholder="Pick a category"
+                label={t("skills1.publish.category")}
+                placeholder={t("skills1.publish.categoryPlaceholder")}
                 value={category}
                 onValueChange={setCategory}
                 options={categoryOptions}
               />
               <div className="flex flex-col gap-2">
-                <Text variant="large-medium">Works with</Text>
+                <Text variant="large-medium">
+                  {t("skills1.publish.worksWith")}
+                </Text>
                 <Text variant="small" className="!text-foreground-tertiary">
-                  Integrations your instructions assume. Installers see these
-                  and connect them when they first need one.
+                  {t("skills1.publish.worksWithHint")}
                 </Text>
                 <MultiToggle
                   items={providerItems}
                   selectedValues={providers}
                   onChange={setProviders}
-                  aria-label="Integrations this skill works with"
+                  aria-label={t("skills1.publish.integrationsAria")}
                 />
               </div>
               <div className="flex justify-end">
@@ -101,7 +102,7 @@ export function PublishSkillButton({ skillName }: Props) {
                   loading={isPublishing}
                   data-testid="skill-publish-submit"
                 >
-                  Submit for review
+                  {t("skills1.publish.submit")}
                 </Button>
               </div>
             </div>
