@@ -53,7 +53,7 @@ describe("ScheduleActionsDropdown", () => {
           agent={agent}
           schedule={schedule}
           onRunCreated={vi.fn()}
-          onScheduleDeleted={vi.fn()}
+          onDeleted={vi.fn()}
         />
       </LocaleProvider>,
     );

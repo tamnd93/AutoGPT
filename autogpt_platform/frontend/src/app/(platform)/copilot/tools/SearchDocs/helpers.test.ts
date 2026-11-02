@@ -38,11 +38,11 @@ describe("documentation labels in vietnamese", () => {
       getDocsToolTitle(
         "tool-search_docs",
         {
-          type: "doc_search_results" as never,
+          type: "doc_search_results",
           results: [],
           count: 0,
           query: "trigger",
-        },
+        } as never,
         "vi",
       ),
     ).toBe("Kết quả tài liệu");
