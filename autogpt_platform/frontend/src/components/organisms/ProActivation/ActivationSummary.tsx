@@ -5,19 +5,25 @@ import {
   invoiceAdjustment,
   shortDate,
 } from "@/services/pro-activation/reviewDetails";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   terms: ActivationTerms;
 }
 
 export function ActivationSummary({ terms }: Props) {
+  const t = useT();
   const plan = terms.plan === "MAX" ? "Max" : "Pro";
   const cadence = billingCadence(terms);
   const adjustment = invoiceAdjustment(terms);
   const period =
     terms.period_starts_at && terms.next_payment_at
-      ? `${plan}, ${shortDate(terms.period_starts_at)} to ${shortDate(terms.next_payment_at)}`
-      : `${plan} subscription`;
+      ? t("billing3.activationSummary.period", {
+          plan,
+          start: shortDate(terms.period_starts_at),
+          end: shortDate(terms.next_payment_at),
+        })
+      : t("billing3.activationSummary.subscription", { plan });
   return (
     <div
       data-slot="activation-summary"
@@ -75,7 +81,7 @@ export function ActivationSummary({ terms }: Props) {
             className="flex items-start justify-between gap-4"
           >
             <dt data-slot="activation-summary-line-label">
-              Discounts, credits &amp; adjustments
+              {t("billing3.activationSummary.adjustments")}
             </dt>
             <dd
               data-slot="activation-summary-line-value"
@@ -91,15 +97,15 @@ export function ActivationSummary({ terms }: Props) {
         >
           <dt data-slot="activation-summary-line-label">
             {terms.renewal_tax?.price_tax_behavior === "inclusive"
-              ? "Tax (included)"
-              : "Tax"}
+              ? t("billing3.activationSummary.taxIncluded")
+              : t("billing3.activationSummary.tax")}
           </dt>
           <dd
             data-slot="activation-summary-line-value"
             className="shrink-0 tabular-nums"
           >
             {terms.tax_amount == null
-              ? "Included in total"
+              ? t("billing3.activationSummary.includedInTotal")
               : formatAmount(terms.tax_amount, terms.currency)}
           </dd>
         </div>
@@ -107,7 +113,9 @@ export function ActivationSummary({ terms }: Props) {
           data-slot="activation-summary-total"
           className="flex items-baseline justify-between gap-4 border-t border-border-base pt-3.5 text-base font-semibold text-foreground-strong"
         >
-          <dt data-slot="activation-summary-total-label">Due today</dt>
+          <dt data-slot="activation-summary-total-label">
+            {t("billing3.activationSummary.dueToday")}
+          </dt>
           <dd
             data-slot="activation-summary-total-value"
             className="tabular-nums"

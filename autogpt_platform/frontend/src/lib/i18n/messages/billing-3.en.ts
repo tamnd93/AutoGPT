@@ -115,6 +115,79 @@ export const billing3En = {
   "billing3.plans.afterDays": "After {days} days",
   "billing3.plans.trialChargeNote":
     "Card required. No subscription charge today. Your paid subscription starts automatically after the trial, plus applicable tax, unless you cancel before it ends.",
+  "billing3.activation.activeFresh":
+    "Your {plan} plan is active with fresh daily and weekly allowances. Your conversations and work are right where you left them.",
+  "billing3.activation.activeExisting":
+    "Your {plan} plan is active. Your existing usage still counts toward your plan’s limits.",
+  "billing3.activation.notApplicable":
+    "This activation no longer applies to your current plan. Check Billing for your current plan and payment details.",
+  "billing3.activation.paymentBody":
+    "Complete payment securely with Stripe using your existing invoice. It opens in a new tab, keeping your draft here while we check your activation.",
+  "billing3.activation.failedBody":
+    "This payment was canceled or could not be completed. Your usage has not been reset.",
+  "billing3.activation.supportBody":
+    "We need to verify your existing payment before you can continue. Contact support; please don’t start another purchase.",
+  "billing3.activation.confirming":
+    "We’re confirming your payment and preparing your {plan} allowance. You can close this window; we’ll keep checking.",
+  "billing3.activation.viewMyPlan": "View my plan",
+  "billing3.activation.verifyPayment": "Verify payment securely",
+  "billing3.activation.completePayment": "Complete payment securely",
+  "billing3.activation.contactSupport": "Contact support",
+  "billing3.activation.continueWhereLeft": "Continue where you left off",
+  "billing3.activation.backToWork": "Back to your work",
+  "billing3.activation.checkStatus": "Check activation status",
+
+  "billing3.activationSummary.period":
+    "{plan}, {start} to {end}",
+  "billing3.activationSummary.subscription": "{plan} subscription",
+  "billing3.activationSummary.adjustments":
+    "Discounts, credits & adjustments",
+  "billing3.activationSummary.tax": "Tax",
+  "billing3.activationSummary.taxIncluded": "Tax (included)",
+  "billing3.activationSummary.includedInTotal": "Included in total",
+  "billing3.activationSummary.dueToday": "Due today",
+
+  "billing3.activationTimeline.today": "Today",
+  "billing3.activationTimeline.startsAfter":
+    "After payment succeeds, {plan} starts and your daily and weekly allowances reset.",
+  "billing3.activationTimeline.renewal": "Renewal",
+
+  "billing3.proActivation.paymentReview": "Payment review",
+  "billing3.proActivation.autoGptPlan": "AutoGPT {plan}",
+  "billing3.proActivation.titleActive": "{plan} is active",
+  "billing3.proActivation.titleStartToday": "Start {plan} today",
+  "billing3.proActivation.titlePlanChanged": "Your plan has changed",
+  "billing3.proActivation.titlePaymentNotCompleted":
+    "Your payment wasn’t completed.",
+  "billing3.proActivation.titleOneMoreStep":
+    "One more step to start {plan}.",
+  "billing3.proActivation.titleGettingReady": "Getting {plan} ready.",
+  "billing3.proActivation.priceHeld":
+    "This price is held for a few more minutes.",
+  "billing3.proActivation.quoteExpired":
+    "This quote has expired. Review the current terms before paying.",
+  "billing3.proActivation.retryConsent": "Retry same confirmation",
+  "billing3.proActivation.payAndStart": "Pay {amount} and start {plan}",
+  "billing3.proActivation.renewsUntil":
+    "Renews {cadence} until you cancel. Cancel anytime in Billing.",
+  "billing3.proActivation.checkExisting": "Check existing payment",
+  "billing3.proActivation.reviewCurrent": "Review current terms",
+  "billing3.proActivation.notNow": "Not now",
+  "billing3.proActivation.loadingUpgrade":
+    "Loading your upgrade details…",
+  "billing3.proActivation.tryAgain": "Try again",
+
+  "billing3.renewal.percentOff": "{percent}% off",
+  "billing3.renewal.amountOff": "{amount} off",
+  "billing3.renewal.offerDiscount": "Offer discount",
+  "billing3.renewal.firstInvoiceOnly": "the first invoice only",
+  "billing3.renewal.everyRenewal": "every renewal",
+  "billing3.renewal.forMonths": "for {months} months",
+  "billing3.renewal.offerPeriod": "for the offer period",
+  "billing3.renewal.ends": " · ends {date}",
+  "billing3.renewal.fullTerms": "Full renewal terms",
+  "billing3.renewal.included": "included",
+  "billing3.renewal.additional": "additional",
   "billing3.plans.trialLimitNote":
     "Trial usage is limited. If you cancel, you keep access until the trial ends. You can manage or cancel your plan in billing.",
 

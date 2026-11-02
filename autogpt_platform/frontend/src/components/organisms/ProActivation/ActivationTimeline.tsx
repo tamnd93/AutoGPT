@@ -3,12 +3,14 @@ import {
   nextPaymentDescription,
   shortDate,
 } from "@/services/pro-activation/reviewDetails";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   terms: ActivationTerms;
 }
 
 export function ActivationTimeline({ terms }: Props) {
+  const t = useT();
   const plan = terms.plan === "MAX" ? "Max" : "Pro";
   return (
     <ol data-slot="activation-timeline" className="space-y-4 text-sm">
@@ -25,14 +27,13 @@ export function ActivationTimeline({ terms }: Props) {
           data-slot="activation-timeline-date"
           className="font-medium text-foreground-strong"
         >
-          Today
+          {t("billing3.activationTimeline.today")}
         </span>
         <span
           data-slot="activation-timeline-description"
           className="leading-relaxed text-foreground-secondary"
         >
-          After payment succeeds, {plan} starts and your daily and weekly
-          allowances reset.
+          {t("billing3.activationTimeline.startsAfter", { plan })}
         </span>
       </li>
       <li
@@ -50,7 +51,9 @@ export function ActivationTimeline({ terms }: Props) {
           data-slot="activation-timeline-date"
           className="font-medium text-foreground-strong"
         >
-          {terms.next_payment_at ? shortDate(terms.next_payment_at) : "Renewal"}
+          {terms.next_payment_at
+            ? shortDate(terms.next_payment_at)
+            : t("billing3.activationTimeline.renewal")}
         </span>
         <span
           data-slot="activation-timeline-description"

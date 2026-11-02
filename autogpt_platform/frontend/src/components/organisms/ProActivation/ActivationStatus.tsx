@@ -8,6 +8,7 @@ import {
   Shield01Icon,
 } from "@hugeicons/core-free-icons";
 import { invoiceURL } from "@/services/pro-activation/helpers";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   attempt: ActivationResponse | null;
@@ -28,6 +29,7 @@ export function ActivationStatus({
   check,
   close,
 }: Props) {
+  const t = useT();
   const url = invoiceURL(attempt?.hosted_invoice_url);
   const payment =
     attempt?.status === "payment_required" ||
@@ -63,17 +65,17 @@ export function ActivationStatus({
         <Text variant="body" className="text-foreground-body">
           {isReady
             ? hasFreshUsage
-              ? `Your ${plan} plan is active with fresh daily and weekly allowances. Your conversations and work are right where you left them.`
-              : `Your ${plan} plan is active. Your existing usage still counts toward your plan’s limits.`
+              ? t("billing3.activation.activeFresh", { plan })
+              : t("billing3.activation.activeExisting", { plan })
             : notApplicable
-              ? "This activation no longer applies to your current plan. Check Billing for your current plan and payment details."
+              ? t("billing3.activation.notApplicable")
               : payment
-                ? "Complete payment securely with Stripe using your existing invoice. It opens in a new tab, keeping your draft here while we check your activation."
+                ? t("billing3.activation.paymentBody")
                 : failed
-                  ? "This payment was canceled or could not be completed. Your usage has not been reset."
+                  ? t("billing3.activation.failedBody")
                   : needsSupport
-                    ? "We need to verify your existing payment before you can continue. Contact support; please don’t start another purchase."
-                    : `We’re confirming your payment and preparing your ${plan} allowance. You can close this window; we’ll keep checking.`}
+                    ? t("billing3.activation.supportBody")
+                    : t("billing3.activation.confirming", { plan })}
         </Text>
       </div>
       {notApplicable && (
@@ -84,7 +86,7 @@ export function ActivationStatus({
           className="w-full"
           onClick={close}
         >
-          View my plan
+          {t("billing3.activation.viewMyPlan")}
         </Button>
       )}
       {url && payment && (
@@ -97,8 +99,8 @@ export function ActivationStatus({
           className="w-full"
         >
           {attempt?.status === "action_required"
-            ? "Verify payment securely"
-            : "Complete payment securely"}
+            ? t("billing3.activation.verifyPayment")
+            : t("billing3.activation.completePayment")}
         </Button>
       )}
       {needsSupport && (
@@ -108,7 +110,7 @@ export function ActivationStatus({
           variant="primary"
           className="w-full"
         >
-          Contact support
+          {t("billing3.activation.contactSupport")}
         </Button>
       )}
       <Button
@@ -119,10 +121,10 @@ export function ActivationStatus({
         className="w-full"
       >
         {isReady
-          ? "Continue where you left off"
+          ? t("billing3.activation.continueWhereLeft")
           : failed || notApplicable
-            ? "Back to your work"
-            : "Check activation status"}
+            ? t("billing3.activation.backToWork")
+            : t("billing3.activation.checkStatus")}
       </Button>
     </div>
   );

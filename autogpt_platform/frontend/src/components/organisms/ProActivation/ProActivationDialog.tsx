@@ -8,12 +8,14 @@ import { ActivationStatus } from "./ActivationStatus";
 import { ActivationPaymentMethod } from "./ActivationPaymentMethod";
 import { billingCadence } from "@/services/pro-activation/reviewDetails";
 import { useQuoteExpiry } from "@/services/pro-activation/useQuoteExpiry";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   activation: ReturnType<typeof useActivationController>;
 }
 
 export function ProActivationDialog({ activation }: Props) {
+  const t = useT();
   const {
     attempt,
     isOpen,
@@ -34,17 +36,17 @@ export function ProActivationDialog({ activation }: Props) {
   const refreshTerms = needsNewTerms || (expiry.expired && !retryConsent);
   const plan = (attempt?.terms?.plan ?? readyPlan) === "MAX" ? "Max" : "Pro";
   const title = isReady
-    ? `${plan} is active`
+    ? t("billing3.proActivation.titleActive", { plan })
     : review
-      ? `Start ${plan} today`
+      ? t("billing3.proActivation.titleStartToday", { plan })
       : attempt?.status === "not_applicable"
-        ? "Your plan has changed"
+        ? t("billing3.proActivation.titlePlanChanged")
         : attempt?.status === "failed"
-          ? "Your payment wasn’t completed."
+          ? t("billing3.proActivation.titlePaymentNotCompleted")
           : attempt?.status === "action_required" ||
               attempt?.status === "payment_required"
-            ? `One more step to start ${plan}.`
-            : `Getting ${plan} ready.`;
+            ? t("billing3.proActivation.titleOneMoreStep", { plan })
+            : t("billing3.proActivation.titleGettingReady", { plan });
   return (
     <Dialog
       variant="compact"
@@ -56,7 +58,9 @@ export function ProActivationDialog({ activation }: Props) {
           className="space-y-2 pr-7"
         >
           <Text variant="small-medium" tone="muted">
-            {review ? "Payment review" : `AutoGPT ${plan}`}
+            {review
+              ? t("billing3.proActivation.paymentReview")
+              : t("billing3.proActivation.autoGptPlan", { plan })}
           </Text>
           <span
             data-slot="pro-activation-dialog-title"
@@ -86,7 +90,7 @@ export function ProActivationDialog({ activation }: Props) {
               <ActivationPaymentMethod />
               {expiry.expiringSoon && !retryConsent && (
                 <Text variant="small" className="text-warning-foreground">
-                  This price is held for a few more minutes.
+                  {t("billing3.proActivation.priceHeld")}
                 </Text>
               )}
               {expiry.expired && !retryConsent && (
@@ -95,8 +99,7 @@ export function ProActivationDialog({ activation }: Props) {
                   className="text-warning-foreground"
                   role="status"
                 >
-                  This quote has expired. Review the current terms before
-                  paying.
+                  {t("billing3.proActivation.quoteExpired")}
                 </Text>
               )}
               <Button
@@ -107,12 +110,16 @@ export function ProActivationDialog({ activation }: Props) {
                 onClick={confirm}
               >
                 {retryConsent
-                  ? "Retry same confirmation"
-                  : `Pay ${formatAmount(review.amount_due, review.currency)} and start ${plan}`}
+                  ? t("billing3.proActivation.retryConsent")
+                  : t("billing3.proActivation.payAndStart", {
+                      amount: formatAmount(review.amount_due, review.currency),
+                      plan,
+                    })}
               </Button>
               <Text variant="small" tone="muted" className="text-center">
-                Renews {billingCadence(review)} until you cancel. Cancel anytime
-                in Billing.
+                {t("billing3.proActivation.renewsUntil", {
+                  cadence: billingCadence(review),
+                })}
               </Text>
               {error && !needsNewTerms && retryConsent && (
                 <Button
@@ -121,7 +128,7 @@ export function ProActivationDialog({ activation }: Props) {
                   onClick={() => check()}
                   disabled={isBusy}
                 >
-                  Check existing payment
+                  {t("billing3.proActivation.checkExisting")}
                 </Button>
               )}
               {refreshTerms && (
@@ -131,7 +138,7 @@ export function ProActivationDialog({ activation }: Props) {
                   onClick={() => start(attempt.return_to)}
                   disabled={isBusy}
                 >
-                  Review current terms
+                  {t("billing3.proActivation.reviewCurrent")}
                 </Button>
               )}
               <Button
@@ -139,7 +146,7 @@ export function ProActivationDialog({ activation }: Props) {
                 className="w-full text-foreground-secondary"
                 onClick={() => setOpen(false)}
               >
-                Not now
+                {t("billing3.proActivation.notNow")}
               </Button>
             </>
           ) : attempt ? (
@@ -159,7 +166,9 @@ export function ProActivationDialog({ activation }: Props) {
               loading={isBusy}
               onClick={() => start()}
             >
-              {isBusy ? "Loading your upgrade details…" : "Try again"}
+              {isBusy
+                ? t("billing3.proActivation.loadingUpgrade")
+                : t("billing3.proActivation.tryAgain")}
             </Button>
           )}
         </div>

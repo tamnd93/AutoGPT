@@ -118,6 +118,80 @@ export const billing3Vi: Partial<Record<keyof typeof billing3En, string>> = {
   "billing3.plans.afterDays": "Sau {days} ngày",
   "billing3.plans.trialChargeNote":
     "Cần thẻ. Hôm nay chưa thu phí đăng ký. Gói trả phí của bạn tự động bắt đầu sau bản dùng thử, cộng thuế áp dụng, trừ khi bạn huỷ trước khi kết thúc.",
+  "billing3.activation.activeFresh":
+    "Gói {plan} của bạn đang hoạt động với hạn mức ngày và tuần mới. Cuộc trò chuyện và công việc của bạn vẫn ở đúng chỗ cũ.",
+  "billing3.activation.activeExisting":
+    "Gói {plan} của bạn đang hoạt động. Mức dùng hiện có vẫn tính vào giới hạn của gói.",
+  "billing3.activation.notApplicable":
+    "Bản kích hoạt này không còn áp dụng cho gói hiện tại của bạn. Kiểm tra phần Thanh toán để xem gói và thông tin thanh toán hiện tại.",
+  "billing3.activation.paymentBody":
+    "Hoàn tất thanh toán an toàn qua Stripe bằng hoá đơn hiện có. Trang mở ở tab mới, giữ bản nháp của bạn ở đây trong khi chúng tôi kiểm tra kích hoạt.",
+  "billing3.activation.failedBody":
+    "Thanh toán này đã bị huỷ hoặc không hoàn tất được. Mức dùng của bạn chưa được đặt lại.",
+  "billing3.activation.supportBody":
+    "Chúng tôi cần xác minh thanh toán hiện có trước khi bạn tiếp tục. Liên hệ hỗ trợ; đừng bắt đầu giao dịch mua khác.",
+  "billing3.activation.confirming":
+    "Chúng tôi đang xác nhận thanh toán và chuẩn bị hạn mức {plan}. Bạn có thể đóng cửa sổ này; chúng tôi tiếp tục kiểm tra.",
+  "billing3.activation.viewMyPlan": "Xem gói của tôi",
+  "billing3.activation.verifyPayment": "Xác minh thanh toán an toàn",
+  "billing3.activation.completePayment": "Hoàn tất thanh toán an toàn",
+  "billing3.activation.contactSupport": "Liên hệ hỗ trợ",
+  "billing3.activation.continueWhereLeft": "Tiếp tục nơi bạn đã dừng",
+  "billing3.activation.backToWork": "Quay lại công việc",
+  "billing3.activation.checkStatus": "Kiểm tra trạng thái kích hoạt",
+
+  "billing3.activationSummary.period":
+    "{plan}, {start} đến {end}",
+  "billing3.activationSummary.subscription": "Gói thuê bao {plan}",
+  "billing3.activationSummary.adjustments":
+    "Giảm giá, tín dụng & điều chỉnh",
+  "billing3.activationSummary.tax": "Thuế",
+  "billing3.activationSummary.taxIncluded": "Thuế (đã gồm)",
+  "billing3.activationSummary.includedInTotal": "Đã gồm trong tổng",
+  "billing3.activationSummary.dueToday": "Cần trả hôm nay",
+
+  "billing3.activationTimeline.today": "Hôm nay",
+  "billing3.activationTimeline.startsAfter":
+    "Sau khi thanh toán thành công, gói {plan} bắt đầu và hạn mức ngày, tuần của bạn được đặt lại.",
+  "billing3.activationTimeline.renewal": "Gia hạn",
+
+  "billing3.proActivation.paymentReview": "Duyệt thanh toán",
+  "billing3.proActivation.autoGptPlan": "AutoGPT {plan}",
+  "billing3.proActivation.titleActive": "{plan} đang hoạt động",
+  "billing3.proActivation.titleStartToday": "Bắt đầu {plan} hôm nay",
+  "billing3.proActivation.titlePlanChanged": "Gói của bạn đã thay đổi",
+  "billing3.proActivation.titlePaymentNotCompleted":
+    "Thanh toán của bạn chưa hoàn tất.",
+  "billing3.proActivation.titleOneMoreStep":
+    "Thêm một bước để bắt đầu {plan}.",
+  "billing3.proActivation.titleGettingReady": "Đang chuẩn bị {plan}.",
+  "billing3.proActivation.priceHeld":
+    "Giá này được giữ thêm vài phút.",
+  "billing3.proActivation.quoteExpired":
+    "Báo giá này đã hết hạn. Xem điều khoản hiện tại trước khi thanh toán.",
+  "billing3.proActivation.retryConsent": "Thử lại xác nhận cũ",
+  "billing3.proActivation.payAndStart":
+    "Thanh toán {amount} và bắt đầu {plan}",
+  "billing3.proActivation.renewsUntil":
+    "Gia hạn {cadence} cho tới khi bạn huỷ. Huỷ bất cứ lúc nào trong phần Thanh toán.",
+  "billing3.proActivation.checkExisting": "Kiểm tra thanh toán hiện có",
+  "billing3.proActivation.reviewCurrent": "Xem điều khoản hiện tại",
+  "billing3.proActivation.notNow": "Để sau",
+  "billing3.proActivation.loadingUpgrade":
+    "Đang tải chi tiết nâng cấp của bạn…",
+  "billing3.proActivation.tryAgain": "Thử lại",
+
+  "billing3.renewal.percentOff": "giảm {percent}%",
+  "billing3.renewal.amountOff": "giảm {amount}",
+  "billing3.renewal.offerDiscount": "Giảm giá ưu đãi",
+  "billing3.renewal.firstInvoiceOnly": "chỉ hoá đơn đầu",
+  "billing3.renewal.everyRenewal": "mọi lần gia hạn",
+  "billing3.renewal.forMonths": "trong {months} tháng",
+  "billing3.renewal.offerPeriod": "trong thời gian ưu đãi",
+  "billing3.renewal.ends": " · kết thúc {date}",
+  "billing3.renewal.fullTerms": "Điều khoản gia hạn đầy đủ",
+  "billing3.renewal.included": "đã gồm",
+  "billing3.renewal.additional": "cộng thêm",
   "billing3.plans.trialLimitNote":
     "Mức dùng thử có giới hạn. Nếu huỷ, bạn vẫn giữ quyền truy cập tới khi hết bản dùng thử. Bạn có thể quản lý hoặc huỷ gói trong phần thanh toán.",
 
