@@ -56,6 +56,7 @@ import { onboarding3Vi } from "./onboarding-3.vi";
 import { settingsRest1Vi } from "./settings-rest-1.vi";
 import { settingsRest2Vi } from "./settings-rest-2.vi";
 import { settingsRest3Vi } from "./settings-rest-3.vi";
+import { team1Vi } from "./team-1.vi";
 import { Team2Vi } from "./team-2.vi";
 import { voice1Vi } from "./voice-1.vi";
 
@@ -117,6 +118,7 @@ export const vi: Partial<Record<MessageKey, string>> = {
   ...settingsRest1Vi,
   ...settingsRest2Vi,
   ...settingsRest3Vi,
+  ...team1Vi,
   ...Team2Vi,
   ...voice1Vi,
   "common.planSuffix": "gói {plan}",

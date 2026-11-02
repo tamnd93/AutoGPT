@@ -3,6 +3,7 @@
 import type { ExpertAvatarRequestCategory } from "@/app/api/__generated__/models/expertAvatarRequestCategory";
 import { ExpertAvatar } from "@/components/molecules/ExpertAvatar/ExpertAvatar";
 import { ExpertAvatarPicker } from "@/components/molecules/ExpertAvatarPicker/ExpertAvatarPicker";
+import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { bubbleClassFor } from "../ColorStep/helpers";
 
@@ -21,6 +22,7 @@ export function AvatarStep({
   avatarUrl,
   onPick,
 }: Props) {
+  const t = useT();
   if (avatarUrl) {
     return (
       <div
@@ -30,12 +32,14 @@ export function AvatarStep({
         )}
       >
         <ExpertAvatar
-          name={name || "Your expert"}
+          name={name || t("team1.common.yourExpert")}
           avatarUrl={avatarUrl}
           size={40}
         />
         <span className="text-sm font-medium text-foreground">
-          {name ? `${name} has an avatar` : "Picture set"}
+          {name
+            ? t("team1.avatar.hasAvatar", { name })
+            : t("team1.avatar.pictureSet")}
         </span>
       </div>
     );

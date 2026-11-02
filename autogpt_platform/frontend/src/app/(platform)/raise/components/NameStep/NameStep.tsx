@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/atoms/Button/Button";
 import { Input } from "@/components/atoms/Input/Input";
+import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { bubbleClassFor } from "../ColorStep/helpers";
 import { useNameStep } from "./useNameStep";
@@ -19,6 +20,7 @@ export function NameStep({
   color,
   onSubmit,
 }: Props) {
+  const t = useT();
   const { custom, setCustom, trimmed, submitCustom } = useNameStep({
     onSubmit,
   });
@@ -30,7 +32,7 @@ export function NameStep({
     <div className="flex flex-col items-end gap-4">
       <div
         role="group"
-        aria-label="Suggested names"
+        aria-label={t("team1.name.suggested")}
         className="flex flex-wrap justify-end gap-2.5"
       >
         {chips.map((chip) => (
@@ -56,19 +58,19 @@ export function NameStep({
           aria-hidden
           className="mr-4 text-xs font-medium uppercase tracking-caps text-muted-foreground"
         >
-          or
+          {t("team1.common.or")}
         </span>
       )}
       {selectedName ? null : (
         <form onSubmit={submitCustom} className="flex items-center gap-2">
           <Input
             id="raise-name"
-            label="Or type your own"
+            label={t("team1.name.ownLabel")}
             hideLabel
             size="small"
             value={custom}
             onChange={(event) => setCustom(event.target.value)}
-            placeholder="Type a name…"
+            placeholder={t("team1.name.placeholder")}
             maxLength={100}
             wrapperClassName="mb-0 w-full max-w-[16rem] [&_input]:h-[2.625rem] [&_input]:py-3"
           />
@@ -79,7 +81,7 @@ export function NameStep({
             disabled={!trimmed}
             className="h-[2.625rem] rounded-xl py-3"
           >
-            Name me
+            {t("team1.name.submit")}
           </Button>
         </form>
       )}

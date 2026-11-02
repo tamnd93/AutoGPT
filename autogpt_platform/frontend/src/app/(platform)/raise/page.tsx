@@ -1,6 +1,7 @@
 "use client";
 
 import { Skeleton } from "@/components/atoms/Skeleton/Skeleton";
+import { useT } from "@/lib/i18n";
 import dynamic from "next/dynamic";
 
 const RaiseFlow = dynamic(
@@ -16,10 +17,11 @@ export default function RaisePage() {
 }
 
 function RaiseSkeleton() {
+  const t = useT();
   return (
     <main
       className="min-h-screen bg-background lg:h-screen lg:overflow-hidden"
-      aria-label="Loading…"
+      aria-label={t("team1.raiseFlow.loadingAria")}
     >
       <div className="grid w-full items-stretch lg:h-full lg:grid-cols-2">
         <div className="order-2 flex flex-col gap-4 px-4 pb-16 pt-6 sm:px-6 lg:order-1 lg:h-screen lg:overflow-y-auto lg:px-8">

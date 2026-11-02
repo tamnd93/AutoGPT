@@ -1,4 +1,5 @@
 import { render, screen } from "@/tests/integrations/test-utils";
+import { LocaleProvider } from "@/lib/i18n";
 import { describe, expect, test } from "vitest";
 import { SoulPreviewPanel } from "./SoulPreviewPanel";
 
@@ -26,5 +27,19 @@ describe("SoulPreviewPanel", () => {
     expect(
       screen.getByRole("heading", { level: 2, name: "Maria" }),
     ).toBeDefined();
+  });
+
+  test("words the placeholder heading and detail labels in Vietnamese", () => {
+    render(
+      <LocaleProvider locale="vi">
+        <SoulPreviewPanel {...baseProps} name="" about="Thích SEO" />
+      </LocaleProvider>,
+    );
+
+    expect(
+      screen.getByRole("heading", { level: 2, name: "Chưa có tên" }),
+    ).toBeDefined();
+    expect(screen.getByText("Giới thiệu")).toBeDefined();
+    expect(screen.getByText("Thích SEO")).toBeDefined();
   });
 });

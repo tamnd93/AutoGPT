@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/atoms/Button/Button";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { FlowIcon, SparklesIcon, Tick02Icon } from "@hugeicons/core-free-icons";
 import { MAX_ATTACHMENTS, type SearchHit } from "./helpers";
@@ -23,6 +24,7 @@ export function KitResultRow({
   isPending,
   onAdd,
 }: Props) {
+  const t = useT();
   return (
     <div
       role="listitem"
@@ -45,7 +47,9 @@ export function KitResultRow({
         <p className="truncate text-sm font-medium text-foreground">
           {hit.name}
         </p>
-        <p className="truncate text-xs text-muted-foreground">{hit.subtitle}</p>
+        <p className="truncate text-xs text-muted-foreground">
+          {t(hit.subtitleKey)}
+        </p>
       </div>
 
       <Button
@@ -74,7 +78,11 @@ export function KitResultRow({
           ) : undefined
         }
       >
-        {selected ? "Added" : atCap ? `${MAX_ATTACHMENTS} max` : "Add"}
+        {selected
+          ? t("team1.common.added")
+          : atCap
+            ? t("team1.kitResult.atCap", { count: MAX_ATTACHMENTS })
+            : t("team1.common.add")}
       </Button>
     </div>
   );

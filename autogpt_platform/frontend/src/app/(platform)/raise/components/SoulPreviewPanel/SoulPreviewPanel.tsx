@@ -3,6 +3,7 @@
 import type { ExpertAvatarRequestCategory } from "@/app/api/__generated__/models/expertAvatarRequestCategory";
 import { GlassOrb } from "@/components/molecules/GlassOrb/GlassOrb";
 import { DEFAULT_GLASS_PARAMS } from "@/components/molecules/GlassOrb/GlassSurface";
+import { useLocale, useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import { kitBudgetLabel, kitToolsLabel, type RaiseKit } from "../../helpers";
@@ -40,12 +41,14 @@ export function SoulPreviewPanel({
   voiceLabel,
   kit,
 }: Props) {
+  const t = useT();
+  const locale = useLocale();
   const roleLabel = jobTitle || roleFor(category);
   const details = [
-    { label: "About", value: about },
-    { label: "Voice", value: voiceLabel },
-    { label: "Weekly budget", value: kitBudgetLabel(kit) },
-    { label: "Tools", value: kitToolsLabel(kit) },
+    { label: t("team1.soulPreview.about"), value: about },
+    { label: t("team1.soulPreview.voice"), value: voiceLabel },
+    { label: t("team1.budget.aria"), value: kitBudgetLabel(kit, locale) },
+    { label: t("team1.soulPreview.tools"), value: kitToolsLabel(kit) },
   ].filter((detail): detail is SoulDetail => Boolean(detail.value));
 
   return (
@@ -55,7 +58,9 @@ export function SoulPreviewPanel({
           {avatarUrl ? (
             <Image
               src={avatarUrl}
-              alt={`${name || "Your expert"}'s picture`}
+              alt={t("team1.soulPreview.pictureAlt", {
+                name: name || t("team1.common.yourExpert"),
+              })}
               width={112}
               height={112}
               className="size-28 rounded-full object-cover"
@@ -73,7 +78,7 @@ export function SoulPreviewPanel({
               name ? `text-foreground ${REVEAL}` : "text-muted-foreground/50",
             )}
           >
-            {name || "No name yet"}
+            {name || t("team1.soulPreview.noName")}
           </h2>
           {roleLabel ? (
             <p

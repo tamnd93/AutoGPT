@@ -1,5 +1,6 @@
 import { getV2GetSpecificAgent } from "@/app/api/__generated__/endpoints/store/store";
 import { toast } from "@/components/molecules/Toast/use-toast";
+import { useT } from "@/lib/i18n";
 import { useState } from "react";
 import type { RaiseAttachmentDraft } from "../../helpers";
 import {
@@ -24,6 +25,7 @@ export function useAttachmentPicker({
   onSubmit,
   onSkip,
 }: Args) {
+  const t = useT();
   const search = useKitSearch(scope);
   const [attachments, setAttachments] = useState<RaiseAttachmentDraft[]>([]);
   const [pendingKey, setPendingKey] = useState<string | null>(null);
@@ -69,8 +71,8 @@ export function useAttachmentPicker({
       });
     } catch {
       toast({
-        title: `Couldn't add ${hit.name}`,
-        description: "Something went wrong. Please try again.",
+        title: t("team1.picker.addFailedTitle", { name: hit.name }),
+        description: t("team1.picker.addFailedDescription"),
         variant: "destructive",
       });
     } finally {

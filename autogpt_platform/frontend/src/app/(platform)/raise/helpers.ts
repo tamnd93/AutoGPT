@@ -2,7 +2,8 @@ import type { ExpertAvatarRequestCategory } from "@/app/api/__generated__/models
 import type { VoiceSample } from "@/app/api/__generated__/models/voiceSample";
 import { legacyCategoryForRole } from "./legacyCategory";
 import { creditsToUsdLabel } from "@/lib/credits";
-import type { Locale } from "@/lib/i18n/locale";
+import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/locale";
+import { getMessage } from "@/lib/i18n/translate";
 import {
   buildVoicePreferences,
   type VoicePickResult,
@@ -269,10 +270,12 @@ export function previousStep(step: RaiseStep): RaiseStep {
 export function voiceSummaryLabel(
   result: VoicePickResult,
   samples: VoiceSample[],
+  locale: Locale = DEFAULT_LOCALE,
 ): string {
-  if (result.choice === "custom") return "My own writing sample";
+  if (result.choice === "custom")
+    return getMessage(locale, "team1.voice.custom");
   const sample = result.choice === "a" ? samples[0] : samples[1];
-  return sample?.label ?? "A voice";
+  return sample?.label ?? getMessage(locale, "team1.voice.someVoice");
 }
 
 export function resolveVoicePreferences(
@@ -292,8 +295,10 @@ export function kitBudgetLabel(
   locale: Locale = "en",
 ): string | null {
   if (!kit || kit.weeklyBudget === null) return null;
-  if (kit.weeklyBudget === 0) return "No weekly limit";
-  return `${creditsToUsdLabel(kit.weeklyBudget, locale)} / week`;
+  if (kit.weeklyBudget === 0) return getMessage(locale, "team1.kit.noLimit");
+  return getMessage(locale, "team1.kit.weeklySuffix", {
+    amount: creditsToUsdLabel(kit.weeklyBudget, locale),
+  });
 }
 
 export function kitToolsLabel(kit: RaiseKit | null): string | null {

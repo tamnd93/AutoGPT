@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/atoms/Button/Button";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import {
   ArrowLeft02Icon,
@@ -28,6 +29,7 @@ const STEP_ANIMATION =
   "duration-500 animate-in fade-in slide-in-from-bottom-2 fill-mode-both motion-reduce:animate-none";
 
 export function RaiseFlow() {
+  const t = useT();
   const flow = useRaisePage();
   const {
     hasStarted,
@@ -67,7 +69,9 @@ export function RaiseFlow() {
             onClick={startRaising}
             disabled={hasStarted}
           >
-            {hasStarted ? "Setting up expert now" : "Create Expert"}
+            {hasStarted
+              ? t("team1.raiseFlow.settingUp")
+              : t("team1.raiseFlow.create")}
             {hasStarted ? null : <Icon icon={ArrowRight02Icon} size={14} />}
           </Button>
         </div>
@@ -100,7 +104,7 @@ export function RaiseFlow() {
             role="log"
             aria-live="polite"
             aria-relevant="additions text"
-            aria-label="Expert creation conversation"
+            aria-label={t("team1.raiseFlow.conversationAria")}
             className="flex flex-col gap-4 px-4 pb-16 pt-6 scrollbar-none sm:px-6 lg:h-full lg:overflow-y-auto lg:px-8"
           >
             {items.map(renderItem)}
@@ -118,7 +122,7 @@ export function RaiseFlow() {
             <Button
               variant="icon"
               size="small"
-              aria-label="Back"
+              aria-label={t("team1.raiseFlow.back")}
               className="bg-surface p-2 hover:bg-surface-hover"
               onClick={goBack}
               disabled={!canGoBack}
@@ -128,7 +132,7 @@ export function RaiseFlow() {
             <Button
               variant="icon"
               size="small"
-              aria-label="Start over"
+              aria-label={t("team1.raiseFlow.startOver")}
               className="bg-surface p-2 hover:bg-surface-hover"
               onClick={() => setIsRestartOpen(true)}
             >

@@ -4,6 +4,9 @@ import type { MarketplaceSkill } from "@/app/api/__generated__/models/marketplac
 import type { RaiseAttachment } from "@/app/api/__generated__/models/raiseAttachment";
 import type { StoreAgent } from "@/app/api/__generated__/models/storeAgent";
 import { parseUsdToCredits } from "@/lib/credits";
+import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/locale";
+import type { MessageKey } from "@/lib/i18n/messages/en";
+import { getMessage } from "@/lib/i18n/translate";
 import type { RaiseAttachmentDraft } from "../../helpers";
 
 export const MAX_ATTACHMENTS = 20;
@@ -22,6 +25,7 @@ export interface SearchHit {
   key: string;
   name: string;
   subtitle: string;
+  subtitleKey: MessageKey;
   kind: "workflow" | "skill";
   source: "marketplace" | "library";
   id: string;
@@ -88,6 +92,7 @@ export function combineSearchHits({
         key: `library:workflow:${agent.id}`,
         name: agent.name,
         subtitle: "Library workflow",
+        subtitleKey: "team1.kit.libraryWorkflow",
         kind: "workflow",
         source: "library",
         id: agent.id,
@@ -103,6 +108,7 @@ export function combineSearchHits({
         key: `library:skill:${skill.name.toLowerCase()}`,
         name: skill.name,
         subtitle: "Library skill",
+        subtitleKey: "team1.kit.librarySkill",
         kind: "skill",
         source: "library",
         id: skill.name,
@@ -174,6 +180,7 @@ export function toRaiseAttachments(
 export function failedAttachmentMessage(
   failures: { kind: string; source: string; id: string; reason: string }[],
   drafts: RaiseAttachmentDraft[],
+  locale: Locale = DEFAULT_LOCALE,
 ) {
   return failures
     .map((failure) => {
@@ -184,10 +191,12 @@ export function failedAttachmentMessage(
             draft.source === failure.source &&
             draft.id === failure.id,
         )?.name ?? failure.id;
-      const reason =
+      const reason = getMessage(
+        locale,
         failure.reason === "unavailable"
-          ? "is no longer available"
-          : "couldn't be installed";
+          ? "team1.kit.unavailable"
+          : "team1.kit.installFailed",
+      );
       return `${name} ${reason}`;
     })
     .join(". ");
@@ -198,6 +207,7 @@ function marketplaceWorkflowHit(agent: StoreAgent): SearchHit {
     key: `marketplace:workflow:${agent.creator.toLowerCase()}/${agent.slug}`,
     name: agent.agent_name,
     subtitle: "Marketplace workflow",
+    subtitleKey: "team1.kit.marketplaceWorkflow",
     kind: "workflow",
     source: "marketplace",
     // Resolved to a store listing version id when the row is added.
@@ -213,6 +223,7 @@ function marketplaceSkillHit(skill: MarketplaceSkill): SearchHit {
     key: `marketplace:skill:${skill.slug}`,
     name: skill.title,
     subtitle: "Marketplace skill",
+    subtitleKey: "team1.kit.marketplaceSkill",
     kind: "skill",
     source: "marketplace",
     id: skill.slug,

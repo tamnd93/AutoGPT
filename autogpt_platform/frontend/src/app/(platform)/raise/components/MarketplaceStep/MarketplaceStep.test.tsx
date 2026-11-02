@@ -7,6 +7,7 @@ import type { LibraryAgent } from "@/app/api/__generated__/models/libraryAgent";
 import type { StoreAgent } from "@/app/api/__generated__/models/storeAgent";
 import type { StoreAgentDetails } from "@/app/api/__generated__/models/storeAgentDetails";
 import { Toaster } from "@/components/molecules/Toast/toaster";
+import { LocaleProvider } from "@/lib/i18n";
 import { server } from "@/mocks/mock-server";
 import { render, screen, waitFor } from "@/tests/integrations/test-utils";
 import userEvent from "@testing-library/user-event";
@@ -67,6 +68,37 @@ describe("MarketplaceStep", () => {
 
     await userEvent.click(screen.getByRole("button", { name: "Skip" }));
     expect(onSkip).toHaveBeenCalled();
+  });
+
+  test("words the search field, skip and final button in Vietnamese", async () => {
+    const onSubmit = vi.fn();
+    render(
+      <LocaleProvider locale="vi">
+        <MarketplaceStep
+          name="Otto"
+          color="rose-300"
+          submitted={null}
+          isFinal={true}
+          isSubmitting={false}
+          onSubmit={onSubmit}
+          onSkip={vi.fn()}
+        />
+      </LocaleProvider>,
+    );
+
+    expect(
+      screen.getByRole("textbox", {
+        name: "Tìm workflow trên marketplace và thư viện",
+      }),
+    ).toBeDefined();
+    expect(
+      screen.getByPlaceholderText("Tìm workflow trên marketplace và thư viện…"),
+    ).toBeDefined();
+    expect(screen.getByRole("button", { name: "Bỏ qua" })).toBeDefined();
+    await userEvent.click(
+      screen.getByRole("button", { name: "Đưa Otto vào hoạt động" }),
+    );
+    expect(onSubmit).toHaveBeenCalledWith([]);
   });
 
   test("raises the expert itself when it is the flow's last beat", async () => {

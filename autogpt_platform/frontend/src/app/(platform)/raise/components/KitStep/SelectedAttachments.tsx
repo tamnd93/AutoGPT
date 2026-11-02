@@ -1,6 +1,7 @@
 "use client";
 
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { Cancel01Icon } from "@hugeicons/core-free-icons";
 import type { RaiseAttachmentDraft } from "../../helpers";
@@ -14,11 +15,12 @@ interface Props {
 }
 
 export function SelectedAttachments({ attachments, color, onRemove }: Props) {
+  const t = useT();
   if (attachments.length === 0) return null;
   return (
     <div
       role="list"
-      aria-label="Selected tools"
+      aria-label={t("team1.kit.selectedTools")}
       className="flex w-full max-w-[42rem] flex-wrap justify-end gap-2"
     >
       {attachments.map((attachment) => (
