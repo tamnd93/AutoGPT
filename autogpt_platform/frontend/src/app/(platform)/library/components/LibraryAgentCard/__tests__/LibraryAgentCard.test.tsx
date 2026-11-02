@@ -5,6 +5,7 @@ import { LibraryAgentCard } from "../LibraryAgentCard";
 import { FavoriteAnimationProvider } from "../../../context/FavoriteAnimationContext";
 import type { LibraryAgent } from "@/app/api/__generated__/models/libraryAgent";
 import type { AgentStatusInfo } from "../../../types";
+import { LocaleProvider } from "@/lib/i18n";
 
 const AGENT = {
   id: "4f6b2c1e-0000-4000-8000-000000000001",
@@ -33,6 +34,17 @@ function renderCard() {
     </FavoriteAnimationProvider>,
   );
 }
+
+test("renders the run count in Vietnamese when the locale is vi", () => {
+  render(
+    <LocaleProvider locale="vi">
+      <FavoriteAnimationProvider>
+        <LibraryAgentCard agent={AGENT} statusInfo={STATUS} />
+      </FavoriteAnimationProvider>
+    </LocaleProvider>,
+  );
+  expect(screen.getByText("3 công việc")).toBeDefined();
+});
 
 describe("LibraryAgentCard", () => {
   test("renders the agent image while the URL loads", () => {

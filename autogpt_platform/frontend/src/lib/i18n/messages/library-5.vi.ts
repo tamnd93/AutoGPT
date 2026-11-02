@@ -97,4 +97,9 @@ export const library5Vi: Partial<Record<keyof typeof library5En, string>> = {
 
   "library5.status.running": "Đang chạy",
   "library5.status.listening": "Đang lắng nghe",
+
+  "library5.folderCreate.trigger": "Tạo thư mục",
+  "library5.card.tasks": "{count} công việc",
+  "library5.tabs.all": "Tất cả",
+  "library5.tabs.favorites": "Yêu thích",
 };

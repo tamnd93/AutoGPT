@@ -95,4 +95,9 @@ export const library5En = {
 
   "library5.status.running": "Running",
   "library5.status.listening": "Listening",
+
+  "library5.folderCreate.trigger": "Create folder",
+  "library5.card.tasks": "{count} tasks",
+  "library5.tabs.all": "All",
+  "library5.tabs.favorites": "Favorites",
 } as const;

@@ -112,7 +112,7 @@ export default function LibraryFolderCreationDialog() {
           size="small"
         >
           <Icon icon={Folder01Icon} width={18} height={18} />
-          <span className="create-folder">Create folder</span>
+          <span className="create-folder">{t("library5.folderCreate.trigger")}</span>
         </Button>
       </Dialog.Trigger>
       <Dialog.Content>

@@ -15,4 +15,8 @@ export const nav3En = {
   "nav3.search.hint.close": "Close",
   "nav3.search.resultsAria": "Search results",
   "nav3.search.opening": "Opening",
+
+  "nav3.chats.loadAll": "Load all",
+  "nav3.chats.loadAllAria": "Load all {label} chats",
+  "nav3.chats.loadMoreAria": "Load more {label} chats",
 } as const;

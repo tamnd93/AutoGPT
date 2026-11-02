@@ -82,7 +82,7 @@ export function LibraryAgentCard({
           <div className="relative flex items-center gap-3 pl-2 pr-4 pt-3">
             <StatusBadge status={statusInfo.status} />
             <Text variant="small" className="text-foreground-subtle">
-              {statusInfo.totalRuns} tasks
+              {t("library5.card.tasks", { count: statusInfo.totalRuns })}
             </Text>
           </div>
         </NextLink>

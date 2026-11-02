@@ -11,18 +11,20 @@ import type { LibraryTab, AgentStatusFilter } from "./types";
 import { useLibraryFleetSummary } from "./hooks/useLibraryFleetSummary";
 import { useLibraryAgents } from "@/hooks/useLibraryAgents/useLibraryAgents";
 import { FavouriteIcon, Menu01Icon } from "@hugeicons/core-free-icons";
+import { useT } from "@/lib/i18n";
 
-const LIBRARY_TABS: LibraryTab[] = [
-  { id: "all", title: "All", icon: Menu01Icon },
-  { id: "favorites", title: "Favorites", icon: FavouriteIcon },
-];
 
 export default function LibraryPage() {
   const { searchTerm, setSearchTerm, librarySort, setLibrarySort } =
     useLibraryListPage();
   // In the URL, so a link can open a folder (the approval card links one).
   const [selectedFolderId, setSelectedFolderId] = useQueryState("folder");
-  const [activeTab, setActiveTab] = useState(LIBRARY_TABS[0].id);
+  const t = useT();
+  const tabs: LibraryTab[] = [
+    { id: "all", title: t("library5.tabs.all"), icon: Menu01Icon },
+    { id: "favorites", title: t("library5.tabs.favorites"), icon: FavouriteIcon },
+  ];
+  const [activeTab, setActiveTab] = useState(tabs[0].id);
   const [statusFilter, setStatusFilter] = useState<AgentStatusFilter>("all");
   const [isImportOpen, setIsImportOpen] = useState(false);
   const { agents } = useLibraryAgents();
@@ -58,7 +60,7 @@ export default function LibraryPage() {
           setLibrarySort={setLibrarySort}
           selectedFolderId={selectedFolderId}
           onFolderSelect={setSelectedFolderId}
-          tabs={LIBRARY_TABS}
+          tabs={tabs}
           activeTab={activeTab}
           onTabChange={handleTabChange}
           statusFilter={statusFilter}

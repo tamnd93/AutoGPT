@@ -24,6 +24,7 @@ import { ArrowDown01Icon, PlusSignIcon } from "@hugeicons/core-free-icons";
 import Link, { useLinkStatus } from "next/link";
 import { ReactNode, useState } from "react";
 import { EXPERT_CHAT_PAGE_SIZE } from "@/services/experts/expert-chat-pagination";
+import { useT } from "@/lib/i18n";
 
 // The chevron, the slot the header reserves next to it, and the new-chat link
 // that floats over that slot are all one size. On touch widths the slot and
@@ -63,6 +64,7 @@ export function ExpertChatGroup({
   const [visibleCount, setVisibleCount] = useState(
     isAutopilot ? OTTO_PREVIEW_COUNT : EXPERT_CHAT_PAGE_SIZE,
   );
+  const t = useT();
   const visibleSessions = sessions.slice(0, visibleCount);
   const hasHiddenSessions = sessions.length > visibleSessions.length;
   const runningSessions = sessions.filter((session) => session.is_processing);
@@ -143,7 +145,11 @@ export function ExpertChatGroup({
           {hasHiddenSessions && (
             <button
               type="button"
-              aria-label={`${isAutopilot ? "Load all" : "Load more"} ${label} chats`}
+              aria-label={
+                isAutopilot
+                  ? t("nav3.chats.loadAllAria", { label })
+                  : t("nav3.chats.loadMoreAria", { label })
+              }
               onClick={() =>
                 setVisibleCount((count) =>
                   isAutopilot ? Infinity : count + EXPERT_CHAT_PAGE_SIZE,
@@ -157,7 +163,7 @@ export function ExpertChatGroup({
                 tone="inherit"
                 className="block"
               >
-                {isAutopilot ? "Load all" : "Load more"}
+                {isAutopilot ? t("nav3.chats.loadAll") : t("nav1.chats.loadMore")}
               </Text>
             </button>
           )}

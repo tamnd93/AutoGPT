@@ -17,4 +17,8 @@ export const nav3Vi: Partial<Record<keyof typeof nav3En, string>> = {
   "nav3.search.hint.close": "Đóng",
   "nav3.search.resultsAria": "Kết quả tìm kiếm",
   "nav3.search.opening": "Đang mở",
+
+  "nav3.chats.loadAll": "Tải tất cả",
+  "nav3.chats.loadAllAria": "Tải tất cả cuộc trò chuyện {label}",
+  "nav3.chats.loadMoreAria": "Tải thêm cuộc trò chuyện {label}",
 };
