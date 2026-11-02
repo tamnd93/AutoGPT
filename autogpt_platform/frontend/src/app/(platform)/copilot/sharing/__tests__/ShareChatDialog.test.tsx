@@ -13,6 +13,7 @@ import {
   screen,
   waitFor,
 } from "@/tests/integrations/test-utils";
+import { LocaleProvider } from "@/lib/i18n";
 import { ShareChatDialog } from "../ShareChatDialog";
 
 const SESSION_ID = "550e8400-e29b-41d4-a716-446655440000";
@@ -123,6 +124,23 @@ describe("ShareChatDialog", () => {
     expect(
       screen.getByLabelText(/share workflow runs from this chat/i),
     ).toBeDefined();
+  });
+
+  test("reads the sharing dialog in Vietnamese", async () => {
+    mockShareState({ is_shared: false });
+    render(
+      <LocaleProvider locale="vi">
+        <ShareChatDialog sessionId={SESSION_ID} open onOpenChange={vi.fn()} />
+      </LocaleProvider>,
+    );
+
+    expect(
+      await screen.findByRole("button", { name: "Bật chia sẻ" }),
+    ).toBeDefined();
+    expect(
+      screen.getByText(/ai có liên kết cũng sẽ thấy cuộc trò chuyện này/i),
+    ).toBeDefined();
+    expect(screen.getByLabelText(/chia sẻ lượt chạy workflow/i)).toBeDefined();
   });
 
   test("does not render dialog content when open=false", () => {

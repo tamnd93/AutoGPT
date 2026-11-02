@@ -7,6 +7,7 @@ import {
   usePostV2EnableChatSharing,
 } from "@/app/api/__generated__/endpoints/chat/chat";
 import { useToast } from "@/components/molecules/Toast/use-toast";
+import { useT } from "@/lib/i18n";
 import { chatShareUrl } from "@/lib/share/routes";
 
 type Props = {
@@ -16,6 +17,7 @@ type Props = {
 
 export function useShareChatDialog({ sessionId, open }: Props) {
   const { toast } = useToast();
+  const t = useT();
   const queryClient = useQueryClient();
 
   const [isShared, setIsShared] = useState(false);
@@ -62,8 +64,8 @@ export function useShareChatDialog({ sessionId, open }: Props) {
       onSuccess: (res) => {
         if (res.status !== 200) {
           toast({
-            title: "Failed to enable sharing",
-            description: "Please try again.",
+            title: t("chatStates3.sharing.toastFailedEnable"),
+            description: t("chatStates3.sharing.toastTryAgain"),
             variant: "destructive",
           });
           return;
@@ -72,15 +74,14 @@ export function useShareChatDialog({ sessionId, open }: Props) {
         setShareToken(res.data.share_token);
         invalidateState();
         toast({
-          title: "Chat sharing enabled",
-          description:
-            "Anyone with the link can now view this conversation. Revoke any time.",
+          title: t("chatStates3.sharing.toastEnabled"),
+          description: t("chatStates3.sharing.toastEnabledBody"),
         });
       },
       onError: () => {
         toast({
-          title: "Failed to enable sharing",
-          description: "Please try again.",
+          title: t("chatStates3.sharing.toastFailedEnable"),
+          description: t("chatStates3.sharing.toastTryAgain"),
           variant: "destructive",
         });
       },
@@ -96,14 +97,14 @@ export function useShareChatDialog({ sessionId, open }: Props) {
           setConfirmingStop(false);
           invalidateState();
           toast({
-            title: "Chat sharing disabled",
-            description: "The share link is no longer accessible.",
+            title: t("chatStates3.sharing.toastDisabled"),
+            description: t("chatStates3.sharing.toastDisabledBody"),
           });
         },
         onError: () => {
           toast({
-            title: "Failed to disable sharing",
-            description: "Please try again.",
+            title: t("chatStates3.sharing.toastFailedDisable"),
+            description: t("chatStates3.sharing.toastTryAgain"),
             variant: "destructive",
           });
         },
@@ -120,7 +121,7 @@ export function useShareChatDialog({ sessionId, open }: Props) {
       setTimeout(() => setCopied(false), 2000);
     } catch {
       toast({
-        title: "Failed to copy link",
+        title: t("chatStates3.sharing.toastFailedCopy"),
         variant: "destructive",
       });
     }

@@ -10,6 +10,7 @@ import {
   Tick02Icon,
 } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 
 type Props = {
   sessionId: string;
@@ -18,11 +19,12 @@ type Props = {
 };
 
 export function ShareChatDialog({ sessionId, open, onOpenChange }: Props) {
+  const t = useT();
   const state = useShareChatDialog({ sessionId, open });
 
   return (
     <Dialog
-      title="Share this chat"
+      title={t("chatStates3.sharing.title")}
       controlled={{ isOpen: open, set: onOpenChange }}
     >
       <Dialog.Content>
@@ -30,14 +32,12 @@ export function ShareChatDialog({ sessionId, open, onOpenChange }: Props) {
           {/* TODO(tokens): no exact role for amber-900 */}
           <div className="space-y-2 rounded-md border border-warning-border bg-warning-surface p-3">
             <Text variant="small" className="text-amber-900">
-              Anyone with the link will see this conversation. Don&apos;t share
-              if it contains secrets you pasted, personal details, or
-              credentials you wouldn&apos;t want public.
+              {t("chatStates3.sharing.warning1")}
             </Text>
             <Text variant="small" className="text-amber-900">
-              Sharing is <strong>live</strong>: new messages, workflow runs, and
-              files added after you enable sharing become visible too. Stop
-              sharing to revoke access.
+              {t("chatStates3.sharing.livePrefix")}{" "}
+              <strong>{t("chatStates3.sharing.liveWord")}</strong>
+              {t("chatStates3.sharing.liveSuffix")}
             </Text>
           </div>
 
@@ -49,22 +49,36 @@ export function ShareChatDialog({ sessionId, open, onOpenChange }: Props) {
             // right now).
             <div className="rounded-md border border-border-base bg-surface-muted p-3">
               <Text variant="small-medium" tone="primary">
-                {state.isShared ? "Currently sharing" : "About to share"}
+                {state.isShared
+                  ? t("chatStates3.sharing.currentlySharing")
+                  : t("chatStates3.sharing.aboutToShare")}
               </Text>
               <ul className="mt-1 list-disc pl-5 text-xs text-foreground-body">
                 <li>
                   {state.messageCount}{" "}
-                  {state.messageCount === 1 ? "message" : "messages"}
+                  {state.messageCount === 1
+                    ? t("chatStates3.sharing.messageOne")
+                    : t("chatStates3.sharing.messages")}
                 </li>
                 {state.autoShareExecutions && (
                   <li>
-                    {state.linkedRunCount} workflow{" "}
-                    {state.linkedRunCount === 1 ? "run" : "runs"}
+                    {state.linkedRunCount === 1
+                      ? t("chatStates3.sharing.runOne", {
+                          count: state.linkedRunCount,
+                        })
+                      : t("chatStates3.sharing.runs", {
+                          count: state.linkedRunCount,
+                        })}
                   </li>
                 )}
                 <li>
-                  {state.fileCount} workspace{" "}
-                  {state.fileCount === 1 ? "file" : "files"}
+                  {state.fileCount === 1
+                    ? t("chatStates3.sharing.fileOne", {
+                        count: state.fileCount,
+                      })
+                    : t("chatStates3.sharing.files", {
+                        count: state.fileCount,
+                      })}
                 </li>
               </ul>
             </div>
@@ -77,24 +91,25 @@ export function ShareChatDialog({ sessionId, open, onOpenChange }: Props) {
           <div className="flex items-center justify-between gap-3 rounded border border-border-base px-3 py-2.5">
             <div className="min-w-0">
               <Text variant="body-medium">
-                Share workflow runs in this chat
+                {t("chatStates3.sharing.toggleTitle")}
               </Text>
               <Text variant="small" tone="muted">
-                Includes every run from this conversation, including ones that
-                happen after you share.
+                {t("chatStates3.sharing.toggleBody")}
               </Text>
             </div>
             <Switch
               checked={state.autoShareExecutions}
               onCheckedChange={state.setAutoShareExecutions}
               disabled={state.isShared || state.isLoadingState}
-              aria-label="Share workflow runs from this chat"
+              aria-label={t("chatStates3.sharing.toggleAria")}
             />
           </div>
 
           {state.isShared && state.shareUrl && (
             <div className="space-y-2">
-              <Text variant="small-medium">Share link</Text>
+              <Text variant="small-medium">
+                {t("chatStates3.sharing.shareLink")}
+              </Text>
               <div className="flex items-center gap-2">
                 <input
                   readOnly
@@ -113,7 +128,9 @@ export function ShareChatDialog({ sessionId, open, onOpenChange }: Props) {
                     )
                   }
                 >
-                  {state.copied ? "Copied" : "Copy"}
+                  {state.copied
+                    ? t("chatStates3.sharing.copied")
+                    : t("chatStates3.sharing.copy")}
                 </Button>
               </div>
             </div>
@@ -128,7 +145,7 @@ export function ShareChatDialog({ sessionId, open, onOpenChange }: Props) {
             <>
               {state.confirmingStop && (
                 <Button variant="secondary" onClick={state.cancelStop}>
-                  Cancel
+                  {t("library2.common.cancel")}
                 </Button>
               )}
               <Button
@@ -136,7 +153,9 @@ export function ShareChatDialog({ sessionId, open, onOpenChange }: Props) {
                 onClick={state.requestStop}
                 loading={state.isDisabling}
               >
-                {state.confirmingStop ? "Confirm stop sharing" : "Stop sharing"}
+                {state.confirmingStop
+                  ? t("chatStates3.sharing.confirmStop")
+                  : t("chatStates3.sharing.stop")}
               </Button>
             </>
           ) : (
@@ -147,7 +166,7 @@ export function ShareChatDialog({ sessionId, open, onOpenChange }: Props) {
               disabled={state.isLoadingState}
               leftIcon={<Icon icon={Share03Icon} size={14} />}
             >
-              Enable sharing
+              {t("chatStates3.sharing.enable")}
             </Button>
           )}
         </Dialog.Footer>

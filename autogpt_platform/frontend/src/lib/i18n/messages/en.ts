@@ -16,6 +16,7 @@ import { chatInput3En } from "./chat-input-3.en";
 import { chatRuntime1En } from "./chat-runtime-1.en";
 import { chatRuntime2En } from "./chat-runtime-2.en";
 import { ChatStates2En } from "./chat-states-2.en";
+import { ChatStates3En } from "./chat-states-3.en";
 import { chatTools1En } from "./chat-tools-1.en";
 import { chatTools2En } from "./chat-tools-2.en";
 import { chatTools3En } from "./chat-tools-3.en";
@@ -65,6 +66,7 @@ export const en = {
   ...chatRuntime1En,
   ...chatRuntime2En,
   ...ChatStates2En,
+  ...ChatStates3En,
   ...chatTools1En,
   ...chatTools2En,
   ...chatTools3En,
