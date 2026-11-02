@@ -11,9 +11,10 @@ import { Button } from "@/components/atoms/Button/Button";
 import { Input } from "@/components/atoms/Input/Input";
 import { Text } from "@/components/atoms/Text/Text";
 import { Plus, Trash2 } from "lucide-react";
+import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { useTable, RowData } from "./useTable";
-import { formatColumnTitle, formatPlaceholder } from "./helpers";
+import { formatColumnTitle } from "./helpers";
 
 export interface TableProps {
   columns: string[];
@@ -32,10 +33,11 @@ export function Table({
   onChange,
   allowAddRow = true,
   allowDeleteRow = true,
-  addRowLabel = "Add row",
+  addRowLabel,
   className,
   readOnly = false,
 }: TableProps) {
+  const t = useT();
   const { rows, handleAddRow, handleDeleteRow, handleCellChange } = useTable({
     columns,
     defaultValues,
@@ -101,7 +103,9 @@ export function Table({
                         onChange={(e) =>
                           handleCellChange(rowIndex, column, e.target.value)
                         }
-                        placeholder={formatPlaceholder(column)}
+                        placeholder={t("shared4.table.enterPlaceholder", {
+                          column: column.toLowerCase(),
+                        })}
                         size="small"
                         wrapperClassName="mb-0"
                         data-slot="table-cell-input"
@@ -115,7 +119,7 @@ export function Table({
                       variant="icon"
                       size="icon"
                       onClick={() => handleDeleteRow(rowIndex)}
-                      aria-label="Delete row"
+                      aria-label={t("shared4.table.deleteRow")}
                       data-slot="table-delete-row"
                       className="text-foreground-subtle transition-colors hover:text-error"
                     >
@@ -148,7 +152,7 @@ export function Table({
                     }
                     className="w-fit"
                   >
-                    {addRowLabel}
+                    {addRowLabel ?? t("shared4.table.addRow")}
                   </Button>
                 </TableCell>
               </TableRow>

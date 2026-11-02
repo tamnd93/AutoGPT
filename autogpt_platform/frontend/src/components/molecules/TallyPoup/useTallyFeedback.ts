@@ -48,7 +48,7 @@ export function useTallyFeedback(isAuthenticated: boolean | null) {
         onClose: handleFormClose,
       });
     } catch {
-      showFeedbackLoadError();
+      showFeedbackLoadError(t);
     } finally {
       setIsLoading(false);
     }

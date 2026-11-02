@@ -9,6 +9,7 @@ import React, {
   useState,
 } from "react";
 import * as AccordionPrimitive from "@radix-ui/react-accordion";
+import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/atoms/Button/Button";
 import { ScrollArea } from "@/components/molecules/ScrollArea/ScrollArea";
@@ -374,6 +375,7 @@ const CollapseButton = forwardRef<
     { className: _className, elements, expandAll = false, children, ...props },
     ref,
   ) => {
+    const t = useT();
     const { expandedItems, setExpandedItems } = useTree();
 
     const expendAllTree = useCallback((elements: TreeViewElement[]) => {
@@ -414,7 +416,7 @@ const CollapseButton = forwardRef<
       >
         {children}
         <span data-slot="file-tree-collapse-button-label" className="sr-only">
-          Toggle
+          {t("shared4.fileTree.toggle")}
         </span>
       </Button>
     );

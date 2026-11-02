@@ -11,6 +11,7 @@ import {
   render,
   screen,
 } from "@/tests/integrations/test-utils";
+import { LocaleProvider } from "@/lib/i18n";
 import { YouTubeEmbed } from "../YouTubeEmbed";
 
 const VIDEO_ID = "dQw4w9WgXcQ";
@@ -32,6 +33,26 @@ afterEach(() => {
 });
 
 describe("YouTubeEmbed", () => {
+  test("reads the consent notice in Vietnamese", () => {
+    configureCookiebot();
+    installCookiebot({ statistics: true, marketing: false });
+
+    render(
+      <LocaleProvider locale="vi">
+        <YouTubeEmbed url={VIDEO_URL} title="Demo video" />
+      </LocaleProvider>,
+    );
+
+    expect(
+      screen.getByText(
+        "YouTube đặt cookie quảng cáo khi video này tải. Để xem tại đây, hãy cho phép cookie tiếp thị.",
+      ),
+    ).toBeDefined();
+    expect(
+      screen.getByRole("link", { name: "Xem trên YouTube" }),
+    ).toBeDefined();
+  });
+
   test("loads the privacy-enhanced player once marketing cookies are allowed", () => {
     configureCookiebot();
     installCookiebot({ marketing: true });

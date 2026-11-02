@@ -20,4 +20,30 @@ export const Shared4Vi: Partial<Record<keyof typeof Shared4En, string>> = {
   "shared4.needsAttention.errorFallback": "Đã có lỗi xảy ra",
   "shared4.showMore.more": "thêm",
   "shared4.showMore.less": "bớt",
+
+  "shared4.table.addRow": "Thêm dòng",
+  "shared4.table.deleteRow": "Xoá dòng",
+  "shared4.table.enterPlaceholder": "Nhập {column}",
+  "shared4.timePicker.hour": "Giờ",
+  "shared4.timePicker.minute": "Phút",
+  "shared4.timePicker.meridiem": "SA/CH",
+  "shared4.timePicker.am": "SA",
+  "shared4.timePicker.pm": "CH",
+  "shared4.toast.unable": "Không thể {action}",
+  "shared4.toast.unexpected": "Đã xảy ra lỗi",
+  "shared4.youtube.defaultTitle": "Video YouTube",
+  "shared4.youtube.noVideo":
+    "Chỉ có thể xem video này trên YouTube.",
+  "shared4.youtube.allowMarketing":
+    "YouTube đặt cookie quảng cáo khi video này tải. Để xem tại đây, hãy cho phép cookie tiếp thị.",
+  "shared4.youtube.blocked":
+    "YouTube đặt cookie quảng cáo khi video này tải.",
+  "shared4.youtube.watch": "Xem trên YouTube",
+  "shared4.youtube.load": "Tải video",
+  "shared4.youtube.cookieSettings": "Cài đặt cookie",
+  "shared4.tally.loadFailedTitle": "Không mở được biểu mẫu phản hồi",
+  "shared4.tally.loadFailedBody": "Có thể trình duyệt của bạn đã chặn nó.",
+  "shared4.tally.openNewTab": "Mở biểu mẫu trong tab mới",
+  "shared4.sidebar.toggle": "Bật/tắt thanh bên",
+  "shared4.fileTree.toggle": "Bật/tắt",
 };

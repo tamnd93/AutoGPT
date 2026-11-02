@@ -122,16 +122,25 @@ export function getYouTubeWatchUrl(url: string): string | null {
   return getYouTubeLinks(url).watchUrl;
 }
 
-export function getNoticeText({
-  hasVideoId,
-  canAllowHere,
-}: {
-  hasVideoId: boolean;
-  canAllowHere: boolean;
-}): string {
-  if (!hasVideoId) return "This video can only be watched on YouTube.";
-  if (canAllowHere) {
-    return "YouTube sets advertising cookies when this video loads. To watch it here, allow marketing cookies.";
-  }
-  return "YouTube sets advertising cookies when this video loads.";
+import { getMessage } from "@/lib/i18n/translate";
+import type { Locale } from "@/lib/i18n/locale";
+
+import { getMessage } from "@/lib/i18n/translate";
+import type { Locale } from "@/lib/i18n/locale";
+
+export function getNoticeText(
+  {
+    hasVideoId,
+    canAllowHere,
+  }: {
+    hasVideoId: boolean;
+    canAllowHere: boolean;
+  },
+  locale: Locale = "en",
+): string {
+  if (!hasVideoId)
+    return getMessage(locale, "shared4.youtube.noVideo");
+  if (canAllowHere)
+    return getMessage(locale, "shared4.youtube.allowMarketing");
+  return getMessage(locale, "shared4.youtube.blocked");
 }

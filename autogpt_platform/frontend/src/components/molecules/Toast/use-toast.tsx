@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { toast as sonnerToast } from "sonner";
+import { useT } from "@/lib/i18n";
 
 export interface ToastProps {
   title?: React.ReactNode;
@@ -99,13 +100,14 @@ interface ToastOnFailOptions {
 }
 
 function useToastOnFail() {
+  const t = useT();
   return React.useCallback(
     (action: string, { rethrow = false }: ToastOnFailOptions = {}) =>
       (error: any) => {
         const err = error as Error;
         toast({
-          title: `Unable to ${action}`,
-          description: err.message ?? "Something went wrong",
+          title: t("shared4.toast.unable", { action }),
+          description: err.message ?? t("shared4.toast.unexpected"),
           variant: "destructive",
           duration: 10000,
         });

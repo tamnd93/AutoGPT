@@ -3,6 +3,7 @@
 import { Button } from "@/components/atoms/Button/Button";
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { Text } from "@/components/atoms/Text/Text";
+import { useLocale, useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { YoutubeIcon } from "@hugeicons/core-free-icons";
 import { getNoticeText } from "./helpers";
@@ -18,11 +19,10 @@ interface Props {
 // YouTube sets advertising cookies (Cookiebot's Marketing category) as soon as
 // its player loads, so the iframe waits for that consent. Nothing else here
 // requests anything from YouTube.
-export function YouTubeEmbed({
-  url,
-  title = "YouTube video",
-  className,
-}: Props) {
+export function YouTubeEmbed({ url, title, className }: Props) {
+  const t = useT();
+  const locale = useLocale();
+  const displayTitle = title ?? t("shared4.youtube.defaultTitle");
   const {
     videoId,
     embedUrl,
@@ -41,7 +41,7 @@ export function YouTubeEmbed({
         data-slot="youtube-embed"
         className={cn("h-full w-full", className)}
         src={embedUrl}
-        title={title}
+        title={displayTitle}
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
         allowFullScreen
         sandbox="allow-scripts allow-same-origin allow-presentation allow-popups allow-popups-to-escape-sandbox"
@@ -52,7 +52,7 @@ export function YouTubeEmbed({
   return (
     <div
       role="group"
-      aria-label={title}
+      aria-label={displayTitle}
       data-slot="youtube-embed"
       className={cn(
         "flex h-full w-full flex-col items-center justify-center gap-3 overflow-auto bg-surface-hover p-4 text-center",
@@ -71,7 +71,7 @@ export function YouTubeEmbed({
         data-slot="youtube-embed-notice"
         className="max-w-sm"
       >
-        {getNoticeText({ hasVideoId: videoId !== null, canAllowHere })}
+        {getNoticeText({ hasVideoId: videoId !== null, canAllowHere }, locale)}
       </Text>
       <div
         data-slot="youtube-embed-actions"
@@ -88,7 +88,7 @@ export function YouTubeEmbed({
             leadingIcon={YoutubeIcon}
             data-slot="youtube-embed-watch"
           >
-            Watch on YouTube
+            {t("shared4.youtube.watch")}
           </Button>
         )}
         {canLoadOnce && (
@@ -98,7 +98,7 @@ export function YouTubeEmbed({
             onClick={loadVideo}
             data-slot="youtube-embed-load"
           >
-            Load video
+            {t("shared4.youtube.load")}
           </Button>
         )}
         {canAllowHere && (
@@ -109,7 +109,7 @@ export function YouTubeEmbed({
             onClick={openSettings}
             data-slot="youtube-embed-settings"
           >
-            Cookie settings
+            {t("shared4.youtube.cookieSettings")}
           </Button>
         )}
       </div>

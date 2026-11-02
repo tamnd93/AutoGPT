@@ -1,4 +1,13 @@
 import { toast } from "@/components/molecules/Toast/use-toast";
+import type { MessageKey } from "@/lib/i18n/messages/en";
+import { getMessage } from "@/lib/i18n/translate";
+
+export type Translate = (
+  key: MessageKey,
+  values?: Record<string, string | number>,
+) => string;
+
+const english: Translate = (key, values) => getMessage("en", key, values);
 
 const TALLY_EMBED_URL = "https://tally.so/widgets/embed.js";
 export const FEEDBACK_TALLY_FORM_ID = "3yx2L0";
@@ -70,12 +79,12 @@ export function getFeedbackHiddenFields(context: FeedbackContext) {
   };
 }
 
-export function showFeedbackLoadError() {
+export function showFeedbackLoadError(t: Translate = english) {
   toast({
-    title: "Couldn't open the feedback form",
+    title: t("shared4.tally.loadFailedTitle"),
     description: (
       <>
-        It may be blocked by your browser.{" "}
+        {t("shared4.tally.loadFailedBody")}{" "}
         <a
           href={FEEDBACK_FORM_URL}
           target="_blank"
@@ -83,7 +92,7 @@ export function showFeedbackLoadError() {
           data-slot="feedback-form-link"
           className="underline"
         >
-          Open the form in a new tab
+          {t("shared4.tally.openNewTab")}
         </a>
       </>
     ),
