@@ -15,6 +15,7 @@ import {
   waitFor,
 } from "@/tests/integrations/test-utils";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { LocaleProvider } from "@/lib/i18n";
 import { BriefingTabContent } from "../BriefingTabContent";
 
 // The costs breakdown is billing UI: these tests are a billed install's view.
@@ -509,6 +510,29 @@ describe("BriefingTabContent — CopilotLibrarySummary (skills and follow-ups pi
       expect(screen.queryByTestId("copilot-library-summary")).toBeNull();
       expect(screen.queryByText("Skills and follow-ups")).toBeNull();
     });
+  });
+
+  it("reads the skills and follow-ups pill in Vietnamese", async () => {
+    setupBriefingMocks();
+    server.use(
+      getListCopilotSkillsMockHandler([makeSkill({ name: "only-one" })]),
+      getListCopilotFollowupSchedulesMockHandler([makeFollowup({ id: "f1" })]),
+      getGetV1ListExecutionSchedulesForAUserMockHandler([]),
+    );
+
+    render(
+      <LocaleProvider locale="vi">
+        <BriefingTabContent activeTab="all" agents={[]} />
+      </LocaleProvider>,
+    );
+
+    expect(await screen.findByText("Kỹ năng và nhắc hẹn")).toBeDefined();
+    expect(screen.getByTestId("copilot-library-skills-link").textContent).toBe(
+      "1 kỹ năng",
+    );
+    expect(
+      screen.getByTestId("copilot-library-followups-link").textContent,
+    ).toBe("1 nhắc hẹn");
   });
 
   it("shows both links with a separator when skills AND follow-ups are positive (singular pluralization)", async () => {

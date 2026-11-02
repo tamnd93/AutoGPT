@@ -20,6 +20,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { MoreVerticalIcon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   agent: LibraryAgent;
@@ -29,6 +30,7 @@ interface Props {
 
 export function TriggerActionsDropdown({ agent, trigger, onDeleted }: Props) {
   const { toast } = useToast();
+  const t = useT();
   const queryClient = useQueryClient();
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
@@ -40,7 +42,7 @@ export function TriggerActionsDropdown({ agent, trigger, onDeleted }: Props) {
       await deletePreset({ presetId: trigger.id });
 
       toast({
-        title: "Trigger deleted",
+        title: t("library3.triggerActions.deleted"),
       });
 
       queryClient.invalidateQueries({
@@ -53,11 +55,11 @@ export function TriggerActionsDropdown({ agent, trigger, onDeleted }: Props) {
       onDeleted?.();
     } catch (error: unknown) {
       toast({
-        title: "Failed to delete trigger",
+        title: t("library3.triggerActions.deleteFailed"),
         description:
           error instanceof Error
             ? error.message
-            : "An unexpected error occurred.",
+            : t("library2.common.unexpectedError"),
         variant: "destructive",
       });
     }
@@ -71,7 +73,7 @@ export function TriggerActionsDropdown({ agent, trigger, onDeleted }: Props) {
             // TODO(tokens): no exact role for hover:bg-gray-100 (#F3F4F6)
             className="ml-auto shrink-0 rounded p-1 hover:bg-gray-100"
             onClick={(e) => e.stopPropagation()}
-            aria-label="More actions"
+            aria-label={t("library3.actions.more")}
           >
             <Icon
               // TODO(tokens): no exact role for text-gray-400 (#9CA3AF)
@@ -88,7 +90,7 @@ export function TriggerActionsDropdown({ agent, trigger, onDeleted }: Props) {
             }}
             className="flex items-center gap-2"
           >
-            Delete trigger
+            {t("library3.triggerActions.delete")}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
@@ -99,13 +101,12 @@ export function TriggerActionsDropdown({ agent, trigger, onDeleted }: Props) {
           set: setShowDeleteDialog,
         }}
         styling={{ maxWidth: "32rem" }}
-        title="Delete trigger"
+        title={t("library3.triggerActions.delete")}
       >
         <Dialog.Content>
           <div>
             <Text variant="large">
-              Are you sure you want to delete this trigger? This action cannot
-              be undone.
+              {t("library3.triggerActions.deleteBody")}
             </Text>
             <Dialog.Footer>
               <Button
@@ -113,14 +114,14 @@ export function TriggerActionsDropdown({ agent, trigger, onDeleted }: Props) {
                 disabled={isDeleting}
                 onClick={() => setShowDeleteDialog(false)}
               >
-                Cancel
+                {t("library2.common.cancel")}
               </Button>
               <Button
                 variant="destructive"
                 onClick={handleDelete}
                 loading={isDeleting}
               >
-                Delete Trigger
+                {t("library4.triggerActions.confirmDelete")}
               </Button>
             </Dialog.Footer>
           </div>

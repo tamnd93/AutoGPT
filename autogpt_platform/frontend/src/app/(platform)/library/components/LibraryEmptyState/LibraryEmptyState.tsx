@@ -5,10 +5,12 @@ import { Text } from "@/components/atoms/Text/Text";
 import { motion, useReducedMotion } from "framer-motion";
 import { PlusSignIcon, Store01Icon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 
 const EASE_OUT_QUINT = [0.22, 1, 0.36, 1] as const;
 
 export function LibraryEmptyState() {
+  const t = useT();
   const shouldReduceMotion = useReducedMotion();
 
   function fadeUp(delay: number) {
@@ -35,13 +37,12 @@ export function LibraryEmptyState() {
       <div className="flex max-w-md flex-col items-center gap-2">
         <motion.div {...fadeUp(0.28)}>
           <Text variant="h3" className="text-foreground-strong">
-            Your library is empty
+            {t("library4.empty.title")}
           </Text>
         </motion.div>
         <motion.div {...fadeUp(0.36)}>
           <Text variant="body" className="text-foreground-tertiary">
-            Build your own workflow from scratch, or grab one from the
-            marketplace to get started.
+            {t("library4.empty.body")}
           </Text>
         </motion.div>
       </div>
@@ -55,7 +56,7 @@ export function LibraryEmptyState() {
             size="large"
             leftIcon={<Icon icon={PlusSignIcon} className="h-4 w-4" />}
           >
-            Build a workflow
+            {t("library4.empty.build")}
           </Button>
         </motion.div>
         <motion.div {...fadeUp(0.5)}>
@@ -66,7 +67,7 @@ export function LibraryEmptyState() {
             size="large"
             leftIcon={<Icon icon={Store01Icon} className="h-4 w-4" />}
           >
-            Browse marketplace
+            {t("library4.empty.browse")}
           </Button>
         </motion.div>
       </div>

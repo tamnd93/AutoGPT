@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { formatCents } from "@/app/(platform)/copilot/components/usageHelpers";
 import { useIsBillingEnabled } from "@/hooks/useIsBillingEnabled";
 import type { FleetSummary, AgentStatusFilter } from "../../../../types";
+import { useT, type MessageKey } from "@/lib/i18n";
 
 interface Props {
   summary: FleetSummary;
@@ -15,7 +16,7 @@ interface Props {
 }
 
 const TILES: {
-  label: string;
+  labelKey: MessageKey;
   key: keyof FleetSummary;
   format?: (v: number) => string;
   filter: AgentStatusFilter;
@@ -23,7 +24,7 @@ const TILES: {
   color: string;
 }[] = [
   {
-    label: "Spent this month",
+    labelKey: "library4.stats.spent",
     key: "monthlySpend",
     format: formatCents,
     filter: "all",
@@ -31,35 +32,35 @@ const TILES: {
     color: "text-foreground-body",
   },
   {
-    label: "Running now",
+    labelKey: "library4.stats.running",
     key: "running",
     filter: "running",
     emoji: "🚩",
     color: "text-info-foreground",
   },
   {
-    label: "Recently completed",
+    labelKey: "library4.stats.completed",
     key: "completed",
     filter: "completed",
     emoji: "🗃️",
     color: "text-success",
   },
   {
-    label: "Needs attention",
+    labelKey: "library4.stats.attention",
     key: "error",
     filter: "attention",
     emoji: "⚠️",
     color: "text-error",
   },
   {
-    label: "Scheduled",
+    labelKey: "library4.stats.scheduled",
     key: "scheduled",
     filter: "scheduled",
     emoji: "📅",
     color: "text-yellow-600",
   },
   {
-    label: "Idle",
+    labelKey: "library4.stats.idle",
     key: "idle",
     filter: "idle",
     emoji: "💤",
@@ -68,6 +69,7 @@ const TILES: {
 ];
 
 export function StatsGrid({ summary, activeTab, onTabChange }: Props) {
+  const t = useT();
   const isBillingEnabled = useIsBillingEnabled();
   const tiles = isBillingEnabled
     ? TILES
@@ -87,7 +89,7 @@ export function StatsGrid({ summary, activeTab, onTabChange }: Props) {
 
         return (
           <button
-            key={tile.label}
+            key={tile.labelKey}
             type="button"
             aria-pressed={isActive}
             // A second click goes back to the overview, which has no tile of
@@ -103,7 +105,7 @@ export function StatsGrid({ summary, activeTab, onTabChange }: Props) {
             <div className="flex min-w-0 items-center gap-1.5">
               <Emoji text={tile.emoji} size={18} />
               <OverflowText
-                value={tile.label}
+                value={t(tile.labelKey)}
                 variant="body"
                 className="text-foreground-emphasis"
               />

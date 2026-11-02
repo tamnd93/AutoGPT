@@ -24,6 +24,7 @@ import { LowCreditBanner } from "@/components/layout/TopUpPrompt/LowCreditBanner
 import { useAgentStatusMap, getAgentStatus } from "../../hooks/useAgentStatus";
 import { ArrowLeft02Icon, FavouriteIcon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 
 // cancels the current spring and starts a new one from current state.
 const containerVariants = {
@@ -96,6 +97,7 @@ export function LibraryAgentList({
   fleetSummary,
   briefingAgents,
 }: Props) {
+  const t = useT();
   const shouldReduceMotion = useReducedMotion();
   const activeContainerVariants = shouldReduceMotion
     ? reducedContainerVariants
@@ -188,7 +190,7 @@ export function LibraryAgentList({
               className="inline-flex items-center gap-1 text-sm text-foreground-tertiary hover:text-foreground-strong"
             >
               <Icon icon={ArrowLeft02Icon} className="h-4 w-4" />
-              My Library
+              {t("library1.view.myLibrary")}
             </button>
             {currentFolder && (
               <>

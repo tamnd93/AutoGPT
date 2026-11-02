@@ -12,6 +12,7 @@ import Link from "next/link";
 import { useRemoveTriggerAgent } from "../../../../hooks/useRemoveTriggerAgent";
 import { MoreVerticalIcon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   parentAgent: LibraryAgent;
@@ -24,6 +25,7 @@ export function TriggerAgentActionsDropdown({
   triggerAgent,
   onDeleted,
 }: Props) {
+  const t = useT();
   const { openDialog, dialog } = useRemoveTriggerAgent({
     parentAgent,
     triggerAgent,
@@ -38,7 +40,7 @@ export function TriggerAgentActionsDropdown({
             variant="icon"
             size="icon"
             onClick={(e) => e.stopPropagation()}
-            aria-label="More actions"
+            aria-label={t("library3.actions.more")}
             className="ml-auto min-w-fit shrink-0"
           >
             <Icon icon={MoreVerticalIcon} size={18} />
@@ -50,7 +52,7 @@ export function TriggerAgentActionsDropdown({
               href={`/library/agents/${triggerAgent.id}`}
               onClick={(e) => e.stopPropagation()}
             >
-              View in library
+              {t("library3.triggerAgent.viewInLibrary")}
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
@@ -58,7 +60,7 @@ export function TriggerAgentActionsDropdown({
               href={`/build?flowID=${triggerAgent.graph_id}`}
               onClick={(e) => e.stopPropagation()}
             >
-              Open in builder
+              {t("library3.common.openInBuilder")}
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem
@@ -67,7 +69,7 @@ export function TriggerAgentActionsDropdown({
               openDialog();
             }}
           >
-            Remove trigger
+            {t("library3.triggerAgent.remove")}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

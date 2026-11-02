@@ -5,6 +5,7 @@ import { Select } from "@/components/atoms/Select/Select";
 import type { AgentStatusFilter, FleetSummary } from "../../types";
 import { FunnelIcon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   value: AgentStatusFilter;
@@ -12,34 +13,53 @@ interface Props {
   summary: FleetSummary;
 }
 
-function buildOptions(summary: FleetSummary): SelectOption[] {
+function buildOptions(
+  summary: FleetSummary,
+  t: ReturnType<typeof useT>,
+): SelectOption[] {
   return [
-    { value: "all", label: "All Workflows" },
-    { value: "running", label: `Running (${summary.running})` },
-    { value: "attention", label: `Needs Attention (${summary.error})` },
-    { value: "listening", label: `Listening (${summary.listening})` },
-    { value: "scheduled", label: `Scheduled (${summary.scheduled})` },
-    { value: "idle", label: `Idle / Stale (${summary.idle})` },
-    { value: "healthy", label: "Healthy" },
+    { value: "all", label: t("library4.filter.all") },
+    {
+      value: "running",
+      label: t("library4.filter.running", { count: summary.running }),
+    },
+    {
+      value: "attention",
+      label: t("library4.filter.attention", { count: summary.error }),
+    },
+    {
+      value: "listening",
+      label: t("library4.filter.listening", { count: summary.listening }),
+    },
+    {
+      value: "scheduled",
+      label: t("library4.filter.scheduled", { count: summary.scheduled }),
+    },
+    {
+      value: "idle",
+      label: t("library4.filter.idle", { count: summary.idle }),
+    },
+    { value: "healthy", label: t("library4.filter.healthy") },
   ];
 }
 
 export function AgentFilterMenu({ value, onChange, summary }: Props) {
+  const t = useT();
   function handleChange(val: string) {
     onChange(val as AgentStatusFilter);
   }
 
-  const options = buildOptions(summary);
+  const options = buildOptions(summary, t);
 
   return (
     <div className="flex items-center" data-testid="agent-filter-dropdown">
       <span className="hidden whitespace-nowrap text-sm text-foreground-tertiary sm:inline">
-        filter
+        {t("library4.filter.hint")}
       </span>
       <Icon icon={FunnelIcon} className="ml-1 h-4 w-4 sm:hidden" />
       <Select
         id="agent-status-filter"
-        label="Filter workflows"
+        label={t("library4.filter.label")}
         hideLabel
         value={value}
         onValueChange={handleChange}

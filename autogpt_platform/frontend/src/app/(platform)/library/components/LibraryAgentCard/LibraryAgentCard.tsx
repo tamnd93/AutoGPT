@@ -25,6 +25,7 @@ import {
 } from "@/components/atoms/Tooltip/BaseTooltip";
 import { Chatting01Icon, EyeIcon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   agent: LibraryAgent;
@@ -37,6 +38,7 @@ export function LibraryAgentCard({
   statusInfo,
   draggable = true,
 }: Props) {
+  const t = useT();
   const { id, name, image_url } = agent;
   const { showImage, handleImageError } = useImageFallback(image_url);
   const router = useRouter();
@@ -124,7 +126,7 @@ export function LibraryAgentCard({
               <Image
                 src={image_url}
                 unoptimized={isLocalStoreMediaUrl(image_url)}
-                alt={`${name} preview image`}
+                alt={t("library4.card.previewAlt", { name })}
                 width={107}
                 height={58}
                 className="flex-shrink-0 rounded-small object-cover"
@@ -141,7 +143,7 @@ export function LibraryAgentCard({
               className="inline-flex items-center gap-1 whitespace-nowrap rounded-md px-2 py-1.5 text-body-sm font-medium leading-inherit text-foreground-secondary transition-colors hover:bg-surface-muted hover:text-foreground-emphasis"
             >
               <Icon icon={EyeIcon} size={14} className="shrink-0" />
-              See tasks
+              {t("library4.card.seeTasks")}
             </button>
             <ContextualActionButton
               status={statusInfo.status}
@@ -159,7 +161,7 @@ export function LibraryAgentCard({
               className="inline-flex items-center gap-1 whitespace-nowrap rounded-md px-2 py-1.5 text-body-sm font-medium leading-inherit text-foreground-secondary transition-colors hover:bg-surface-muted hover:text-foreground-emphasis"
             >
               <Icon icon={Chatting01Icon} size={14} className="shrink-0" />
-              Chat
+              {t("library4.card.chat")}
             </button>
           </div>
         </div>

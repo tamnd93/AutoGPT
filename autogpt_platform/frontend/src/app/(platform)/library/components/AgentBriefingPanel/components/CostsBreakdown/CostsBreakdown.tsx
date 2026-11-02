@@ -11,12 +11,14 @@ import { TopRunsList } from "./components/TopRunsList";
 import { useCostsBreakdown } from "./useCostsBreakdown";
 import { ArrowDown01Icon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   agents: LibraryAgent[];
 }
 
 export function CostsBreakdown({ agents }: Props) {
+  const t = useT();
   const [isExpanded, setIsExpanded] = useState(false);
   const { summary, agentLookup, isLoading, isError, hasAnySpend } =
     useCostsBreakdown(agents, { enabled: isExpanded });
@@ -31,7 +33,7 @@ export function CostsBreakdown({ agents }: Props) {
         // TODO(tokens): no exact role for text-neutral-800 (#262626)
         className="w-fit gap-1 px-0 text-neutral-800 hover:bg-transparent"
       >
-        {isExpanded ? "Hide costs breakdown" : "See costs breakdown"}
+        {isExpanded ? t("library4.costs.hide") : t("library4.costs.show")}
         <Icon
           icon={ArrowDown01Icon}
           size={14}
@@ -67,6 +69,7 @@ function ExpandedBody({
   isError,
   hasAnySpend,
 }: ExpandedBodyProps) {
+  const t = useT();
   if (isError) {
     return (
       <Text
@@ -98,7 +101,7 @@ function ExpandedBody({
         variant="body"
         className="text-neutral-500"
       >
-        No spend this month yet.
+        {t("library4.costs.noSpend")}
       </Text>
     );
   }
@@ -118,21 +121,26 @@ function ExpandedBody({
         variant="small"
         className="text-neutral-500"
       >
-        Calendar month so far · {formatMonthRangeLabel()}
+        {t("library4.costs.monthRange", {
+          range: formatMonthRangeLabel(t),
+        })}
       </Text>
       <StatRow
         items={[
           {
-            label: "Total this month",
+            label: t("library4.costs.total"),
             value: formatCents(summary.total_cents),
           },
-          { label: "Tasks", value: String(summary.run_count) },
           {
-            label: "Avg / task",
+            label: t("library4.costs.tasks"),
+            value: String(summary.run_count),
+          },
+          {
+            label: t("library4.costs.avgPerTask"),
             value: formatCents(Math.round(avgCostCents)),
           },
           {
-            label: "Wasted on failed",
+            label: t("library4.costs.wasted"),
             value: formatCents(summary.failed_cost_cents),
             tone: summary.failed_cost_cents > 0 ? "warn" : undefined,
           },
@@ -151,7 +159,7 @@ function ExpandedBody({
   );
 }
 
-function formatMonthRangeLabel(): string {
+function formatMonthRangeLabel(t: ReturnType<typeof useT>): string {
   const now = new Date();
   const monthStart = new Date(
     Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1),
@@ -162,7 +170,7 @@ function formatMonthRangeLabel(): string {
       day: "numeric",
       timeZone: "UTC",
     });
-  return `${fmt(monthStart)} – today (UTC)`;
+  return t("library4.costs.todayRange", { date: fmt(monthStart) });
 }
 
 interface StatItem {

@@ -28,6 +28,7 @@ import { useState } from "react";
 import { MoveToFolderDialog } from "../../MoveToFolderDialog/MoveToFolderDialog";
 import { MoreHorizontalIcon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 
 interface AgentCardMenuProps {
   agent: LibraryAgent;
@@ -35,6 +36,7 @@ interface AgentCardMenuProps {
 
 export function AgentCardMenu({ agent }: AgentCardMenuProps) {
   const { toast } = useToast();
+  const t = useT();
   const queryClient = useQueryClient();
   const router = useRouter();
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
@@ -72,17 +74,19 @@ export function AgentCardMenu({ agent }: AgentCardMenuProps) {
         });
 
         toast({
-          title: "Workflow duplicated",
-          description: `${result.data.name} has been created.`,
+          title: t("library4.cardMenu.duplicated"),
+          description: t("library4.cardMenu.duplicatedBody", {
+            name: result.data.name,
+          }),
         });
       }
     } catch (error: unknown) {
       toast({
-        title: "Failed to duplicate workflow",
+        title: t("library4.cardMenu.duplicateFailed"),
         description:
           error instanceof Error
             ? error.message
-            : "An unexpected error occurred.",
+            : t("library2.common.unexpectedError"),
         variant: "destructive",
       });
     } finally {
@@ -104,16 +108,16 @@ export function AgentCardMenu({ agent }: AgentCardMenuProps) {
       });
 
       toast({
-        title: "Removed from folder",
-        description: "Workflow has been moved back to your library.",
+        title: t("library4.cardMenu.removedFromFolder"),
+        description: t("library4.cardMenu.removedFromFolderBody"),
       });
     } catch (error: unknown) {
       toast({
-        title: "Failed to remove from folder",
+        title: t("library4.cardMenu.removeFromFolderFailed"),
         description:
           error instanceof Error
             ? error.message
-            : "An unexpected error occurred.",
+            : t("library2.common.unexpectedError"),
         variant: "destructive",
       });
     } finally {
@@ -133,16 +137,16 @@ export function AgentCardMenu({ agent }: AgentCardMenuProps) {
         queryKey: getGetV2ListLibraryAgentsQueryKey(),
       });
 
-      toast({ title: "Workflow deleted" });
+      toast({ title: t("library2.emptyTasks.workflowDeleted") });
       setShowDeleteDialog(false);
       router.push("/library");
     } catch (error: unknown) {
       toast({
-        title: "Failed to delete workflow",
+        title: t("library2.emptyTasks.workflowDeleteFailed"),
         description:
           error instanceof Error
             ? error.message
-            : "An unexpected error occurred.",
+            : t("library2.common.unexpectedError"),
         variant: "destructive",
       });
     } finally {
@@ -158,7 +162,7 @@ export function AgentCardMenu({ agent }: AgentCardMenuProps) {
             // TODO(tokens): no exact role for hover:bg-neutral-100 (#F5F5F5)
             className="absolute right-2 top-1 rounded p-1.5 transition-opacity hover:bg-neutral-100"
             onClick={(e) => e.stopPropagation()}
-            aria-label="More actions"
+            aria-label={t("library3.actions.more")}
           >
             <Icon
               icon={MoreHorizontalIcon}
@@ -178,7 +182,7 @@ export function AgentCardMenu({ agent }: AgentCardMenuProps) {
                   data-testid="library-agent-card-open-in-builder-link"
                   onClick={(e) => e.stopPropagation()}
                 >
-                  Edit workflow
+                  {t("library2.emptyTasks.edit")}
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
@@ -192,7 +196,7 @@ export function AgentCardMenu({ agent }: AgentCardMenuProps) {
             disabled={isDuplicatingAgent}
             className="flex items-center gap-2"
           >
-            Duplicate workflow
+            {t("library4.cardMenu.duplicate")}
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem
@@ -202,7 +206,7 @@ export function AgentCardMenu({ agent }: AgentCardMenuProps) {
             }}
             className="flex items-center gap-2"
           >
-            Move to folder
+            {t("library4.cardMenu.moveToFolder")}
           </DropdownMenuItem>
           {agent.folder_id && (
             <>
@@ -215,7 +219,7 @@ export function AgentCardMenu({ agent }: AgentCardMenuProps) {
                 disabled={isRemovingFromFolder}
                 className="flex items-center gap-2"
               >
-                Remove from folder
+                {t("library4.cardMenu.removeFromFolder")}
               </DropdownMenuItem>
             </>
           )}
@@ -228,7 +232,7 @@ export function AgentCardMenu({ agent }: AgentCardMenuProps) {
             // TODO(tokens): no fitting role for text-red-600 #D93636; #D93636 is error-hover, a hover fill; no fitting role for focus:text-red-600 #D93636
             className="flex items-center gap-2 text-red-600 focus:bg-error-surface focus:text-red-600"
           >
-            Delete workflow
+            {t("library2.emptyTasks.delete")}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
@@ -239,28 +243,25 @@ export function AgentCardMenu({ agent }: AgentCardMenuProps) {
           set: setShowDeleteDialog,
         }}
         styling={{ maxWidth: "32rem" }}
-        title="Delete workflow"
+        title={t("library2.emptyTasks.deleteTitle")}
       >
         <Dialog.Content>
           <div>
-            <Text variant="large">
-              Are you sure you want to delete this workflow? This action cannot
-              be undone.
-            </Text>
+            <Text variant="large">{t("library2.emptyTasks.deleteBody")}</Text>
             <Dialog.Footer>
               <Button
                 variant="secondary"
                 disabled={isDeletingAgent}
                 onClick={() => setShowDeleteDialog(false)}
               >
-                Cancel
+                {t("library2.common.cancel")}
               </Button>
               <Button
                 variant="destructive"
                 onClick={handleDeleteAgent}
                 loading={isDeletingAgent}
               >
-                Delete Workflow
+                {t("library2.emptyTasks.deleteConfirm")}
               </Button>
             </Dialog.Footer>
           </div>

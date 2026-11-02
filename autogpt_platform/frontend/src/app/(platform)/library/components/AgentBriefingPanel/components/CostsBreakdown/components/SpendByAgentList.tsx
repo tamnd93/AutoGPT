@@ -7,6 +7,7 @@ import { formatCents } from "@/app/(platform)/copilot/components/usageHelpers";
 import Link from "next/link";
 import { useState } from "react";
 import type { AgentLookupEntry } from "../helpers";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   rollups: UserAgentCostRollup[];
@@ -17,6 +18,7 @@ interface Props {
 const INITIAL_VISIBLE = 5;
 
 export function SpendByAgentList({ rollups, agentLookup, totalCents }: Props) {
+  const t = useT();
   const [showAll, setShowAll] = useState(false);
 
   const billable = rollups.filter((r) => r.cost_cents > 0);
@@ -33,21 +35,24 @@ export function SpendByAgentList({ rollups, agentLookup, totalCents }: Props) {
           variant="body-medium"
           className="text-neutral-800"
         >
-          Spend by workflow
+          {t("library4.costs.spendByWorkflow")}
         </Text>
         <Text
           // TODO(tokens): no exact role for text-neutral-400 (#A3A3A3)
           variant="small"
           className="text-neutral-400"
         >
-          % of monthly spend
+          {t("library4.costs.percentMonthly")}
         </Text>
       </div>
       <ul className="flex flex-col gap-4">
         {visible.map((rollup) => {
           const agent = agentLookup.get(rollup.graph_id);
           const label =
-            agent?.name ?? `Workflow ${rollup.graph_id.slice(0, 8)}`;
+            agent?.name ??
+            t("library4.costs.workflowFallback", {
+              id: rollup.graph_id.slice(0, 8),
+            });
           const share = totalCents > 0 ? rollup.cost_cents / totalCents : 0;
           const sharePct = Math.round(share * 100);
           const widthPct = Math.max(2, sharePct);
@@ -79,9 +84,15 @@ export function SpendByAgentList({ rollups, agentLookup, totalCents }: Props) {
                     // TODO(tokens): no exact role for text-neutral-400 (#A3A3A3)
                     className="ml-2 text-neutral-400"
                   >
-                    {rollup.run_count} run{rollup.run_count === 1 ? "" : "s"}
+                    {rollup.run_count === 1
+                      ? t("library4.costs.runOne")
+                      : t("library4.costs.runs", {
+                          count: rollup.run_count,
+                        })}
                     {avgPerRun > 0 &&
-                      ` · avg ${formatCents(Math.round(avgPerRun))}`}
+                      t("library4.costs.avgPerRun", {
+                        amount: formatCents(Math.round(avgPerRun)),
+                      })}
                   </Text>
                 </Text>
               </div>
@@ -127,7 +138,9 @@ export function SpendByAgentList({ rollups, agentLookup, totalCents }: Props) {
             size="small"
             onClick={() => setShowAll(!showAll)}
           >
-            {showAll ? "Collapse" : `Show all (${billable.length})`}
+            {showAll
+              ? t("library4.costs.collapse")
+              : t("library4.costs.showAll", { count: billable.length })}
           </Button>
         </div>
       )}

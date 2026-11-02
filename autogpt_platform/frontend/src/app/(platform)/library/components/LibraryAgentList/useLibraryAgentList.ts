@@ -26,6 +26,7 @@ import type { AgentStatusFilter } from "../../types";
 import { useGetV1ListAllExecutions } from "@/app/api/__generated__/endpoints/graphs/graphs";
 import { AgentExecutionStatus } from "@/app/api/__generated__/models/agentExecutionStatus";
 import { isAgentScheduled } from "../../hooks/executionHelpers";
+import { useT } from "@/lib/i18n";
 
 const FILTER_EXHAUST_THRESHOLD = 3;
 
@@ -48,6 +49,7 @@ export function useLibraryAgentList({
 }: Props) {
   const isFavoritesTab = activeTab === "favorites";
   const { toast } = useToast();
+  const t = useT();
   const stableQueryClient = getQueryClient();
   const queryClient = useQueryClient();
   const prevSortRef = useRef<LibraryAgentSort | null>(null);
@@ -176,8 +178,8 @@ export function useLibraryAgentList({
           }
         }
         toast({
-          title: "Error",
-          description: "Failed to move workflow. Please try again.",
+          title: t("library3.common.error"),
+          description: t("library4.libraryList.moveFailed"),
           variant: "destructive",
         });
       },

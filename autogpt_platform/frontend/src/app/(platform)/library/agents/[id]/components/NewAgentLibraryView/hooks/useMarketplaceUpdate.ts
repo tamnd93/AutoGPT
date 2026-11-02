@@ -14,6 +14,7 @@ import { okData } from "@/app/api/helpers";
 import type { StoreSubmission } from "@/app/api/__generated__/models/storeSubmission";
 import * as React from "react";
 import { useState } from "react";
+import { useT } from "@/lib/i18n";
 
 interface UseMarketplaceUpdateProps {
   agent: LibraryAgent | null | undefined;
@@ -22,6 +23,7 @@ interface UseMarketplaceUpdateProps {
 export function useMarketplaceUpdate({ agent }: UseMarketplaceUpdateProps) {
   const [modalOpen, setModalOpen] = useState(false);
   const { toast } = useToast();
+  const t = useT();
   const queryClient = useQueryClient();
   const user = useAuthStore((state) => state.user);
 
@@ -56,16 +58,16 @@ export function useMarketplaceUpdate({ agent }: UseMarketplaceUpdateProps) {
     mutation: {
       onError: (err) => {
         toast({
-          title: "Update Failed",
-          description: "Failed to update workflow to latest version",
+          title: t("library4.marketplaceUpdate.failedTitle"),
+          description: t("library4.marketplaceUpdate.failedBody"),
           variant: "destructive",
         });
         console.error("Failed to update agent:", err);
       },
       onSuccess: () => {
         toast({
-          title: "Workflow Updated",
-          description: "Workflow updated to latest version successfully",
+          title: t("library4.marketplaceUpdate.updatedTitle"),
+          description: t("library4.marketplaceUpdate.updatedBody"),
         });
         // Invalidate to get the updated agent data from the server
         if (agent?.id) {

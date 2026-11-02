@@ -7,6 +7,7 @@ import { formatCents } from "@/app/(platform)/copilot/components/usageHelpers";
 import Link from "next/link";
 import { useState } from "react";
 import { formatRelativeDate, type AgentLookupEntry } from "../helpers";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   runs: UserTopRun[];
@@ -16,6 +17,7 @@ interface Props {
 const INITIAL_VISIBLE = 5;
 
 export function TopRunsList({ runs, agentLookup }: Props) {
+  const t = useT();
   const [showAll, setShowAll] = useState(false);
   if (runs.length === 0) return null;
 
@@ -29,12 +31,16 @@ export function TopRunsList({ runs, agentLookup }: Props) {
         variant="body-medium"
         className="text-neutral-800 lg:mb-[.5rem]"
       >
-        Most expensive tasks
+        {t("library4.costs.mostExpensive")}
       </Text>
       <ul className="flex flex-col divide-y divide-separator rounded-medium border border-separator bg-surface">
         {visible.map((run) => {
           const agent = agentLookup.get(run.graph_id);
-          const label = agent?.name ?? `Workflow ${run.graph_id.slice(0, 8)}`;
+          const label =
+            agent?.name ??
+            t("library4.costs.workflowFallback", {
+              id: run.graph_id.slice(0, 8),
+            });
           const href = agent
             ? `/library/agents/${agent.libraryAgentId}?activeItem=${run.execution_id}`
             : null;
@@ -56,7 +62,11 @@ export function TopRunsList({ runs, agentLookup }: Props) {
                 >
                   {formatRelativeDate(run.started_at)}
                   {run.node_error_count > 0
-                    ? ` · ${run.node_error_count} error${run.node_error_count === 1 ? "" : "s"}`
+                    ? run.node_error_count === 1
+                      ? t("library4.costs.errorOne")
+                      : t("library4.costs.errors", {
+                          count: run.node_error_count,
+                        })
                     : ""}
                 </Text>
               </div>
@@ -90,7 +100,9 @@ export function TopRunsList({ runs, agentLookup }: Props) {
             size="small"
             onClick={() => setShowAll(!showAll)}
           >
-            {showAll ? "Collapse" : `Show all (${runs.length})`}
+            {showAll
+              ? t("library4.costs.collapse")
+              : t("library4.costs.showAll", { count: runs.length })}
           </Button>
         </div>
       )}

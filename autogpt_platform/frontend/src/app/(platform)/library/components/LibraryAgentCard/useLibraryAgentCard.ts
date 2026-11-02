@@ -11,6 +11,7 @@ import { useToast } from "@/components/molecules/Toast/use-toast";
 import { isLogoutInProgress } from "@/lib/autogpt-server-api/helpers";
 import { useAuth } from "@/lib/auth/hooks/useAuth";
 import { updateFavoriteInQueries } from "./helpers";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   agent: LibraryAgent;
@@ -23,6 +24,7 @@ export function useLibraryAgentCard({ agent, onFavoriteAdd }: Props) {
   const isFromMarketplace = Boolean(marketplace_listing);
   const [isFavorite, setIsFavorite] = useState(is_favorite);
   const { toast } = useToast();
+  const t = useT();
   const queryClient = getQueryClient();
   const { mutateAsync: updateLibraryAgent } = usePatchV2UpdateLibraryAgent();
   const { user, isLoggedIn } = useAuth();
@@ -78,8 +80,8 @@ export function useLibraryAgentCard({ agent, onFavoriteAdd }: Props) {
       updateQueryData(!newIsFavorite);
 
       toast({
-        title: "Error",
-        description: "Failed to update favorite status. Please try again.",
+        title: t("library3.common.error"),
+        description: t("library4.libraryCard.favoriteFailed"),
         variant: "destructive",
       });
     }

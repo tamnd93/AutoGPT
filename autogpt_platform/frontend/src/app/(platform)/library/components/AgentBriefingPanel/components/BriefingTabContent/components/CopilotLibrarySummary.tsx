@@ -4,8 +4,10 @@ import { useListCopilotSkills } from "@/app/api/__generated__/endpoints/skills/s
 import { useListCopilotFollowupSchedules } from "@/app/api/__generated__/endpoints/schedules/schedules";
 import { Text } from "@/components/atoms/Text/Text";
 import Link from "next/link";
+import { useT } from "@/lib/i18n";
 
 export function CopilotLibrarySummary() {
+  const t = useT();
   const { data: skillsRes } = useListCopilotSkills(undefined, {
     query: { staleTime: 30_000 },
   });
@@ -43,7 +45,7 @@ export function CopilotLibrarySummary() {
       data-testid="copilot-library-summary"
     >
       <Text variant="small" className="!text-foreground-tertiary">
-        Skills and follow-ups
+        {t("library4.summary.title")}
       </Text>
       {showSkills ? (
         <Link
@@ -51,7 +53,9 @@ export function CopilotLibrarySummary() {
           className="text-sm text-accent-strong hover:underline"
           data-testid="copilot-library-skills-link"
         >
-          {skillsCount} skill{skillsCount === 1 ? "" : "s"}
+          {skillsCount === 1
+            ? t("library4.summary.skillOne")
+            : t("library4.summary.skills", { count: skillsCount })}
         </Link>
       ) : null}
       {showSkills && showFollowups ? (
@@ -64,7 +68,11 @@ export function CopilotLibrarySummary() {
           className="text-sm text-yellow-700 hover:underline"
           data-testid="copilot-library-followups-link"
         >
-          {followupCount} follow-up{followupCount === 1 ? "" : "s"}
+          {followupCount === 1
+            ? t("library4.summary.followupOne")
+            : t("library4.summary.followups", {
+                count: followupCount,
+              })}
         </Link>
       ) : null}
     </div>

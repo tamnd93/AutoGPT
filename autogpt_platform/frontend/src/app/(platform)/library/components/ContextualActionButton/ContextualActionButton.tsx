@@ -9,6 +9,7 @@ import {
 } from "@hugeicons/core-free-icons";
 import type { IconSvgElement } from "@hugeicons/react";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT, type MessageKey } from "@/lib/i18n";
 
 interface Props {
   status: AgentStatus;
@@ -23,6 +24,7 @@ export function ContextualActionButton({
   executionID,
   className,
 }: Props) {
+  const t = useT();
   const router = useRouter();
 
   const config = ACTION_CONFIG[status];
@@ -48,18 +50,18 @@ export function ContextualActionButton({
       )}
     >
       <Icon icon={config.icon} size={12} className="shrink-0" />
-      {config.label}
+      {t(config.labelKey)}
     </button>
   );
 }
 
 const ACTION_CONFIG: Record<
   AgentStatus,
-  { label: string; icon: IconSvgElement }
+  { labelKey: MessageKey; icon: IconSvgElement }
 > = {
-  error: { label: "View error", icon: EyeIcon },
-  listening: { label: "Reconnect", icon: ReloadIcon },
-  running: { label: "Watch live", icon: ComputerVideoIcon },
-  idle: { label: "View", icon: EyeIcon },
-  scheduled: { label: "View", icon: EyeIcon },
+  error: { labelKey: "library4.action.viewError", icon: EyeIcon },
+  listening: { labelKey: "library4.action.reconnect", icon: ReloadIcon },
+  running: { labelKey: "library4.action.watchLive", icon: ComputerVideoIcon },
+  idle: { labelKey: "library4.action.view", icon: EyeIcon },
+  scheduled: { labelKey: "library4.action.view", icon: EyeIcon },
 };

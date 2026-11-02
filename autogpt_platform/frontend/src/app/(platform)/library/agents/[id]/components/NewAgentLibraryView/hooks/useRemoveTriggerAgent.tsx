@@ -11,6 +11,7 @@ import { Dialog } from "@/components/molecules/Dialog/Dialog";
 import { useToast } from "@/components/molecules/Toast/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
 import { ReactNode, useState } from "react";
+import { useT } from "@/lib/i18n";
 
 interface Args {
   parentAgent: LibraryAgent;
@@ -36,6 +37,7 @@ export function useRemoveTriggerAgent({
   dialog: ReactNode;
 } {
   const { toast } = useToast();
+  const t = useT();
   const queryClient = useQueryClient();
   const [showDialog, setShowDialog] = useState(false);
 
@@ -43,7 +45,7 @@ export function useRemoveTriggerAgent({
     useDeleteV2DeleteLibraryAgent({
       mutation: {
         onSuccess: async () => {
-          toast({ title: "Trigger removed" });
+          toast({ title: t("library4.removeTrigger.removed") });
           queryClient.invalidateQueries({
             queryKey: getGetV2ListTriggerAgentsQueryKey(parentAgent.id),
           });
@@ -52,11 +54,11 @@ export function useRemoveTriggerAgent({
         },
         onError: (error) => {
           toast({
-            title: "Failed to remove trigger",
+            title: t("library4.removeTrigger.failed"),
             description:
               error instanceof Error
                 ? error.message
-                : "An unexpected error occurred.",
+                : t("library2.common.unexpectedError"),
             variant: "destructive",
           });
         },
@@ -71,27 +73,24 @@ export function useRemoveTriggerAgent({
     <Dialog
       controlled={{ isOpen: showDialog, set: setShowDialog }}
       styling={{ maxWidth: "32rem" }}
-      title="Remove trigger"
+      title={t("library3.triggerAgent.remove")}
     >
       <Dialog.Content>
-        <Text variant="large">
-          Are you sure you want to remove this trigger? The trigger workflow and
-          its schedule will be deleted. This action cannot be undone.
-        </Text>
+        <Text variant="large">{t("library4.removeTrigger.body")}</Text>
         <Dialog.Footer>
           <Button
             variant="secondary"
             disabled={isPending}
             onClick={() => setShowDialog(false)}
           >
-            Cancel
+            {t("library2.common.cancel")}
           </Button>
           <Button
             variant="destructive"
             onClick={handleDelete}
             loading={isPending}
           >
-            Remove trigger
+            {t("library3.triggerAgent.remove")}
           </Button>
         </Dialog.Footer>
       </Dialog.Content>
