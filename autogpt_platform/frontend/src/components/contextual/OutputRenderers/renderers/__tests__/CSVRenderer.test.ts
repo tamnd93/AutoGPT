@@ -98,11 +98,14 @@ describe("csvRenderer.render (parse via render output smoke)", () => {
   });
   it("speaks vietnamese when the file is empty", () => {
     render(
-      React.createElement(
-        LocaleProvider,
-        { locale: "vi" },
-        csvRenderer.render("", { filename: "empty.csv" }, "vi") as React.ReactElement,
-      ),
+      React.createElement(LocaleProvider, {
+        locale: "vi",
+        children: csvRenderer.render(
+          "",
+          { filename: "empty.csv" },
+          "vi",
+        ) as React.ReactElement,
+      }),
     );
 
     expect(screen.getByText("CSV trống")).toBeDefined();

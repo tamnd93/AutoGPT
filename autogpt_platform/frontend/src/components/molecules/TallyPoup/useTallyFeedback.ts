@@ -1,5 +1,6 @@
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useT } from "@/lib/i18n";
 import {
   FEEDBACK_TALLY_FORM_ID,
   getFeedbackHiddenFields,
@@ -24,6 +25,7 @@ export function useTallyPageContext() {
 }
 
 export function useTallyFeedback(isAuthenticated: boolean | null) {
+  const t = useT();
   const page = useTallyPageContext();
   const [isFormVisible, setIsFormVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);

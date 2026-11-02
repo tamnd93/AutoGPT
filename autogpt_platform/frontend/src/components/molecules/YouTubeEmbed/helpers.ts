@@ -1,3 +1,6 @@
+import type { Locale } from "@/lib/i18n/locale";
+import { getMessage } from "@/lib/i18n/translate";
+
 const VIDEO_ID = /^[A-Za-z0-9_-]{11}$/;
 // Paths that carry the ID as the next segment: /embed/ID, /shorts/ID, ...
 const ID_PATH_PREFIXES = new Set(["embed", "v", "e", "shorts", "live"]);
@@ -121,12 +124,6 @@ export function getYouTubeEmbedUrl(url: string): string | null {
 export function getYouTubeWatchUrl(url: string): string | null {
   return getYouTubeLinks(url).watchUrl;
 }
-
-import { getMessage } from "@/lib/i18n/translate";
-import type { Locale } from "@/lib/i18n/locale";
-
-import { getMessage } from "@/lib/i18n/translate";
-import type { Locale } from "@/lib/i18n/locale";
 
 export function getNoticeText(
   {

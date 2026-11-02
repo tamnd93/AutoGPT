@@ -19,14 +19,18 @@ function widget(schema: Record<string, unknown>) {
     formContext: {},
     onChange: vi.fn(),
     value: "",
-  } as never;
+  };
 }
 
 describe("input widgets in Vietnamese", () => {
   it("words the text widget placeholders and expand control in Vietnamese", () => {
     render(
       <LocaleProvider locale="vi">
-        <TextWidget {...widget({ type: "string" })} />
+        <TextWidget
+          {...(widget({ type: "string" }) as unknown as Parameters<
+            typeof TextWidget
+          >[0])}
+        />
       </LocaleProvider>,
     );
 
