@@ -1,5 +1,6 @@
 import { ExpertDayOneItem } from "@/app/api/__generated__/models/expertDayOneItem";
 import { cn } from "@/lib/utils";
+import { useT } from "@/lib/i18n";
 import type { ExpertAccent } from "../../../components/ExpertsSection/helpers";
 import { ExpertSection } from "./ExpertSection";
 
@@ -12,10 +13,11 @@ interface Props {
 /** Day one as a timeline: numbered steps joined by a line, each with its
  *  timing on the right. */
 export function ExpertDayOne({ name, items, accent }: Props) {
+  const t = useT();
   if (items.length === 0) return null;
 
   return (
-    <ExpertSection title={`What ${name} sets up on day one`}>
+    <ExpertSection title={t("errors5.dayOne.title", { name })}>
       <ol className="rounded-2xl bg-surface p-5 smooth-shadow-ring-sm">
         {items.map((item, index) => (
           <li

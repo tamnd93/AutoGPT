@@ -1,6 +1,7 @@
 import { ditherColorsFor } from "@/app/(platform)/raise/components/ColorStep/helpers";
 import { ExpertActivityDay } from "@/app/api/__generated__/models/expertActivityDay";
 import { cn } from "@/lib/utils";
+import { useT } from "@/lib/i18n";
 import { getActivityCells, getActivitySummary } from "./helpers";
 
 const LEVEL_OPACITY = [0, 0.18, 0.34, 0.52, 0.7] as const;
@@ -11,6 +12,7 @@ interface Props {
 }
 
 export function ExpertActivityGraph({ days, color }: Props) {
+  const t = useT();
   const cells = getActivityCells(days);
   const { rangeLabel } = getActivitySummary(days);
   // The dither ramp's first stop is the -400 shade, dark enough to read at
@@ -21,7 +23,7 @@ export function ExpertActivityGraph({ days, color }: Props) {
     <div className="w-full pb-1">
       <div
         role="img"
-        aria-label={`Activity over the ${rangeLabel}`}
+        aria-label={t("errors5.activity.aria", { range: rangeLabel })}
         className="grid w-full auto-cols-fr grid-flow-col grid-rows-7 gap-[3px]"
         data-testid="expert-activity-graph"
       >

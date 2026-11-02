@@ -8,6 +8,7 @@ import {
   ContentMessage,
 } from "../../../../components/ToolAccordion/AccordionContent";
 import type { MCPToolOutputResponse } from "../../helpers";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   output: MCPToolOutputResponse;
@@ -40,6 +41,7 @@ function formatResult(value: unknown): string {
 }
 
 export function MCPToolOutputCard({ output }: Props) {
+  const t = useT();
   const result = output.result;
 
   const isImage = isImageResult(result);
@@ -63,7 +65,7 @@ export function MCPToolOutputCard({ output }: Props) {
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={`data:${result.mimeType};base64,${result.data}`}
-            alt={`Result from ${output.tool_name}`}
+            alt={t("errors5.mcpOutput.resultFrom", { name: output.tool_name })}
             className="mt-2 max-h-96 max-w-full rounded object-contain"
           />
         ) : isJson ? (

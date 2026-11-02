@@ -5,6 +5,7 @@ import { Download04Icon } from "@hugeicons/core-free-icons";
 import { classifyArtifact } from "../../../../ArtifactPanel/helpers";
 import { formatFileSize, formatFileTimestamp } from "../../FilesTab/helpers";
 import type { SessionFile } from "../../FilesTab/useSessionFiles";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   file: SessionFile;
@@ -13,6 +14,7 @@ interface Props {
 }
 
 export function ArtifactMiniCard({ file, onOpen, onDownload }: Props) {
+  const t = useT();
   const { item } = file;
   const fileIcon = classifyArtifact(item.mime_type ?? null, item.name).icon;
 
@@ -42,7 +44,7 @@ export function ArtifactMiniCard({ file, onOpen, onDownload }: Props) {
       <button
         type="button"
         onClick={() => onDownload(file)}
-        aria-label={`Download ${item.name}`}
+        aria-label={t("errors5.fileActions.download", { name: item.name })}
         className="shrink-0 rounded-full p-1 text-foreground-disabled opacity-0 transition-opacity duration-150 ease-out hover:text-foreground-secondary focus-visible:opacity-100 group-hover:opacity-100 motion-reduce:transition-none [@media(hover:none)]:opacity-100"
       >
         <Icon icon={Download04Icon} size={16} />

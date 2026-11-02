@@ -5,6 +5,7 @@ import { Button } from "@/components/atoms/Button/Button";
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { isUploadedFile } from "../../ContextPanel/components/FilesTab/helpers";
 import type { SessionFile } from "../../ContextPanel/components/FilesTab/useSessionFiles";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   file: SessionFile;
@@ -16,6 +17,7 @@ interface Props {
  *  row reads as plain text until you reach for it. Touch devices never hover,
  *  so there they stay visible. */
 export function FileRowActions({ file, onDownload, onRequestDelete }: Props) {
+  const t = useT();
   const { item } = file;
   const canDelete = !isUploadedFile(item);
 
@@ -25,7 +27,7 @@ export function FileRowActions({ file, onDownload, onRequestDelete }: Props) {
         variant="ghost"
         size="icon"
         onClick={() => onDownload(file)}
-        aria-label={`Download ${item.name}`}
+        aria-label={t("errors5.fileActions.download", { name: item.name })}
         className="size-7 rounded-lg !p-0 text-foreground-tertiary"
       >
         <Icon icon={Download01Icon} size={14} />
@@ -35,7 +37,7 @@ export function FileRowActions({ file, onDownload, onRequestDelete }: Props) {
           variant="ghost"
           size="icon"
           onClick={() => onRequestDelete(file)}
-          aria-label={`Delete ${item.name}`}
+          aria-label={t("errors5.fileActions.delete", { name: item.name })}
           className="size-7 rounded-lg !p-0 text-foreground-tertiary"
         >
           <Icon icon={Delete02Icon} size={14} />

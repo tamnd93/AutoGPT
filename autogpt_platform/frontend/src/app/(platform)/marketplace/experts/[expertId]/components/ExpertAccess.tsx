@@ -1,6 +1,7 @@
 import { formatProviderName } from "@/components/contextual/IntegrationsPanel/helpers";
 import { IntegrationLogo } from "@/components/molecules/IntegrationLogo/IntegrationLogo";
 import { ExpertSection } from "./ExpertSection";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   name: string;
@@ -8,12 +9,13 @@ interface Props {
 }
 
 export function ExpertAccess({ name, providers }: Props) {
+  const t = useT();
   if (providers.length === 0) return null;
 
   return (
     <ExpertSection
-      title={`Services ${name} can work with`}
-      description={`${name} will ask you to connect these the first time they are needed — nothing is shared until you do.`}
+      title={t("errors5.access.servicesTitle", { name })}
+      description={t("errors5.access.servicesBody", { name })}
     >
       <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3">
         {providers.map((provider) => (

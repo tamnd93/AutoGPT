@@ -4,6 +4,7 @@ import { ExpertWorkflowRef } from "@/app/api/__generated__/models/expertWorkflow
 import { LibraryAgent } from "@/app/api/__generated__/models/libraryAgent";
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { Text } from "@/components/atoms/Text/Text";
+import { useT } from "@/lib/i18n";
 import { safeHumanizeCronExpression } from "@/lib/cron-expression-utils";
 import { cn } from "@/lib/utils";
 import { Activity01Icon } from "@hugeicons/core-free-icons";
@@ -34,6 +35,7 @@ export function ExpertWorkflowCard({
   coverColor,
   onAsk,
 }: Props) {
+  const t = useT();
   const {
     name,
     runCount,
@@ -61,7 +63,7 @@ export function ExpertWorkflowCard({
       {libraryHref ? (
         <NextLink
           href={libraryHref}
-          aria-label={`Open ${name} tasks`}
+          aria-label={t("errors5.workflow.openTasks", { name })}
           className="absolute inset-0 z-0 rounded-xl"
         />
       ) : null}

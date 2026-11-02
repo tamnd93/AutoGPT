@@ -49,25 +49,23 @@ export function UnderstandingCard() {
             {t("settingsRest2.memory.understanding.title")}
           </Text>
           <Text variant="small" as="span" className="text-zinc-500">
-            From your onboarding and your chats. Every new chat with Otto starts
-            with this.
+            {t("errors5.understanding.body")}
           </Text>
         </div>
         <Dialog
-          title="Forget what Otto knows about your work"
+          title={t("errors5.understanding.forgetTitle")}
           styling={{ maxWidth: "440px" }}
           controlled={{ isOpen: isConfirmOpen, set: setIsConfirmOpen }}
         >
           <Dialog.Trigger>
             <Button variant="secondary" size="small">
-              Forget this
+              {t("errors5.understanding.forgetTrigger")}
             </Button>
           </Dialog.Trigger>
           <Dialog.Content>
             <div className="flex flex-col gap-4">
               <Text variant="small" as="p" className="text-zinc-600">
-                Otto stops starting new chats with this. Your recent memories
-                stay.
+                {t("errors5.understanding.forgetBody")}
               </Text>
               <div className="flex justify-end gap-2">
                 <Button
@@ -75,7 +73,7 @@ export function UnderstandingCard() {
                   size="small"
                   onClick={() => setIsConfirmOpen(false)}
                 >
-                  Cancel
+                  {t("errors5.understanding.cancel")}
                 </Button>
                 <Button
                   variant="destructive"
@@ -83,7 +81,7 @@ export function UnderstandingCard() {
                   loading={isForgetting}
                   onClick={forget}
                 >
-                  Forget
+                  {t("errors5.understanding.forget")}
                 </Button>
               </div>
             </div>

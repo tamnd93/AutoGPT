@@ -30,8 +30,8 @@ export function useUnderstandingCard() {
       },
       onError() {
         toast({
-          title: "Could not forget this",
-          description: "Please try again.",
+          title: t("errors5.understanding.errorTitle"),
+          description: t("errors5.understanding.errorBody"),
           variant: "destructive",
         });
       },
