@@ -1,6 +1,7 @@
 import { http, HttpResponse } from "msw";
 import { describe, expect, test, vi } from "vitest";
 
+import { LocaleProvider } from "@/lib/i18n";
 import { server } from "@/mocks/mock-server";
 import { restoreFromBackForwardCache } from "@/tests/integrations/back-forward-cache";
 import {
@@ -30,6 +31,37 @@ vi.mock("@/services/feature-flags/use-get-flag", async (importOriginal) => ({
 }));
 
 describe("legacy credits page top-up", () => {
+  test("reads the billing page chrome in Vietnamese", async () => {
+    server.use(
+      http.get("*/api/credits/subscription", () =>
+        HttpResponse.json({
+          tier: "BASIC",
+          monthly_cost: 0,
+          tier_costs: { BASIC: 0, PRO: 1999 },
+          tier_multipliers: { BASIC: 1, PRO: 5 },
+          proration_credit_cents: 0,
+          pending_tier: null,
+          pending_tier_effective_at: null,
+        }),
+      ),
+    );
+
+    render(
+      <LocaleProvider locale="vi">
+        <CreditsPage />
+      </LocaleProvider>,
+    );
+
+    expect(
+      await screen.findByRole("heading", { name: "Thanh toán" }),
+    ).toBeDefined();
+    expect(screen.getByRole("heading", { name: "Nạp credit" })).toBeDefined();
+    expect(
+      screen.getByRole("heading", { name: "Lịch sử giao dịch" }),
+    ).toBeDefined();
+    expect(screen.getByRole("button", { name: "Nạp" })).toBeDefined();
+  });
+
   test("keeps the top-up and plan buttons disabled while Stripe loads", async () => {
     const checkoutURL = "https://checkout.stripe.com/pay/cs_top_up";
     let topUps = 0;

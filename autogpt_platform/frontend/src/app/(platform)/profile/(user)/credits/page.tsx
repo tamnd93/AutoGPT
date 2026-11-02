@@ -11,6 +11,7 @@ import {
   useToastOnFail,
 } from "@/components/molecules/Toast/use-toast";
 
+import { useT } from "@/lib/i18n";
 import { RefundModal } from "./RefundModal";
 import { SubscriptionTierSection } from "./components/SubscriptionTierSection/SubscriptionTierSection";
 import { CreditTransaction } from "@/lib/autogpt-server-api";
@@ -29,6 +30,7 @@ import {
 } from "@/components/molecules/Table/components/TablePrimitives";
 
 function CoPilotUsageSection() {
+  const t = useT();
   const router = useRouter();
   const { data: usage, isSuccess } = useGetV2GetCopilotUsage({
     query: {
@@ -44,7 +46,7 @@ function CoPilotUsageSection() {
   return (
     <div className="my-6 space-y-4">
       <Text variant="lg-medium" as="h3" tone="inherit">
-        Expert Usage & Storage
+        {t("profile4.credits.usageTitle")}
       </Text>
       <div
         // TODO(tokens): no exact role (border-neutral-200 #E5E5E5)
@@ -52,14 +54,14 @@ function CoPilotUsageSection() {
       >
         {usage.daily && (
           <UsageBar
-            label="Today"
+            label={t("profile4.credits.today")}
             percentUsed={usage.daily.percent_used}
             resetsAt={usage.daily.resets_at}
           />
         )}
         {usage.weekly && (
           <UsageBar
-            label="This week"
+            label={t("profile4.credits.thisWeek")}
             percentUsed={usage.weekly.percent_used}
             resetsAt={usage.weekly.resets_at}
           />
@@ -71,13 +73,14 @@ function CoPilotUsageSection() {
         className="w-full"
         onClick={() => router.push("/copilot")}
       >
-        Open Otto
+        {t("profile4.credits.openOtto")}
       </Button>
     </div>
   );
 }
 
 export default function CreditsPage() {
+  const t = useT();
   const api = useBackendAPI();
   const {
     requestTopUp,
@@ -116,14 +119,15 @@ export default function CreditsPage() {
       .then((amount) => {
         if (amount > 0) {
           toast({
-            title: "Refund approved! 🎉",
-            description: `Your refund has been automatically processed. Based on your remaining balance, the amount of ${formatCredits(amount)} will be credited to your account.`,
+            title: t("profile4.credits.refundApprovedTitle"),
+            description: t("profile4.credits.refundApprovedBody", {
+              amount: formatCredits(amount),
+            }),
           });
         } else {
           toast({
-            title: "Refund Request Received",
-            description:
-              "We have received your refund request. A member of our team will review it and reach out via email shortly.",
+            title: t("profile4.credits.refundReceivedTitle"),
+            description: t("profile4.credits.refundReceivedBody"),
           });
         }
       })
@@ -164,7 +168,7 @@ export default function CreditsPage() {
     const threshold = parseInt(formData.get("threshold") as string) * 100;
     updateAutoTopUpConfig(amount, threshold)
       .then(() => {
-        toast({ title: "Auto top-up config updated! 🎉" });
+        toast({ title: t("profile4.credits.autoTopUpUpdated") });
       })
       .catch(toastOnFail("update auto top-up config"));
   };
@@ -175,7 +179,7 @@ export default function CreditsPage() {
         // TODO(tokens): no exact role (text-neutral-900 #171717, dark:text-neutral-100); SECRT-3152 rare size (sm:text-[35px])
         className="mb-6 text-heading font-normal leading-inherit text-neutral-900 dark:text-neutral-100 sm:mb-8 sm:text-[35px]"
       >
-        Billing
+        {t("profile4.credits.billing")}
       </h1>
 
       {/* Subscription Tier */}
@@ -187,7 +191,7 @@ export default function CreditsPage() {
         {/* Top-up Form */}
         <div className="space-y-4">
           <Text variant="lg-medium" as="h3" tone="inherit">
-            Top-up Credits
+            {t("profile4.credits.topUpTitle")}
           </Text>
 
           <p
@@ -199,13 +203,12 @@ export default function CreditsPage() {
                 // TODO(tokens): no exact role (text-green-500 #16A34A)
                 className="text-green-500"
               >
-                Your payment was successful. Your credits will be updated
-                shortly. Try refreshing the page in case it is not updated.
+                {t("profile4.credits.topUpSuccess")}
               </span>
             )}
             {topupStatus === "cancel" && (
               <span className="text-error">
-                Payment failed. Your payment method has not been charged.
+                {t("profile4.credits.topUpCancel")}
               </span>
             )}
           </p>
@@ -217,13 +220,13 @@ export default function CreditsPage() {
                 // TODO(tokens): no exact role (text-neutral-700 #404040)
                 className="mb-1 block text-neutral-700"
               >
-                Top-up amount (USD), minimum $5:
+                {t("profile4.credits.topUpAmountLabel")}
               </label>
               <input
                 type="number"
                 id="topUpAmount"
                 name="topUpAmount"
-                placeholder="Enter top-up amount"
+                placeholder={t("profile4.credits.topUpAmountPlaceholder")}
                 min="5"
                 step="1"
                 defaultValue={5}
@@ -239,14 +242,14 @@ export default function CreditsPage() {
               className="w-full"
               disabled={isRequestingTopUp || checkoutRedirect.isRedirecting}
             >
-              Top-up
+              {t("profile4.credits.topUp")}
             </Button>
           </form>
 
           {/* Auto Top-up Form */}
           <form onSubmit={submitAutoTopUpConfig} className="my-6 space-y-4">
             <Text variant="lg-medium" as="h3" tone="inherit">
-              Automatic Refill Settings
+              {t("profile4.credits.refillTitle")}
             </Text>
 
             <div>
@@ -255,7 +258,7 @@ export default function CreditsPage() {
                 // TODO(tokens): no exact role (text-neutral-700 #404040)
                 className="mb-1 block text-neutral-700"
               >
-                When my balance goes below this amount:
+                {t("profile4.credits.thresholdLabel")}
               </label>
               <input
                 type="number"
@@ -266,7 +269,7 @@ export default function CreditsPage() {
                     ? autoTopUpConfig.threshold / 100
                     : ""
                 }
-                placeholder="Refill threshold, minimum $5"
+                placeholder={t("profile4.credits.thresholdPlaceholder")}
                 min="5"
                 step="1"
                 // TODO(tokens): no exact role (border-slate-200 #CFD4DB, dark:border-slate-700, dark:bg-slate-800)
@@ -281,7 +284,7 @@ export default function CreditsPage() {
                 // TODO(tokens): no exact role (text-neutral-700 #404040)
                 className="mb-1 block text-neutral-700"
               >
-                Automatically refill my balance with this amount:
+                {t("profile4.credits.refillAmountLabel")}
               </label>
               <input
                 type="number"
@@ -290,7 +293,7 @@ export default function CreditsPage() {
                 defaultValue={
                   autoTopUpConfig?.amount ? autoTopUpConfig.amount / 100 : ""
                 }
-                placeholder="Refill amount, minimum $5"
+                placeholder={t("profile4.credits.refillAmountPlaceholder")}
                 min="5"
                 step="1"
                 // TODO(tokens): no exact role (border-slate-200 #CFD4DB, dark:border-slate-700, dark:bg-slate-800)
@@ -300,10 +303,8 @@ export default function CreditsPage() {
             </div>
 
             <Text variant="body-tight" tone="inherit">
-              <b>Note:</b> For your safety, we will top up your balance{" "}
-              <b>at most once</b> per workflow execution to prevent unintended
-              excessive charges. Therefore, ensure that the automatic top-up
-              amount is sufficient for your workflow&apos;s operation.
+              <b>{t("profile4.credits.refillNoteLabel")}</b>{" "}
+              {t("profile4.credits.refillNote")}
             </Text>
 
             {autoTopUpConfig?.amount ? (
@@ -313,23 +314,25 @@ export default function CreditsPage() {
                   type="submit"
                   className="w-full"
                 >
-                  Save Changes
+                  {t("profile4.credits.saveChanges")}
                 </Button>
                 <Button
                   className="w-full"
                   variant="legacy-destructive"
                   onClick={() =>
                     updateAutoTopUpConfig(0, 0).then(() => {
-                      toast({ title: "Auto top-up config disabled! 🎉" });
+                      toast({
+                        title: t("profile4.credits.autoTopUpDisabled"),
+                      });
                     })
                   }
                 >
-                  Disable Auto-Refill
+                  {t("profile4.credits.disableAutoRefill")}
                 </Button>
               </>
             ) : (
               <Button variant="legacy-default" type="submit" className="w-full">
-                Enable Auto-Refill
+                {t("profile4.credits.enableAutoRefill")}
               </Button>
             )}
           </form>
@@ -342,14 +345,13 @@ export default function CreditsPage() {
           {/* Payment Portal */}
 
           <Text variant="lg-medium" as="h3" tone="inherit">
-            Manage Your Payment Methods
+            {t("profile4.credits.paymentTitle")}
           </Text>
           <p
             // TODO(tokens): no exact role (text-neutral-600 #525252)
             className="text-neutral-600"
           >
-            You can manage your cards and see your payment history in the
-            billing portal.
+            {t("profile4.credits.paymentBody")}
           </p>
           <Button
             variant="legacy-default"
@@ -357,20 +359,20 @@ export default function CreditsPage() {
             className="w-full"
             onClick={() => openBillingPortal()}
           >
-            Open Portal
+            {t("profile4.credits.openPortal")}
           </Button>
 
           {/* Transaction History */}
 
           <Text variant="lg-medium" as="h3" tone="inherit">
-            Transaction History
+            {t("profile4.credits.historyTitle")}
           </Text>
           {transactionHistory.transactions.length === 0 && (
             <p
               // TODO(tokens): no exact role (text-neutral-600 #525252)
               className="text-neutral-600"
             >
-              No transactions found.
+              {t("profile4.credits.noTransactions")}
             </p>
           )}
           <Table
@@ -380,9 +382,9 @@ export default function CreditsPage() {
           >
             <TableHeader>
               <TableRow>
-                <TableHead>Date</TableHead>
-                <TableHead>Description</TableHead>
-                <TableHead>Amount</TableHead>
+                <TableHead>{t("profile4.credits.date")}</TableHead>
+                <TableHead>{t("profile4.credits.description")}</TableHead>
+                <TableHead>{t("profile4.credits.amount")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -421,22 +423,22 @@ export default function CreditsPage() {
               className="w-full"
               onClick={() => fetchTransactionHistory()}
             >
-              Load More
+              {t("profile4.credits.loadMore")}
             </Button>
           )}
 
           {refundRequests.length > 0 && (
             <>
               <Text variant="lg-medium" as="h3" tone="inherit">
-                Your Refund Requests
+                {t("profile4.credits.refundRequestsTitle")}
               </Text>
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Last Updated</TableHead>
-                    <TableHead>Amount</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Comment</TableHead>
+                    <TableHead>{t("profile4.credits.lastUpdated")}</TableHead>
+                    <TableHead>{t("profile4.credits.amount")}</TableHead>
+                    <TableHead>{t("profile4.credits.status")}</TableHead>
+                    <TableHead>{t("profile4.credits.comment")}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -469,7 +471,7 @@ export default function CreditsPage() {
             onClick={() => openRefundModal()}
             className="w-full"
           >
-            Request Refund
+            {t("profile4.refund.title")}
           </Button>
           <RefundModal
             isOpen={isRefundModalOpen}
