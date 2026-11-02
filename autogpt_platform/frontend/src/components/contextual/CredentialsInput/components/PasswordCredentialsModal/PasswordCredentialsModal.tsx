@@ -10,6 +10,7 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, FormProvider } from "react-hook-form";
 import { z } from "zod";
+import { useT } from "@/lib/i18n";
 
 type Props = {
   schema: BlockIOCredentialsSubSchema;
@@ -26,12 +27,13 @@ export function PasswordCredentialsModal({
   onCredentialsCreate,
   siblingInputs,
 }: Props) {
+  const t = useT();
   const credentials = useCredentials(schema, siblingInputs);
 
   const formSchema = z.object({
-    username: z.string().min(1, "Username is required"),
-    password: z.string().min(1, "Password is required"),
-    title: z.string().min(1, "Name is required"),
+    username: z.string().min(1, t("credentials1.password.usernameRequired")),
+    password: z.string().min(1, t("credentials1.password.passwordRequired")),
+    title: z.string().min(1, t("credentials1.apiKey.nameRequired")),
   });
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -69,7 +71,7 @@ export function PasswordCredentialsModal({
 
   return (
     <Dialog
-      title={`Add new username & password for ${providerName}`}
+      title={t("credentials1.password.title", { name: providerName })}
       controlled={{
         isOpen: open,
         set: (isOpen) => {
@@ -93,9 +95,9 @@ export function PasswordCredentialsModal({
               render={({ field }) => (
                 <Input
                   id="username"
-                  label="Username"
+                  label={t("credentials1.password.username")}
                   type="text"
-                  placeholder="Enter username..."
+                  placeholder={t("credentials1.password.usernamePlaceholder")}
                   {...field}
                 />
               )}
@@ -106,9 +108,9 @@ export function PasswordCredentialsModal({
               render={({ field }) => (
                 <Input
                   id="password"
-                  label="Password"
+                  label={t("credentials1.password.password")}
                   type="password"
-                  placeholder="Enter password..."
+                  placeholder={t("credentials1.password.passwordPlaceholder")}
                   {...field}
                 />
               )}
@@ -119,16 +121,16 @@ export function PasswordCredentialsModal({
               render={({ field }) => (
                 <Input
                   id="title"
-                  label="Name"
+                  label={t("credentials1.apiKey.name")}
                   type="text"
-                  placeholder="Enter a name for this user login..."
+                  placeholder={t("credentials1.password.namePlaceholder")}
                   className="mb-8"
                   {...field}
                 />
               )}
             />
             <Button type="submit" className="w-full">
-              Save & use this user login
+              {t("credentials1.password.submit")}
             </Button>
           </form>
         </FormProvider>

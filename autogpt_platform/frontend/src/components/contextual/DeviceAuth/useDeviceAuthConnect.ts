@@ -11,6 +11,8 @@ import {
 import type { CredentialsMetaResponse } from "@/app/api/__generated__/models/credentialsMetaResponse";
 import { toast } from "@/components/molecules/Toast/use-toast";
 import type { CredentialsProviderName } from "@/lib/autogpt-server-api/types";
+import { useLocale } from "@/lib/i18n";
+import { getMessage } from "@/lib/i18n/translate";
 import { invalidateConnectionQueries } from "@/lib/react-query/invalidateConnections";
 import { CredentialsActionsContext } from "@/providers/agent-credentials/credentials-provider";
 
@@ -29,6 +31,8 @@ type Phase = "idle" | "awaiting_user" | "polling" | "done" | "error";
 const MAX_CONSECUTIVE_POLL_FAILURES = 3;
 
 export function useDeviceAuthConnect({ provider, onSuccess }: Args) {
+  const locale = useLocale();
+  const tr = (key: string) => getMessage(locale, key);
   const queryClient = useQueryClient();
   const credentialsActions = useContext(CredentialsActionsContext);
   const [phase, setPhase] = useState<Phase>("idle");
@@ -77,7 +81,7 @@ export function useDeviceAuthConnect({ provider, onSuccess }: Args) {
         if (isUnmountedRef.current || runId !== runIdRef.current) return;
 
         if (response.status !== 200) {
-          throw new Error("Device auth poll failed");
+          throw new Error(tr("credentials1.deviceAuth.pollFailed"));
         }
         consecutiveFailuresRef.current = 0;
         const { status, credentials } = response.data;
@@ -85,7 +89,10 @@ export function useDeviceAuthConnect({ provider, onSuccess }: Args) {
         if (status === "approved") {
           setPhase("done");
           stopPolling();
-          toast({ title: "Connected via device auth", variant: "success" });
+          toast({
+            title: tr("credentials1.deviceAuth.connected"),
+            variant: "success",
+          });
           await invalidateConnectionQueries(queryClient);
           // Seed the credentials store directly. Invalidating the query keys
           // does not reach it — it is separate state filled by loadCredentials
@@ -113,12 +120,12 @@ export function useDeviceAuthConnect({ provider, onSuccess }: Args) {
           toast({
             title:
               status === "denied"
-                ? "Authorization denied"
-                : "Authorization expired",
+                ? tr("credentials1.deviceAuth.denied")
+                : tr("credentials1.deviceAuth.expired"),
             description:
               status === "denied"
-                ? "The authorization request was denied."
-                : "The authorization request expired. Please try again.",
+                ? tr("credentials1.deviceAuth.deniedBody")
+                : tr("credentials1.deviceAuth.expiredBody"),
             variant: "destructive",
           });
           return;
@@ -147,14 +154,23 @@ export function useDeviceAuthConnect({ provider, onSuccess }: Args) {
         setPhase("error");
         stopPolling();
         toast({
-          title: "Device auth polling failed",
+          title: tr("credentials1.deviceAuth.pollFailed"),
           description:
-            error instanceof Error ? error.message : "Unexpected error",
+            error instanceof Error
+              ? error.message
+              : tr("credentials1.deviceAuth.unexpected"),
           variant: "destructive",
         });
       }
     },
-    [provider, onSuccess, queryClient, stopPolling, credentialsActions],
+    [
+      provider,
+      onSuccess,
+      queryClient,
+      stopPolling,
+      credentialsActions,
+      locale,
+    ],
   );
 
   async function connect() {
@@ -171,7 +187,7 @@ export function useDeviceAuthConnect({ provider, onSuccess }: Args) {
       if (isUnmountedRef.current || runId !== runIdRef.current) return;
 
       if (response.status !== 200) {
-        throw new Error("Device auth initiation failed");
+        throw new Error(tr("credentials1.deviceAuth.initFailed"));
       }
       const data = response.data;
       setUserCode(data.user_code);
@@ -192,14 +208,14 @@ export function useDeviceAuthConnect({ provider, onSuccess }: Args) {
     } catch (error) {
       if (isUnmountedRef.current || runId !== runIdRef.current) return;
       setPhase("error");
-      if (
-        toastIfPlanRequired(error, "Connecting a service needs an active plan")
-      )
+      if (toastIfPlanRequired(error, tr("credentials1.deviceAuth.planRequired")))
         return;
       toast({
-        title: "Device auth initiation failed",
+        title: tr("credentials1.deviceAuth.initFailed"),
         description:
-          error instanceof Error ? error.message : "Unexpected error",
+          error instanceof Error
+            ? error.message
+            : tr("credentials1.deviceAuth.unexpected"),
         variant: "destructive",
       });
     }

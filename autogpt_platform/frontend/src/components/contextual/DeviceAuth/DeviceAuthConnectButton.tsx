@@ -12,6 +12,7 @@ import { Button } from "@/components/atoms/Button/Button";
 import { Text } from "@/components/atoms/Text/Text";
 
 import type { CredentialsMetaResponse } from "@/app/api/__generated__/models/credentialsMetaResponse";
+import { useT } from "@/lib/i18n";
 
 import { useDeviceAuthConnect } from "./useDeviceAuthConnect";
 
@@ -26,6 +27,7 @@ export function DeviceAuthConnectButton({
   providerName,
   onSuccess,
 }: Props) {
+  const t = useT();
   const { connect, cancel, phase, userCode, verificationUrl } =
     useDeviceAuthConnect({ provider, onSuccess });
 
@@ -36,11 +38,11 @@ export function DeviceAuthConnectButton({
     return (
       <div className="flex flex-col gap-3">
         <Text variant="body" className="text-foreground-secondary">
-          Requesting a code from {providerName}…
+          {t("credentials1.deviceAuth.requesting", { name: providerName })}
         </Text>
         <div className="flex items-center gap-2 text-foreground-tertiary">
           <Icon icon={Loading03Icon} size={16} className="animate-spin" />
-          <Text variant="small">Starting device authorization…</Text>
+          <Text variant="small">{t("credentials1.deviceAuth.starting")}</Text>
         </div>
       </div>
     );
@@ -50,11 +52,10 @@ export function DeviceAuthConnectButton({
     return (
       <div className="flex flex-col gap-3">
         <Text variant="body" className="text-foreground-secondary">
-          {providerName} uses device authorization. Click below, then follow the
-          link to approve access.
+          {t("credentials1.deviceAuth.intro", { name: providerName })}
         </Text>
         <Button type="button" variant="primary" size="large" onClick={connect}>
-          Connect {providerName}
+          {t("credentials1.deviceAuth.connect", { name: providerName })}
         </Button>
       </div>
     );
@@ -63,8 +64,7 @@ export function DeviceAuthConnectButton({
   return (
     <div className="flex flex-col gap-4">
       <Text variant="body" className="text-foreground-secondary">
-        Open the link below and enter the code to connect your {providerName}{" "}
-        account.
+        {t("credentials1.deviceAuth.openAndEnter", { name: providerName })}
       </Text>
 
       {/* The code is a live authorization code and the link's href can carry
@@ -76,7 +76,7 @@ export function DeviceAuthConnectButton({
             variant="small"
             className="font-medium text-foreground-tertiary"
           >
-            Your code
+            {t("credentials1.deviceAuth.yourCode")}
           </Text>
           <Text
             variant="h3"
@@ -93,7 +93,7 @@ export function DeviceAuthConnectButton({
           rel="noopener noreferrer"
           className="inline-flex items-center justify-center gap-2 rounded-md bg-action-hover px-4 py-2.5 text-sm font-medium text-action-foreground transition-colors hover:bg-action"
         >
-          Open {providerName}
+          {t("credentials1.deviceAuth.open", { name: providerName })}
           <Icon icon={LinkSquare01Icon} size={16} />
         </a>
       </div>
@@ -101,7 +101,7 @@ export function DeviceAuthConnectButton({
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2 text-foreground-tertiary">
           <Icon icon={Loading03Icon} size={16} className="animate-spin" />
-          <Text variant="small">Waiting for approval…</Text>
+          <Text variant="small">{t("credentials1.deviceAuth.waitingApproval")}</Text>
         </div>
         <Button
           type="button"
@@ -110,7 +110,7 @@ export function DeviceAuthConnectButton({
           onClick={cancel}
           rightIcon={<Icon icon={Cancel01Icon} size={14} />}
         >
-          Cancel
+          {t("credentials1.dialog.cancel")}
         </Button>
       </div>
     </div>

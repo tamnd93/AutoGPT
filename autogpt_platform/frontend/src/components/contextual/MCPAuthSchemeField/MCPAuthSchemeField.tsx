@@ -5,6 +5,7 @@ import { useId } from "react";
 import { Text } from "@/components/atoms/Text/Text";
 import type { Variant } from "@/components/atoms/Text/helpers";
 import type { MCPAuthScheme } from "@/lib/mcp-auth";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   value: MCPAuthScheme;
@@ -30,9 +31,10 @@ export function MCPAuthSchemeField({
   labelVariant,
   selectClassName,
 }: Props) {
+  const t = useT();
   const id = useId();
   const accessibleName = nameSuffix
-    ? `Authentication type for ${nameSuffix}`
+    ? t("credentials1.mcp.authTypeAria", { name: nameSuffix })
     : undefined;
 
   return (
@@ -45,11 +47,11 @@ export function MCPAuthSchemeField({
           htmlFor={id}
           className={labelClassName}
         >
-          Authentication type
+          {t("credentials1.mcp.authType")}
         </Text>
       ) : (
         <label htmlFor={id} className={labelClassName}>
-          Authentication type
+          {t("credentials1.mcp.authType")}
         </label>
       )}
       <select
@@ -60,8 +62,8 @@ export function MCPAuthSchemeField({
         disabled={disabled}
         className={selectClassName}
       >
-        <option value="bearer">API token (Bearer)</option>
-        <option value="basic">Basic authentication</option>
+        <option value="bearer">{t("credentials1.mcp.optionBearer")}</option>
+        <option value="basic">{t("credentials1.mcp.optionBasic")}</option>
       </select>
     </div>
   );

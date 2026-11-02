@@ -1,4 +1,5 @@
 import { Dialog } from "@/components/molecules/Dialog/Dialog";
+import { useT } from "@/lib/i18n";
 
 type Props = {
   open: boolean;
@@ -18,9 +19,10 @@ export function OAuthFlowWaitingModal({
   providerName,
   popupBlocked = false,
 }: Props) {
+  const t = useT();
   return (
     <Dialog
-      title={`Waiting on ${providerName} sign-in process...`}
+      title={t("credentials1.oauthWait.title", { name: providerName })}
       controlled={{
         isOpen: open,
         set: (isOpen) => {
@@ -32,17 +34,11 @@ export function OAuthFlowWaitingModal({
       <Dialog.Content>
         {popupBlocked ? (
           <p className="text-sm text-foreground-secondary">
-            Your browser blocked the sign-in window, so we opened it in a new
-            tab. Switch to that tab and complete sign-in there.
-            <br />
-            If you don&apos;t see the tab, allow popups for this site, close
-            this dialog, and try connecting again.
+            {t("credentials1.oauthWait.blocked")}
           </p>
         ) : (
           <p className="text-sm text-foreground-secondary">
-            Complete the sign-in process in the sign-in window.
-            <br />
-            Closing this dialog will cancel the sign-in process.
+            {t("credentials1.oauthWait.body")}
           </p>
         )}
       </Dialog.Content>

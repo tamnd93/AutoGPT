@@ -68,4 +68,79 @@ export const credentials1En = {
     'Are you sure you want to delete "{title}"? This action cannot be undone.',
   "credentials1.delete.delete": "Delete",
   "credentials1.delete.force": "Force Delete",
+  "credentials1.typeLabels.apiKey": "API Key",
+  "credentials1.typeLabels.userPassword": "Password",
+  "credentials1.typeLabels.hostScoped": "Headers",
+  "credentials1.typeLabels.deviceCode": "Device Auth",
+
+  "credentials1.action.existing": "Add another credential",
+  "credentials1.action.add": "Add credential",
+  "credentials1.action.codexReconnect": "Reconnect ChatGPT",
+  "credentials1.action.codexSignIn": "Sign in with ChatGPT",
+  "credentials1.action.connectAnother": "Connect another account",
+  "credentials1.action.useNewApiKey": "Use a new API key",
+  "credentials1.action.addUserPassword": "Add a new username and password",
+  "credentials1.action.updateHeaders": "Update headers",
+  "credentials1.action.addNew": "Add new credentials",
+  "credentials1.action.addAccount": "Add account",
+  "credentials1.action.addApiKeyShort": "Add API key",
+  "credentials1.action.addUserPasswordShort": "Add username and password",
+  "credentials1.action.addHeadersShort": "Add headers",
+  "credentials1.action.addCredentialsShort": "Add credentials",
+
+  "credentials1.oauthWait.title": "Waiting on {name} sign-in process...",
+  "credentials1.oauthWait.blocked":
+    "Your browser blocked the sign-in window, so we opened it in a new tab. Switch to that tab and complete sign-in there. If you don't see the tab, allow popups for this site, close this dialog, and try connecting again.",
+  "credentials1.oauthWait.body":
+    "Complete the sign-in process in the sign-in window. Closing this dialog will cancel the sign-in process.",
+
+  "credentials1.password.title": "Add new username & password for {name}",
+  "credentials1.password.username": "Username",
+  "credentials1.password.usernamePlaceholder": "Enter username...",
+  "credentials1.password.password": "Password",
+  "credentials1.password.passwordPlaceholder": "Enter password...",
+  "credentials1.password.namePlaceholder": "Enter a name for this user login...",
+  "credentials1.password.submit": "Save & use this user login",
+  "credentials1.password.usernameRequired": "Username is required",
+  "credentials1.password.passwordRequired": "Password is required",
+
+  "credentials1.mcp.authType": "Authentication type",
+  "credentials1.mcp.authTypeAria": "Authentication type for {name}",
+  "credentials1.mcp.optionBearer": "API token (Bearer)",
+  "credentials1.mcp.optionBasic": "Basic authentication",
+  "credentials1.mcp.tokenLabelBasic": "Basic authentication token",
+  "credentials1.mcp.tokenLabelBearer": "API token",
+  "credentials1.mcp.hintBasic":
+    'Paste the Base64 of user:password — the value after "Basic" — or the complete Authorization header.',
+  "credentials1.mcp.hintBearer":
+    "Paste the token itself. AutoGPT sends it using Bearer authentication.",
+  "credentials1.mcp.placeholderBasic": "Paste Base64 of user:password",
+  "credentials1.mcp.placeholderBearer": "Paste API token",
+
+  "credentials1.deviceAuth.requesting": "Requesting a code from {name}…",
+  "credentials1.deviceAuth.starting": "Starting device authorization…",
+  "credentials1.deviceAuth.intro":
+    "{name} uses device authorization. Click below, then follow the link to approve access.",
+  "credentials1.deviceAuth.connect": "Connect {name}",
+  "credentials1.deviceAuth.openAndEnter":
+    "Open the link below and enter the code to connect your {name} account.",
+  "credentials1.deviceAuth.yourCode": "Your code",
+  "credentials1.deviceAuth.open": "Open {name}",
+  "credentials1.deviceAuth.waitingApproval": "Waiting for approval…",
+  "credentials1.deviceAuth.connected": "Connected via device auth",
+  "credentials1.deviceAuth.denied": "Authorization denied",
+  "credentials1.deviceAuth.deniedBody": "The authorization request was denied.",
+  "credentials1.deviceAuth.expired": "Authorization expired",
+  "credentials1.deviceAuth.expiredBody":
+    "The authorization request expired. Please try again.",
+  "credentials1.deviceAuth.pollFailed": "Device auth polling failed",
+  "credentials1.deviceAuth.initFailed": "Device auth initiation failed",
+  "credentials1.deviceAuth.unexpected": "Unexpected error",
+  "credentials1.deviceAuth.planRequired":
+    "Connecting a service needs an active plan",
+  "credentials1.displayName.fallback": "Your {name} account",
+  "credentials1.removed.gone":
+    "{title} was removed. Choose a connection to keep this workflow running.",
+  "credentials1.removed.replaced":
+    "{title} was removed — now using {replacement}.",
 } as const;

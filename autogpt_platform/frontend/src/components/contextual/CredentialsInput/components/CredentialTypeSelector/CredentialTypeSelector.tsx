@@ -20,7 +20,7 @@ import {
 } from "@/lib/autogpt-server-api/types";
 import { useAPIKeyCredentialsModal } from "../APIKeyCredentialsModal/useAPIKeyCredentialsModal";
 import { getCredentialTypeIcon, getCredentialTypeLabel } from "../../helpers";
-import { useT } from "@/lib/i18n";
+import { useLocale, useT } from "@/lib/i18n";
 
 type Props = {
   schema: BlockIOCredentialsSubSchema;
@@ -50,6 +50,7 @@ export function CredentialTypeSelector({
   siblingInputs,
 }: Props) {
   const t = useT();
+  const locale = useLocale();
   const defaultTab = supportedTypes[0];
 
   return (
@@ -76,7 +77,7 @@ export function CredentialTypeSelector({
                   className="inline-flex items-center gap-1.5"
                 >
                   <Icon size={16} />
-                  {getCredentialTypeLabel(type)}
+                  {getCredentialTypeLabel(type, locale)}
                 </TabsLineTrigger>
               );
             })}

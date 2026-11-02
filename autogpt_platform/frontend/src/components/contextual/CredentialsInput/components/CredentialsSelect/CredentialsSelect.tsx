@@ -4,7 +4,7 @@ import {
   getCredentialDisplayName,
   getCredentialTypeLabel,
 } from "../../helpers";
-import { useT } from "@/lib/i18n";
+import { useLocale, useT } from "@/lib/i18n";
 import { CredentialRow } from "../CredentialRow/CredentialRow";
 
 interface Props {
@@ -38,6 +38,7 @@ export function CredentialsSelect({
   variant = "default",
 }: Props) {
   const t = useT();
+  const locale = useLocale();
 
   function handleValueChange(e: React.ChangeEvent<HTMLSelectElement>) {
     const value = e.target.value;
@@ -93,8 +94,11 @@ export function CredentialsSelect({
           )}
           {credentials.map((credential) => (
             <option key={credential.id} value={credential.id}>
-              {getCredentialDisplayName(credential, displayName)} (
-              {getCredentialTypeLabel(credential.type as CredentialsType)})
+              {getCredentialDisplayName(credential, displayName, locale)} (
+              {getCredentialTypeLabel(
+                credential.type as CredentialsType,
+                locale,
+              )})
             </option>
           ))}
         </select>

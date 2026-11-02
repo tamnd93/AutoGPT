@@ -15,6 +15,8 @@ import {
   LockPasswordIcon,
 } from "@hugeicons/core-free-icons";
 import { createIconComponent } from "@/components/atoms/Icon/Icon";
+import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/locale";
+import { getMessage } from "@/lib/i18n/translate";
 
 export const fallbackIcon = createIconComponent(Key01Icon);
 const globeIcon = createIconComponent(Globe02Icon);
@@ -112,15 +114,19 @@ export function getSupportedTypes(
 }
 
 const CREDENTIAL_TYPE_LABELS: Record<CredentialsType, string> = {
-  oauth2: "OAuth",
-  api_key: "API Key",
-  user_password: "Password",
-  host_scoped: "Headers",
-  device_code: "Device Auth",
+  oauth2: "credentials1.existing.typeOAuth",
+  api_key: "credentials1.typeLabels.apiKey",
+  user_password: "credentials1.typeLabels.userPassword",
+  host_scoped: "credentials1.typeLabels.hostScoped",
+  device_code: "credentials1.typeLabels.deviceCode",
 };
 
-export function getCredentialTypeLabel(type: CredentialsType): string {
-  return CREDENTIAL_TYPE_LABELS[type] ?? type;
+export function getCredentialTypeLabel(
+  type: CredentialsType,
+  locale: Locale = DEFAULT_LOCALE,
+): string {
+  const key = CREDENTIAL_TYPE_LABELS[type];
+  return key ? getMessage(locale, key) : type;
 }
 
 type CredentialIcon = React.FC<{ className?: string; size?: string | number }>;
@@ -148,6 +154,7 @@ export function getActionButtonText(
   hasExistingCredentials: boolean,
   provider?: string,
   supportsDeviceCode: boolean = false,
+  locale: Locale = DEFAULT_LOCALE,
 ): string {
   const multipleTypes =
     countSupportedTypes(
@@ -158,39 +165,49 @@ export function getActionButtonText(
       supportsDeviceCode,
     ) > 1;
 
+  const t = (key: string) => getMessage(locale, key);
+
   if (multipleTypes) {
-    return hasExistingCredentials ? "Add another credential" : "Add credential";
+    return hasExistingCredentials
+      ? t("credentials1.action.existing")
+      : t("credentials1.action.add");
   }
 
   if (provider === "codex" && supportsOAuth2) {
     return hasExistingCredentials
-      ? "Reconnect ChatGPT"
-      : "Sign in with ChatGPT";
+      ? t("credentials1.action.codexReconnect")
+      : t("credentials1.action.codexSignIn");
   }
 
   if (hasExistingCredentials) {
-    if (supportsOAuth2) return "Connect another account";
-    if (supportsDeviceCode) return "Connect another account";
-    if (supportsApiKey) return "Use a new API key";
-    if (supportsUserPassword) return "Add a new username and password";
-    if (supportsHostScoped) return "Update headers";
-    return "Add new credentials";
+    if (supportsOAuth2) return t("credentials1.action.connectAnother");
+    if (supportsDeviceCode) return t("credentials1.action.connectAnother");
+    if (supportsApiKey) return t("credentials1.action.useNewApiKey");
+    if (supportsUserPassword) return t("credentials1.action.addUserPassword");
+    if (supportsHostScoped) return t("credentials1.action.updateHeaders");
+    return t("credentials1.action.addNew");
   } else {
-    if (supportsOAuth2) return "Add account";
-    if (supportsDeviceCode) return "Add account";
-    if (supportsApiKey) return "Add API key";
-    if (supportsUserPassword) return "Add username and password";
-    if (supportsHostScoped) return "Add headers";
-    return "Add credentials";
+    if (supportsOAuth2) return t("credentials1.action.addAccount");
+    if (supportsDeviceCode) return t("credentials1.action.addAccount");
+    if (supportsApiKey) return t("credentials1.action.addApiKeyShort");
+    if (supportsUserPassword)
+      return t("credentials1.action.addUserPasswordShort");
+    if (supportsHostScoped) return t("credentials1.action.addHeadersShort");
+    return t("credentials1.action.addCredentialsShort");
   }
 }
 
 export function getCredentialDisplayName(
   credential: { title?: string | null; username?: string },
   displayName: string,
+  locale: Locale = DEFAULT_LOCALE,
 ): string {
   return (
-    credential.title || credential.username || `Your ${displayName} account`
+    credential.title ||
+    credential.username ||
+    getMessage(locale, "credentials1.displayName.fallback", {
+      name: displayName,
+    })
   );
 }
 
@@ -200,16 +217,23 @@ export function getRemovedCredentialMessage(
     | { id: string; title?: string | null; username?: string }
     | undefined,
   providerName: string,
+  locale: Locale = DEFAULT_LOCALE,
 ): string {
   if (!selectedCredential?.id) {
-    return `${removedCredentialTitle} was removed. Choose a connection to keep this workflow running.`;
+    return getMessage(locale, "credentials1.removed.gone", {
+      title: removedCredentialTitle,
+    });
   }
 
   const replacement = getCredentialDisplayName(
     selectedCredential,
     providerName,
+    locale,
   );
-  return `${removedCredentialTitle} was removed — now using ${replacement}.`;
+  return getMessage(locale, "credentials1.removed.replaced", {
+    title: removedCredentialTitle,
+    replacement,
+  });
 }
 
 export const OAUTH_TIMEOUT_MS = 5 * 60 * 1000;

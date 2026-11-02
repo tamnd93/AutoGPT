@@ -5,7 +5,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/molecules/DropdownMenu/DropdownMenu";
-import { useT } from "@/lib/i18n";
+import { useLocale, useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { useEffect, useRef, useState } from "react";
 import { CredentialsType } from "@/lib/autogpt-server-api/types";
@@ -51,6 +51,7 @@ export function CredentialRow({
   variant = "default",
 }: CredentialRowProps) {
   const t = useT();
+  const locale = useLocale();
   const ProviderIcon = providerIcons[provider] || fallbackIcon;
   const isRealCredentialType = [
     "api_key",
@@ -125,11 +126,11 @@ export function CredentialRow({
               isNodeVariant ? "truncate" : "line-clamp-1 text-ellipsis",
             )}
           >
-            {getCredentialDisplayName(credential, displayName)}
+            {getCredentialDisplayName(credential, displayName, locale)}
           </Text>
           {isRealCredentialType && (
             <span className="shrink-0 rounded bg-surface-hover px-1.5 py-0.5 text-tiny font-medium leading-tight text-foreground-tertiary">
-              {getCredentialTypeLabel(credType)}
+              {getCredentialTypeLabel(credType, locale)}
             </span>
           )}
         </div>

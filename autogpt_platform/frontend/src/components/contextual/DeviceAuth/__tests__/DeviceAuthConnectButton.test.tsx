@@ -1,5 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
+import { LocaleProvider } from "@/lib/i18n";
 
 import { DeviceAuthConnectButton } from "../DeviceAuthConnectButton";
 
@@ -71,5 +72,29 @@ describe("DeviceAuthConnectButton", () => {
 
     expect(screen.getByText(/Starting device authorization/)).toBeTruthy();
     expect(container.querySelector("a")).toBeNull();
+  });
+
+  it("words the connect prompt and button in Vietnamese", () => {
+    state.phase = "idle";
+    state.userCode = "";
+    state.verificationUrl = "";
+    render(
+      <LocaleProvider locale="vi">
+        <DeviceAuthConnectButton
+          provider="stripe_link"
+          providerName="Stripe Link"
+          onSuccess={vi.fn()}
+        />
+      </LocaleProvider>,
+    );
+
+    expect(
+      screen.getByText(
+        "Stripe Link dùng xác thực thiết bị. Bấm nút bên dưới rồi mở liên kết để chấp thuận quyền truy cập.",
+      ),
+    ).toBeTruthy();
+    expect(
+      screen.getByRole("button", { name: "Kết nối Stripe Link" }),
+    ).toBeTruthy();
   });
 });

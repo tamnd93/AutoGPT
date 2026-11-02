@@ -6,6 +6,7 @@ import {
   getCredentialTypeLabel,
   getActionButtonText,
   getCredentialDisplayName,
+  getRemovedCredentialMessage,
   isSystemCredential,
   filterSystemCredentials,
   getSystemCredentials,
@@ -600,5 +601,46 @@ describe("updateHeaderPairInList", () => {
     const pairs = [{ key: "a", value: "1" }];
     updateHeaderPairInList(pairs, 0, "key", "b");
     expect(pairs[0].key).toBe("a");
+  });
+});
+
+describe("credential helper copy in Vietnamese", () => {
+  it("words the credential type labels in Vietnamese", () => {
+    expect(getCredentialTypeLabel("oauth2", "vi")).toBe("OAuth");
+    expect(getCredentialTypeLabel("api_key", "vi")).toBe("Khoá API");
+    expect(getCredentialTypeLabel("user_password", "vi")).toBe("Mật khẩu");
+    expect(getCredentialTypeLabel("host_scoped", "vi")).toBe("Header");
+    expect(getCredentialTypeLabel("device_code", "vi")).toBe(
+      "Xác thực thiết bị",
+    );
+  });
+
+  it("keeps the credential type labels in English by default", () => {
+    expect(getCredentialTypeLabel("api_key")).toBe("API Key");
+    expect(getCredentialTypeLabel("device_code")).toBe("Device Auth");
+  });
+
+  it("words the action button text in Vietnamese", () => {
+    expect(getActionButtonText(true, true, false, false, false, undefined, false, "vi")).toBe(
+      "Thêm thông tin kết nối",
+    );
+    expect(getActionButtonText(true, false, false, false, false, undefined, false, "vi")).toBe(
+      "Thêm tài khoản",
+    );
+    expect(getActionButtonText(false, true, false, false, false, undefined, false, "vi")).toBe(
+      "Thêm API key",
+    );
+    expect(getActionButtonText(true, false, false, false, false, "codex", false, "vi")).toBe(
+      "Đăng nhập bằng ChatGPT",
+    );
+  });
+
+  it("words the fallback display name and removal notices in Vietnamese", () => {
+    expect(getCredentialDisplayName({}, "GitHub", "vi")).toBe(
+      "Tài khoản GitHub của bạn",
+    );
+    expect(getRemovedCredentialMessage("Key A", undefined, "GitHub", "vi")).toBe(
+      "Key A đã bị xoá. Chọn một kết nối để workflow này tiếp tục chạy.",
+    );
   });
 });
