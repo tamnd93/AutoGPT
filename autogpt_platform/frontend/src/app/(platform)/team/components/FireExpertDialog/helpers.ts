@@ -1,4 +1,6 @@
 import { ExpertDetachPreview } from "@/app/api/__generated__/models/expertDetachPreview";
+import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/locale";
+import { getMessage } from "@/lib/i18n/translate";
 
 export interface PauseItem {
   id: string;
@@ -23,12 +25,25 @@ export function getPauseItems(
   ];
 }
 
-export function getAutomationLine(count: number) {
-  if (count === 0) return "No automations will pause.";
-  return `${count} ${count === 1 ? "automation" : "automations"} will pause.`;
+export function getAutomationLine(
+  count: number,
+  locale: Locale = DEFAULT_LOCALE,
+) {
+  if (count === 0) return getMessage(locale, "team8.fire.automationNone");
+  return getMessage(
+    locale,
+    count === 1 ? "team8.fire.automationOne" : "team8.fire.automationMany",
+    { count },
+  );
 }
 
-export function getFireSummary(preview: ExpertDetachPreview | null) {
+export function getFireSummary(
+  preview: ExpertDetachPreview | null,
+  locale: Locale = DEFAULT_LOCALE,
+) {
   const items = getPauseItems(preview);
-  return { items, automationLine: getAutomationLine(items.length) };
+  return {
+    items,
+    automationLine: getAutomationLine(items.length, locale),
+  };
 }

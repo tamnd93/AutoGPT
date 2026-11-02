@@ -2,6 +2,8 @@ import { expertPastel } from "@/components/molecules/ExpertAvatar/colors";
 import { coverClassFor } from "@/app/(platform)/raise/components/ColorStep/helpers";
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { Text } from "@/components/atoms/Text/Text";
+import { useT } from "@/lib/i18n";
+import type { MessageKey } from "@/lib/i18n/messages/en";
 import { cn } from "@/lib/utils";
 import { Activity01Icon, Alert01Icon } from "@hugeicons/core-free-icons";
 import type { IconSvgElement } from "@hugeicons/react";
@@ -15,17 +17,17 @@ type CoverStatus = ExpertRosterStatus | "built-in";
 const STATUS_STYLES: Partial<
   Record<
     CoverStatus,
-    { label: string; className: string; icon: IconSvgElement }
+    { labelKey: MessageKey; className: string; icon: IconSvgElement }
   >
 > = {
   working: {
-    label: "Working",
+    labelKey: "team8.cover.working",
     // TODO(tokens): no exact role: bg-emerald-50 #ECFDF5, text-emerald-700 #047857
     className: "bg-emerald-50 text-emerald-700",
     icon: Activity01Icon,
   },
   "needs-you": {
-    label: "Needs you",
+    labelKey: "team3.needsYou.aria",
     className: "bg-warning-surface text-warning-foreground",
     icon: Alert01Icon,
   },
@@ -40,6 +42,7 @@ interface Props {
 }
 
 export function ExpertCover({ className, color, status, art }: Props) {
+  const t = useT();
   const statusStyle = status ? (STATUS_STYLES[status] ?? null) : null;
 
   return (
@@ -74,7 +77,7 @@ export function ExpertCover({ className, color, status, art }: Props) {
           )}
         >
           <Icon icon={statusStyle.icon} size={13} />
-          {statusStyle.label}
+          {t(statusStyle.labelKey)}
         </Text>
       ) : null}
     </div>

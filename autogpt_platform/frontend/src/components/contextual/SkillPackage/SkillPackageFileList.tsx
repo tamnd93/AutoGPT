@@ -2,6 +2,7 @@ import type { SkillPackageFile } from "@/app/api/__generated__/models/skillPacka
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { File01Icon } from "@hugeicons/core-free-icons";
 import { formatFileSize } from "./helpers";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   files: SkillPackageFile[];
@@ -9,6 +10,8 @@ interface Props {
 }
 
 export function SkillPackageFileList({ files, onOpenFile }: Props) {
+  const t = useT();
+
   return (
     <ul
       className="divide-y divide-separator overflow-hidden rounded-xl border border-border-base"
@@ -32,7 +35,7 @@ export function SkillPackageFileList({ files, onOpenFile }: Props) {
             </span>
             {file.is_executable ? (
               <span className="shrink-0 rounded-md bg-surface-hover px-1.5 py-0.5 text-caption-sm font-medium leading-inherit text-foreground-tertiary">
-                executable
+                {t("skills1.fileList.executable")}
               </span>
             ) : null}
             <span className="shrink-0 text-xs tabular-nums text-foreground-subtle">

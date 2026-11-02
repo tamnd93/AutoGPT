@@ -15,6 +15,20 @@ describe("getAutomationLine", () => {
   });
 });
 
+describe("getAutomationLine in Vietnamese", () => {
+  test("words the pause line in Vietnamese", () => {
+    expect(getAutomationLine(0, "vi")).toBe(
+      "Không có tự động hoá nào bị tạm dừng.",
+    );
+    expect(getAutomationLine(1, "vi")).toBe("1 tự động hoá sẽ tạm dừng.");
+    expect(getAutomationLine(3, "vi")).toBe("3 tự động hoá sẽ tạm dừng.");
+    expect(getFireSummary(null, "vi")).toEqual({
+      items: [],
+      automationLine: "Không có tự động hoá nào bị tạm dừng.",
+    });
+  });
+});
+
 describe("getPauseItems", () => {
   test("returns an empty list without a preview", () => {
     expect(getPauseItems(null)).toEqual([]);

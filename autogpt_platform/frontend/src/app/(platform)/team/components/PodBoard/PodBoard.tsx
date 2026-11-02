@@ -5,6 +5,7 @@ import { Icon } from "@/components/atoms/Icon/Icon";
 import { Skeleton } from "@/components/atoms/Skeleton/Skeleton";
 import { Text } from "@/components/atoms/Text/Text";
 import { ArrowLeft01Icon, Folder02Icon } from "@hugeicons/core-free-icons";
+import { useT } from "@/lib/i18n";
 import { ReactNode, useState } from "react";
 import { TEAM_GRID_CLASS } from "../../helpers";
 
@@ -24,13 +25,14 @@ export function PodBoard({
   onNewPod,
   renderCard,
 }: Props) {
+  const t = useT();
   const [openPodId, setOpenPodId] = useState<string | null>(null);
   const openGroup = podGroups.find((group) => group.pod.id === openPodId);
 
   if (openGroup) {
     return (
       <section
-        aria-label={`${openGroup.pod.name} pod`}
+        aria-label={t("team8.pods.podAria", { name: openGroup.pod.name })}
         className="flex flex-col gap-4"
       >
         <div className="flex items-center gap-2">
@@ -39,15 +41,19 @@ export function PodBoard({
             variant="ghost"
             size="icon-xs"
             leadingIcon={ArrowLeft01Icon}
-            aria-label="Back to pods"
+            aria-label={t("team8.pods.back")}
             onClick={() => setOpenPodId(null)}
           />
           <Text variant="large-medium" as="h5" tone="primary">
             {openGroup.pod.name}
           </Text>
           <Text variant="small" tone="muted">
-            {openGroup.experts.length}{" "}
-            {openGroup.experts.length === 1 ? "expert" : "experts"}
+            {t(
+              openGroup.experts.length === 1
+                ? "team8.pods.expertOne"
+                : "team8.pods.expertMany",
+              { count: openGroup.experts.length },
+            )}
           </Text>
         </div>
         {openGroup.experts.length > 0 ? (
@@ -56,7 +62,7 @@ export function PodBoard({
           </div>
         ) : (
           <Text variant="body" tone="muted">
-            No experts in this pod yet. Move one in from its card menu.
+            {t("team8.pods.emptyOpen")}
           </Text>
         )}
       </section>
@@ -64,9 +70,9 @@ export function PodBoard({
   }
 
   return (
-    <section aria-label="Pods" className="flex flex-col gap-4">
+    <section aria-label={t("team8.pods.title")} className="flex flex-col gap-4">
       <Text variant="large-medium" as="h5" tone="primary">
-        Pods
+        {t("team8.pods.title")}
       </Text>
       {isLoading ? (
         <div className={FOLDER_GRID_CLASS}>
@@ -77,13 +83,13 @@ export function PodBoard({
       ) : podGroups.length === 0 ? (
         <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed border-border-strong bg-surface p-8 text-center">
           <Text variant="large-medium" tone="primary">
-            No pods yet
+            {t("team8.pods.noPods")}
           </Text>
           <Text variant="body" tone="secondary" className="max-w-prose">
-            Group experts into pods to keep related work together.
+            {t("team8.pods.intro")}
           </Text>
           <Button variant="primary" size="small" onClick={onNewPod}>
-            New Pod
+            {t("team8.pods.newPod")}
           </Button>
         </div>
       ) : (
@@ -109,11 +115,12 @@ interface PodFolderProps {
 }
 
 function PodFolder({ name, experts, onOpen }: PodFolderProps) {
+  const t = useT();
   return (
     <button
       type="button"
       onClick={onOpen}
-      aria-label={`Open ${name} pod`}
+      aria-label={t("team8.pods.openPod", { name })}
       // TODO(tokens): no fitting role for focus-visible:ring-zinc-400 #ADADB3; #ADADB3 is foreground-subtle (a text colour)
       className="flex flex-col gap-3 rounded-2xl bg-surface p-4 text-left transition-colors smooth-shadow-ring-sm hover:bg-surface-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-400"
     >
@@ -131,7 +138,12 @@ function PodFolder({ name, experts, onOpen }: PodFolderProps) {
             {name}
           </Text>
           <Text variant="small" tone="muted">
-            {experts.length} {experts.length === 1 ? "expert" : "experts"}
+            {t(
+              experts.length === 1
+                ? "team8.pods.expertOne"
+                : "team8.pods.expertMany",
+              { count: experts.length },
+            )}
           </Text>
         </div>
       </div>
@@ -151,7 +163,7 @@ function PodFolder({ name, experts, onOpen }: PodFolderProps) {
         </ul>
       ) : (
         <Text variant="small" tone="muted">
-          No experts in this pod yet.
+          {t("team8.pods.emptyFolder")}
         </Text>
       )}
     </button>

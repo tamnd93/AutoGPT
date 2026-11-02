@@ -30,6 +30,7 @@ import {
 } from "@/app/api/__generated__/endpoints/chat/chat";
 import { toast } from "@/components/molecules/Toast/use-toast";
 import { useAuthStore } from "@/lib/auth/hooks/useAuthStore";
+import { useT } from "@/lib/i18n";
 import * as Sentry from "@sentry/nextjs";
 import type { UIDataTypes, UIMessage, UITools } from "ai";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -38,12 +39,14 @@ import { recoverUnsentMessage, useExpertChatSend } from "./useExpertChatSend";
 
 type UiMessages = UIMessage<unknown, UIDataTypes, UITools>[];
 
+type Translate = ReturnType<typeof useT>;
+
 class SessionStartingError extends Error {}
 
-function notifyStartFailed(error: unknown) {
+function notifyStartFailed(error: unknown, t: Translate) {
   toast({
     variant: "destructive",
-    title: "Could not start the chat",
+    title: t("team8.drawer.startFailedTitle"),
     description: describeChatError(
       error instanceof Error ? error : new Error(String(error)),
     ).title,
@@ -84,6 +87,7 @@ export function useExpertChatDrawer({
   threadKey,
   seedPrompt,
 }: Args) {
+  const t = useT();
   const expertId = target?.expertId ?? null;
   const userId = useAuthStore((state) => state.user?.id) ?? null;
   const [sessionId, setSessionId] = useState<string | null>(null);
@@ -168,7 +172,9 @@ export function useExpertChatDrawer({
         .then(() => sendQueuedInNewThreadRef.current());
       return;
     }
-    void startKickoffRef.current(userId, expertId).catch(notifyStartFailed);
+    void startKickoffRef
+      .current(userId, expertId)
+      .catch((err: unknown) => notifyStartFailed(err, t));
   }, [
     expertId,
     kickoffCheckQuery.data,
@@ -313,7 +319,7 @@ export function useExpertChatDrawer({
     setSeedToSend(null);
     void startSessionRef
       .current(textMessage(seedToSend))
-      .catch(notifyStartFailed);
+      .catch((err: unknown) => notifyStartFailed(err, t));
   }, [seedToSend]);
 
   useEffect(() => {
@@ -321,7 +327,7 @@ export function useExpertChatDrawer({
     const pending = pendingPromptRef.current;
     pendingPromptRef.current = null;
     void send(sessionId, pending).catch((err: unknown) =>
-      recoverUnsentMessage(pending, err),
+      recoverUnsentMessage(pending, err, t),
     );
   }, [sessionId, send]);
 
@@ -480,7 +486,7 @@ export function useExpertChatDrawer({
     }
     if (hasAttachments(message)) {
       void send(sessionId, message).catch((err: unknown) =>
-        recoverUnsentMessage(message, err),
+        recoverUnsentMessage(message, err, t),
       );
       return;
     }
@@ -495,7 +501,7 @@ export function useExpertChatDrawer({
           err.name === "QueueFollowUpNotActiveError"
         ) {
           void send(sessionId, message).catch((sendErr: unknown) =>
-            recoverUnsentMessage(message, sendErr),
+            recoverUnsentMessage(message, sendErr, t),
           );
           return;
         }
@@ -506,7 +512,7 @@ export function useExpertChatDrawer({
       return;
     }
     void send(sessionId, message).catch((err: unknown) =>
-      recoverUnsentMessage(message, err),
+      recoverUnsentMessage(message, err, t),
     );
   }
 
@@ -539,7 +545,7 @@ export function useExpertChatDrawer({
     try {
       await onSend(message);
     } catch (err) {
-      if (!(err instanceof SessionStartingError)) notifyStartFailed(err);
+      if (!(err instanceof SessionStartingError)) notifyStartFailed(err, t);
       throw err;
     }
   }

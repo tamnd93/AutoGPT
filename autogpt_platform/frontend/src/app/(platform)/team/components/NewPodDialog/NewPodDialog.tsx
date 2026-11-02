@@ -3,6 +3,7 @@
 import { Button } from "@/components/atoms/Button/Button";
 import { Input } from "@/components/atoms/Input/Input";
 import { Dialog } from "@/components/molecules/Dialog/Dialog";
+import { useT } from "@/lib/i18n";
 import { FormEvent, useEffect, useState } from "react";
 import { POD_NAME_MAX_LENGTH } from "../../helpers";
 
@@ -14,6 +15,7 @@ interface Props {
 }
 
 export function NewPodDialog({ open, onClose, onCreate, isCreating }: Props) {
+  const t = useT();
   const [name, setName] = useState("");
   const trimmed = name.trim();
 
@@ -30,7 +32,7 @@ export function NewPodDialog({ open, onClose, onCreate, isCreating }: Props) {
   return (
     <Dialog
       variant="compact"
-      title="New pod"
+      title={t("team8.newPod.title")}
       styling={{ maxWidth: "28rem" }}
       controlled={{
         isOpen: open,
@@ -44,9 +46,9 @@ export function NewPodDialog({ open, onClose, onCreate, isCreating }: Props) {
           <Input
             id="pod-name"
             size="small"
-            label="Pod name"
+            label={t("team8.newPod.nameLabel")}
             labelVariant="small-medium"
-            placeholder="e.g. Growth"
+            placeholder={t("team8.newPod.namePlaceholder")}
             value={name}
             maxLength={POD_NAME_MAX_LENGTH}
             onChange={(event) => setName(event.target.value)}
@@ -59,7 +61,7 @@ export function NewPodDialog({ open, onClose, onCreate, isCreating }: Props) {
               variant="secondary"
               onClick={onClose}
             >
-              Cancel
+              {t("team8.common.cancel")}
             </Button>
             <Button
               size="small"
@@ -68,7 +70,7 @@ export function NewPodDialog({ open, onClose, onCreate, isCreating }: Props) {
               disabled={!trimmed || isCreating}
               loading={isCreating}
             >
-              Create pod
+              {t("team8.newPod.create")}
             </Button>
           </div>
         </form>

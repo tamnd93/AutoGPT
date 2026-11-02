@@ -1,6 +1,7 @@
 import { Button } from "@/components/atoms/Button/Button";
 import { Text } from "@/components/atoms/Text/Text";
 import { Dialog } from "@/components/molecules/Dialog/Dialog";
+import { useT } from "@/lib/i18n";
 import type { ReactNode } from "react";
 import type { PauseItem } from "./helpers";
 
@@ -39,10 +40,10 @@ export function FireExpertPreview({
   isReady,
   onRetry,
 }: PreviewProps) {
+  const t = useT();
   function getAutomationLineText() {
-    if (isLoading) return "Checking what will pause…";
-    if (isError)
-      return "We couldn't preview what pauses, but you can still fire them.";
+    if (isLoading) return t("team8.fire.checking");
+    if (isError) return t("team8.fire.previewFailed");
     return automationLine;
   }
 
@@ -53,13 +54,13 @@ export function FireExpertPreview({
   return (
     <>
       <Text variant="body" tone="secondary">
-        Here is exactly what happens when you fire {expertName}.
+        {t("team8.fire.intro", { name: expertName })}
       </Text>
       <ul className="flex flex-col gap-2.5">
-        <FireLine>Installed workflows stay in your library.</FireLine>
+        <FireLine>{t("team8.fire.lineWorkflows")}</FireLine>
         <FireLine>{getAutomationLineText()}</FireLine>
-        <FireLine>Any chat history stays available but read-only.</FireLine>
-        <FireLine>Their work stays yours.</FireLine>
+        <FireLine>{t("team8.fire.lineHistory")}</FireLine>
+        <FireLine>{t("team8.fire.lineWork")}</FireLine>
       </ul>
       {isError ? (
         <div className="flex justify-end">
@@ -69,7 +70,7 @@ export function FireExpertPreview({
             onClick={handleRetry}
             data-testid="fire-preview-retry"
           >
-            Retry preview
+            {t("team8.fire.retryPreview")}
           </Button>
         </div>
       ) : null}
@@ -79,10 +80,11 @@ export function FireExpertPreview({
 }
 
 function PauseItemsPanel({ items }: PauseItemsPanelProps) {
+  const t = useT();
   return (
     <div className="rounded-xl bg-surface-muted px-3.5 py-3 ring-1 ring-inset ring-border-base/80">
       <Text variant="small" tone="muted">
-        Pausing now
+        {t("team8.fire.pausingNow")}
       </Text>
       <ul className="mt-1 flex flex-col gap-0.5">
         {items.map((item) => (
@@ -108,6 +110,7 @@ export function FireExpertFooter({
   onClose,
   onFire,
 }: FooterProps) {
+  const t = useT();
   return (
     <Dialog.Footer>
       <Button
@@ -116,7 +119,7 @@ export function FireExpertFooter({
         disabled={isFiring}
         onClick={onClose}
       >
-        Keep {expertName}
+        {t("team8.fire.keepName", { name: expertName })}
       </Button>
       <Button
         size="small"
@@ -126,7 +129,7 @@ export function FireExpertFooter({
         onClick={onFire}
         data-testid="fire-expert-confirm"
       >
-        Fire {expertName}
+        {t("team8.fire.fireName", { name: expertName })}
       </Button>
     </Dialog.Footer>
   );

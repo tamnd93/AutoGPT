@@ -10,6 +10,8 @@ import { toastSendFailure } from "@/app/(platform)/copilot/helpers/sendFailureTo
 import { useSettleGate } from "@/app/(platform)/copilot/useSettleGate";
 import { useCopilotUIStore } from "@/app/(platform)/copilot/store";
 import { toast } from "@/components/molecules/Toast/use-toast";
+import { useT } from "@/lib/i18n";
+import type { MessageKey } from "@/lib/i18n/messages/en";
 import * as Sentry from "@sentry/nextjs";
 import type { ChatStatus } from "ai";
 import { useRef, useState } from "react";
@@ -39,6 +41,7 @@ export function useExpertChatSend({
   sendMessage,
   stop,
 }: Args) {
+  const t = useT();
   const [heldMessage, setHeldMessage] = useState<OutgoingMessage | null>(null);
   const sessionIdRef = useRef(sessionId);
   sessionIdRef.current = sessionId;
@@ -94,13 +97,13 @@ export function useExpertChatSend({
    *  uploads outlived its own thread goes back to the composer instead. */
   function isStillShown(targetSessionId: string, message: OutgoingMessage) {
     if (sessionIdRef.current === targetSessionId) return true;
-    returnToComposer(message, "new-task");
+    returnToComposer(message, "new-task", t);
     return false;
   }
 
   function wasNotStopped(stopCount: number, message: OutgoingMessage) {
     if (stopCountRef.current === stopCount) return true;
-    returnToComposer(message, "stopped");
+    returnToComposer(message, "stopped", t);
     return false;
   }
 
@@ -141,9 +144,11 @@ export function useExpertChatSend({
   };
 }
 
-const UNSENT_BECAUSE = {
-  "new-task": "You started a new task before it went out.",
-  stopped: "You stopped the reply before it went out.",
+type Translate = ReturnType<typeof useT>;
+
+const UNSENT_BECAUSE: Record<"new-task" | "stopped", MessageKey> = {
+  "new-task": "team8.drawer.unsentNewTask",
+  stopped: "team8.drawer.unsentStopped",
 };
 
 /** The user started a new task, or stopped the reply, while the message's
@@ -151,29 +156,35 @@ const UNSENT_BECAUSE = {
 function returnToComposer(
   message: OutgoingMessage,
   reason: keyof typeof UNSENT_BECAUSE,
+  t: Translate,
 ) {
   if (message.text) useCopilotUIStore.getState().restoreDraft(message.text);
+  const because = t(UNSENT_BECAUSE[reason]);
   toast({
-    title: "Message not sent",
+    title: t("team8.drawer.messageNotSent"),
     description: message.text
-      ? `${UNSENT_BECAUSE[reason]} Its text is back in the composer; attach the files again.`
-      : `${UNSENT_BECAUSE[reason]} Attach the files again to send them.`,
+      ? t("team8.drawer.unsentWithFiles", { reason: because })
+      : t("team8.drawer.unsentNoFiles", { reason: because }),
   });
 }
 
 /** For a send whose caller has already moved on. A kickoff prompt is ours,
  *  not the user's, so there is nothing to hand back for it. */
-export function recoverUnsentMessage(message: OutgoingMessage, error: unknown) {
+export function recoverUnsentMessage(
+  message: OutgoingMessage,
+  error: unknown,
+  t: Translate,
+) {
   if (message.metadata) {
     Sentry.captureException(error);
     return;
   }
   if (message.text) useCopilotUIStore.getState().restoreDraft(message.text);
   toastSendFailure({
-    title: "Couldn't send message",
+    title: t("team8.drawer.sendFailedTitle"),
     error,
     recovery: message.text
-      ? "your message is back in the composer"
-      : "your files were not sent",
+      ? t("team8.drawer.sendRecoveryText")
+      : t("team8.drawer.sendRecoveryFiles"),
   });
 }

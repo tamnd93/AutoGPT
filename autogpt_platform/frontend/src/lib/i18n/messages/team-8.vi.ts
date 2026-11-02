@@ -96,4 +96,62 @@ export const team8Vi: Partial<Record<keyof typeof team8En, string>> = {
     "Mọi kết nối đã sẵn sàng; vẫn cần tạo lịch chạy.",
   "team8.setupRow.inputsFallback": "vài thông tin từ bạn",
   "team8.setupRow.inputsJoiner": "{rest} và {last}",
+
+  "team8.common.cancel": "Huỷ",
+
+  "team8.drawer.chatWithAria": "Chat với {name}",
+  "team8.drawer.closeLabel": "Đóng bảng chat",
+  "team8.drawer.newTask": "Tác vụ mới",
+  "team8.drawer.openInChat": "Mở trong Chat",
+  "team8.drawer.opening": "Đang mở chat…",
+  "team8.drawer.whatCanIDo": "Tôi có thể giúp gì cho bạn?",
+  "team8.drawer.placeholder": "Nhắn cho {name}…",
+  "team8.drawer.startFailedTitle": "Không bắt đầu được chat",
+  "team8.drawer.messageNotSent": "Tin nhắn chưa gửi",
+  "team8.drawer.unsentNewTask":
+    "Bạn đã bắt đầu tác vụ mới trước khi tin nhắn được gửi.",
+  "team8.drawer.unsentStopped":
+    "Bạn đã dừng phản hồi trước khi tin nhắn được gửi.",
+  "team8.drawer.unsentWithFiles":
+    "{reason} Nội dung đã trở lại ô nhập; hãy đính kèm lại các tệp.",
+  "team8.drawer.unsentNoFiles": "{reason} Hãy đính kèm lại các tệp để gửi.",
+  "team8.drawer.sendFailedTitle": "Không gửi được tin nhắn",
+  "team8.drawer.sendRecoveryText": "tin nhắn của bạn đã trở lại ô nhập",
+  "team8.drawer.sendRecoveryFiles": "các tệp của bạn chưa được gửi",
+
+  "team8.fire.title": "Cho {name} rời đội?",
+  "team8.fire.checking": "Đang kiểm tra những gì sẽ tạm dừng…",
+  "team8.fire.previewFailed":
+    "Không xem trước được những gì sẽ tạm dừng, nhưng bạn vẫn có thể cho chuyên gia rời đội.",
+  "team8.fire.intro":
+    "Đây là chính xác những gì xảy ra khi bạn cho {name} rời đội.",
+  "team8.fire.lineWorkflows": "Workflow đã cài vẫn ở trong thư viện của bạn.",
+  "team8.fire.lineHistory": "Lịch sử chat vẫn xem được nhưng chỉ đọc.",
+  "team8.fire.lineWork": "Công việc của họ vẫn thuộc về bạn.",
+  "team8.fire.retryPreview": "Thử lại xem trước",
+  "team8.fire.pausingNow": "Đang tạm dừng",
+  "team8.fire.keepName": "Giữ {name}",
+  "team8.fire.fireName": "Cho {name} rời đội",
+  "team8.fire.automationNone": "Không có tự động hoá nào bị tạm dừng.",
+  "team8.fire.automationOne": "{count} tự động hoá sẽ tạm dừng.",
+  "team8.fire.automationMany": "{count} tự động hoá sẽ tạm dừng.",
+
+  "team8.newPod.title": "Pod mới",
+  "team8.newPod.nameLabel": "Tên pod",
+  "team8.newPod.namePlaceholder": "ví dụ: Growth",
+  "team8.newPod.create": "Tạo pod",
+
+  "team8.pods.title": "Pod",
+  "team8.pods.podAria": "Pod {name}",
+  "team8.pods.back": "Về danh sách pod",
+  "team8.pods.openPod": "Mở pod {name}",
+  "team8.pods.expertOne": "{count} chuyên gia",
+  "team8.pods.expertMany": "{count} chuyên gia",
+  "team8.pods.emptyOpen":
+    "Chưa có chuyên gia trong pod này. Chuyển một chuyên gia vào từ menu trên thẻ.",
+  "team8.pods.emptyFolder": "Chưa có chuyên gia trong pod này.",
+  "team8.pods.noPods": "Chưa có pod nào",
+  "team8.pods.intro":
+    "Nhóm các chuyên gia vào pod để công việc liên quan ở cạnh nhau.",
+  "team8.pods.newPod": "Pod mới",
 };

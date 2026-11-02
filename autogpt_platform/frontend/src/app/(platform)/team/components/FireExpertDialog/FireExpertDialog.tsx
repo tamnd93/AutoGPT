@@ -1,6 +1,7 @@
 "use client";
 
 import { Dialog } from "@/components/molecules/Dialog/Dialog";
+import { useLocale, useT } from "@/lib/i18n";
 import { getFireSummary } from "./helpers";
 import {
   FireExpertFooter,
@@ -38,7 +39,9 @@ export function FireExpertDialog({
     onClose,
     onFired,
   });
-  const summary = getFireSummary(preview);
+  const t = useT();
+  const locale = useLocale();
+  const summary = getFireSummary(preview, locale);
 
   // Match the disabled "Keep" button: while the archive request is in flight
   // ESC and overlay clicks must not dismiss either, or the user loses the
@@ -52,7 +55,7 @@ export function FireExpertDialog({
       variant="compact"
       controlled={{ isOpen: open, set: handleOpenChange }}
       styling={{ maxWidth: "30rem" }}
-      title={`Fire ${expertName}?`}
+      title={t("team8.fire.title", { name: expertName })}
     >
       <Dialog.Content>
         <div className="flex flex-col gap-4">

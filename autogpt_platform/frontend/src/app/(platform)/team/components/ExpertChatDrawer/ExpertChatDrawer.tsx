@@ -6,6 +6,7 @@ import { ChatInput } from "@/app/(platform)/copilot/components/ChatInput/ChatInp
 import { ChatMessagesContainer } from "@/app/(platform)/copilot/components/ChatMessagesContainer/ChatMessagesContainer";
 import { CopilotChatActionsProvider } from "@/app/(platform)/copilot/components/CopilotChatActionsProvider/CopilotChatActionsProvider";
 import { Button } from "@/components/atoms/Button/Button";
+import { useT } from "@/lib/i18n";
 import { Text } from "@/components/atoms/Text/Text";
 import { ArrowExpandIcon, NoteEditIcon } from "@hugeicons/core-free-icons";
 import { ExpertSidePanel } from "../ExpertSidePanel/ExpertSidePanel";
@@ -34,6 +35,7 @@ export function ExpertChatDrawer({
   threadKey = 0,
   seedPrompt = null,
 }: Props) {
+  const t = useT();
   const chat = useExpertChatDrawer({
     target,
     isOpen: target !== null,
@@ -59,9 +61,11 @@ export function ExpertChatDrawer({
     <ExpertSidePanel
       identity={identity}
       title={target?.name ?? ""}
-      ariaLabel={target ? `Chat with ${target.name}` : ""}
+      ariaLabel={
+        target ? t("team8.drawer.chatWithAria", { name: target.name }) : ""
+      }
       panelId="chat"
-      closeLabel="Close chat panel"
+      closeLabel={t("team8.drawer.closeLabel")}
       showIdentity={!!chat.sessionId}
       headerActions={
         <>
@@ -70,7 +74,7 @@ export function ExpertChatDrawer({
             variant="ghost"
             size="icon-xs"
             leadingIcon={NoteEditIcon}
-            aria-label="New task"
+            aria-label={t("team8.drawer.newTask")}
             disabled={!chat.sessionId}
             onClick={chat.startNewThread}
           />
@@ -80,7 +84,7 @@ export function ExpertChatDrawer({
             variant="ghost"
             size="icon-xs"
             leadingIcon={ArrowExpandIcon}
-            aria-label="Open in Chat"
+            aria-label={t("team8.drawer.openInChat")}
           />
         </>
       }
@@ -106,6 +110,7 @@ interface BodyProps {
 }
 
 function ChatPanelBody({ target, identity, chat }: BodyProps) {
+  const t = useT();
   const {
     sessionId,
     messages,
@@ -128,7 +133,7 @@ function ChatPanelBody({ target, identity, chat }: BodyProps) {
         {isResolvingSession ? (
           <div className="flex flex-1 items-center justify-center px-4 py-6">
             <Text variant="small" tone="muted">
-              Opening chat…
+              {t("team8.drawer.opening")}
             </Text>
           </div>
         ) : sessionId || pendingSend ? (
@@ -154,7 +159,7 @@ function ChatPanelBody({ target, identity, chat }: BodyProps) {
             />
             <div className="space-y-0.5">
               <Text variant="body-medium" tone="primary">
-                What can I do for you?
+                {t("team8.drawer.whatCanIDo")}
               </Text>
               <Text variant="small" tone="muted">
                 {target.name} · {getExpertRoleLabel(target.role)}
@@ -174,7 +179,9 @@ function ChatPanelBody({ target, identity, chat }: BodyProps) {
             onStop={stop}
             onEnqueue={onSend}
             canAttachWhileStreaming
-            placeholder={`Message ${target.name}…`}
+            placeholder={t("team8.drawer.placeholder", {
+              name: target.name,
+            })}
             hasSession={!!sessionId}
             expertId={target.expertId}
             expertName={target.name}

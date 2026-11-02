@@ -1,6 +1,8 @@
 import { useGetV2AdminReadSkillSubmissionFile } from "@/app/api/__generated__/endpoints/admin/admin";
 import { useGetV2ReadMarketplaceSkillFile } from "@/app/api/__generated__/endpoints/store/store";
 import { okData } from "@/app/api/helpers";
+import { getMessage } from "@/lib/i18n/translate";
+import { useLocale } from "@/lib/i18n";
 
 export type SkillPackageSource =
   | { kind: "listing"; slug: string }
@@ -12,6 +14,7 @@ interface Args {
 }
 
 export function useSkillFileViewer({ source, path }: Args) {
+  const locale = useLocale();
   const isListing = source.kind === "listing";
   // Both are declared and one is enabled: a listing reads the approved
   // version, a submission goes through the admin route that can see a
@@ -35,13 +38,19 @@ export function useSkillFileViewer({ source, path }: Args) {
     // A refusal is a state to render, not a failure to hide: only the
     // endpoint knows whether a file is one this viewer can serve.
     unavailable: query.isError
-      ? describeRefusal((query.error as { status?: number } | null)?.status)
+      ? describeRefusal(
+          (query.error as { status?: number } | null)?.status,
+          locale,
+        )
       : null,
   };
 }
 
-function describeRefusal(status: number | undefined): string {
-  if (status === 413) return "This file is too large to preview here.";
-  if (status === 415) return "This file isn't text, so it can't be previewed.";
-  return "Couldn't load this file.";
+function describeRefusal(
+  status: number | undefined,
+  locale: ReturnType<typeof useLocale>,
+): string {
+  if (status === 413) return getMessage(locale, "skills1.viewer.tooLarge");
+  if (status === 415) return getMessage(locale, "skills1.viewer.notText");
+  return getMessage(locale, "skills1.viewer.loadFailed");
 }
