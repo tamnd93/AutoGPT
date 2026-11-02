@@ -20,6 +20,7 @@ import { okData } from "@/app/api/helpers";
 import { formatProviderName } from "@/components/contextual/IntegrationsPanel/helpers";
 import { useToast } from "@/components/molecules/Toast/use-toast";
 import { useAuth } from "@/lib/auth/hooks/useAuth";
+import { useT } from "@/lib/i18n";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 
@@ -27,6 +28,7 @@ import { useState } from "react";
 const MORE_SKILLS_PAGE_SIZE = 3;
 
 export function useSkillPage(slug: string) {
+  const t = useT();
   const queryClient = useQueryClient();
   const { isLoggedIn, isUserLoading } = useAuth();
   const { toast } = useToast();
@@ -87,21 +89,28 @@ export function useSkillPage(slug: string) {
           queryClient.invalidateQueries({
             queryKey: getGetExpertQueryKey(expert.id),
           });
-          toast({ title: `Installed on ${expert.name}`, variant: "success" });
+          toast({
+            title: t("marketplace2.skillPage.installedOn", {
+              name: expert.name,
+            }),
+            variant: "success",
+          });
         },
         onError: (error, variables) => {
           const status = (error as { status?: number }).status;
           const expert = findExpert(variables.params?.expert_id);
           toast({
             title: expert
-              ? `Couldn't add this skill to ${expert.name}`
-              : "Couldn't add this skill",
+              ? t("marketplace2.skillPage.installFailedOn", {
+                  name: expert.name,
+                })
+              : t("marketplace2.skillPage.installFailed"),
             description:
               status === 401
-                ? "Sign in and try again."
+                ? t("marketplace2.skillPage.signIn")
                 : error instanceof Error
                   ? error.message
-                  : "Please try again.",
+                  : t("marketplace2.skillPage.tryAgain"),
             variant: "destructive",
           });
         },

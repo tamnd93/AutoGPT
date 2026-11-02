@@ -7,6 +7,7 @@ import {
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { IntegrationLogo } from "@/components/molecules/IntegrationLogo/IntegrationLogo";
 import { formatProviderName } from "@/components/contextual/IntegrationsPanel/helpers";
+import { useLocale, useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import {
   ArrowRight02Icon,
@@ -24,6 +25,8 @@ interface Props {
 }
 
 export function SkillCard({ skill, isInstalled }: Props) {
+  const t = useT();
+  const locale = useLocale();
   const { accent, icon } = getCategoryAccent(skill.categories[0]);
   const title = skill.title;
   const providers = skill.required_providers;
@@ -82,20 +85,24 @@ export function SkillCard({ skill, isInstalled }: Props) {
                 ) : null}
                 <AvatarFallback>{skill.creator ?? "AutoGPT"}</AvatarFallback>
               </Avatar>
-              by {skill.creator ?? "AutoGPT"}
+              {t("marketplace2.skill.by", {
+                creator: skill.creator ?? "AutoGPT",
+              })}
             </span>
             {skill.source_repo ? (
               <span className="inline-flex items-center gap-1.5">
                 <span aria-hidden>·</span>
-                From {skill.source_repo}
+                {t("marketplace2.skill.from", {
+                  source: skill.source_repo,
+                })}
               </span>
             ) : null}
             {providers.length > 0 ? (
               <span className="inline-flex items-center gap-1.5">
                 <span aria-hidden>·</span>
-                Works with
+                {t("marketplace2.skill.worksWith")}
                 <IntegrationLogo provider={providers[0]} size={14} alt="" />
-                {formatProviderList(providers)}
+                {formatProviderList(providers, locale)}
               </span>
             ) : null}
           </div>
@@ -114,8 +121,10 @@ export function SkillCard({ skill, isInstalled }: Props) {
             />
             {/* Nobody having installed it yet makes a listing new, not failing. */}
             {skill.install_count === 0
-              ? "New"
-              : `${skill.install_count.toLocaleString()} installed`}
+              ? t("marketplace2.skill.new")
+              : t("marketplace2.skill.installedCount", {
+                  count: skill.install_count.toLocaleString(),
+                })}
           </span>
           {isInstalled ? (
             <span
@@ -123,11 +132,11 @@ export function SkillCard({ skill, isInstalled }: Props) {
               className="flex items-center gap-1.5 text-base font-medium text-emerald-600"
             >
               <Icon icon={CheckmarkCircle02Icon} size={18} aria-hidden />
-              Added
+              {t("marketplace2.skill.added")}
             </span>
           ) : (
             <span className="flex items-center gap-1.5 text-base font-medium text-foreground-tertiary transition-colors duration-200 group-hover:text-foreground-strong">
-              View
+              {t("marketplace2.skill.view")}
               <Icon
                 icon={ArrowRight02Icon}
                 size={16}
@@ -142,9 +151,12 @@ export function SkillCard({ skill, isInstalled }: Props) {
   );
 }
 
-function formatProviderList(providers: string[]): string {
+function formatProviderList(
+  providers: string[],
+  locale: string = "en",
+): string {
   const names = providers.map(formatProviderName).filter(Boolean);
-  return new Intl.ListFormat("en", {
+  return new Intl.ListFormat(locale === "vi" ? "vi" : "en", {
     style: "long",
     type: "conjunction",
   }).format(names);

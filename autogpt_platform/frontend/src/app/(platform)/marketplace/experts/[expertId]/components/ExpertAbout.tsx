@@ -1,6 +1,7 @@
 "use client";
 
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { ArrowDown01Icon } from "@hugeicons/core-free-icons";
 import { useState } from "react";
@@ -14,11 +15,12 @@ interface Props {
 }
 
 export function ExpertAbout({ text }: Props) {
+  const t = useT();
   const [isExpanded, setIsExpanded] = useState(false);
   const isClampable = text.length > CLAMPED_LENGTH;
 
   return (
-    <ExpertSection title="About">
+    <ExpertSection title={t("marketplace2.expert.about")}>
       <p
         className={cn(
           "whitespace-pre-line text-base leading-7 text-foreground-secondary",
@@ -33,7 +35,9 @@ export function ExpertAbout({ text }: Props) {
           onClick={() => setIsExpanded((value) => !value)}
           className="mt-2 inline-flex items-center gap-1 text-sm font-medium text-foreground-tertiary transition-colors hover:text-foreground-strong"
         >
-          {isExpanded ? "Show less" : "Read more"}
+          {isExpanded
+            ? t("marketplace2.expert.showLess")
+            : t("marketplace2.expert.readMore")}
           <Icon
             icon={ArrowDown01Icon}
             size={14}

@@ -13,6 +13,7 @@ import { Badge } from "@/components/atoms/Badge/Badge";
 import { Button } from "@/components/atoms/Button/Button";
 import { Text } from "@/components/atoms/Text/Text";
 import { Breadcrumbs } from "@/components/molecules/Breadcrumbs/Breadcrumbs";
+import { useT } from "@/lib/i18n";
 import { ErrorCard } from "@/components/molecules/ErrorCard/ErrorCard";
 import { useMainCreatorPage } from "./useMainCreatorPage";
 import { ArrowLeft02Icon } from "@hugeicons/core-free-icons";
@@ -23,6 +24,7 @@ interface Props {
 }
 
 export function MainCreatorPage({ params }: Props) {
+  const t = useT();
   const { creatorAgents, creator, isLoading, hasError } = useMainCreatorPage({
     params,
   });
@@ -35,7 +37,9 @@ export function MainCreatorPage({ params }: Props) {
         <div className="flex min-h-[60vh] items-center justify-center">
           <ErrorCard
             isSuccess={false}
-            responseError={{ message: "Failed to load creator data" }}
+            responseError={{
+              message: t("marketplace2.creator.loadFailed"),
+            }}
             context="creator page"
             onRetry={() => window.location.reload()}
             className="w-full max-w-md"
@@ -64,7 +68,7 @@ export function MainCreatorPage({ params }: Props) {
             className="relative -left-2 lg:!-left-4"
             leftIcon={<Icon icon={ArrowLeft02Icon} size={16} />}
           >
-            Go back
+            {t("marketplace2.creator.goBack")}
           </Button>
           <div className="hidden md:block">
             <Breadcrumbs items={breadcrumbs} />
@@ -88,7 +92,9 @@ export function MainCreatorPage({ params }: Props) {
                     {creator.avatar_url && (
                       <AvatarImage
                         src={creator.avatar_url}
-                        alt={`${creator.name} avatar`}
+                        alt={t("marketplace2.creator.avatarAlt", {
+                          name: creator.name,
+                        })}
                       />
                     )}
                     <AvatarFallback size={96}>
@@ -128,7 +134,7 @@ export function MainCreatorPage({ params }: Props) {
                   {creator.top_categories.length > 0 && (
                     <div className="mb-6">
                       <Text variant="h5" className="mb-2">
-                        Top categories
+                        {t("marketplace2.creator.topCategories")}
                       </Text>
                       <div className="flex flex-wrap gap-2">
                         {creator.top_categories.map((category, index) => (
@@ -162,7 +168,9 @@ export function MainCreatorPage({ params }: Props) {
           <AgentsSection
             agents={creatorAgents.agents}
             hideAvatars
-            sectionTitle={`AI Workflows by ${creator.name}`}
+            sectionTitle={t("marketplace2.creator.workflowsBy", {
+              name: creator.name,
+            })}
           />
         )}
       </main>

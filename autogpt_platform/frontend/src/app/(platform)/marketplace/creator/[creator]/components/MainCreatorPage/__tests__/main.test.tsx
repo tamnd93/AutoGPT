@@ -3,6 +3,7 @@ import {
   getGetV2GetCreatorDetailsResponseMock,
   getGetV2ListStoreAgentsResponseMock,
 } from "@/app/api/__generated__/endpoints/store/store.msw";
+import { LocaleProvider } from "@/lib/i18n";
 import { MainCreatorPage } from "../MainCreatorPage";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -40,6 +41,18 @@ describe("MainCreatorPage", () => {
       isLoading: false,
       hasError: false,
     });
+  });
+
+  test("reads the creator page chrome in Vietnamese", () => {
+    render(
+      <LocaleProvider locale="vi">
+        <MainCreatorPage params={{ creator: "creator-one" }} />
+      </LocaleProvider>,
+    );
+
+    expect(screen.getByText("Quay lại")).toBeDefined();
+    expect(screen.getByText("Danh mục chính")).toBeDefined();
+    expect(screen.getByText("Workflow AI của Creator One")).toBeDefined();
   });
 
   test("renders creator details and their agents", () => {

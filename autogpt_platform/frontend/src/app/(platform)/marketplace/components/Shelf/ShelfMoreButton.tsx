@@ -1,4 +1,5 @@
 import { Button } from "@/components/atoms/Button/Button";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   isExpanded: boolean;
@@ -19,11 +20,21 @@ export function ShelfMoreButton({
   noun,
   onToggle,
 }: Props) {
+  const t = useT();
+
   return (
     <Button size="small" aria-expanded={isExpanded} onClick={onToggle}>
       {isExpanded
-        ? "Show fewer"
-        : `Load ${isAll ? "all " : ""}${count.toLocaleString()} ${noun}`}
+        ? t("marketplace2.shelf.showFewer")
+        : isAll
+          ? t("marketplace2.shelf.loadAll", {
+              count: count.toLocaleString(),
+              noun,
+            })
+          : t("marketplace2.shelf.loadCount", {
+              count: count.toLocaleString(),
+              noun,
+            })}
     </Button>
   );
 }

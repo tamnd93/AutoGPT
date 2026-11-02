@@ -3,6 +3,7 @@ import { Badge } from "@/components/atoms/Badge/Badge";
 import { Button } from "@/components/atoms/Button/Button";
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { Skeleton } from "@/components/atoms/Skeleton/Skeleton";
+import { useT } from "@/lib/i18n";
 import {
   ArrowDown01Icon,
   CheckmarkCircle02Icon,
@@ -43,6 +44,8 @@ export function SkillActions({
   onAdd,
   onAddToExpert,
 }: Props) {
+  const t = useT();
+
   return (
     <div aria-live="polite" className="w-full sm:w-auto">
       {!isReady ? (
@@ -55,13 +58,13 @@ export function SkillActions({
           size="small"
           className="w-full sm:w-auto"
         >
-          Install skill
+          {t("marketplace2.skillPage.installSkill")}
         </Button>
       ) : isAdded ? (
         <div className="flex flex-wrap items-center gap-3">
           <Badge variant="success" className={STATUS_CLASS}>
             <Icon icon={CheckmarkCircle02Icon} size={16} aria-hidden />
-            Installed
+            {t("marketplace2.skillPage.installed")}
           </Badge>
           <Button
             as="NextLink"
@@ -70,7 +73,7 @@ export function SkillActions({
             size="small"
             className={SECONDARY_CLASS}
           >
-            Your skills
+            {t("marketplace2.skillPage.yourSkills")}
           </Button>
           {/* Already in your own skills is no reason not to hand it to an
               expert too, so the dropdown outlives the main action. */}

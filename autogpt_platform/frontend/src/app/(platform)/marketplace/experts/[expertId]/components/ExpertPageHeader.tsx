@@ -7,6 +7,7 @@ import {
 import { ExpertAvatar } from "@/components/molecules/ExpertAvatar/ExpertAvatar";
 import { ExpertIdentityDetails } from "@/components/molecules/ExpertIdentityDetails/ExpertIdentityDetails";
 import { CategoryTag } from "../../../components/CategoryChip/CategoryTag";
+import { useT } from "@/lib/i18n";
 
 interface BandProps {
   expert: Expert;
@@ -65,6 +66,7 @@ export function ExpertHeroBand({ expert }: BandProps) {
 /** The portrait breaking out of the band, the name with its glowing title,
  *  the tagline and what comes with the hire, on the page's left edge. */
 export function ExpertHeroIdentity({ expert, stats }: IdentityProps) {
+  const t = useT();
   const area = expert.categories?.[0];
   const topic = getTopic(expert);
 
@@ -98,7 +100,7 @@ export function ExpertHeroIdentity({ expert, stats }: IdentityProps) {
         {stats.length > 0 ? (
           <ul
             className="mt-5 flex flex-wrap gap-2"
-            aria-label="What comes with this expert"
+            aria-label={t("marketplace2.expert.statsAria")}
           >
             {stats.map((stat) => (
               <li key={stat} className={GLOSSY_STAT}>

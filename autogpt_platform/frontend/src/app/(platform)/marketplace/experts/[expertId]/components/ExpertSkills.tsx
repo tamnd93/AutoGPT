@@ -1,5 +1,6 @@
 import type { ExpertBundledSkill } from "@/app/api/__generated__/models/expertBundledSkill";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { BookOpen01Icon } from "@hugeicons/core-free-icons";
 import { getCategoryAccent } from "../../../components/ExpertsSection/helpers";
@@ -16,12 +17,13 @@ interface Props {
  *  skill there are one object — and the description a pill had no room for
  *  gets its line. */
 export function ExpertSkills({ skills, category }: Props) {
+  const t = useT();
   const { accent, icon } = getCategoryAccent(category);
 
   if (skills.length === 0) return null;
 
   return (
-    <ExpertSection title="Skills">
+    <ExpertSection title={t("marketplace2.expert.skillsTitle")}>
       <ul className="grid grid-cols-1 gap-3 md:grid-cols-2">
         {skills.map((skill) => (
           <ShelfTile

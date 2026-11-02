@@ -18,6 +18,7 @@ import {
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
+import { LocaleProvider } from "@/lib/i18n";
 import { SkillPage } from "../components/SkillPage";
 
 // These pages wait on several queries before anything renders, and CI is
@@ -285,5 +286,33 @@ describe("Marketplace skill page", () => {
     });
 
     expect(screen.queryByTestId("skill-connect-step")).toBeNull();
+  });
+});
+
+describe("Marketplace skill page in Vietnamese", () => {
+  beforeEach(() => {
+    mockUseAuth.mockReturnValue({ user: { id: "user-1" }, isLoggedIn: true });
+    userSkills.length = 0;
+    server.use(
+      getGetV2GetMarketplaceSkillMockHandler200(outreach),
+      getGetV1ListCredentialsMockHandler200([googleCredential]),
+      userSkillsHandler(),
+    );
+  });
+
+  test("reads the skill page chrome in Vietnamese", async () => {
+    render(
+      <LocaleProvider locale="vi">
+        <SkillPage slug="outreach-playbook" />
+      </LocaleProvider>,
+    );
+
+    expect(await screen.findByText("Quay lại Marketplace")).toBeDefined();
+    expect(await screen.findByText("Hướng dẫn")).toBeDefined();
+    expect(screen.getByText("Kích hoạt")).toBeDefined();
+    expect(screen.getByText("Kỹ năng khác")).toBeDefined();
+    expect(screen.getByTestId("skill-install-button").textContent).toContain(
+      "Cài kỹ năng",
+    );
   });
 });

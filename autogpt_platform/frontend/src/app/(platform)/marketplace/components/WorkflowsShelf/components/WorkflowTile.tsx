@@ -3,6 +3,7 @@
 import { StoreAgent } from "@/app/api/__generated__/models/storeAgent";
 import { isLocalStoreMediaUrl } from "@/lib/store-media";
 import Image from "next/image";
+import { useT } from "@/lib/i18n";
 import { useState } from "react";
 import { ShelfTile } from "../../Shelf/ShelfTile";
 
@@ -11,6 +12,7 @@ interface Props {
 }
 
 export function WorkflowTile({ agent }: Props) {
+  const t = useT();
   const [imageError, setImageError] = useState(false);
   const runs = agent.runs ?? 0;
 
@@ -34,7 +36,13 @@ export function WorkflowTile({ agent }: Props) {
         ) : null
       }
       title={agent.agent_name}
-      subtitle={runs === 0 ? "No runs" : `${runs.toLocaleString()} runs`}
+      subtitle={
+        runs === 0
+          ? t("marketplace2.storeCard.noRuns")
+          : t("marketplace2.storeCard.runs", {
+              count: runs.toLocaleString(),
+            })
+      }
     />
   );
 }

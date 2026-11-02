@@ -10,6 +10,7 @@ import userEvent from "@testing-library/user-event";
 import { HttpResponse, http } from "msw";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
+import { LocaleProvider } from "@/lib/i18n";
 import { SkillsBrowsePage } from "../components/SkillsBrowsePage/SkillsBrowsePage";
 
 // These pages wait on several queries before anything renders, and CI is
@@ -66,6 +67,47 @@ function listing(skills: MarketplaceSkill[]) {
     },
   });
 }
+
+describe("Marketplace skills browse page in Vietnamese", () => {
+  beforeEach(() => {
+    searchParams.value = "";
+    mockUseAuth.mockReturnValue({ user: { id: "user-1" }, isLoggedIn: true });
+    server.use(
+      getListCopilotSkillsMockHandler200([]),
+      getGetV2ListStoreCategoriesMockHandler(CATEGORIES),
+    );
+  });
+
+  test("reads the catalogue chrome and its count in Vietnamese", async () => {
+    server.use(listing([brandVoice]));
+
+    render(
+      <LocaleProvider locale="vi">
+        <SkillsBrowsePage />
+      </LocaleProvider>,
+    );
+
+    expect(
+      await screen.findByRole("heading", { name: "Kỹ năng" }),
+    ).toBeDefined();
+    expect(screen.getByPlaceholderText("Tìm kỹ năng")).toBeDefined();
+    expect(await screen.findByText("1 kỹ năng")).toBeDefined();
+    expect(screen.getByText("Quay lại Marketplace")).toBeDefined();
+  });
+
+  test("reads the empty state in Vietnamese", async () => {
+    server.use(listing([]));
+
+    render(
+      <LocaleProvider locale="vi">
+        <SkillsBrowsePage />
+      </LocaleProvider>,
+    );
+
+    expect(await screen.findByText("Chưa có gì được đăng")).toBeDefined();
+    expect(screen.getByText("Tới kỹ năng của bạn →")).toBeDefined();
+  });
+});
 
 describe("Marketplace skills browse page", () => {
   beforeEach(() => {

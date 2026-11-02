@@ -13,6 +13,8 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/molecules/DropdownMenu/DropdownMenu";
+import { useT } from "@/lib/i18n";
+import { useT } from "@/lib/i18n";
 import { ArrowDown01Icon } from "@hugeicons/core-free-icons";
 
 export const MENU_LABEL = "Install for an expert";
@@ -32,6 +34,7 @@ export function InstallSkillButton({
   onAddToLibrary,
   onAddToExpert,
 }: Props) {
+  const t = useT();
   if (experts.length === 0) {
     return (
       <Button
@@ -42,7 +45,7 @@ export function InstallSkillButton({
         className="w-full sm:w-auto"
         data-testid="skill-install-button"
       >
-        Install skill
+        {t("marketplace2.skillPage.installSkill")}
       </Button>
     );
   }
@@ -57,7 +60,7 @@ export function InstallSkillButton({
         className="!rounded-r-none border-r-0 sm:w-auto"
         data-testid="skill-install-button"
       >
-        Install skill
+        {t("marketplace2.skillPage.installSkill")}
       </Button>
       <ExpertInstallMenu
         experts={experts}
@@ -91,12 +94,14 @@ export function ExpertInstallMenu({
   onAddToExpert,
   children,
 }: MenuProps) {
+  const t = useT();
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>{children}</DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="min-w-[15rem]">
         <DropdownMenuLabel className="text-xs font-normal text-foreground-tertiary">
-          {MENU_LABEL}
+          {t("marketplace2.skillPage.installForExpert")}
         </DropdownMenuLabel>
         {experts.map((expert) => (
           <DropdownMenuItem

@@ -10,8 +10,10 @@ import { Skeleton } from "@/components/atoms/Skeleton/Skeleton";
 import { Dialog } from "@/components/molecules/Dialog/Dialog";
 import { ErrorCard } from "@/components/molecules/ErrorCard/ErrorCard";
 import { VoicePicker } from "@/components/organisms/VoicePicker/VoicePicker";
+import { useLocale, useT } from "@/lib/i18n";
 import { useTrackExpertProfileOpened } from "@/services/experts/use-track-funnel-view-once";
 import { useHireFlow } from "@/services/experts/useHireFlow";
+import { getMessage } from "@/lib/i18n/translate";
 import { ArrowLeft02Icon } from "@hugeicons/core-free-icons";
 import Link from "next/link";
 import { notFound, useParams } from "next/navigation";
@@ -31,18 +33,22 @@ const MAIN_CLASS =
   "mx-auto flex w-full max-w-[1120px] flex-col px-4 pb-24 pt-8 sm:px-6 md:px-8";
 
 function BackToMarketplaceLink() {
+  const t = useT();
+
   return (
     <Link
       href="/marketplace#experts"
       className="mb-6 inline-flex w-fit items-center gap-1.5 text-body-sm leading-inherit text-foreground-tertiary transition-colors hover:text-foreground-strong"
     >
       <Icon icon={ArrowLeft02Icon} size={14} />
-      Back to marketplace
+      {t("marketplace2.expert.backToMarketplace")}
     </Link>
   );
 }
 
 export function ExpertPage() {
+  const t = useT();
+  const locale = useLocale();
   const { expertId } = useParams<{ expertId: string }>();
   useTrackExpertProfileOpened(expertId);
   const {
@@ -94,7 +100,7 @@ export function ExpertPage() {
         <BackToMarketplaceLink />
         <ErrorCard
           context="this expert"
-          hint="We could not load this expert."
+          hint={t("marketplace2.expert.loadFailed")}
           onRetry={() => refetch()}
         />
       </main>
@@ -111,7 +117,7 @@ export function ExpertPage() {
     expert.workflows,
     systemProviders,
   );
-  const stats = getExpertStats(expert, accessProviders.length);
+  const stats = getExpertStats(expert, accessProviders.length, locale);
 
   let actions: ReactNode = <Skeleton className="h-9 w-full rounded-full" />;
   if (isActionReady) {
@@ -191,21 +197,30 @@ export function ExpertPage() {
   );
 }
 
-function plural(count: number, word: string) {
-  return `${count} ${word}${count === 1 ? "" : "s"}`;
-}
-
 /** The hero's at-a-glance chips: only the counts that are not zero. */
 function getExpertStats(
   expert: { bundled_skills?: unknown[] | null; workflows: unknown[] },
   serviceCount: number,
+  locale: ReturnType<typeof useLocale>,
 ) {
   const skillCount = expert.bundled_skills?.length ?? 0;
+  const copy = (key: string, count: number) =>
+    getMessage(locale, key, { count });
   return [
-    skillCount > 0 ? plural(skillCount, "skill") : null,
-    expert.workflows.length > 0
-      ? plural(expert.workflows.length, "workflow")
+    skillCount > 0
+      ? skillCount === 1
+        ? copy("marketplace2.expert.statSkillOne", skillCount)
+        : copy("marketplace2.expert.statSkills", skillCount)
       : null,
-    serviceCount > 0 ? plural(serviceCount, "service") : null,
+    expert.workflows.length > 0
+      ? expert.workflows.length === 1
+        ? copy("marketplace2.expert.statWorkflowOne", expert.workflows.length)
+        : copy("marketplace2.expert.statWorkflows", expert.workflows.length)
+      : null,
+    serviceCount > 0
+      ? serviceCount === 1
+        ? copy("marketplace2.expert.statServiceOne", serviceCount)
+        : copy("marketplace2.expert.statServices", serviceCount)
+      : null,
   ].filter((stat): stat is string => stat !== null);
 }

@@ -1,6 +1,7 @@
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { LockIcon, SecurityCheckIcon } from "@hugeicons/core-free-icons";
 import { ExpertSection } from "./ExpertSection";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   rules: string[];
@@ -11,12 +12,13 @@ interface Props {
  *  instruction the model receives can never drift apart. Each one gets its
  *  own tile: a shield, the rule, and a quiet "Locked" note. */
 export function ExpertProtectedRules({ rules }: Props) {
+  const t = useT();
   if (rules.length === 0) return null;
 
   return (
     <ExpertSection
-      title="Rules this expert cannot break"
-      description="Part of every expert's soul, and not editable by anyone."
+      title={t("marketplace2.expert.rulesTitle")}
+      description={t("marketplace2.expert.rulesDescription")}
     >
       <ul className="grid gap-3 sm:grid-cols-2">
         {rules.map((rule) => (
@@ -37,7 +39,7 @@ export function ExpertProtectedRules({ rules }: Props) {
               </p>
               <span className="mt-1 inline-flex items-center gap-1 text-xs text-foreground-tertiary">
                 <Icon icon={LockIcon} size={12} aria-hidden="true" />
-                Locked
+                {t("marketplace2.expert.locked")}
               </span>
             </div>
           </li>

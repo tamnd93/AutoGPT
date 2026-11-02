@@ -2,6 +2,7 @@ import { Expert } from "@/app/api/__generated__/models/expert";
 import { Badge } from "@/components/atoms/Badge/Badge";
 import { Button } from "@/components/atoms/Button/Button";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 import { trackFunnel } from "@/services/experts/experts-analytics";
 import { CheckmarkCircle02Icon } from "@hugeicons/core-free-icons";
 
@@ -31,6 +32,7 @@ export function ExpertHireActions({
   isHiring,
   onHire,
 }: Props) {
+  const t = useT();
   if (!isLoggedIn) {
     const next = encodeURIComponent(`/marketplace/experts/${expert.id}`);
     return (
@@ -41,7 +43,7 @@ export function ExpertHireActions({
         size="small"
         className="w-full sm:w-auto"
       >
-        Get started
+        {t("marketplace2.expert.getStarted")}
       </Button>
     );
   }
@@ -54,7 +56,7 @@ export function ExpertHireActions({
           className={`${STATUS_CLASS} w-full justify-center`}
         >
           <Icon icon={CheckmarkCircle02Icon} size={16} />
-          On your team
+          {t("marketplace2.expert.onTeam")}
         </Badge>
         <Button
           as="NextLink"
@@ -63,7 +65,7 @@ export function ExpertHireActions({
           size="small"
           className={SECONDARY_CLASS}
         >
-          {`Chat with ${expert.name}`}
+          {t("marketplace2.expert.chatWith", { name: expert.name })}
         </Button>
       </div>
     );
@@ -85,7 +87,7 @@ export function ExpertHireActions({
       loading={isHiring}
       className="w-full sm:w-auto"
     >
-      {`Hire ${expert.name}`}
+      {t("marketplace2.expert.hire", { name: expert.name })}
     </Button>
   );
 }

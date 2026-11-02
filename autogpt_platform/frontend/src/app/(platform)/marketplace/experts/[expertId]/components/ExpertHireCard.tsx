@@ -1,7 +1,7 @@
 import { Expert } from "@/app/api/__generated__/models/expert";
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { creditsToUsdLabel } from "@/lib/credits";
-import { useLocale } from "@/lib/i18n";
+import { useLocale, useT } from "@/lib/i18n";
 import { CheckmarkCircle02Icon, Coins01Icon } from "@hugeicons/core-free-icons";
 import type { ReactNode } from "react";
 
@@ -15,6 +15,7 @@ interface Props {
  *  wide screens, straight under the hero on phones. It carries the price
  *  terms so the decision and its cost sit together. */
 export function ExpertHireCard({ expert, firstName, actions }: Props) {
+  const t = useT();
   const locale = useLocale();
   const weeklyBudget = expert.weekly_budget ?? null;
   const workflowCount = expert.workflows.length;
@@ -24,15 +25,25 @@ export function ExpertHireCard({ expert, firstName, actions }: Props) {
       <div className="[&_a]:w-full [&_button]:w-full">{actions}</div>
 
       <ul className="mt-5 flex flex-col gap-2.5">
-        <Perk icon={CheckmarkCircle02Icon}>No extra cost</Perk>
-        <Perk icon={CheckmarkCircle02Icon}>Joins your team instantly</Perk>
+        <Perk icon={CheckmarkCircle02Icon}>
+          {t("marketplace2.expert.noExtraCost")}
+        </Perk>
+        <Perk icon={CheckmarkCircle02Icon}>
+          {t("marketplace2.expert.joinsInstantly")}
+        </Perk>
         {workflowCount > 0 ? (
           <Perk icon={CheckmarkCircle02Icon}>
-            {`${workflowCount} ${workflowCount === 1 ? "workflow" : "workflows"} installed and ready to run`}
+            {workflowCount === 1
+              ? t("marketplace2.expert.workflowPerkOne", {
+                  count: workflowCount,
+                })
+              : t("marketplace2.expert.workflowPerkMany", {
+                  count: workflowCount,
+                })}
           </Perk>
         ) : null}
         <Perk icon={CheckmarkCircle02Icon}>
-          Asks before acting on your behalf
+          {t("marketplace2.expert.asksBefore")}
         </Perk>
       </ul>
 
@@ -43,13 +54,15 @@ export function ExpertHireCard({ expert, firstName, actions }: Props) {
             size={16}
             className="text-foreground-tertiary"
           />
-          Included with your plan
+          {t("marketplace2.expert.included")}
         </h2>
         <p className="mt-1.5 text-sm leading-6 text-foreground-secondary">
-          {`Hiring ${firstName} costs nothing extra. Their work draws on your existing balance`}
+          {t("marketplace2.expert.hireCosts", { name: firstName })}
           {weeklyBudget
-            ? `, capped at ${creditsToUsdLabel(weeklyBudget, locale)} a week — a limit you can change once they are on your team.`
-            : "."}
+            ? t("marketplace2.expert.hireCostsCapped", {
+                amount: creditsToUsdLabel(weeklyBudget, locale),
+              })
+            : t("marketplace2.expert.hireCostsEnd")}
         </p>
       </div>
     </aside>

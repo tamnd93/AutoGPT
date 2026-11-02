@@ -3,6 +3,7 @@
 import { StoreAgent } from "@/app/api/__generated__/models/storeAgent";
 import { Button } from "@/components/atoms/Button/Button";
 import { PublishAgentModal } from "@/components/contextual/PublishAgentModal/PublishAgentModal";
+import { useT } from "@/lib/i18n";
 import { useState } from "react";
 import { SectionHeader } from "../SectionHeader";
 import { SHELF_GRID, SHELF_PREVIEW_SIZE } from "../Shelf/helpers";
@@ -27,6 +28,7 @@ export function WorkflowsShelf({
   total,
   onPublish,
 }: Props) {
+  const t = useT();
   const [isExpanded, setIsExpanded] = useState(false);
   const ordered = featuredFirst(agents, featuredAgents);
 
@@ -35,7 +37,7 @@ export function WorkflowsShelf({
   const shown = isExpanded ? ordered : ordered.slice(0, SHELF_PREVIEW_SIZE);
   const publishTrigger = (
     <Button variant="secondary" size="small" onClick={onPublish}>
-      Publish your workflows
+      {t("marketplace2.workflowsShelf.publish")}
     </Button>
   );
 
@@ -46,9 +48,9 @@ export function WorkflowsShelf({
       className="mb-16 scroll-mt-24"
     >
       <SectionHeader
-        title="Workflows"
+        title={t("marketplace2.workflowsShelf.heading")}
         titleId={HEADING_ID}
-        subtitle="Automations your experts can run — or install one yourself."
+        subtitle={t("marketplace2.workflowsShelf.subtitle")}
       />
       <ul className={SHELF_GRID}>
         {shown.map((agent) => (
@@ -61,7 +63,7 @@ export function WorkflowsShelf({
             isExpanded={isExpanded}
             count={ordered.length}
             isAll={total <= ordered.length}
-            noun="workflows"
+            noun={t("marketplace2.nouns.workflows")}
             onToggle={() => setIsExpanded(!isExpanded)}
           />
         ) : null}

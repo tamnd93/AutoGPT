@@ -6,6 +6,7 @@ import { Text } from "@/components/atoms/Text/Text";
 import { ErrorCard } from "@/components/molecules/ErrorCard/ErrorCard";
 import { InfiniteList } from "@/components/molecules/InfiniteList/InfiniteList";
 import { useStoreCategories } from "@/hooks/useStoreCategories";
+import { useT } from "@/lib/i18n";
 import { ArrowLeft02Icon, BookOpen01Icon } from "@hugeicons/core-free-icons";
 import Link from "next/link";
 import { SearchBar } from "../../../components/SearchBar/SearchBar";
@@ -16,6 +17,7 @@ import { useSkillsBrowsePage } from "./useSkillsBrowsePage";
 const GRID_CLASS = "grid grid-cols-1 gap-5 md:grid-cols-2";
 
 export function SkillsBrowsePage() {
+  const t = useT();
   const {
     search,
     category,
@@ -40,21 +42,21 @@ export function SkillsBrowsePage() {
         className="mb-6 inline-flex w-fit items-center gap-1.5 text-body-sm leading-inherit text-foreground-tertiary transition-colors hover:text-foreground-strong"
       >
         <Icon icon={ArrowLeft02Icon} size={14} aria-hidden />
-        Back to marketplace
+        {t("marketplace2.expert.backToMarketplace")}
       </Link>
 
       <div className="mb-7 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div>
           <h1 className="flex items-center gap-2.5 text-3xl font-semibold tracking-heading text-foreground-strong">
             <Icon icon={BookOpen01Icon} size={30} aria-hidden />
-            Skills
+            {t("marketplace2.expert.skillsTitle")}
           </h1>
           <p className="mt-2 text-base text-foreground-tertiary">
-            Playbooks your experts follow. Teach them your way of working.
+            {t("marketplace2.browse.subtitle")}
           </p>
         </div>
         <SearchBar
-          placeholder="Search skills"
+          placeholder={t("marketplace2.browse.searchPlaceholder")}
           height="h-[2.75rem]"
           width="w-full md:w-[439px]"
           defaultValue={search}
@@ -74,7 +76,7 @@ export function SkillsBrowsePage() {
         <div
           role="status"
           aria-busy="true"
-          aria-label="Loading skills"
+          aria-label={t("marketplace1.skills.loadingAria")}
           className={GRID_CLASS}
         >
           {[0, 1, 2, 3, 4, 5, 6, 7].map((i) => (
@@ -84,7 +86,9 @@ export function SkillsBrowsePage() {
       ) : isError ? (
         <ErrorCard
           isSuccess={false}
-          responseError={{ message: "Couldn't load skills right now" }}
+          responseError={{
+            message: t("marketplace2.browse.loadFailed"),
+          }}
           context="marketplace skills"
           onRetry={() => refetch()}
           className="max-w-md"
@@ -100,7 +104,11 @@ export function SkillsBrowsePage() {
       ) : (
         <>
           <p className="mb-4 text-sm text-foreground-tertiary">
-            {total.toLocaleString()} {total === 1 ? "skill" : "skills"}
+            {total === 1
+              ? t("marketplace2.browse.skillOne")
+              : t("marketplace2.browse.skills", {
+                  count: total.toLocaleString(),
+                })}
           </p>
           <InfiniteList
             items={skills}
@@ -131,6 +139,8 @@ function EmptyResult({
   categoryLabel: string | undefined;
   onShowAll: () => void;
 }) {
+  const t = useT();
+
   return (
     <div
       className="flex flex-col items-center justify-center gap-3 rounded-large border border-dashed border-border-base px-6 py-16 text-center"
@@ -146,8 +156,10 @@ function EmptyResult({
       </div>
       <Text variant="h4" className="text-foreground-strong">
         {category
-          ? `No ${categoryLabel ?? category} skills yet`
-          : "Nothing published yet"}
+          ? t("marketplace2.browse.emptyCategory", {
+              category: categoryLabel ?? category,
+            })
+          : t("marketplace2.browse.emptyNone")}
       </Text>
       {category ? (
         <button
@@ -155,14 +167,14 @@ function EmptyResult({
           onClick={onShowAll}
           className="text-sm font-medium text-accent transition-colors hover:text-accent/80"
         >
-          Show all
+          {t("marketplace1.skills.showAll")}
         </button>
       ) : (
         <Link
           href="/library/skills"
           className="text-sm font-medium text-accent transition-colors hover:text-accent/80"
         >
-          Go to your skills →
+          {t("marketplace2.browse.goToSkills")}
         </Link>
       )}
     </div>

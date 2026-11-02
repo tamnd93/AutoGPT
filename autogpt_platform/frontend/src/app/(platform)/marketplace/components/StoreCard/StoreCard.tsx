@@ -11,6 +11,7 @@ import Image from "next/image";
 import { isLocalStoreMediaUrl } from "@/lib/store-media";
 import { useState } from "react";
 import { AddToLibraryButton } from "../AddToLibraryButton/AddToLibraryButton";
+import { useT } from "@/lib/i18n";
 import { isKey } from "@/lib/keyboard";
 
 interface Props {
@@ -42,6 +43,7 @@ export function StoreCard({
   agentSlug,
   agentGraphID,
 }: Props) {
+  const t = useT();
   const [imageError, setImageError] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
 
@@ -57,7 +59,7 @@ export function StoreCard({
       data-testid="store-card"
       role="button"
       tabIndex={0}
-      aria-label={`${agentName} workflow card`}
+      aria-label={t("marketplace2.storeCard.aria", { name: agentName })}
       onKeyDown={(e) => {
         if (isKey(e, "Enter", " ")) {
           e.preventDefault();
@@ -77,7 +79,9 @@ export function StoreCard({
             <Image
               src={agentImage}
               unoptimized={isLocalStoreMediaUrl(agentImage)}
-              alt={`${agentName} preview image`}
+              alt={t("marketplace2.storeCard.previewAlt", {
+                name: agentName,
+              })}
               fill
               className="object-cover"
               onLoad={() => setImageLoaded(true)}
@@ -105,13 +109,15 @@ export function StoreCard({
               {avatarSrc && (
                 <AvatarImage
                   src={avatarSrc}
-                  alt={`${creatorName} creator avatar`}
+                  alt={t("marketplace2.storeCard.creatorAvatarAlt", {
+                    creator: creatorName,
+                  })}
                 />
               )}
               <AvatarFallback size={20}>{creatorName}</AvatarFallback>
             </Avatar>
             <span className="truncate text-body-sm leading-inherit text-foreground-tertiary">
-              by {creatorName}
+              {t("marketplace2.skill.by", { creator: creatorName })}
             </span>
           </div>
         )}
@@ -122,12 +128,18 @@ export function StoreCard({
 
       <div className="mt-auto flex w-full items-center pt-3">
         <span className="flex items-center gap-2 text-xs text-foreground-tertiary">
-          {runs === 0 ? "No runs" : `${runs.toLocaleString()} runs`}
+          {runs === 0
+            ? t("marketplace2.storeCard.noRuns")
+            : t("marketplace2.storeCard.runs", {
+                count: runs.toLocaleString(),
+              })}
           {rating >= 1 && (
             <span
               className="inline-flex items-center gap-1"
               role="img"
-              aria-label={`Rating: ${rating.toFixed(1)} out of 5 stars`}
+              aria-label={t("marketplace2.storeCard.rating", {
+                rating: rating.toFixed(1),
+              })}
             >
               <span className="font-medium text-foreground-body">
                 {rating.toFixed(1)}

@@ -14,7 +14,7 @@ import { SkillPackageFileList } from "@/components/contextual/SkillPackage/Skill
 import { ErrorCard } from "@/components/molecules/ErrorCard/ErrorCard";
 import { IntegrationLogo } from "@/components/molecules/IntegrationLogo/IntegrationLogo";
 import { cn } from "@/lib/utils";
-import { useLocale } from "@/lib/i18n";
+import { useLocale, useT } from "@/lib/i18n";
 import { formatTimeAgo } from "@/lib/utils/time";
 import { ArrowLeft02Icon, BookOpen01Icon } from "@hugeicons/core-free-icons";
 import Link from "next/link";
@@ -61,6 +61,7 @@ export function SkillPage({ slug }: Props) {
     handleConnected,
   } = useSkillPage(slug);
   const locale = useLocale();
+  const t = useT();
 
   // A bookmarked URL reaches this page without passing the marketplace shelf,
   // so the shelf being hidden is not what keeps the feature dark.
@@ -74,7 +75,9 @@ export function SkillPage({ slug }: Props) {
         <BackToMarketplaceLink />
         <ErrorCard
           isSuccess={false}
-          responseError={{ message: "Couldn't load this skill right now" }}
+          responseError={{
+            message: t("marketplace2.skillPage.loadFailed"),
+          }}
           context="marketplace skill"
           onRetry={() => refetch()}
           className="max-w-md"
@@ -150,19 +153,25 @@ export function SkillPage({ slug }: Props) {
               ) : null}
               <AvatarFallback>{skill.creator ?? "AutoGPT"}</AvatarFallback>
             </Avatar>
-            by {skill.creator ?? "AutoGPT"}
+            {t("marketplace2.skill.by", {
+              creator: skill.creator ?? "AutoGPT",
+            })}
           </span>
           <span aria-hidden>·</span>
           <span>
             {skill.install_count === 0
-              ? "New"
-              : `${skill.install_count.toLocaleString()} installed`}
+              ? t("marketplace2.skill.new")
+              : t("marketplace2.skill.installedCount", {
+                  count: skill.install_count.toLocaleString(),
+                })}
           </span>
           {skill.updated_at ? (
             <>
               <span aria-hidden>·</span>
               <span>
-                Updated {formatTimeAgo(String(skill.updated_at), locale)}
+                {t("marketplace2.skillPage.updated", {
+                  ago: formatTimeAgo(String(skill.updated_at), locale),
+                })}
               </span>
             </>
           ) : null}
@@ -170,7 +179,7 @@ export function SkillPage({ slug }: Props) {
             <>
               <span aria-hidden>·</span>
               <span>
-                From{" "}
+                {t("marketplace2.skillPage.from")}{" "}
                 {skill.source_url ? (
                   <a
                     href={skill.source_url}
@@ -190,14 +199,18 @@ export function SkillPage({ slug }: Props) {
           {skill.license ? (
             <>
               <span aria-hidden>·</span>
-              <span>License: {skill.license}</span>
+              <span>
+                {t("marketplace2.skillPage.license", {
+                  license: skill.license,
+                })}
+              </span>
             </>
           ) : null}
           {providers.length > 0 ? (
             <>
               <span aria-hidden>·</span>
               <span className="inline-flex items-center gap-1.5">
-                Works with
+                {t("marketplace2.skill.worksWith")}
                 <IntegrationLogo provider={providers[0]} size={14} alt="" />
                 {formatProviderList(providers)}
               </span>
@@ -212,11 +225,11 @@ export function SkillPage({ slug }: Props) {
 
       <div className="mt-8 flex flex-col gap-10 border-t border-border-base pt-8">
         <ExpertSection
-          title="Instructions"
+          title={t("marketplace2.skillPage.instructions")}
           description={
             skill.body.trim()
-              ? "Instructions your experts follow when using this skill."
-              : "This skill has no instructions yet."
+              ? t("marketplace2.skillPage.instructionsDescription")
+              : t("marketplace1.skillDialog.noInstructions")
           }
         >
           {skill.body.trim() ? (
@@ -231,9 +244,9 @@ export function SkillPage({ slug }: Props) {
 
         {files.length > 0 ? (
           <ExpertSection
-            title="Package contents"
+            title={t("marketplace2.skillPage.packageContents")}
             count={files.length}
-            description="Files installed alongside these instructions."
+            description={t("marketplace2.skillPage.packageDescription")}
           >
             <SkillPackageFileList files={files} onOpenFile={openFile} />
           </ExpertSection>
@@ -241,9 +254,9 @@ export function SkillPage({ slug }: Props) {
 
         {skill.triggers.length > 0 ? (
           <ExpertSection
-            title="Triggers"
+            title={t("marketplace2.skillPage.triggers")}
             count={skill.triggers.length}
-            description="Phrases that help your experts find this skill."
+            description={t("marketplace2.skillPage.triggersDescription")}
           >
             <div className="flex flex-wrap gap-2">
               {skill.triggers.map((trigger) => (
@@ -259,7 +272,7 @@ export function SkillPage({ slug }: Props) {
         ) : null}
 
         {moreSkills.length > 0 ? (
-          <ExpertSection title="More skills">
+          <ExpertSection title={t("marketplace2.skillPage.moreSkills")}>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               {moreSkills.map((other) => (
                 <SkillCard key={other.slug} skill={other} isInstalled={false} />
@@ -279,8 +292,13 @@ export function SkillPage({ slug }: Props) {
         preferMcp
         open={isConnectOpen}
         onOpenChange={setIsConnectOpen}
-        title={`Connect ${formatProviderList(providers)}`}
-        description={`${title}'s steps use ${formatProviderList(providers)}.`}
+        title={t("marketplace2.skillPage.connectTitle", {
+          providers: formatProviderList(providers),
+        })}
+        description={t("marketplace2.skillPage.connectDescription", {
+          title,
+          providers: formatProviderList(providers),
+        })}
         onConnected={handleConnected}
       />
     </main>
@@ -288,6 +306,8 @@ export function SkillPage({ slug }: Props) {
 }
 
 function BackToMarketplaceLink() {
+  const t = useT();
+
   return (
     <Link
       href="/marketplace#skills"
@@ -295,7 +315,7 @@ function BackToMarketplaceLink() {
       data-testid="skill-back-to-marketplace"
     >
       <Icon icon={ArrowLeft02Icon} size={14} aria-hidden />
-      Back to marketplace
+      {t("marketplace2.expert.backToMarketplace")}
     </Link>
   );
 }

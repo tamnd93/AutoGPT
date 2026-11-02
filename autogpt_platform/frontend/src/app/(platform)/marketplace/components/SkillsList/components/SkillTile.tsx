@@ -1,5 +1,6 @@
 import type { MarketplaceSkill } from "@/app/api/__generated__/models/marketplaceSkill";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { Book04Icon, CheckmarkCircle02Icon } from "@hugeicons/core-free-icons";
 import { getCategoryAccent } from "../../ExpertsSection/helpers";
@@ -12,6 +13,7 @@ interface Props {
 }
 
 export function SkillTile({ skill, isInstalled, onSee }: Props) {
+  const t = useT();
   const { accent } = getCategoryAccent(skill.categories[0]);
 
   return (
@@ -31,7 +33,7 @@ export function SkillTile({ skill, isInstalled, onSee }: Props) {
             className="flex shrink-0 items-center gap-1 pr-1 text-body-sm font-medium leading-inherit text-emerald-600"
           >
             <Icon icon={CheckmarkCircle02Icon} size={14} aria-hidden />
-            Added
+            {t("marketplace2.skill.added")}
           </span>
         ) : null
       }

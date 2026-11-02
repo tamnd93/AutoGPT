@@ -124,7 +124,7 @@ export function SkillsList({ category }: Props) {
             isExpanded={isExpanded}
             count={Math.min(total, SHELF_MAX_SIZE)}
             isAll={total <= SHELF_MAX_SIZE}
-            noun="skills"
+            noun={t("marketplace2.nouns.skills")}
             onToggle={() =>
               setPageSize(
                 isExpanded

@@ -4,6 +4,7 @@ import { SortDropdown } from "@/components/__legacy__/SortDropdown";
 import { Button } from "@/components/atoms/Button/Button";
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { ErrorCard } from "@/components/molecules/ErrorCard/ErrorCard";
+import { useT } from "@/lib/i18n";
 import { ArrowLeft02Icon } from "@hugeicons/core-free-icons";
 import { AgentsSection } from "../../../components/AgentsSection/AgentsSection";
 import { ExpertCard } from "../../../components/ExpertsSection/components/ExpertCard";
@@ -23,6 +24,7 @@ export const MainSearchResultPage = ({
   searchTerm: string;
   sort: MarketplaceSearchSort;
 }) => {
+  const t = useT();
   const {
     agents,
     creators,
@@ -63,7 +65,9 @@ export const MainSearchResultPage = ({
       <div className="flex min-h-[500px] items-center justify-center">
         <ErrorCard
           isSuccess={false}
-          responseError={{ message: "Failed to load marketplace data" }}
+          responseError={{
+            message: t("marketplace1.mainMarketplacePage.loadFailed"),
+          }}
           context="marketplace page"
           onRetry={() => window.location.reload()}
         />
@@ -81,7 +85,7 @@ export const MainSearchResultPage = ({
             href="/marketplace"
             leftIcon={<Icon icon={ArrowLeft02Icon} size={16} />}
           >
-            Go back
+            {t("marketplace2.creator.goBack")}
           </Button>
         </div>
         <div className="flex flex-col gap-4 md:flex-row md:items-center">
@@ -90,7 +94,7 @@ export const MainSearchResultPage = ({
               // TODO(tokens): no exact role: text-neutral-800 #262626
               className="text-base font-medium leading-normal text-neutral-800"
             >
-              Showing results for:
+              {t("marketplace2.search.showingFor")}
             </h2>
             <h1
               // TODO(tokens): no exact role: text-neutral-800 #262626
@@ -124,7 +128,7 @@ export const MainSearchResultPage = ({
               {showExperts && expertsCount > 0 ? (
                 <section aria-labelledby="search-experts-heading">
                   <SectionHeader
-                    title="Experts"
+                    title={t("marketplace2.search.experts")}
                     titleId="search-experts-heading"
                   />
                   <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
@@ -144,7 +148,7 @@ export const MainSearchResultPage = ({
               {showSkills && skillsCount > 0 ? (
                 <section aria-labelledby="search-skills-heading">
                   <SectionHeader
-                    title="Skills"
+                    title={t("marketplace2.expert.skillsTitle")}
                     titleId="search-skills-heading"
                   />
                   <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
@@ -170,13 +174,13 @@ export const MainSearchResultPage = ({
               // TODO(tokens): no exact role: text-neutral-600 #525252
               className="mb-2 text-xl font-medium text-neutral-600"
             >
-              No results found
+              {t("marketplace2.search.noResults")}
             </h3>
             <p
               // TODO(tokens): no exact role: text-neutral-500 #737373
               className="text-neutral-500"
             >
-              Try adjusting your search terms or filters
+              {t("marketplace2.search.adjust")}
             </p>
           </div>
         )}

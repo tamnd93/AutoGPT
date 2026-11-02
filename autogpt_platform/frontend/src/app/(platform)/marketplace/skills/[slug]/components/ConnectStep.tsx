@@ -1,6 +1,7 @@
 import { Button } from "@/components/atoms/Button/Button";
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { Text } from "@/components/atoms/Text/Text";
+import { useT } from "@/lib/i18n";
 import { PlugSocketIcon } from "@hugeicons/core-free-icons";
 
 interface Props {
@@ -11,6 +12,7 @@ interface Props {
 /** Offered after the install has already succeeded, so it reads as the next
  *  thing worth doing rather than something that went wrong. */
 export function ConnectStep({ names, onConnect }: Props) {
+  const t = useT();
   const providers = new Intl.ListFormat("en", {
     style: "long",
     type: "conjunction",
@@ -28,7 +30,7 @@ export function ConnectStep({ names, onConnect }: Props) {
         aria-hidden
       />
       <Text variant="small" className="!text-foreground-secondary">
-        Its steps use {providers}. Connect when you first need it.
+        {t("marketplace2.skillPage.connectStep", { providers })}
       </Text>
       <Button
         variant="secondary"
@@ -36,7 +38,7 @@ export function ConnectStep({ names, onConnect }: Props) {
         onClick={onConnect}
         className="ml-auto"
       >
-        Connect
+        {t("marketplace2.skillPage.connect")}
       </Button>
     </div>
   );
