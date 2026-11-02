@@ -2,8 +2,10 @@ import { convertLibraryAgentIntoCustomNode } from "../helpers";
 import { LibraryAgent } from "@/app/api/__generated__/models/libraryAgent";
 import { getV2GetLibraryAgent } from "@/app/api/__generated__/endpoints/library/library";
 import { useAddBlockToBuilder } from "./useAddBlockToBuilder";
+import { useT } from "@/lib/i18n";
 
 export function useAddAgentToBuilder() {
+  const t = useT();
   const { addBlockWithPlacement } = useAddBlockToBuilder();
 
   function addAgentToBuilder(libraryAgent: LibraryAgent) {
@@ -22,7 +24,7 @@ export function useAddAgentToBuilder() {
     const response = await getV2GetLibraryAgent(agent.id);
 
     if (!response.data) {
-      throw new Error("Failed to get workflow details");
+      throw new Error(t("build5.addAgent.detailsFailed"));
     }
 
     const libraryAgent = response.data as LibraryAgent;

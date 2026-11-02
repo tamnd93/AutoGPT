@@ -10,10 +10,12 @@ import {
   getFlowViewportBounds,
 } from "@/app/(platform)/build/components/placementHelpers";
 import { CustomNode } from "@/app/(platform)/build/components/FlowEditor/nodes/CustomNode/CustomNode";
+import { useT } from "@/lib/i18n";
 
 const PLACEMENT_MARGIN = 30;
 
 export function useAddBlockToBuilder() {
+  const t = useT();
   const { getViewport, fitView } = useReactFlow();
   const flowStore = useStoreApi();
 
@@ -57,10 +59,10 @@ export function useAddBlockToBuilder() {
         notification.dismiss();
       }
       const notification = toast({
-        title: "Block added outside the current view",
+        title: t("build5.addBlock.outsideView"),
         action: (
           <Button variant="secondary" size="small" onClick={handleShowBlock}>
-            Show block
+            {t("build5.addBlock.showBlock")}
           </Button>
         ),
       });

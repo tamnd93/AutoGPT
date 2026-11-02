@@ -5,8 +5,10 @@ import { usePaginatedIntegrationList } from "./usePaginatedIntegrationList";
 import { ErrorCard } from "@/components/molecules/ErrorCard/ErrorCard";
 import { blockMenuContainerStyle } from "../style";
 import { useBlockMenuStore } from "../../../../stores/blockMenuStore";
+import { useT } from "@/lib/i18n";
 
 export const PaginatedIntegrationList = () => {
+  const t = useT();
   const setIntegration = useBlockMenuStore((state) => state.setIntegration);
   const {
     allProviders: providers,
@@ -28,8 +30,10 @@ export const PaginatedIntegrationList = () => {
           context="block menu"
           httpError={{
             status: status,
-            statusText: "Request failed",
-            message: (error?.detail as string) || "An error occurred",
+            statusText: t("build5.myAgents.requestFailed"),
+            message:
+              (error?.detail as string) ||
+              t("build5.myAgents.errorFallback"),
           }}
           onRetry={() => refetch()}
         />

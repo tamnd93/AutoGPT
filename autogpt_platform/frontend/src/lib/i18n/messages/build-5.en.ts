@@ -63,4 +63,10 @@ export const Build5En = {
   "build5.myAgents.requestFailed": "Request failed",
   "build5.myAgents.errorFallback": "An error occurred",
 
+  "build5.ugc.edited": "Edited {ago}",
+  "build5.addBlock.outsideView": "Block added outside the current view",
+  "build5.addBlock.showBlock": "Show block",
+  "build5.suggestion.untitledSearch": "Untitled search",
+  "build5.addAgent.detailsFailed": "Failed to get workflow details",
+
 } as const;

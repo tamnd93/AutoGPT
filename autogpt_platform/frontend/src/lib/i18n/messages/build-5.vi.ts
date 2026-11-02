@@ -68,4 +68,10 @@ export const Build5Vi: Partial<Record<keyof typeof Build5En, string>> = {
   "build5.myAgents.requestFailed": "Yêu cầu thất bại",
   "build5.myAgents.errorFallback": "Đã xảy ra lỗi",
 
+  "build5.ugc.edited": "Đã sửa {ago}",
+  "build5.addBlock.outsideView": "Block được thêm ngoài vùng xem hiện tại",
+  "build5.addBlock.showBlock": "Xem block",
+  "build5.suggestion.untitledSearch": "Tìm kiếm chưa đặt tên",
+  "build5.addAgent.detailsFailed": "Không lấy được thông tin workflow",
+
 };

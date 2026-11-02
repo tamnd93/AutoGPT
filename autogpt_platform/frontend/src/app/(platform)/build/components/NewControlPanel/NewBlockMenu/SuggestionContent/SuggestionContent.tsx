@@ -10,8 +10,10 @@ import { DefaultStateType } from "../types";
 import { SearchHistoryChip } from "../SearchHistoryChip";
 import { HorizontalScroll } from "../HorizontalScroll";
 import { Text } from "@/components/atoms/Text/Text";
+import { useT } from "@/lib/i18n";
 
 export const SuggestionContent = () => {
+  const t = useT();
   const { setIntegration, setDefaultState, setSearchQuery, setSearchId } =
     useBlockMenuStore(
       useShallow((state) => ({
@@ -33,8 +35,10 @@ export const SuggestionContent = () => {
           responseError={error || undefined}
           httpError={{
             status: data?.status,
-            statusText: "Request failed",
-            message: (error?.detail as string) || "An error occurred",
+            statusText: t("build5.myAgents.requestFailed"),
+            message:
+              (error?.detail as string) ||
+              t("build5.myAgents.errorFallback"),
           }}
           context="block menu"
           onRetry={() => refetch()}
@@ -64,7 +68,9 @@ export const SuggestionContent = () => {
                 ? suggestions.recent_searches.map((entry, index) => (
                     <SearchHistoryChip
                       key={entry.search_id || `${entry.search_query}-${index}`}
-                      content={entry.search_query || "Untitled search"}
+                      content={
+              entry.search_query || t("build5.suggestion.untitledSearch")
+            }
                       onClick={() => {
                         setSearchQuery(entry.search_query || "");
                         setSearchId(entry.search_id || undefined);

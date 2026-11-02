@@ -6,7 +6,7 @@ import Image from "next/image";
 import { isLocalStoreMediaUrl } from "@/lib/store-media";
 import React, { ButtonHTMLAttributes } from "react";
 import { highlightText } from "./helpers";
-import { useLocale } from "@/lib/i18n";
+import { useLocale, useT } from "@/lib/i18n";
 import { formatTimeAgo } from "@/lib/utils/time";
 import { Loading03Icon, PlusSignIcon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
@@ -37,6 +37,7 @@ export const UGCAgentBlock: UGCAgentBlockComponent = ({
 }) => {
   const { showImage, handleImageError } = useImageFallback(image_url);
   const locale = useLocale();
+  const t = useT();
 
   return (
     <Button
@@ -83,7 +84,9 @@ export const UGCAgentBlock: UGCAgentBlockComponent = ({
                 "line-clamp-1 group-disabled:text-foreground-subtle",
               )}
             >
-              Edited {formatTimeAgo(edited_time.toISOString(), locale)}
+              {t("build5.ugc.edited", {
+                ago: formatTimeAgo(edited_time.toISOString(), locale),
+              })}
             </Text>
           )}
 
