@@ -1,4 +1,7 @@
 import { StepOptions } from "shepherd.js";
+import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/locale";
+import type { build4En } from "@/lib/i18n/messages/build-4.en";
+import { getMessage } from "@/lib/i18n/translate";
 import {
   fitViewToScreen,
   highlightElement,
@@ -9,14 +12,22 @@ import { banner } from "../styles";
 import { useEdgeStore } from "../../../../stores/edgeStore";
 import { TUTORIAL_SELECTORS } from "../constants";
 
+type TutorialKey = keyof typeof build4En;
+type Translate = (key: TutorialKey) => string;
+
 // TODO(tokens): no exact role: ring-green-200 #94D5AC, text-amber-600 #D97706; no fitting role for ring-amber-200 #FDE68A; #FDE68A is warning-border (a border colour), and this is a ring (QUALITY 41(b))
-const getConnectionStatusHtml = (id: string, isConnected: boolean = false) => `
+const getConnectionStatusHtml = (
+  t: Translate,
+  id: string,
+  isConnected: boolean = false,
+) => `
   <div id="${id}" class="mt-3 p-2 ${isConnected ? "bg-success-surface ring-1 ring-green-200" : "bg-warning-surface ring-1 ring-amber-200"} rounded-2xl text-center text-body leading-5 ${isConnected ? "text-success" : "text-amber-600"}">
-    ${isConnected ? "✅ Connected!" : "Waiting for connection..."}
+    ${isConnected ? t("build4.tutorial.connections.connected") : t("build4.tutorial.connections.waiting")}
   </div>
 `;
 
 const updateConnectionStatus = (
+  t: Translate,
   id: string,
   isConnected: boolean,
   message?: string,
@@ -24,7 +35,10 @@ const updateConnectionStatus = (
   const statusEl = document.querySelector(`#${id}`);
   if (statusEl) {
     statusEl.innerHTML =
-      message || (isConnected ? "✅ Connected!" : "Waiting for connection...");
+      message ||
+      (isConnected
+        ? t("build4.tutorial.connections.connected")
+        : t("build4.tutorial.connections.waiting"));
     statusEl.classList.remove(
       "bg-warning-surface",
       // TODO(tokens): no fitting role for ring-amber-200 #FDE68A; #FDE68A is warning-border (a border colour), and this is a ring (QUALITY 41(b))
@@ -97,7 +111,11 @@ const connectionFloatingOptions: StepOptions["floatingUIOptions"] = {
   ],
 };
 
-export const createConnectionSteps = (tour: any): StepOptions[] => {
+export const createConnectionSteps = (
+  tour: any,
+  locale: Locale = DEFAULT_LOCALE,
+): StepOptions[] => {
+  const t: Translate = (key) => getMessage(locale, key);
   let isConnecting = false;
 
   const handleMouseDown = () => {
@@ -123,18 +141,22 @@ export const createConnectionSteps = (tour: any): StepOptions[] => {
   return [
     {
       id: "connect-blocks-output",
-      title: "Connect the Blocks: Output",
+      title: t("build4.tutorial.connections.outputTitle"),
       // TODO(tokens): no exact role: ring-blue-200 #BFDBFE
       text: `
         <div class="text-body text-foreground-emphasis">
-          <p class="text-body font-normal text-foreground-emphasis m-0">Now, let's connect the <strong>Result output</strong> of the first Calculator to the <strong>input (A)</strong> of the second Calculator.</p>
+          <p class="text-body font-normal text-foreground-emphasis m-0">${t("build4.tutorial.connections.outputLine")}</p>
           
           <div class="mt-3 p-3 bg-info-surface ring-1 ring-blue-200 rounded-2xl">
-            <p class="text-body leading-5 font-medium text-info-foreground m-0 mb-2">Drag from the Result output:</p>
-            <p class="text-body-sm leading-inherit text-info-foreground m-0">Click and drag from the <strong>Result</strong> output pin (right side) of the <strong>first Calculator block</strong>.</p>
+            <p class="text-body leading-5 font-medium text-info-foreground m-0 mb-2">${t("build4.tutorial.connections.outputDragTitle")}</p>
+            <p class="text-body-sm leading-inherit text-info-foreground m-0">${t("build4.tutorial.connections.outputDragLine")}</p>
           </div>
-          ${getConnectionStatusHtml("connection-status-output", false)}
-          ${banner(ICONS.Drag, "Drag from the Result output pin", "action")}
+          ${getConnectionStatusHtml(t, "connection-status-output", false)}
+          ${banner(
+            ICONS.Drag,
+            t("build4.tutorial.connections.outputBanner"),
+            "action",
+          )}
         </div>
       `,
       attachTo: {
@@ -149,9 +171,10 @@ export const createConnectionSteps = (tour: any): StepOptions[] => {
 
           if (hasAnyEdge()) {
             updateConnectionStatus(
+              t,
               "connection-status-output",
               true,
-              "✅ Connection already exists!",
+              t("build4.tutorial.connections.alreadyConnected"),
             );
             setTimeout(() => {
               tour.next();
@@ -171,7 +194,7 @@ export const createConnectionSteps = (tour: any): StepOptions[] => {
 
           const unsubscribe = useEdgeStore.subscribe(() => {
             if (hasAnyEdge()) {
-              updateConnectionStatus("connection-status-output", true);
+              updateConnectionStatus(t, "connection-status-output", true);
               setTimeout(() => {
                 unsubscribe();
                 tour.next();
@@ -199,12 +222,12 @@ export const createConnectionSteps = (tour: any): StepOptions[] => {
       },
       buttons: [
         {
-          text: "Back",
+          text: t("build4.tutorial.common.back"),
           action: () => tour.back(),
           classes: "shepherd-button-secondary",
         },
         {
-          text: "Skip (already connected)",
+          text: t("build4.tutorial.common.skipConnected"),
           action: () => tour.show("connection-complete"),
           classes: "shepherd-button-secondary",
         },
@@ -213,17 +236,17 @@ export const createConnectionSteps = (tour: any): StepOptions[] => {
 
     {
       id: "connect-blocks-input",
-      title: "Connect the Blocks: Input",
+      title: t("build4.tutorial.connections.inputTitle"),
       // TODO(tokens): no exact role: ring-blue-200 #BFDBFE
       text: `
         <div class="text-body text-foreground-emphasis">
-          <p class="text-body font-normal text-foreground-emphasis m-0">Now, connect to the <strong>input (A)</strong> of the second Calculator block.</p>
+          <p class="text-body font-normal text-foreground-emphasis m-0">${t("build4.tutorial.connections.inputLine")}</p>
           
           <div class="mt-3 p-3 bg-info-surface ring-1 ring-blue-200 rounded-2xl">
-            <p class="text-body leading-5 font-medium text-info-foreground m-0 mb-2">Drop on the A input:</p>
-            <p class="text-body-sm leading-inherit text-info-foreground m-0">Drag to the <strong>A</strong> input handle (left side) of the <strong>second Calculator block</strong>.</p>
+            <p class="text-body leading-5 font-medium text-info-foreground m-0 mb-2">${t("build4.tutorial.connections.inputDropTitle")}</p>
+            <p class="text-body-sm leading-inherit text-info-foreground m-0">${t("build4.tutorial.connections.inputDragLine")}</p>
           </div>
-          ${getConnectionStatusHtml("connection-status-input", false)}
+          ${getConnectionStatusHtml(t, "connection-status-input", false)}
         </div>
       `,
       attachTo: {
@@ -241,9 +264,10 @@ export const createConnectionSteps = (tour: any): StepOptions[] => {
 
           if (hasAnyEdge()) {
             updateConnectionStatus(
+              t,
               "connection-status-input",
               true,
-              "✅ Connected!",
+              t("build4.tutorial.connections.connected"),
             );
             setTimeout(() => {
               tour.next();
@@ -253,7 +277,7 @@ export const createConnectionSteps = (tour: any): StepOptions[] => {
 
           const unsubscribe = useEdgeStore.subscribe(() => {
             if (hasAnyEdge()) {
-              updateConnectionStatus("connection-status-input", true);
+              updateConnectionStatus(t, "connection-status-input", true);
               setTimeout(() => {
                 unsubscribe();
                 tour.next();
@@ -287,12 +311,12 @@ export const createConnectionSteps = (tour: any): StepOptions[] => {
       },
       buttons: [
         {
-          text: "Back",
+          text: t("build4.tutorial.common.back"),
           action: () => tour.show("connect-blocks-output"),
           classes: "shepherd-button-secondary",
         },
         {
-          text: "Skip (already connected)",
+          text: t("build4.tutorial.common.skipConnected"),
           action: () => tour.next(),
           classes: "shepherd-button-secondary",
         },
@@ -301,11 +325,11 @@ export const createConnectionSteps = (tour: any): StepOptions[] => {
 
     {
       id: "connection-complete",
-      title: "Blocks Connected! 🎉",
+      title: t("build4.tutorial.connections.completeTitle"),
       // TODO(tokens): no exact role: ring-green-200 #94D5AC, text-green-500 #16A34A
       text: `
         <div class="text-body text-foreground-emphasis">
-          <p class="text-body font-normal text-foreground-emphasis m-0">Excellent! Your Calculator blocks are now connected:</p>
+          <p class="text-body font-normal text-foreground-emphasis m-0">${t("build4.tutorial.connections.completeLine")}</p>
           
           <div class="mt-3 p-3 bg-success-surface ring-1 ring-green-200 rounded-2xl">
             <div class="flex items-center justify-center gap-2 text-body leading-5 font-medium text-success">
@@ -313,10 +337,10 @@ export const createConnectionSteps = (tour: any): StepOptions[] => {
               <span>→</span>
               <span>Calculator 2</span>
             </div>
-            <p class="text-caption leading-inherit text-green-500 m-0 mt-2 text-center italic">The result of Calculator 1 flows into Calculator 2's input A</p>
+            <p class="text-caption leading-inherit text-green-500 m-0 mt-2 text-center italic">${t("build4.tutorial.connections.completeNote")}</p>
           </div>
           
-          <p class="text-body font-normal text-foreground-emphasis m-0" style="margin-top: 0.75rem;">Now let's save and run your workflow!</p>
+          <p class="text-body font-normal text-foreground-emphasis m-0" style="margin-top: 0.75rem;">${t("build4.tutorial.connections.completeNext")}</p>
         </div>
       `,
       beforeShowPromise: async () => {
@@ -325,7 +349,7 @@ export const createConnectionSteps = (tour: any): StepOptions[] => {
       },
       buttons: [
         {
-          text: "Save My Workflow",
+          text: t("build4.tutorial.connections.saveButton"),
           action: () => tour.next(),
         },
       ],

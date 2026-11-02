@@ -1,4 +1,5 @@
 import { StepOptions } from "shepherd.js";
+import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/locale";
 import { createWelcomeSteps } from "./welcome";
 import { createBlockMenuSteps } from "./block-menu";
 import { createBlockBasicsSteps } from "./block-basics";
@@ -9,14 +10,17 @@ import { createSaveSteps } from "./save";
 import { createRunSteps } from "./run";
 import { createCompletionSteps } from "./completion";
 
-export const createTutorialSteps = (tour: any): StepOptions[] => [
+export const createTutorialSteps = (
+  tour: any,
+  locale: Locale = DEFAULT_LOCALE,
+): StepOptions[] => [
   ...createWelcomeSteps(tour),
-  ...createBlockMenuSteps(tour),
-  ...createBlockBasicsSteps(tour),
-  ...createConfigureCalculatorSteps(tour),
+  ...createBlockMenuSteps(tour, locale),
+  ...createBlockBasicsSteps(tour, locale),
+  ...createConfigureCalculatorSteps(tour, locale),
   ...createSecondCalculatorSteps(tour),
-  ...createConnectionSteps(tour),
+  ...createConnectionSteps(tour, locale),
   ...createSaveSteps(),
-  ...createRunSteps(tour),
-  ...createCompletionSteps(tour),
+  ...createRunSteps(tour, locale),
+  ...createCompletionSteps(tour, locale),
 ];

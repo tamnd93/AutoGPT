@@ -1,4 +1,10 @@
 import Shepherd from "shepherd.js";
+import {
+  DEFAULT_LOCALE,
+  isLocale,
+  LOCALE_COOKIE,
+  type Locale,
+} from "@/lib/i18n";
 import { analytics } from "@/services/analytics";
 import { TUTORIAL_CONFIG } from "./constants";
 import { createTutorialSteps } from "./steps";
@@ -14,6 +20,18 @@ import { useEdgeStore } from "../../../stores/edgeStore";
 import { useTutorialStore } from "../../../stores/tutorialStore";
 
 let tutorialLoadingCallback: ((loading: boolean) => void) | null = null;
+
+/** The locale the reader picked. The tutorial starts from a click, so the
+ *  cookie the LocaleProvider writes is the reader's current choice. */
+function currentLocale(): Locale {
+  if (typeof document === "undefined") return DEFAULT_LOCALE;
+  const prefix = `${LOCALE_COOKIE}=`;
+  const cookie = document.cookie
+    .split("; ")
+    .find((entry) => entry.startsWith(prefix));
+  const value = cookie?.slice(prefix.length);
+  return isLocale(value) ? value : DEFAULT_LOCALE;
+}
 
 export const setTutorialLoadingCallback = (
   callback: (loading: boolean) => void,
@@ -49,7 +67,7 @@ export const startTutorial = async () => {
 
   injectTutorialStyles();
 
-  const steps = createTutorialSteps(tour);
+  const steps = createTutorialSteps(tour, currentLocale());
   steps.forEach((step) => tour.addStep(step));
 
   tour.on("complete", () => {

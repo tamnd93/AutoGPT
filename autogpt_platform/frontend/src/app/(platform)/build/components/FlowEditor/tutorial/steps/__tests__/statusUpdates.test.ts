@@ -67,6 +67,29 @@ describe("tutorial requirement and connection status", () => {
     useEdgeStore.setState({ edges: [] });
   });
 
+  it("words the requirement states in Vietnamese from show to success", () => {
+    const step = mount(
+      createConfigureCalculatorSteps(tour, "vi") as StepLike[],
+      "enter-values",
+    );
+
+    expect(document.querySelector("#requirements-title")?.textContent).toBe(
+      "⚠️ Bắt buộc để tiếp tục:",
+    );
+
+    nodes.first = {
+      id: "n1",
+      data: { hardcodedValues: { a: 1, b: 2, operation: "Add" } },
+    };
+    step.when?.show?.();
+    vi.advanceTimersByTime(300);
+
+    expect(document.querySelector("#requirements-title")?.textContent).toBe(
+      "🎉 Tuyệt vời! Đã điền đủ mọi giá trị!",
+    );
+    step.when?.hide?.();
+  });
+
   it("turns the first calculator's requirements green, then back to amber", () => {
     const step = mount(
       createConfigureCalculatorSteps(tour) as StepLike[],
