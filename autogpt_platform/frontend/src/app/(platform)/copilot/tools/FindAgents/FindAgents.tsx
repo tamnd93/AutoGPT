@@ -1,7 +1,7 @@
 "use client";
 
 import { ToolUIPart } from "ai";
-import { useLocale } from "@/lib/i18n";
+import { useLocale, useT } from "@/lib/i18n";
 import { MorphingTextAnimation } from "../../components/MorphingTextAnimation/MorphingTextAnimation";
 import {
   ContentBadge,
@@ -38,6 +38,7 @@ interface Props {
 
 export function FindAgentsTool({ part }: Props) {
   const locale = useLocale();
+  const t = useT();
   const text = getAnimationText(part, locale);
   const output = getFindAgentsOutput(part);
   const isStreaming =
@@ -64,12 +65,14 @@ export function FindAgentsTool({ part }: Props) {
   const { source } = getSourceLabelFromToolType(part.type, locale);
   const scopeText =
     source === "library"
-      ? "in your library"
+      ? t("chatTools4.findAgents.scopeLibrary")
       : source === "marketplace"
-        ? "in marketplace"
+        ? t("chatTools4.findAgents.scopeMarketplace")
         : "";
-  const accordionDescription = `Found ${totalCount}${scopeText ? ` ${scopeText}` : ""}${
-    query ? ` for "${query}"` : ""
+  const accordionDescription = `${t("chatTools4.findAgents.found", {
+    count: totalCount,
+  })}${scopeText ? ` ${scopeText}` : ""}${
+    query ? ` ${t("chatTools4.find.forQuery", { query })}` : ""
   }`;
 
   return (
@@ -89,7 +92,7 @@ export function FindAgentsTool({ part }: Props) {
       {hasAgents && agentsFoundOutput && (
         <ToolAccordion
           icon={<AccordionIcon toolType={part.type} />}
-          title="Workflow results"
+          title={t("chatTools4.findAgents.title")}
           description={accordionDescription}
         >
           <ContentGrid className="sm:grid-cols-2">
@@ -97,15 +100,19 @@ export function FindAgentsTool({ part }: Props) {
               const href = getAgentHref(agent);
               const agentSource =
                 agent.source === "library"
-                  ? "Library"
+                  ? t("chatTools4.findAgents.badgeLibrary")
                   : agent.source === "marketplace"
-                    ? "Marketplace"
+                    ? t("chatTools4.findAgents.badgeMarketplace")
                     : null;
               return (
                 <ContentCard key={agent.id}>
                   <ContentCardHeader
                     action={
-                      href ? <ContentLink href={href}>Open</ContentLink> : null
+                      href ? (
+                        <ContentLink href={href}>
+                          {t("chatTools4.find.open")}
+                        </ContentLink>
+                      ) : null
                     }
                   >
                     <div className="flex min-w-0 items-center gap-2">

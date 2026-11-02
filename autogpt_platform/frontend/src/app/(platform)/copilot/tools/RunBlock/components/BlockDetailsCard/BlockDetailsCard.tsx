@@ -1,5 +1,6 @@
 "use client";
 
+import { useT } from "@/lib/i18n";
 import type { BlockDetailsResponse } from "../../helpers";
 import {
   ContentBadge,
@@ -23,6 +24,7 @@ function SchemaFieldList({
   properties: Record<string, unknown>;
   required?: string[];
 }) {
+  const t = useT();
   const entries = Object.entries(properties);
   if (entries.length === 0) return null;
 
@@ -52,7 +54,9 @@ function SchemaFieldList({
                 <div className="flex gap-1">
                   <ContentBadge>{fieldType}</ContentBadge>
                   {requiredSet.has(name) && (
-                    <ContentBadge>Required</ContentBadge>
+                    <ContentBadge>
+                      {t("chatTools4.runBlock.details.required")}
+                    </ContentBadge>
                   )}
                 </div>
               </div>
@@ -70,6 +74,7 @@ function SchemaFieldList({
 }
 
 export function BlockDetailsCard({ output }: Props) {
+  const t = useT();
   const inputs = output.block.inputs as {
     properties?: Record<string, unknown>;
     required?: string[];
@@ -85,7 +90,7 @@ export function BlockDetailsCard({ output }: Props) {
 
       {inputs?.properties && Object.keys(inputs.properties).length > 0 && (
         <SchemaFieldList
-          title="Inputs"
+          title={t("chatTools4.runBlock.details.inputs")}
           properties={inputs.properties}
           required={inputs.required}
         />
@@ -93,7 +98,7 @@ export function BlockDetailsCard({ output }: Props) {
 
       {outputs?.properties && Object.keys(outputs.properties).length > 0 && (
         <SchemaFieldList
-          title="Outputs"
+          title={t("chatTools4.runBlock.details.outputs")}
           properties={outputs.properties}
           required={outputs.required}
         />

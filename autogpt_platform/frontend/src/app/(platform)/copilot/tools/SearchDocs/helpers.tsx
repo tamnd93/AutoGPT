@@ -3,6 +3,8 @@ import type { DocSearchResultsResponse } from "@/app/api/__generated__/models/do
 import type { ErrorResponse } from "@/app/api/__generated__/models/errorResponse";
 import type { NoResultsResponse } from "@/app/api/__generated__/models/noResultsResponse";
 import { ResponseType } from "@/app/api/__generated__/models/responseType";
+import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/locale";
+import { getMessage } from "@/lib/i18n/translate";
 import { ToolUIPart } from "ai";
 import {
   File02Icon,
@@ -27,14 +29,15 @@ export type DocsToolOutput =
 
 export type DocsToolType = "tool-search_docs" | "tool-get_doc_page" | string;
 
-export function getToolLabel(toolType: DocsToolType): string {
+export function getToolLabel(
+  toolType: DocsToolType,
+  locale: Locale = DEFAULT_LOCALE,
+): string {
   switch (toolType) {
-    case "tool-search_docs":
-      return "Docs";
     case "tool-get_doc_page":
-      return "Docs page";
+      return getMessage(locale, "chatTools4.searchDocs.label.docsPage");
     default:
-      return "Docs";
+      return getMessage(locale, "chatTools4.searchDocs.label.docs");
   }
 }
 
@@ -104,49 +107,74 @@ export function isErrorOutput(output: DocsToolOutput): output is ErrorResponse {
 export function getDocsToolTitle(
   toolType: DocsToolType,
   output: DocsToolOutput,
+  locale: Locale = DEFAULT_LOCALE,
 ): string {
   if (toolType === "tool-search_docs") {
-    if (isDocSearchResultsOutput(output)) return "Documentation results";
-    if (isNoResultsOutput(output)) return "No documentation found";
-    return "Documentation search error";
+    if (isDocSearchResultsOutput(output)) {
+      return getMessage(locale, "chatTools4.searchDocs.title.results");
+    }
+    if (isNoResultsOutput(output)) {
+      return getMessage(locale, "chatTools4.searchDocs.title.noResults");
+    }
+    return getMessage(locale, "chatTools4.searchDocs.title.searchError");
   }
 
-  if (isDocPageOutput(output)) return "Documentation page";
-  if (isNoResultsOutput(output)) return "No documentation found";
-  return "Documentation page error";
+  if (isDocPageOutput(output)) {
+    return getMessage(locale, "chatTools4.searchDocs.title.page");
+  }
+  if (isNoResultsOutput(output)) {
+    return getMessage(locale, "chatTools4.searchDocs.title.noResults");
+  }
+  return getMessage(locale, "chatTools4.searchDocs.title.pageError");
 }
 
-export function getAnimationText(part: {
-  type: DocsToolType;
-  state: ToolUIPart["state"];
-  input?: unknown;
-  output?: unknown;
-}): string {
+export function getAnimationText(
+  part: {
+    type: DocsToolType;
+    state: ToolUIPart["state"];
+    input?: unknown;
+    output?: unknown;
+  },
+  locale: Locale = DEFAULT_LOCALE,
+): string {
   switch (part.type) {
     case "tool-search_docs": {
       const query = (part.input as SearchDocsInput | undefined)?.query?.trim();
-      const queryText = query ? ` for "${query}"` : "";
+      const queryText = query
+        ? ` ${getMessage(locale, "chatTools4.searchDocs.animation.for", { query })}`
+        : "";
 
       switch (part.state) {
         case "input-streaming":
         case "input-available":
-          return `Searching documentation${queryText}`;
+          return `${getMessage(locale, "chatTools4.searchDocs.animation.searching")}${queryText}`;
         case "output-available": {
           const output = parseOutput(part.output);
-          if (!output) return `Searching documentation${queryText}`;
+          if (!output) {
+            return `${getMessage(locale, "chatTools4.searchDocs.animation.searching")}${queryText}`;
+          }
           if (isDocSearchResultsOutput(output)) {
             const count = output.count ?? output.results.length;
-            return `Found ${count} result${count === 1 ? "" : "s"}${queryText}`;
+            return `${getMessage(
+              locale,
+              count === 1
+                ? "chatTools4.searchDocs.animation.foundOne"
+                : "chatTools4.searchDocs.animation.foundMany",
+              { count },
+            )}${queryText}`;
           }
           if (isNoResultsOutput(output)) {
-            return `No results found${queryText}`;
+            return `${getMessage(locale, "chatTools4.searchDocs.animation.none")}${queryText}`;
           }
-          return `Error searching documentation${queryText}`;
+          return `${getMessage(locale, "chatTools4.searchDocs.animation.searchError")}${queryText}`;
         }
         case "output-error":
-          return `Error searching documentation${queryText}`;
+          return `${getMessage(locale, "chatTools4.searchDocs.animation.searchError")}${queryText}`;
         default:
-          return "Searching documentation";
+          return getMessage(
+            locale,
+            "chatTools4.searchDocs.animation.searching",
+          );
       }
     }
     case "tool-get_doc_page": {
@@ -156,23 +184,44 @@ export function getAnimationText(part: {
       switch (part.state) {
         case "input-streaming":
         case "input-available":
-          return `Loading documentation page${pathText}`;
+          return `${getMessage(locale, "chatTools4.searchDocs.animation.loading")}${pathText}`;
         case "output-available": {
           const output = parseOutput(part.output);
-          if (!output) return `Loading documentation page${pathText}`;
-          if (isDocPageOutput(output)) return `Loaded "${output.title}"`;
-          if (isNoResultsOutput(output)) return "Documentation page not found";
-          return "Error loading documentation page";
+          if (!output) {
+            return `${getMessage(locale, "chatTools4.searchDocs.animation.loading")}${pathText}`;
+          }
+          if (isDocPageOutput(output)) {
+            return getMessage(
+              locale,
+              "chatTools4.searchDocs.animation.loaded",
+              {
+                title: output.title,
+              },
+            );
+          }
+          if (isNoResultsOutput(output)) {
+            return getMessage(
+              locale,
+              "chatTools4.searchDocs.animation.pageNotFound",
+            );
+          }
+          return getMessage(
+            locale,
+            "chatTools4.searchDocs.animation.loadError",
+          );
         }
         case "output-error":
-          return "Error loading documentation page";
+          return getMessage(
+            locale,
+            "chatTools4.searchDocs.animation.loadError",
+          );
         default:
-          return "Loading documentation page";
+          return getMessage(locale, "chatTools4.searchDocs.animation.loading");
       }
     }
   }
 
-  return "Processing";
+  return getMessage(locale, "chatTools4.searchDocs.animation.processing");
 }
 
 export function ToolIcon({

@@ -1,6 +1,10 @@
 import { describe, expect, it } from "vitest";
 import type { getV1ListAvailableBlocksResponse } from "@/app/api/__generated__/endpoints/blocks/blocks";
-import { getAnimationText, getBlockNamesById } from "../helpers";
+import {
+  getAccordionMeta,
+  getAnimationText,
+  getBlockNamesById,
+} from "../helpers";
 
 function make200(
   blocks: Record<string, unknown>[],
@@ -93,5 +97,51 @@ describe("getAnimationText block name resolution", () => {
       new Map([[blockId, "AI Conversation"]]),
     );
     expect(text).toBe('Simulating "AI Conversation"');
+  });
+});
+
+describe("getAnimationText in vietnamese", () => {
+  it("localizes the running and dry-run animations", () => {
+    expect(
+      getAnimationText(
+        { state: "input-available", input: { block_name: "My Block" } },
+        undefined,
+        "vi",
+      ),
+    ).toBe('Đang chạy "My Block"');
+    expect(
+      getAnimationText(
+        {
+          state: "input-available",
+          input: { block_name: "My Block", dry_run: true },
+        },
+        undefined,
+        "vi",
+      ),
+    ).toBe('Đang mô phỏng "My Block"');
+  });
+
+  it("localizes the failure animation", () => {
+    expect(getAnimationText({ state: "output-error" }, undefined, "vi")).toBe(
+      "Hành động thất bại",
+    );
+  });
+});
+
+describe("getAccordionMeta in vietnamese", () => {
+  it("localizes the review description", () => {
+    expect(
+      getAccordionMeta(
+        {
+          type: "review_required" as never,
+          message: "",
+          block_id: "block-1",
+          block_name: "Send Email",
+          review_id: "review-1",
+          input_data: {},
+        },
+        "vi",
+      ).description,
+    ).toBe("Hành động nhạy cảm — đang chờ duyệt");
   });
 });

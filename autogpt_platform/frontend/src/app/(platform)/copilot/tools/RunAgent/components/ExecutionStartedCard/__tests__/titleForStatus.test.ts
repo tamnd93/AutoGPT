@@ -30,4 +30,21 @@ describe("titleForStatus", () => {
   it("falls back to the started label for unknown statuses", () => {
     expect(titleForStatus("WEIRD_CUSTOM_STATUS")).toBe("Execution started");
   });
+
+  it.each([
+    ["COMPLETED", "Đã chạy xong"],
+    ["FAILED", "Chạy thất bại"],
+    ["STOPPED", "Đã dừng chạy"],
+    ["TIMED_OUT", "Chạy chưa xong"],
+    ["RUNNING", "Đang chạy"],
+    ["SCHEDULED", "Đã lên lịch chạy"],
+    ["QUEUED", "Đã bắt đầu chạy"],
+    ["", "Đã bắt đầu chạy"],
+  ])("maps %s to the vietnamese title", (input, expected) => {
+    expect(titleForStatus(input, "vi")).toBe(expected);
+  });
+
+  it("still reads english when no locale is given", () => {
+    expect(titleForStatus("COMPLETED", "en")).toBe("Execution completed");
+  });
 });

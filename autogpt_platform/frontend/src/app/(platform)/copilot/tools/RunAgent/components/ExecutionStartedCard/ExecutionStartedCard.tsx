@@ -2,6 +2,9 @@
 
 import type { ExecutionStartedResponse } from "@/app/api/__generated__/models/executionStartedResponse";
 import { Button } from "@/components/atoms/Button/Button";
+import { useLocale, useT } from "@/lib/i18n";
+import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/locale";
+import { getMessage } from "@/lib/i18n/translate";
 import { executionSharePath } from "@/lib/share/routes";
 import { useRouter } from "next/navigation";
 import {
@@ -17,24 +20,34 @@ interface Props {
   output: ExecutionStartedResponse;
 }
 
-export function titleForStatus(status: string | undefined): string {
+export function titleForStatus(
+  status: string | undefined,
+  locale: Locale = DEFAULT_LOCALE,
+): string {
   // Normalise whatever the backend sent (QUEUED/RUNNING/COMPLETED/FAILED/
   // STOPPED/TERMINATED/TIMED_OUT/INCOMPLETE/CANCELLED …). The card is
   // reused for both truly-just-queued runs and for sync-completed runs
   // (run_agent with wait_for_result) — "Execution started" is wrong for
   // the latter.
   const s = (status ?? "").toUpperCase();
-  if (s === "COMPLETED") return "Execution completed";
-  if (s === "FAILED") return "Execution failed";
+  if (s === "COMPLETED")
+    return getMessage(locale, "chatTools4.runAgent.status.completed");
+  if (s === "FAILED")
+    return getMessage(locale, "chatTools4.runAgent.status.failed");
   if (s === "STOPPED" || s === "TERMINATED" || s === "CANCELLED")
-    return "Execution stopped";
-  if (s === "TIMED_OUT" || s === "INCOMPLETE") return "Execution incomplete";
-  if (s === "RUNNING") return "Execution running";
-  if (s === "SCHEDULED") return "Execution scheduled";
-  return "Execution started";
+    return getMessage(locale, "chatTools4.runAgent.status.stopped");
+  if (s === "TIMED_OUT" || s === "INCOMPLETE")
+    return getMessage(locale, "chatTools4.runAgent.status.incomplete");
+  if (s === "RUNNING")
+    return getMessage(locale, "chatTools4.runAgent.status.running");
+  if (s === "SCHEDULED")
+    return getMessage(locale, "chatTools4.runAgent.status.scheduled");
+  return getMessage(locale, "chatTools4.runAgent.status.started");
 }
 
 export function ExecutionStartedCard({ output }: Props) {
+  const locale = useLocale();
+  const t = useT();
   const router = useRouter();
   // In the builder panel the run_agent effect already drops the exec_id
   // onto the URL so the builder's in-place execution UI opens — the
@@ -58,7 +71,9 @@ export function ExecutionStartedCard({ output }: Props) {
   return (
     <ContentGrid>
       <ContentCard>
-        <ContentCardTitle>{titleForStatus(output.status)}</ContentCardTitle>
+        <ContentCardTitle>
+          {titleForStatus(output.status, locale)}
+        </ContentCardTitle>
         <ContentCardSubtitle>{output.execution_id}</ContentCardSubtitle>
         <ContentCardDescription>{output.message}</ContentCardDescription>
         {!hideViewExecution && (
@@ -67,7 +82,7 @@ export function ExecutionStartedCard({ output }: Props) {
             className="mt-3"
             onClick={() => router.push(href)}
           >
-            View Execution
+            {t("chatTools4.runAgent.card.viewExecution")}
           </Button>
         )}
       </ContentCard>

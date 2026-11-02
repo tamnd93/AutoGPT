@@ -3,6 +3,7 @@
 import React from "react";
 import { ToolUIPart } from "ai";
 import { cn } from "@/lib/utils";
+import { useLocale, useT } from "@/lib/i18n";
 import { MorphingTextAnimation } from "../../components/MorphingTextAnimation/MorphingTextAnimation";
 import { ToolAccordion } from "../../components/ToolAccordion/ToolAccordion";
 import {
@@ -51,6 +52,8 @@ import { Icon } from "@/components/atoms/Icon/Icon";
 interface Props {
   part: ToolUIPart;
 }
+
+type Translate = ReturnType<typeof useT>;
 
 function RenderMedia({
   value,
@@ -214,12 +217,16 @@ interface AccordionData {
 function getBashAccordionData(
   input: unknown,
   output: Record<string, unknown>,
+  t: Translate,
 ): AccordionData {
   const inp = (input && typeof input === "object" ? input : {}) as Record<
     string,
     unknown
   >;
-  const command = typeof inp.command === "string" ? inp.command : "Command";
+  const command =
+    typeof inp.command === "string"
+      ? inp.command
+      : t("chatTools4.generic.bash.command");
 
   const stdout = getStringField(output, "stdout");
   const stderr = getStringField(output, "stderr");
@@ -229,10 +236,10 @@ function getBashAccordionData(
   const message = getStringField(output, "message");
 
   const title = timedOut
-    ? "Command timed out"
+    ? t("chatTools4.generic.bash.timedOutTitle")
     : exitCode !== null && exitCode !== 0
-      ? `Command failed (exit ${exitCode})`
-      : "Command output";
+      ? t("chatTools4.generic.bash.failedTitle", { exitCode })
+      : t("chatTools4.generic.bash.outputTitle");
 
   // The command itself is already in the subtitle row above; surface the
   // outcome here so scanning the closed accordion tells the reader "how it
@@ -250,13 +257,16 @@ function getBashAccordionData(
   const stdoutPreview = firstNonEmptyLine(stdout);
   let description: string | undefined;
   if (timedOut) {
-    description = stderrPreview ?? "timed out";
+    description = stderrPreview ?? t("chatTools4.generic.bash.timedOut");
   } else if (exitCode !== null && exitCode !== 0) {
     description = stderrPreview
-      ? `status code ${exitCode} · ${stderrPreview}`
-      : `status code ${exitCode}`;
+      ? t("chatTools4.generic.bash.statusWithDetail", {
+          exitCode,
+          detail: stderrPreview,
+        })
+      : t("chatTools4.generic.bash.status", { exitCode });
   } else if (exitCode === 0) {
-    description = stdoutPreview ?? "completed";
+    description = stdoutPreview ?? t("chatTools4.generic.bash.completed");
   } else {
     // Historical sessions persisted before exit_code/timed_out were added
     // fall through here — fall back to the command preview so the closed
@@ -272,21 +282,27 @@ function getBashAccordionData(
         {command && (
           <div>
             {/* TODO(tokens): no exact role for slate-500 #64748B */}
-            <p className="mb-1 text-xs font-medium text-slate-500">command</p>
+            <p className="mb-1 text-xs font-medium text-slate-500">
+              {t("chatTools4.generic.bash.commandLabel")}
+            </p>
             <ContentCodeBlock>{command}</ContentCodeBlock>
           </div>
         )}
         {stdout && (
           <div>
             {/* TODO(tokens): no exact role for slate-500 #64748B */}
-            <p className="mb-1 text-xs font-medium text-slate-500">stdout</p>
+            <p className="mb-1 text-xs font-medium text-slate-500">
+              {t("chatTools4.generic.bash.stdoutLabel")}
+            </p>
             <ContentCodeBlock>{stdout}</ContentCodeBlock>
           </div>
         )}
         {stderr && (
           <div>
             {/* TODO(tokens): no exact role for slate-500 #64748B */}
-            <p className="mb-1 text-xs font-medium text-slate-500">stderr</p>
+            <p className="mb-1 text-xs font-medium text-slate-500">
+              {t("chatTools4.generic.bash.stderrLabel")}
+            </p>
             <ContentCodeBlock>{stderr}</ContentCodeBlock>
           </div>
         )}
@@ -301,13 +317,15 @@ function getBashAccordionData(
 function getWebAccordionData(
   input: unknown,
   output: Record<string, unknown>,
+  t: Translate,
 ): AccordionData {
   const inp = (input && typeof input === "object" ? input : {}) as Record<
     string,
     unknown
   >;
   const query = getStringField(inp, "query");
-  const url = getStringField(inp, "url") ?? query ?? "Web content";
+  const url =
+    getStringField(inp, "url") ?? query ?? t("chatTools4.generic.web.content");
 
   const results = Array.isArray(output.results)
     ? (output.results as Array<Record<string, unknown>>)
@@ -315,10 +333,17 @@ function getWebAccordionData(
 
   if (results) {
     const deep = inp.deep === true;
-    const noun = deep ? "research source" : "search result";
+    const countKey =
+      results.length === 1
+        ? deep
+          ? "chatTools4.generic.web.researchSourceOne"
+          : "chatTools4.generic.web.searchResultOne"
+        : deep
+          ? "chatTools4.generic.web.researchSourceMany"
+          : "chatTools4.generic.web.searchResultMany";
     const answer = getStringField(output, "answer");
     return {
-      title: `${results.length} ${noun}${results.length === 1 ? "" : "s"}`,
+      title: t(countKey, { count: results.length }),
       description: query ? truncate(query, 80) : undefined,
       content: (
         <div className="space-y-3">
@@ -329,7 +354,9 @@ function getWebAccordionData(
             </div>
           )}
           {results.map((r, i) => {
-            const title = getStringField(r, "title") ?? "(untitled)";
+            const title =
+              getStringField(r, "title") ??
+              t("chatTools4.generic.web.untitled");
             const href = getStringField(r, "url") ?? "";
             const snippet = getStringField(r, "snippet");
             const pageAge = getStringField(r, "page_age");
@@ -390,7 +417,9 @@ function getWebAccordionData(
   const message = getStringField(output, "message");
 
   return {
-    title: statusCode ? `Response (${statusCode})` : "Web fetch",
+    title: statusCode
+      ? t("chatTools4.generic.web.response", { statusCode })
+      : t("chatTools4.generic.web.fetch"),
     description: truncate(url, 80),
     content: content ? (
       <ContentCodeBlock>{content}</ContentCodeBlock>
@@ -406,6 +435,7 @@ function getBrowserAccordionData(
   toolName: string,
   input: unknown,
   output: Record<string, unknown>,
+  t: Translate,
 ): AccordionData {
   const message = getStringField(output, "message");
   const snapshot = getStringField(output, "snapshot");
@@ -415,7 +445,9 @@ function getBrowserAccordionData(
     const fileId = getStringField(output, "file_id");
     const filename = getStringField(output, "filename");
     return {
-      title: filename ? `Screenshot: ${filename}` : "Screenshot captured",
+      title: filename
+        ? t("chatTools4.generic.browser.screenshotNamed", { filename })
+        : t("chatTools4.generic.browser.screenshotCaptured"),
       description: fileId ? `file_id: ${fileId}` : undefined,
       content: message ? <ContentMessage>{message}</ContentMessage> : null,
     };
@@ -424,8 +456,9 @@ function getBrowserAccordionData(
   // Navigate / act tools: show snapshot if available
   const title =
     toolName === "browser_navigate"
-      ? (getStringField(output, "title") ?? "Page loaded")
-      : (message ?? "Action completed");
+      ? (getStringField(output, "title") ??
+        t("chatTools4.generic.browser.pageLoaded"))
+      : (message ?? t("chatTools4.generic.browser.actionCompleted"));
 
   const url = getStringField(output, "url", "current_url");
 
@@ -444,6 +477,7 @@ function getFileAccordionData(
   category: ToolCategory,
   input: unknown,
   output: Record<string, unknown>,
+  t: Translate,
 ): AccordionData {
   const inp = (input && typeof input === "object" ? input : {}) as Record<
     string,
@@ -455,7 +489,7 @@ function getFileAccordionData(
       "file_path",
       "path",
       "pattern",
-    ) ?? "File";
+    ) ?? t("chatTools4.generic.file.fallbackName");
   const content = getStringField(
     output,
     "content",
@@ -481,7 +515,7 @@ function getFileAccordionData(
         );
         displayContent = new TextDecoder().decode(bytes);
       } catch {
-        displayContent = "[Binary content]";
+        displayContent = t("chatTools4.generic.file.binaryContent");
       }
     }
   }
@@ -533,9 +567,11 @@ function getFileAccordionData(
             ? fileObj.path
             : typeof fileObj.name === "string"
               ? fileObj.name
-              : "unknown";
+              : t("chatTools4.generic.file.unknown");
         const mimeType =
-          typeof fileObj.mime_type === "string" ? fileObj.mime_type : "unknown";
+          typeof fileObj.mime_type === "string"
+            ? fileObj.mime_type
+            : t("chatTools4.generic.file.unknown");
         const size =
           typeof fileObj.size_bytes === "number"
             ? ` (${(fileObj.size_bytes / 1024).toFixed(1)} KB, ${mimeType})`
@@ -552,7 +588,11 @@ function getFileAccordionData(
   return {
     title:
       message ??
-      (isWriteOrEdit ? `Wrote ${truncate(filePath, 60)}` : "File output"),
+      (isWriteOrEdit
+        ? t("chatTools4.generic.file.wrote", {
+            name: truncate(filePath, 60),
+          })
+        : t("chatTools4.generic.file.output")),
     description: truncate(filePath, 80),
     content: (
       <div className="space-y-2">
@@ -560,12 +600,16 @@ function getFileAccordionData(
           <>
             <div>
               {/* TODO(tokens): no exact role for red-400 #F26969 */}
-              <p className="mb-1 text-xs font-medium text-red-400">removed</p>
+              <p className="mb-1 text-xs font-medium text-red-400">
+                {t("chatTools4.generic.file.removed")}
+              </p>
               <ContentCodeBlock>{oldString}</ContentCodeBlock>
             </div>
             <div>
               {/* TODO(tokens): no exact role for green-400 #45B56E */}
-              <p className="mb-1 text-xs font-medium text-green-400">added</p>
+              <p className="mb-1 text-xs font-medium text-green-400">
+                {t("chatTools4.generic.file.added")}
+              </p>
               <ContentCodeBlock>{newString}</ContentCodeBlock>
             </div>
           </>
@@ -600,7 +644,7 @@ interface TodoItem {
   activeForm?: string;
 }
 
-function getTodoAccordionData(input: unknown): AccordionData {
+function getTodoAccordionData(input: unknown, t: Translate): AccordionData {
   const inp = (input && typeof input === "object" ? input : {}) as Record<
     string,
     unknown
@@ -618,8 +662,8 @@ function getTodoAccordionData(input: unknown): AccordionData {
   const total = todos.length;
 
   return {
-    title: "Task list",
-    description: `${completed}/${total} completed`,
+    title: t("chatTools4.generic.todo.title"),
+    description: t("chatTools4.generic.todo.completed", { completed, total }),
     content: (
       <div className="space-y-1 py-1">
         {todos.map((todo, i) => (
@@ -665,6 +709,7 @@ function getAgentAccordionData(
   toolName: string,
   input: unknown,
   output: Record<string, unknown>,
+  t: Translate,
 ): AccordionData {
   const inp = (input && typeof input === "object" ? input : {}) as Record<
     string,
@@ -676,16 +721,21 @@ function getAgentAccordionData(
     const status = getStringField(output, "retrieval_status");
     const task = output.task;
     return {
-      title: status === "timeout" ? "Subtask still running" : "Subtask result",
+      title:
+        status === "timeout"
+          ? t("chatTools4.generic.agent.subtaskStillRunning")
+          : t("chatTools4.generic.agent.subtaskResult"),
       description:
-        typeof inp.agentId === "string" ? `Subtask: ${inp.agentId}` : undefined,
+        typeof inp.agentId === "string"
+          ? t("chatTools4.generic.agent.subtaskNamed", { id: inp.agentId })
+          : undefined,
       content: task ? (
         <ContentCodeBlock>{JSON.stringify(task, null, 2)}</ContentCodeBlock>
       ) : (
         <ContentMessage>
           {status === "timeout"
-            ? "The subtask hasn't finished yet. Results will appear automatically when it's done."
-            : "No result available."}
+            ? t("chatTools4.generic.agent.subtaskTimeout")
+            : t("chatTools4.generic.agent.noResult")}
         </ContentMessage>
       ),
     };
@@ -696,11 +746,13 @@ function getAgentAccordionData(
   const agentId = getStringField(output, "agentId");
 
   return {
-    title: isAsync ? "Subtask started (background)" : "Subtask completed",
+    title: isAsync
+      ? t("chatTools4.generic.agent.subtaskStarted")
+      : t("chatTools4.generic.agent.subtaskCompleted"),
     description: description ?? agentId ?? undefined,
     content: isAsync ? (
       <ContentMessage>
-        Running in the background. Results will appear here when ready.
+        {t("chatTools4.generic.agent.runningInBackground")}
       </ContentMessage>
     ) : (
       <ContentCodeBlock>{JSON.stringify(output, null, 2)}</ContentCodeBlock>
@@ -710,6 +762,7 @@ function getAgentAccordionData(
 
 function getDefaultAccordionData(
   output: Record<string, unknown>,
+  t: Translate,
 ): AccordionData {
   const message = getStringField(output, "message");
   const raw = output._raw;
@@ -733,7 +786,7 @@ function getDefaultAccordionData(
   }
 
   return {
-    title: "Output",
+    title: t("chatTools4.generic.output"),
     description: message ?? undefined,
     content: <ContentCodeBlock>{displayContent}</ContentCodeBlock>,
   };
@@ -744,27 +797,28 @@ function getAccordionData(
   toolName: string,
   input: unknown,
   output: Record<string, unknown>,
+  t: Translate,
 ): AccordionData {
   switch (category) {
     case "bash":
-      return getBashAccordionData(input, output);
+      return getBashAccordionData(input, output, t);
     case "web":
-      return getWebAccordionData(input, output);
+      return getWebAccordionData(input, output, t);
     case "browser":
-      return getBrowserAccordionData(toolName, input, output);
+      return getBrowserAccordionData(toolName, input, output, t);
     case "file-read":
     case "file-write":
     case "file-delete":
     case "file-list":
     case "search":
     case "edit":
-      return getFileAccordionData(category, input, output);
+      return getFileAccordionData(category, input, output, t);
     case "todo":
-      return getTodoAccordionData(input);
+      return getTodoAccordionData(input, t);
     case "agent":
-      return getAgentAccordionData(toolName, input, output);
+      return getAgentAccordionData(toolName, input, output, t);
     default:
-      return getDefaultAccordionData(output);
+      return getDefaultAccordionData(output, t);
   }
 }
 
@@ -773,12 +827,14 @@ function getAccordionData(
 /* ------------------------------------------------------------------ */
 
 export function GenericTool({ part }: Props) {
+  const locale = useLocale();
+  const t = useT();
   const toolName = extractToolName(part);
   const category = getToolCategory(toolName);
   const isStreaming =
     part.state === "input-streaming" || part.state === "input-available";
   const isError = part.state === "output-error";
-  const text = getAnimationText(part, category);
+  const text = getAnimationText(part, category, locale);
 
   const output = parseOutput(part.output);
   const hasOutput =
@@ -798,7 +854,7 @@ export function GenericTool({ part }: Props) {
   const showAccordion =
     category !== "compaction" && (hasOutput || hasError || hasTodoInput);
   const accordionData = showAccordion
-    ? getAccordionData(category, toolName, part.input, output ?? {})
+    ? getAccordionData(category, toolName, part.input, output ?? {}, t)
     : null;
 
   return (

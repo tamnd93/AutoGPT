@@ -5,6 +5,8 @@ import type { ExecutionStartedResponse } from "@/app/api/__generated__/models/ex
 import type { NeedLoginResponse } from "@/app/api/__generated__/models/needLoginResponse";
 import { ResponseType } from "@/app/api/__generated__/models/responseType";
 import type { SetupRequirementsResponse } from "@/app/api/__generated__/models/setupRequirementsResponse";
+import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/locale";
+import { getMessage } from "@/lib/i18n/translate";
 import type { ToolUIPart } from "ai";
 import { ScaleLoader } from "../../components/ScaleLoader/ScaleLoader";
 import {
@@ -117,28 +119,39 @@ export function getRunAgentToolOutput(
 
 function getAgentIdentifierText(
   input: RunAgentInput | undefined,
+  locale: Locale,
 ): string | null {
   if (!input) return null;
   const slug = input.username_agent_slug?.trim();
   if (slug) return slug;
   const libraryId = input.library_agent_id?.trim();
-  if (libraryId) return `Library workflow ${libraryId}`;
+  if (libraryId) {
+    return getMessage(locale, "chatTools4.runAgent.animation.libraryWorkflow", {
+      id: libraryId,
+    });
+  }
   return null;
 }
 
-export function getAnimationText(part: {
-  state: ToolUIPart["state"];
-  input?: unknown;
-  output?: unknown;
-}): string {
+export function getAnimationText(
+  part: {
+    state: ToolUIPart["state"];
+    input?: unknown;
+    output?: unknown;
+  },
+  locale: Locale = DEFAULT_LOCALE,
+): string {
   const input = part.input as RunAgentInput | undefined;
-  const agentIdentifier = getAgentIdentifierText(input);
+  const agentIdentifier = getAgentIdentifierText(input, locale);
   const isSchedule = Boolean(
     input?.schedule_name?.trim() || input?.cron?.trim(),
   );
-  const actionPhrase = isSchedule
-    ? "Scheduling the workflow to run"
-    : "Running the workflow";
+  const actionPhrase = getMessage(
+    locale,
+    isSchedule
+      ? "chatTools4.runAgent.animation.scheduling"
+      : "chatTools4.runAgent.animation.running",
+  );
   const identifierText = agentIdentifier ? ` "${agentIdentifier}"` : "";
 
   switch (part.state) {
@@ -149,36 +162,58 @@ export function getAnimationText(part: {
       const output = parseOutput(part.output);
       if (!output) return `${actionPhrase}${identifierText}`;
       if (isRunAgentExecutionStartedOutput(output)) {
-        return `Started "${output.graph_name}"`;
+        return getMessage(locale, "chatTools4.runAgent.animation.started", {
+          name: output.graph_name,
+        });
       }
       if (isRunAgentAgentDetailsOutput(output)) {
         if (output.agent.trigger_info) {
-          return `Webhook trigger setup for "${output.agent.name}"`;
+          return getMessage(
+            locale,
+            "chatTools4.runAgent.animation.webhookSetup",
+            { name: output.agent.name },
+          );
         }
-        return `Workflow inputs needed for "${output.agent.name}"`;
+        return getMessage(
+          locale,
+          "chatTools4.runAgent.animation.inputsNeeded",
+          { name: output.agent.name },
+        );
       }
       if (isRunAgentSetupRequirementsOutput(output)) {
-        return `Setup needed for "${output.setup_info.agent_name}"`;
+        return getMessage(locale, "chatTools4.runAgent.animation.setupNeeded", {
+          name: output.setup_info.agent_name,
+        });
       }
-      if (isRunAgentNeedLoginOutput(output))
-        return "Sign in required to run workflow";
-      return "Something went wrong";
+      if (isRunAgentNeedLoginOutput(output)) {
+        return getMessage(
+          locale,
+          "chatTools4.runAgent.animation.signInRequired",
+        );
+      }
+      return getMessage(locale, "chatTools4.runAgent.animation.wentWrong");
     }
     case "output-error":
-      return "Something went wrong";
+      return getMessage(locale, "chatTools4.runAgent.animation.wentWrong");
     default:
       return actionPhrase;
   }
 }
 
-export function getStreamingLoadingText(part: { input?: unknown }): string {
+export function getStreamingLoadingText(
+  part: { input?: unknown },
+  locale: Locale = DEFAULT_LOCALE,
+): string {
   const input = part.input as RunAgentInput | undefined;
   const isSchedule = Boolean(
     input?.schedule_name?.trim() || input?.cron?.trim(),
   );
-  return isSchedule
-    ? "Scheduling workflow, this might take a minute"
-    : "Running workflow, this might take a minute";
+  return getMessage(
+    locale,
+    isSchedule
+      ? "chatTools4.runAgent.loading.scheduling"
+      : "chatTools4.runAgent.loading.running",
+  );
 }
 
 export function ToolIcon({
@@ -211,7 +246,10 @@ export function formatMaybeJson(value: unknown): string {
   }
 }
 
-export function getAccordionMeta(output: RunAgentToolOutput): {
+export function getAccordionMeta(
+  output: RunAgentToolOutput,
+  locale: Locale = DEFAULT_LOCALE,
+): {
   icon: React.ReactNode;
   title: string;
   titleClassName?: string;
@@ -223,11 +261,13 @@ export function getAccordionMeta(output: RunAgentToolOutput): {
     const statusText =
       typeof output.status === "string" && output.status.trim()
         ? output.status.trim()
-        : "started";
+        : getMessage(locale, "chatTools4.runAgent.accordion.statusStarted");
     return {
       icon,
       title: output.graph_name,
-      description: `Status: ${statusText}`,
+      description: getMessage(locale, "chatTools4.runAgent.accordion.status", {
+        status: statusText,
+      }),
     };
   }
 
@@ -235,9 +275,12 @@ export function getAccordionMeta(output: RunAgentToolOutput): {
     return {
       icon,
       title: output.agent.name,
-      description: output.agent.trigger_info
-        ? "Webhook trigger setup"
-        : "Inputs required",
+      description: getMessage(
+        locale,
+        output.agent.trigger_info
+          ? "chatTools4.runAgent.accordion.webhookSetup"
+          : "chatTools4.runAgent.accordion.inputsRequired",
+      ),
     };
   }
 
@@ -253,7 +296,13 @@ export function getAccordionMeta(output: RunAgentToolOutput): {
       title: output.setup_info.agent_name,
       description:
         missingCredsCount > 0
-          ? `Missing ${missingCredsCount} credential${missingCredsCount === 1 ? "" : "s"}`
+          ? getMessage(
+              locale,
+              missingCredsCount === 1
+                ? "chatTools4.runAgent.accordion.missingCredentialOne"
+                : "chatTools4.runAgent.accordion.missingCredentialMany",
+              { count: missingCredsCount },
+            )
           : output.message,
     };
   }
@@ -262,17 +311,20 @@ export function getAccordionMeta(output: RunAgentToolOutput): {
     return {
       icon,
       title: output.agent_name,
-      description: "Execution completed",
+      description: getMessage(locale, "chatTools4.runAgent.status.completed"),
     };
   }
 
   if (isRunAgentNeedLoginOutput(output)) {
-    return { icon, title: "Sign in required" };
+    return {
+      icon,
+      title: getMessage(locale, "chatTools4.runAgent.accordion.signInRequired"),
+    };
   }
 
   return {
     icon: <Icon icon={AlertDiamondIcon} size={28} className="text-error" />,
-    title: "Error",
+    title: getMessage(locale, "chatTools4.runAgent.accordion.error"),
     titleClassName: "text-error",
   };
 }

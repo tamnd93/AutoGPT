@@ -1,6 +1,7 @@
 "use client";
 
 import type { ToolUIPart } from "ai";
+import { useLocale, useT } from "@/lib/i18n";
 import { MorphingTextAnimation } from "../../components/MorphingTextAnimation/MorphingTextAnimation";
 import { ToolAccordion } from "../../components/ToolAccordion/ToolAccordion";
 import { ContentMessage } from "../../components/ToolAccordion/AccordionContent";
@@ -39,7 +40,9 @@ interface Props {
 }
 
 export function RunAgentTool({ part }: Props) {
-  const text = getAnimationText(part);
+  const locale = useLocale();
+  const t = useT();
+  const text = getAnimationText(part, locale);
   const isStreaming =
     part.state === "input-streaming" || part.state === "input-available";
 
@@ -90,7 +93,9 @@ export function RunAgentTool({ part }: Props) {
             <ToolIcon isStreaming={isStreaming} isError={isError} />
             <MorphingTextAnimation
               text={
-                isCorrupted ? "Workflow result could not be displayed" : text
+                isCorrupted
+                  ? t("chatTools4.runAgent.card.corruptedAnimation")
+                  : text
               }
               className={isError ? "text-error" : undefined}
             />
@@ -99,15 +104,14 @@ export function RunAgentTool({ part }: Props) {
 
       {isCorrupted && (
         <p className="mt-1 text-sm text-error">
-          The result data arrived corrupted, so any sign-in or setup card it
-          contained can&apos;t be shown. Ask your expert to retry this step.
+          {t("chatTools4.runAgent.card.corruptedDetail")}
         </p>
       )}
 
       {isStreaming && !output && (
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <ToolIcon isStreaming isError={isError} />
-          <MorphingTextAnimation text={getStreamingLoadingText(part)} />
+          <MorphingTextAnimation text={getStreamingLoadingText(part, locale)} />
         </div>
       )}
 
@@ -133,7 +137,7 @@ export function RunAgentTool({ part }: Props) {
       )}
 
       {hasExpandableContent && output && (
-        <ToolAccordion {...getAccordionMeta(output)}>
+        <ToolAccordion {...getAccordionMeta(output, locale)}>
           {isRunAgentExecutionStartedOutput(output) && (
             <ExecutionStartedCard output={output} />
           )}

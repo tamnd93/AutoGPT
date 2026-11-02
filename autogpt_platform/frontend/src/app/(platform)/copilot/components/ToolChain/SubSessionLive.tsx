@@ -250,6 +250,7 @@ function toMiniRow(
         toolCallId: `live-${index}`,
       } as ToolUIPart,
       getToolCategory(step.name),
+      locale,
     );
   return {
     key: `live-${step.name}-${index}`,

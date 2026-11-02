@@ -1,6 +1,7 @@
 "use client";
 
 import { useGetV1ListAvailableBlocks } from "@/app/api/__generated__/endpoints/blocks/blocks";
+import { useLocale, useT } from "@/lib/i18n";
 import { HIDDEN_FROM_REPLAY } from "@/lib/replay-privacy";
 import type { ToolUIPart } from "ai";
 import { MorphingTextAnimation } from "../../components/MorphingTextAnimation/MorphingTextAnimation";
@@ -41,6 +42,8 @@ interface Props {
 }
 
 export function RunBlockTool({ part }: Props) {
+  const locale = useLocale();
+  const t = useT();
   const input = part.input as RunBlockInput | undefined;
   // The LLM's input only carries a block_id; resolve it to a name so the
   // in-flight state doesn't show a raw UUID (outputs carry the name already)
@@ -52,6 +55,7 @@ export function RunBlockTool({ part }: Props) {
   const text = getAnimationText(
     part,
     needsBlockNameLookup ? getBlockNamesById(blocksResponse) : undefined,
+    locale,
   );
   const isStreaming =
     part.state === "input-streaming" || part.state === "input-available";
@@ -93,15 +97,18 @@ export function RunBlockTool({ part }: Props) {
       <div className="flex items-center gap-2 text-sm text-muted-foreground">
         <ToolIcon isStreaming={isStreaming} isError={isError} />
         <MorphingTextAnimation
-          text={isCorrupted ? "Block result could not be displayed" : text}
+          text={
+            isCorrupted
+              ? t("chatTools4.runBlock.card.corruptedAnimation")
+              : text
+          }
           className={isError ? "text-error" : undefined}
         />
       </div>
 
       {isCorrupted && (
         <p className="mt-1 text-sm text-error">
-          The result data arrived corrupted, so any sign-in or setup card it
-          contained can&apos;t be shown. Ask your expert to retry this step.
+          {t("chatTools4.runAgent.card.corruptedDetail")}
         </p>
       )}
 
@@ -113,7 +120,7 @@ export function RunBlockTool({ part }: Props) {
 
       {hasExpandableContent && output && (
         <ToolAccordion
-          {...getAccordionMeta(output)}
+          {...getAccordionMeta(output, locale)}
           className={HIDDEN_FROM_REPLAY}
         >
           {hasInputData && <BlockInputCard inputData={inputData} />}

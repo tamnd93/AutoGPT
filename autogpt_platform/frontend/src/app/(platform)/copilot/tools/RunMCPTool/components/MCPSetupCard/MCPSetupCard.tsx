@@ -16,6 +16,9 @@ import {
   mcpAuthTokenPlaceholder,
 } from "@/components/contextual/MCPAuthSchemeField/helpers";
 import { useMCPAuthScheme } from "@/components/contextual/MCPAuthSchemeField/useMCPAuthScheme";
+import { useLocale, useT } from "@/lib/i18n";
+import { getMessage } from "@/lib/i18n/translate";
+import type { Locale } from "@/lib/i18n/locale";
 import { isKey } from "@/lib/keyboard";
 import {
   detectMCPAuthScheme,
@@ -45,7 +48,11 @@ interface Props {
   retryInstruction?: string;
 }
 
-async function storeManualToken(serverUrl: string, token: string) {
+async function storeManualToken(
+  serverUrl: string,
+  token: string,
+  locale: Locale,
+) {
   // Probe before storing so a rejected credential never shows as Connected.
   const probe = await postV2DiscoverAvailableToolsOnAnMcpServer({
     server_url: serverUrl,
@@ -59,7 +66,7 @@ async function storeManualToken(serverUrl: string, token: string) {
     throw new Error(
       typeof probeDetail === "string"
         ? probeDetail
-        : "This server did not accept the credential.",
+        : getMessage(locale, "chatTools4.mcp.error.credentialRejected"),
     );
   }
 
@@ -73,7 +80,9 @@ async function storeManualToken(serverUrl: string, token: string) {
         ? res.data.detail
         : null;
     throw new Error(
-      typeof detail === "string" ? detail : "Failed to store token",
+      typeof detail === "string"
+        ? detail
+        : getMessage(locale, "chatTools4.mcp.error.storeToken"),
     );
   }
   return res.status === 200 ? res.data.id : undefined;
@@ -89,6 +98,8 @@ async function storeManualToken(serverUrl: string, token: string) {
  * to provide an API credential manually.
  */
 export function MCPSetupCard({ output, retryInstruction }: Props) {
+  const locale = useLocale();
+  const t = useT();
   const { onSend } = useCopilotChatActions();
   const queryClient = useQueryClient();
   const allProviders = useContext(CredentialsProvidersContext);
@@ -259,9 +270,7 @@ export function MCPSetupCard({ output, retryInstruction }: Props) {
       });
       if (!ok) {
         setFailedGrantId(credentialId);
-        setGrantError(
-          "Connected, but could not grant access. Try Grant access again.",
-        );
+        setGrantError(t("chatTools4.mcp.error.grantFailed"));
         return;
       }
     }
@@ -314,11 +323,12 @@ export function MCPSetupCard({ output, retryInstruction }: Props) {
       setForceDisconnected(true);
       const message = getErrorMessage(
         error,
-        "Failed to complete sign-in. Please try again.",
+        t("chatTools4.mcp.error.signInFailed"),
       );
       setError(
+        // The matcher below is the helper's own english sentinel, not copy.
         message === "OAuth flow timed out"
-          ? "OAuth sign-in timed out. Please try again."
+          ? t("chatTools4.mcp.error.signInTimeout")
           : message,
       );
     }
@@ -350,7 +360,7 @@ export function MCPSetupCard({ output, retryInstruction }: Props) {
     setError(null);
     setGrantError(null);
     try {
-      const credentialId = await storeManualToken(serverUrl, token);
+      const credentialId = await storeManualToken(serverUrl, token, locale);
       // Only clear the force-disconnect override AFTER the API confirms
       // the token was stored.  Clearing it before the await would let
       // ``liveHasCred=true`` (from an existing stale cred) re-render the
@@ -367,7 +377,7 @@ export function MCPSetupCard({ output, retryInstruction }: Props) {
       const err = e as Record<string, unknown>;
       setError(
         (typeof err?.message === "string" ? err.message : null) ||
-          "Failed to save token. Please try again.",
+          t("chatTools4.mcp.error.saveToken"),
       );
     }
     setLoading(false);
@@ -443,14 +453,16 @@ export function MCPSetupCard({ output, retryInstruction }: Props) {
       <div className="mt-2 grid gap-2">
         {/* TODO(tokens): no exact role for green-200 #94D5AC */}
         <div className="rounded-lg border border-green-200 bg-success-surface px-3 py-2 text-sm text-success-foreground">
-          Connected to {service}.{" "}
+          {t("chatTools4.mcp.connect.connectedNotice", { service })}{" "}
           <button
             type="button"
             onClick={handleConnect}
             disabled={loading}
             className="ml-1 underline underline-offset-2 hover:no-underline disabled:opacity-60"
           >
-            {loading ? "Reconnecting…" : "Reconnect"}
+            {loading
+              ? t("chatTools4.mcp.connect.reconnecting")
+              : t("chatTools4.mcp.connect.reconnect")}
           </button>
         </div>
       </div>
@@ -472,7 +484,9 @@ export function MCPSetupCard({ output, retryInstruction }: Props) {
             disabled={granting || loading}
             className="mr-2"
           >
-            {granting ? "Granting…" : "Grant access"}
+            {granting
+              ? t("chatTools4.mcp.connect.granting")
+              : t("chatTools4.mcp.connect.grantAccess")}
           </Button>
         ) : null}
         <Button
@@ -481,7 +495,9 @@ export function MCPSetupCard({ output, retryInstruction }: Props) {
           onClick={handleConnect}
           disabled={loading || granting}
         >
-          {loading ? "Connecting…" : `Connect ${service}`}
+          {loading
+            ? t("chatTools4.mcp.connect.connecting")
+            : t("chatTools4.mcp.connect.connect", { service })}
         </Button>
 
         {(error || grantError) && (
@@ -512,7 +528,10 @@ export function MCPSetupCard({ output, retryInstruction }: Props) {
               // TODO(tokens): no exact role for gray-700 #374151
               className="text-xs font-medium text-gray-700"
             >
-              {`${mcpAuthTokenLabel(manualAuthScheme)} for ${service}`}
+              {t("chatTools4.mcp.connect.tokenLabel", {
+                label: mcpAuthTokenLabel(manualAuthScheme),
+                service,
+              })}
             </label>
             {/* TODO(tokens): no exact role for gray-500 #6B7280 */}
             <p id={manualTokenHintId} className="text-xs text-gray-500">
@@ -541,7 +560,9 @@ export function MCPSetupCard({ output, retryInstruction }: Props) {
                 onClick={() => handleManualToken()}
                 disabled={loading || !manualToken.trim()}
               >
-                {loading ? "Verifying…" : "Use Token"}
+                {loading
+                  ? t("chatTools4.mcp.connect.verify")
+                  : t("chatTools4.mcp.connect.useToken")}
               </Button>
             </div>
           </div>

@@ -4,6 +4,8 @@ import type { MCPToolOutputResponse } from "@/app/api/__generated__/models/mCPTo
 import type { MCPToolsDiscoveredResponse } from "@/app/api/__generated__/models/mCPToolsDiscoveredResponse";
 import { ResponseType } from "@/app/api/__generated__/models/responseType";
 import type { SetupRequirementsResponse } from "@/app/api/__generated__/models/setupRequirementsResponse";
+import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/locale";
+import { getMessage } from "@/lib/i18n/translate";
 import type { ToolUIPart } from "ai";
 import { ScaleLoader } from "../../components/ScaleLoader/ScaleLoader";
 import { AlertDiamondIcon, PlugSocketIcon } from "@hugeicons/core-free-icons";
@@ -171,39 +173,63 @@ function getArgPreview(args: Record<string, unknown> | undefined): string {
  * Return the human-readable status line shown next to the MCP tool spinner.
  * Transitions through: connecting → discovering / calling → result summary.
  */
-export function getAnimationText(part: {
-  state: ToolUIPart["state"];
-  input?: unknown;
-  output?: unknown;
-}): string {
+export function getAnimationText(
+  part: {
+    state: ToolUIPart["state"];
+    input?: unknown;
+    output?: unknown;
+  },
+  locale: Locale = DEFAULT_LOCALE,
+): string {
   const input = part.input as RunMCPToolInput | undefined;
   const host = input?.server_url ? serverHost(input.server_url) : "";
   const toolName = input?.tool_name?.trim();
 
   const service = host ? serviceNameFromHost(host) : "";
+  const onService = service
+    ? ` ${getMessage(locale, "chatTools4.mcp.animation.onService", { service })}`
+    : "";
 
   switch (part.state) {
     case "input-streaming":
     case "input-available": {
-      if (!toolName) return `Connecting to ${service || "integration"}…`;
+      if (!toolName) {
+        return getMessage(locale, "chatTools4.mcp.animation.connectingTo", {
+          service:
+            service || getMessage(locale, "chatTools4.mcp.defaultService"),
+        });
+      }
       const argPreview = getArgPreview(input?.tool_arguments);
-      return `Calling ${toolName}${argPreview ? `(${argPreview})` : ""}${service ? ` on ${service}` : ""}`;
+      return `${getMessage(locale, "chatTools4.mcp.animation.calling", {
+        name: toolName,
+      })}${argPreview ? `(${argPreview})` : ""}${onService}`;
     }
     case "output-available": {
       const output = getRunMCPToolOutput(part);
-      if (!output) return "Connecting…";
-      if (isSetupRequirementsOutput(output))
-        return `Connect ${output.setup_info.agent_name}`;
-      if (isMCPToolOutput(output))
-        return `Ran ${output.tool_name}${service ? ` on ${service}` : ""}`;
-      if (isDiscoveryOutput(output))
-        return `Connected to ${serviceNameFromHost(serverHost(output.server_url))}`;
-      return "Connection error";
+      if (!output) {
+        return getMessage(locale, "chatTools4.mcp.animation.connecting");
+      }
+      if (isSetupRequirementsOutput(output)) {
+        return getMessage(locale, "chatTools4.mcp.animation.connect", {
+          name: output.setup_info.agent_name,
+        });
+      }
+      if (isMCPToolOutput(output)) {
+        return `${getMessage(locale, "chatTools4.mcp.animation.ran", {
+          name: output.tool_name,
+        })}${onService}`;
+      }
+      if (isDiscoveryOutput(output)) {
+        return getMessage(locale, "chatTools4.mcp.animation.connectedTo", {
+          service: serviceNameFromHost(serverHost(output.server_url)),
+        });
+      }
+      return getMessage(locale, "chatTools4.mcp.animation.connectionError");
     }
     case "output-error":
-      return "Connection error";
+      return getMessage(locale, "chatTools4.mcp.animation.connectionError");
     default:
-      return "Connecting…";
+      return getMessage(locale, "chatTools4.mcp.animation.connecting");
   }
 }
 

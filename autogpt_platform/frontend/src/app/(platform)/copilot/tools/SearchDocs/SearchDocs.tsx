@@ -2,6 +2,7 @@
 
 import type { ToolUIPart } from "ai";
 
+import { useLocale, useT } from "@/lib/i18n";
 import { MorphingTextAnimation } from "../../components/MorphingTextAnimation/MorphingTextAnimation";
 import {
   ContentCard,
@@ -49,8 +50,10 @@ function truncate(text: string, maxChars: number): string {
 }
 
 export function SearchDocsTool({ part }: Props) {
+  const locale = useLocale();
+  const t = useT();
   const output = getDocsToolOutput(part);
-  const text = getAnimationText(part);
+  const text = getAnimationText(part, locale);
   const isStreaming =
     part.state === "input-streaming" || part.state === "input-available";
   const isError =
@@ -58,8 +61,8 @@ export function SearchDocsTool({ part }: Props) {
 
   const normalized = output
     ? {
-        title: getDocsToolTitle(part.type, output),
-        label: getToolLabel(part.type),
+        title: getDocsToolTitle(part.type, output, locale),
+        label: getToolLabel(part.type, locale),
       }
     : null;
 
@@ -85,7 +88,12 @@ export function SearchDocsTool({ part }: Props) {
 
   const accordionDescription =
     hasExpandableContent && docSearchOutput
-      ? `Found ${docSearchOutput.count} result${docSearchOutput.count === 1 ? "" : "s"} for "${docSearchOutput.query}"`
+      ? t(
+          docSearchOutput.count === 1
+            ? "chatTools4.searchDocs.accordion.foundOne"
+            : "chatTools4.searchDocs.accordion.foundMany",
+          { count: docSearchOutput.count, query: docSearchOutput.query },
+        )
       : hasExpandableContent && docPageOutput
         ? docPageOutput.path
         : hasExpandableContent && (noResultsOutput || errorOutput)
@@ -119,7 +127,11 @@ export function SearchDocsTool({ part }: Props) {
                 return (
                   <ContentCard key={r.path}>
                     <ContentCardHeader
-                      action={<ContentLink href={href}>Open</ContentLink>}
+                      action={
+                        <ContentLink href={href}>
+                          {t("chatTools4.searchDocs.card.open")}
+                        </ContentLink>
+                      }
                     >
                       <ContentCardTitle>{r.title}</ContentCardTitle>
                       <ContentCardSubtitle>
@@ -145,7 +157,7 @@ export function SearchDocsTool({ part }: Props) {
                       docPageOutput.doc_url ?? toDocsUrl(docPageOutput.path)
                     }
                   >
-                    Open
+                    {t("chatTools4.searchDocs.card.open")}
                   </ContentLink>
                 }
               >

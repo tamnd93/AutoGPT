@@ -345,7 +345,7 @@ export function toChainRow(
     return {
       key: tool.toolCallId,
       category,
-      text: getAnimationText(stableTool, category),
+      text: getAnimationText(stableTool, category, locale),
       state,
       detail,
       providerIconSrc,

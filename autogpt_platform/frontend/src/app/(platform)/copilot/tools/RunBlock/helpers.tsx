@@ -3,6 +3,8 @@ import type { BlockOutputResponse } from "@/app/api/__generated__/models/blockOu
 import type { ErrorResponse } from "@/app/api/__generated__/models/errorResponse";
 import { ResponseType } from "@/app/api/__generated__/models/responseType";
 import type { SetupRequirementsResponse } from "@/app/api/__generated__/models/setupRequirementsResponse";
+import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/locale";
+import { getMessage } from "@/lib/i18n/translate";
 import type { ToolUIPart } from "ai";
 import { ScaleLoader } from "../../components/ScaleLoader/ScaleLoader";
 import { getBlockDisplayName } from "../../helpers/toolDisplay";
@@ -158,6 +160,7 @@ export function getAnimationText(
     output?: unknown;
   },
   blockNamesById?: Map<string, string>,
+  locale: Locale = DEFAULT_LOCALE,
 ): string {
   const input = part.input as RunBlockInput | undefined;
   const blockName = input?.block_name?.trim();
@@ -173,33 +176,53 @@ export function getAnimationText(
       ? ` "${blockId}"`
       : "";
 
+  const runningText = getMessage(
+    locale,
+    isDryRun
+      ? "chatTools4.runBlock.animation.simulating"
+      : "chatTools4.runBlock.animation.running",
+  );
+  const failedText = getMessage(locale, "chatTools4.runBlock.animation.failed");
+
   switch (part.state) {
     case "input-streaming":
     case "input-available":
-      return isDryRun ? `Simulating${blockText}` : `Running${blockText}`;
+      return `${runningText}${blockText}`;
     case "output-available": {
       const output = parseOutput(part.output);
-      if (!output)
-        return isDryRun ? `Simulating${blockText}` : `Running${blockText}`;
+      if (!output) return `${runningText}${blockText}`;
       if (isRunBlockBlockOutput(output)) {
-        return output.is_dry_run
-          ? `Simulated "${output.block_name}"`
-          : `Ran "${output.block_name}"`;
+        return getMessage(
+          locale,
+          output.is_dry_run
+            ? "chatTools4.runBlock.animation.simulated"
+            : "chatTools4.runBlock.animation.ran",
+          { name: output.block_name },
+        );
       }
-      if (isRunBlockDetailsOutput(output))
-        return `Details for "${output.block.name}"`;
+      if (isRunBlockDetailsOutput(output)) {
+        return getMessage(locale, "chatTools4.runBlock.animation.details", {
+          name: output.block.name,
+        });
+      }
       if (isRunBlockSetupRequirementsOutput(output)) {
-        return `Setup needed for "${output.setup_info.agent_name}"`;
+        return getMessage(locale, "chatTools4.runBlock.animation.setupNeeded", {
+          name: output.setup_info.agent_name,
+        });
       }
       if (isRunBlockReviewRequiredOutput(output)) {
-        return `Review needed for "${output.block_name}"`;
+        return getMessage(
+          locale,
+          "chatTools4.runBlock.animation.reviewNeeded",
+          { name: output.block_name },
+        );
       }
-      return "Action failed";
+      return failedText;
     }
     case "output-error":
-      return "Action failed";
+      return failedText;
     default:
-      return isDryRun ? "Simulating" : "Running";
+      return runningText;
   }
 }
 
@@ -247,7 +270,10 @@ export function formatMaybeJson(value: unknown): string {
   }
 }
 
-export function getAccordionMeta(output: RunBlockToolOutput): {
+export function getAccordionMeta(
+  output: RunBlockToolOutput,
+  locale: Locale = DEFAULT_LOCALE,
+): {
   icon: React.ReactNode;
   title: string;
   titleClassName?: string;
@@ -259,13 +285,21 @@ export function getAccordionMeta(output: RunBlockToolOutput): {
     const keys = Object.keys(output.outputs ?? {});
     const outputCount =
       keys.length > 0
-        ? `${keys.length} output key${keys.length === 1 ? "" : "s"}`
+        ? getMessage(
+            locale,
+            keys.length === 1
+              ? "chatTools4.runBlock.accordion.outputKeyOne"
+              : "chatTools4.runBlock.accordion.outputKeyMany",
+            { count: keys.length },
+          )
         : output.message;
     return {
       icon,
       title: output.block_name,
       description: output.is_dry_run
-        ? `Simulated · ${outputCount}`
+        ? getMessage(locale, "chatTools4.runBlock.accordion.simulated", {
+            summary: outputCount,
+          })
         : outputCount,
     };
   }
@@ -280,7 +314,13 @@ export function getAccordionMeta(output: RunBlockToolOutput): {
       title: output.block.name,
       description:
         inputKeys.length > 0
-          ? `${inputKeys.length} input field${inputKeys.length === 1 ? "" : "s"} available`
+          ? getMessage(
+              locale,
+              inputKeys.length === 1
+                ? "chatTools4.runBlock.accordion.inputFieldOne"
+                : "chatTools4.runBlock.accordion.inputFieldMany",
+              { count: inputKeys.length },
+            )
           : output.message,
     };
   }
@@ -297,7 +337,13 @@ export function getAccordionMeta(output: RunBlockToolOutput): {
       title: output.setup_info.agent_name,
       description:
         missingCredsCount > 0
-          ? `Missing ${missingCredsCount} credential${missingCredsCount === 1 ? "" : "s"}`
+          ? getMessage(
+              locale,
+              missingCredsCount === 1
+                ? "chatTools4.runBlock.accordion.missingCredentialOne"
+                : "chatTools4.runBlock.accordion.missingCredentialMany",
+              { count: missingCredsCount },
+            )
           : output.message,
     };
   }
@@ -306,13 +352,16 @@ export function getAccordionMeta(output: RunBlockToolOutput): {
     return {
       icon,
       title: output.block_name,
-      description: "Sensitive action — awaiting review",
+      description: getMessage(
+        locale,
+        "chatTools4.runBlock.accordion.reviewRequired",
+      ),
     };
   }
 
   return {
     icon: <Icon icon={AlertDiamondIcon} size={32} className="text-error" />,
-    title: "Error",
+    title: getMessage(locale, "chatTools4.runBlock.accordion.error"),
     titleClassName: "text-error",
   };
 }

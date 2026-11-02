@@ -18,6 +18,9 @@ import {
   ContentMessage,
 } from "../../components/ToolAccordion/AccordionContent";
 import { OrbitLoader } from "../../components/OrbitLoader/OrbitLoader";
+import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/locale";
+import type { MessageKey } from "@/lib/i18n/messages/en";
+import { getMessage } from "@/lib/i18n/translate";
 import {
   getAnimationText,
   getFolderToolOutput,
@@ -42,7 +45,7 @@ import {
   FolderOpenIcon,
 } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
-import { useLocale } from "@/lib/i18n";
+import { useLocale, useT } from "@/lib/i18n";
 
 interface Props {
   part: ToolUIPart;
@@ -74,6 +77,7 @@ function ToolStatusIcon({
 /* ------------------------------------------------------------------ */
 
 function FolderCard({ folder }: { folder: FolderInfo }) {
+  const t = useT();
   return (
     <ContentCard>
       <ContentCardHeader>
@@ -91,9 +95,19 @@ function FolderCard({ folder }: { folder: FolderInfo }) {
         </div>
       </ContentCardHeader>
       <ContentHint>
-        {folder.agent_count} workflow{folder.agent_count !== 1 ? "s" : ""}
+        {t(
+          folder.agent_count === 1
+            ? "chatTools4.folderTool.workflowOne"
+            : "chatTools4.folderTool.workflowMany",
+          { count: folder.agent_count },
+        )}
         {folder.subfolder_count > 0 &&
-          ` · ${folder.subfolder_count} subfolder${folder.subfolder_count !== 1 ? "s" : ""}`}
+          ` · ${t(
+            folder.subfolder_count === 1
+              ? "chatTools4.folderTool.subfolderOne"
+              : "chatTools4.folderTool.subfolderMany",
+            { count: folder.subfolder_count },
+          )}`}
       </ContentHint>
       {folder.agents && folder.agents.length > 0 && (
         // TODO(tokens): no exact role for neutral-200 #E5E5E5
@@ -123,10 +137,13 @@ function FolderCard({ folder }: { folder: FolderInfo }) {
 
 type TreeNode = TreeViewElement & { isAgent?: boolean };
 
-function folderTreeToElements(nodes: FolderTreeInfo[]): TreeNode[] {
+function folderTreeToElements(
+  nodes: FolderTreeInfo[],
+  locale: Locale,
+): TreeNode[] {
   return nodes.map((node) => {
     const children: TreeNode[] = [
-      ...folderTreeToElements(node.children),
+      ...folderTreeToElements(node.children, locale),
       ...(node.agents ?? []).map((a) => ({
         id: a.id,
         name: a.name,
@@ -135,7 +152,13 @@ function folderTreeToElements(nodes: FolderTreeInfo[]): TreeNode[] {
     ];
     return {
       id: node.id,
-      name: `${node.name} (${node.agent_count} workflow${node.agent_count !== 1 ? "s" : ""})`,
+      name: `${node.name} (${getMessage(
+        locale,
+        node.agent_count === 1
+          ? "chatTools4.folderTool.workflowOne"
+          : "chatTools4.folderTool.workflowMany",
+        { count: node.agent_count },
+      )})`,
       children: children.length > 0 ? children : undefined,
     };
   });
@@ -146,7 +169,8 @@ function collectAllIDs(nodes: FolderTreeInfo[]): string[] {
 }
 
 function FolderTreeView({ tree }: { tree: FolderTreeInfo[] }) {
-  const elements = folderTreeToElements(tree);
+  const locale = useLocale();
+  const elements = folderTreeToElements(tree, locale);
   const allIDs = collectAllIDs(tree);
 
   return (
@@ -203,6 +227,7 @@ function FolderTreeNodes({ element }: { element: TreeNode }) {
 /* ------------------------------------------------------------------ */
 
 function AccordionContent({ output }: { output: FolderToolOutput }) {
+  const t = useT();
   if (isFolderCreated(output)) {
     return (
       <ContentGrid>
@@ -224,7 +249,9 @@ function AccordionContent({ output }: { output: FolderToolOutput }) {
         </ContentGrid>
       );
     }
-    return <ContentMessage>No folders found.</ContentMessage>;
+    return (
+      <ContentMessage>{t("chatTools4.folderTool.noFolders")}</ContentMessage>
+    );
   }
 
   if (isFolderUpdated(output) || isFolderMoved(output)) {
@@ -250,16 +277,34 @@ function AccordionContent({ output }: { output: FolderToolOutput }) {
 /*  Main component                                                     */
 /* ------------------------------------------------------------------ */
 
-function getAccordionTitle(output: FolderToolOutput): string {
-  if (isFolderCreated(output)) return `Created "${output.folder.name}"`;
+function getAccordionTitle(
+  output: FolderToolOutput,
+  locale: Locale = DEFAULT_LOCALE,
+): string {
+  const m = (key: MessageKey, values?: Record<string, string | number>) =>
+    getMessage(locale, key, values);
+  if (isFolderCreated(output))
+    return m("chatTools4.folderTool.created", { name: output.folder.name });
   if (isFolderList(output))
-    return `${output.count} folder${output.count !== 1 ? "s" : ""}`;
-  if (isFolderUpdated(output)) return `Updated "${output.folder.name}"`;
-  if (isFolderMoved(output)) return `Moved "${output.folder.name}"`;
-  if (isFolderDeleted(output)) return "Folder deleted";
+    return m(
+      output.count === 1
+        ? "chatTools4.folderTool.listCountOne"
+        : "chatTools4.folderTool.listCountMany",
+      { count: output.count },
+    );
+  if (isFolderUpdated(output))
+    return m("chatTools4.folderTool.updated", { name: output.folder.name });
+  if (isFolderMoved(output))
+    return m("chatTools4.folderTool.moved", { name: output.folder.name });
+  if (isFolderDeleted(output)) return m("chatTools4.folderTool.deleted");
   if (isAgentsMoved(output))
-    return `Moved ${output.count} workflow${output.count !== 1 ? "s" : ""}`;
-  return "Folder operation";
+    return m(
+      output.count === 1
+        ? "chatTools4.folderTool.movedWorkflowsOne"
+        : "chatTools4.folderTool.movedWorkflowsMany",
+      { count: output.count },
+    );
+  return m("chatTools4.folderTool.operation");
 }
 
 function getAccordionIcon(output: FolderToolOutput) {
@@ -295,7 +340,7 @@ export function FolderTool({ part }: Props) {
       {hasContent && output && (
         <ToolAccordion
           icon={getAccordionIcon(output)}
-          title={getAccordionTitle(output)}
+          title={getAccordionTitle(output, locale)}
           defaultExpanded={isFolderList(output)}
         >
           <AccordionContent output={output} />

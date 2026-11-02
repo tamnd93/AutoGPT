@@ -1,7 +1,7 @@
 "use client";
 
 import type { ToolUIPart } from "ai";
-import { useLocale } from "@/lib/i18n";
+import { useLocale, useT } from "@/lib/i18n";
 
 import { MorphingTextAnimation } from "../../components/MorphingTextAnimation/MorphingTextAnimation";
 import {
@@ -48,6 +48,7 @@ function truncate(text: string, maxChars: number): string {
 
 export function SearchFeatureRequestsTool({ part }: Props) {
   const locale = useLocale();
+  const t = useT();
   const output = getFeatureRequestOutput(part);
   const text = getAnimationText(part, locale);
   const isStreaming =
@@ -78,7 +79,12 @@ export function SearchFeatureRequestsTool({ part }: Props) {
 
   const accordionDescription =
     hasExpandableContent && searchOutput
-      ? `Found ${searchOutput.count} result${searchOutput.count === 1 ? "" : "s"} for "${searchOutput.query}"`
+      ? t(
+          searchOutput.count === 1
+            ? "chatTools4.featureRequests.descriptionOne"
+            : "chatTools4.featureRequests.descriptionMany",
+          { count: searchOutput.count, query: searchOutput.query },
+        )
       : hasExpandableContent && (noResultsOutput || errorOutput)
         ? ((noResultsOutput ?? errorOutput)?.message ?? null)
         : null;
@@ -148,6 +154,7 @@ export function SearchFeatureRequestsTool({ part }: Props) {
 
 export function CreateFeatureRequestTool({ part }: Props) {
   const locale = useLocale();
+  const t = useT();
   const output = getFeatureRequestOutput(part);
   const text = getAnimationText(part, locale);
   const isStreaming =
@@ -203,7 +210,9 @@ export function CreateFeatureRequestTool({ part }: Props) {
               </ContentCardHeader>
               <div className="mt-2 flex items-center gap-2">
                 <ContentBadge>
-                  {createdOutput.is_new_issue ? "New" : "Existing"}
+                  {createdOutput.is_new_issue
+                    ? t("chatTools4.featureRequests.newTag")
+                    : t("chatTools4.featureRequests.existingTag")}
                 </ContentBadge>
               </div>
               <ContentMessage>{createdOutput.message}</ContentMessage>

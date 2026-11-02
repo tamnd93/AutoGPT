@@ -1,4 +1,7 @@
 import type { ToolUIPart } from "ai";
+import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/locale";
+import type { MessageKey } from "@/lib/i18n/messages/en";
+import { getMessage } from "@/lib/i18n/translate";
 
 /* ------------------------------------------------------------------ */
 /*  Sub-agent tool name constants                                      */
@@ -18,29 +21,33 @@ export function extractToolName(part: ToolUIPart): string {
 
 // Specific-case labels for tools whose auto-formatted name reads awkwardly
 // alongside a "Running …" prefix (e.g. avoid "Running Run sub session").
-const TOOL_DISPLAY_NAMES: Record<string, string> = {
-  run_sub_session: "Subtask",
-  get_sub_session_result: "Subtask result",
-  delegate_to_expert: "Teammate delegation",
-  handoff_to_expert: "Teammate hand-off",
-  hire_expert: "Expert hire preview",
-  raise_expert: "Expert raise preview",
-  update_expert: "Expert update",
-  confirm_expert_change: "Expert change confirmation",
-  run_agent: "Workflow",
-  view_agent_output: "Workflow output",
-  run_block: "Action",
-  run_mcp_tool: "MCP tool",
-  find_capability: "Capability search",
-  describe_capability: "Capability details",
-  run_capability: "Action",
-  resume_capability: "Resumed action",
-  get_agent_building_guide: "Workflow building guide",
+const TOOL_DISPLAY_NAME_KEYS: Record<string, MessageKey> = {
+  run_sub_session: "chatTools4.generic.toolName.run_sub_session",
+  get_sub_session_result: "chatTools4.generic.toolName.get_sub_session_result",
+  delegate_to_expert: "chatTools4.generic.toolName.delegate_to_expert",
+  handoff_to_expert: "chatTools4.generic.toolName.handoff_to_expert",
+  hire_expert: "chatTools4.generic.toolName.hire_expert",
+  raise_expert: "chatTools4.generic.toolName.raise_expert",
+  update_expert: "chatTools4.generic.toolName.update_expert",
+  confirm_expert_change: "chatTools4.generic.toolName.confirm_expert_change",
+  run_agent: "chatTools4.generic.toolName.run_agent",
+  view_agent_output: "chatTools4.generic.toolName.view_agent_output",
+  run_block: "chatTools4.generic.toolName.run_block",
+  run_mcp_tool: "chatTools4.generic.toolName.run_mcp_tool",
+  find_capability: "chatTools4.generic.toolName.find_capability",
+  describe_capability: "chatTools4.generic.toolName.describe_capability",
+  run_capability: "chatTools4.generic.toolName.run_capability",
+  resume_capability: "chatTools4.generic.toolName.resume_capability",
+  get_agent_building_guide:
+    "chatTools4.generic.toolName.get_agent_building_guide",
 };
 
-export function formatToolName(name: string): string {
-  const override = TOOL_DISPLAY_NAMES[name];
-  if (override) return override;
+export function formatToolName(
+  name: string,
+  locale: Locale = DEFAULT_LOCALE,
+): string {
+  const key = TOOL_DISPLAY_NAME_KEYS[name];
+  if (key) return getMessage(locale, key);
   // Drop a redundant "run_" prefix so "Running Run agent" → "Running agent".
   const stripped = name.startsWith("run_") ? name.slice(4) : name;
   return stripped.replace(/_/g, " ").replace(/^\w/, (c) => c.toUpperCase());
@@ -215,7 +222,7 @@ export function humanizeFileName(filePath: string): string {
 /*  Animation text                                                     */
 /* ------------------------------------------------------------------ */
 
-// web_search accepts a ``deep`` arg that dispatches to a multi-step
+// web_search accepts a deep-search arg that dispatches to a multi-step
 // research model; render a distinct verb ("Researching"/"Researched"/
 // "Research failed") so users know the call takes longer.
 function _isDeepWebSearch(part: ToolUIPart): boolean {
@@ -226,10 +233,14 @@ function _isDeepWebSearch(part: ToolUIPart): boolean {
 export function getAnimationText(
   part: ToolUIPart,
   category: ToolCategory,
+  locale: Locale = DEFAULT_LOCALE,
 ): string {
   const toolName = extractToolName(part);
   const summary = getInputSummary(toolName, part.input);
   const shortSummary = summary ? truncate(summary, 60) : null;
+  const displayName = formatToolName(toolName, locale);
+  const m = (key: MessageKey, values?: Record<string, string | number>) =>
+    getMessage(locale, key, values);
 
   switch (part.state) {
     case "input-streaming":
@@ -237,173 +248,229 @@ export function getAnimationText(
       switch (category) {
         case "bash":
           return shortSummary
-            ? `Running: ${shortSummary}`
-            : "Running command\u2026";
+            ? m("chatTools4.generic.bashRunningNamed", {
+                summary: shortSummary,
+              })
+            : m("chatTools4.generic.bashRunningGeneric");
         case "web":
           if (toolName === "WebSearch" || toolName === "web_search") {
             const deep = _isDeepWebSearch(part);
-            const verb = deep ? "Researching" : "Searching";
-            return shortSummary
-              ? `${verb} "${shortSummary}"`
-              : `${verb} the web\u2026`;
+            if (shortSummary) {
+              return deep
+                ? m("chatTools4.generic.webResearchingNamed", {
+                    summary: shortSummary,
+                  })
+                : m("chatTools4.generic.webSearchingNamed", {
+                    summary: shortSummary,
+                  });
+            }
+            return deep
+              ? m("chatTools4.generic.webResearchingGeneric")
+              : m("chatTools4.generic.webSearchingGeneric");
           }
           return shortSummary
-            ? `Fetching ${shortSummary}`
-            : "Fetching web content\u2026";
+            ? m("chatTools4.generic.webFetchingNamed", {
+                summary: shortSummary,
+              })
+            : m("chatTools4.generic.webFetchingGeneric");
         case "browser":
-          if (toolName === "browser_screenshot")
-            return "Taking screenshot\u2026";
+          if (toolName === "browser_screenshot") {
+            return m("chatTools4.generic.browserScreenshotting");
+          }
           return shortSummary
-            ? `Browsing ${shortSummary}`
-            : "Interacting with browser\u2026";
+            ? m("chatTools4.generic.browserBrowsingNamed", {
+                summary: shortSummary,
+              })
+            : m("chatTools4.generic.browserBrowsingGeneric");
         case "file-read":
           return summary
-            ? `Reading ${humanizeFileName(summary)}`
-            : "Reading file\u2026";
+            ? m("chatTools4.generic.fileReadNamed", {
+                name: humanizeFileName(summary),
+              })
+            : m("chatTools4.generic.fileReadGeneric");
         case "file-write":
           return summary
-            ? `Writing ${humanizeFileName(summary)}`
-            : "Writing file\u2026";
+            ? m("chatTools4.generic.fileWriteNamed", {
+                name: humanizeFileName(summary),
+              })
+            : m("chatTools4.generic.fileWriteGeneric");
         case "file-delete":
           return summary
-            ? `Deleting ${humanizeFileName(summary)}`
-            : "Deleting file\u2026";
+            ? m("chatTools4.generic.fileDeleteNamed", {
+                name: humanizeFileName(summary),
+              })
+            : m("chatTools4.generic.fileDeleteGeneric");
         case "file-list":
           return shortSummary
-            ? `Listing ${shortSummary}`
-            : "Listing files\u2026";
+            ? m("chatTools4.generic.fileListNamed", { summary: shortSummary })
+            : m("chatTools4.generic.fileListGeneric");
         case "search":
           return shortSummary
-            ? `Searching for "${shortSummary}"`
-            : "Searching\u2026";
+            ? m("chatTools4.generic.searchNamed", { summary: shortSummary })
+            : m("chatTools4.generic.searchGeneric");
         case "edit":
           return summary
-            ? `Editing ${humanizeFileName(summary)}`
-            : "Editing file\u2026";
+            ? m("chatTools4.generic.editNamed", {
+                name: humanizeFileName(summary),
+              })
+            : m("chatTools4.generic.editGeneric");
         case "todo":
-          return shortSummary ? `${shortSummary}` : "Updating task list\u2026";
-        case "compaction":
-          return "Summarizing earlier messages\u2026";
-        case "agent":
-          if (toolName === TOOL_TASK_OUTPUT)
-            return shortSummary
-              ? `Checking subtask ${shortSummary}\u2026`
-              : "Checking subtask result\u2026";
           return shortSummary
-            ? `Running subtask: ${shortSummary}`
-            : "Starting subtask\u2026";
+            ? shortSummary
+            : m("chatTools4.generic.todoUpdating");
+        case "compaction":
+          return m("chatTools4.generic.compactionRunning");
+        case "agent":
+          if (toolName === TOOL_TASK_OUTPUT) {
+            return shortSummary
+              ? m("chatTools4.generic.subCheckingNamed", { name: shortSummary })
+              : m("chatTools4.generic.subCheckingGeneric");
+          }
+          return shortSummary
+            ? m("chatTools4.generic.subRunningNamed", { summary: shortSummary })
+            : m("chatTools4.generic.subStartingGeneric");
         default:
-          return `Running ${formatToolName(toolName)}\u2026`;
+          return m("chatTools4.generic.runningDefault", { name: displayName });
       }
     }
     case "output-available": {
       switch (category) {
         case "bash":
-          // Subtitle always shows WHAT ran. The accordion title + description
-          // carry HOW it ended (exit code / "timed out"), so repeating the
-          // exit status here would just double up.
-          return shortSummary ? `Ran: ${shortSummary}` : "Command completed";
+          return shortSummary
+            ? m("chatTools4.generic.bashDoneNamed", { summary: shortSummary })
+            : m("chatTools4.generic.bashDoneGeneric");
         case "web":
           if (toolName === "WebSearch" || toolName === "web_search") {
             const deep = _isDeepWebSearch(part);
-            const verb = deep ? "Researched" : "Searched";
-            const completed = deep
-              ? "Web research completed"
-              : "Web search completed";
-            return shortSummary ? `${verb} "${shortSummary}"` : completed;
+            if (shortSummary) {
+              return deep
+                ? m("chatTools4.generic.webResearchedNamed", {
+                    summary: shortSummary,
+                  })
+                : m("chatTools4.generic.webSearchedNamed", {
+                    summary: shortSummary,
+                  });
+            }
+            return deep
+              ? m("chatTools4.generic.webResearchCompleted")
+              : m("chatTools4.generic.webSearchCompleted");
           }
           return shortSummary
-            ? `Fetched ${shortSummary}`
-            : "Fetched web content";
+            ? m("chatTools4.generic.webFetchedNamed", { summary: shortSummary })
+            : m("chatTools4.generic.webFetchedGeneric");
         case "browser":
-          if (toolName === "browser_screenshot") return "Screenshot captured";
+          if (toolName === "browser_screenshot") {
+            return m("chatTools4.generic.browserScreenshotDone");
+          }
           return shortSummary
-            ? `Browsed ${shortSummary}`
-            : "Browser action completed";
+            ? m("chatTools4.generic.browserBrowsedNamed", {
+                summary: shortSummary,
+              })
+            : m("chatTools4.generic.browserDoneGeneric");
         case "file-read":
           return summary
-            ? `Read ${humanizeFileName(summary)}`
-            : "File read completed";
+            ? m("chatTools4.generic.fileReadDoneNamed", {
+                name: humanizeFileName(summary),
+              })
+            : m("chatTools4.generic.fileReadDoneGeneric");
         case "file-write":
           return summary
-            ? `Wrote ${humanizeFileName(summary)}`
-            : "File written";
+            ? m("chatTools4.generic.fileWriteDoneNamed", {
+                name: humanizeFileName(summary),
+              })
+            : m("chatTools4.generic.fileWriteDoneGeneric");
         case "file-delete":
           return summary
-            ? `Deleted ${humanizeFileName(summary)}`
-            : "File deleted";
+            ? m("chatTools4.generic.fileDeleteDoneNamed", {
+                name: humanizeFileName(summary),
+              })
+            : m("chatTools4.generic.fileDeleteDoneGeneric");
         case "file-list":
-          return "Listed files";
+          return m("chatTools4.generic.fileListDone");
         case "search":
           return shortSummary
-            ? `Searched for "${shortSummary}"`
-            : "Search completed";
+            ? m("chatTools4.generic.searchDoneNamed", {
+                summary: shortSummary,
+              })
+            : m("chatTools4.generic.searchDoneGeneric");
         case "edit":
           return summary
-            ? `Edited ${humanizeFileName(summary)}`
-            : "Edited a file";
+            ? m("chatTools4.generic.editDoneNamed", {
+                name: humanizeFileName(summary),
+              })
+            : m("chatTools4.generic.editDoneGeneric");
         case "todo":
-          return "Updated task list";
+          return m("chatTools4.generic.todoUpdated");
         case "compaction":
-          return "Earlier messages were summarized";
+          return m("chatTools4.generic.compactionDone");
         case "agent": {
           if (toolName === TOOL_TASK_OUTPUT) {
             const taskOut =
               part.output && typeof part.output === "object"
                 ? (part.output as Record<string, unknown>)
                 : null;
-            if (taskOut?.retrieval_status === "timeout")
-              return "Subtask still running\u2026";
-            return "Subtask result received";
+            if (taskOut?.retrieval_status === "timeout") {
+              return m("chatTools4.generic.subStillRunning");
+            }
+            return m("chatTools4.generic.subResultReceived");
           }
           const agentOut =
             part.output && typeof part.output === "object"
               ? (part.output as Record<string, unknown>)
               : null;
-          if (agentOut?.isAsync || agentOut?.status === "async_launched")
+          if (agentOut?.isAsync || agentOut?.status === "async_launched") {
             return shortSummary
-              ? `Subtask started (background): ${shortSummary}`
-              : "Subtask started in background";
+              ? m("chatTools4.generic.subStartedNamed", {
+                  summary: shortSummary,
+                })
+              : m("chatTools4.generic.subStartedGeneric");
+          }
           return shortSummary
-            ? `Subtask completed: ${shortSummary}`
-            : "Subtask completed";
+            ? m("chatTools4.generic.subCompletedNamed", {
+                summary: shortSummary,
+              })
+            : m("chatTools4.generic.subCompletedGeneric");
         }
         default:
-          return `${formatToolName(toolName)} completed`;
+          return m("chatTools4.generic.completedDefault", {
+            name: displayName,
+          });
       }
     }
     case "output-error": {
       switch (category) {
         case "bash":
-          return "Command failed";
+          return m("chatTools4.generic.bashFailed");
         case "web":
           if (toolName === "WebSearch" || toolName === "web_search") {
-            return _isDeepWebSearch(part) ? "Research failed" : "Search failed";
+            return _isDeepWebSearch(part)
+              ? m("chatTools4.generic.webResearchFailed")
+              : m("chatTools4.generic.webSearchFailed");
           }
-          return "Fetch failed";
+          return m("chatTools4.generic.webFetchFailed");
         case "browser":
-          return "Browser action failed";
+          return m("chatTools4.generic.browserFailed");
         case "file-read":
-          return "Failed while reading the file";
+          return m("chatTools4.generic.fileReadFailed");
         case "file-write":
-          return "Failed while writing the file";
+          return m("chatTools4.generic.fileWriteFailed");
         case "file-delete":
-          return "Failed while deleting the file";
+          return m("chatTools4.generic.fileDeleteFailed");
         case "file-list":
-          return "Failed while listing files";
+          return m("chatTools4.generic.fileListFailed");
         case "search":
-          return "Failed while searching files";
+          return m("chatTools4.generic.searchFailed");
         case "edit":
-          return "Failed while editing the file";
+          return m("chatTools4.generic.editFailed");
         case "todo":
-          return "Failed while updating the task list";
+          return m("chatTools4.generic.todoFailed");
         case "agent":
-          return "Subtask failed";
+          return m("chatTools4.generic.subFailed");
         default:
-          return `${formatToolName(toolName)} failed`;
+          return m("chatTools4.generic.failedDefault", { name: displayName });
       }
     }
     default:
-      return `Running ${formatToolName(toolName)}\u2026`;
+      return m("chatTools4.generic.runningDefault", { name: displayName });
   }
 }

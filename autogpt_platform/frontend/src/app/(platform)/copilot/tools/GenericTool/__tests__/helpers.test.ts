@@ -475,3 +475,48 @@ describe("getAnimationText", () => {
     expect(getAnimationText(part, "other")).toBe("Running Custom tool\u2026");
   });
 });
+
+describe("vietnamese labels", () => {
+  const makePart = (part: Partial<ToolUIPart>) => part as unknown as ToolUIPart;
+
+  it("translates the explicit tool display names", () => {
+    expect(formatToolName("run_sub_session", "vi")).toBe("Việc phụ");
+    expect(formatToolName("run_agent", "vi")).toBe("Workflow");
+    expect(formatToolName("run_sub_session")).toBe("Subtask");
+  });
+
+  it("translates the bash animation", () => {
+    const part = makePart({
+      type: "tool-bash_exec",
+      state: "input-available",
+      input: { command: "npm test" },
+    });
+    expect(getAnimationText(part, "bash", "vi")).toBe("Đang chạy: npm test");
+  });
+
+  it("translates the file and subtask animations", () => {
+    const readPart = makePart({
+      type: "tool-read_workspace_file",
+      state: "input-available",
+      input: { file_path: "/tmp/report.md" },
+    });
+    expect(getAnimationText(readPart, "file-read", "vi")).toBe(
+      'Đang đọc "Report"',
+    );
+    const agentPart = makePart({
+      type: "tool-Task",
+      state: "output-error",
+    });
+    expect(getAnimationText(agentPart, "agent", "vi")).toBe(
+      "Việc phụ thất bại",
+    );
+  });
+
+  it("translates the fallback animation", () => {
+    const part = makePart({
+      type: "tool-custom_tool",
+      state: "output-available",
+    });
+    expect(getAnimationText(part, "other", "vi")).toBe("Custom tool hoàn tất");
+  });
+});

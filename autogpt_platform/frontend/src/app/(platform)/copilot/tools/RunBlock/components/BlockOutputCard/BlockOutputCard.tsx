@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { Button } from "@/components/atoms/Button/Button";
+import { useT } from "@/lib/i18n";
 import type { BlockOutputResponse } from "@/app/api/__generated__/models/blockOutputResponse";
 import {
   globalRegistry,
@@ -49,6 +50,7 @@ function OutputKeySection({
   outputKey: string;
   items: unknown[];
 }) {
+  const t = useT();
   const [expanded, setExpanded] = useState(false);
   const hasMoreItems = items.length > COLLAPSED_LIMIT;
   const visibleItems = expanded ? items : items.slice(0, COLLAPSED_LIMIT);
@@ -58,7 +60,12 @@ function OutputKeySection({
       <div className="flex items-center justify-between gap-2">
         <ContentCardTitle className="text-xs">{outputKey}</ContentCardTitle>
         <ContentBadge>
-          {items.length} item{items.length === 1 ? "" : "s"}
+          {t(
+            items.length === 1
+              ? "chatTools4.runBlock.output.itemOne"
+              : "chatTools4.runBlock.output.itemMany",
+            { count: items.length },
+          )}
         </ContentBadge>
       </div>
       <div className="mt-2">
@@ -73,7 +80,9 @@ function OutputKeySection({
           className="mt-1 h-auto px-0 py-0.5 text-caption-sm leading-inherit text-muted-foreground"
           onClick={() => setExpanded((prev) => !prev)}
         >
-          {expanded ? "Show less" : `Show all ${items.length} items`}
+          {expanded
+            ? t("chatTools4.runBlock.output.showLess")
+            : t("chatTools4.runBlock.output.showAll", { count: items.length })}
         </Button>
       )}
     </ContentCard>
@@ -81,12 +90,13 @@ function OutputKeySection({
 }
 
 export function BlockOutputCard({ output }: Props) {
+  const t = useT();
   return (
     <ContentGrid>
       {output.is_dry_run && (
         <div className="flex items-center gap-1.5 rounded-md border border-warning-border bg-warning-surface px-2.5 py-1.5 text-xs font-medium text-warning-foreground">
           <span>⚡</span>
-          <span>Simulated — no real execution occurred</span>
+          <span>{t("chatTools4.runBlock.output.simulated")}</span>
         </div>
       )}
       <ContentMessage>{output.message}</ContentMessage>

@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { toDocsUrl } from "./helpers";
+import {
+  getAnimationText,
+  getDocsToolTitle,
+  getToolLabel,
+  toDocsUrl,
+} from "./helpers";
 
 describe("toDocsUrl", () => {
   it("builds extension-less rendered-page URLs on the live host", () => {
@@ -19,5 +24,50 @@ describe("toDocsUrl", () => {
     expect(toDocsUrl("platform/v1.2-guide.md")).toBe(
       "https://agpt.co/docs/platform/v1.2-guide",
     );
+  });
+});
+
+describe("documentation labels in vietnamese", () => {
+  it("localizes the tool labels", () => {
+    expect(getToolLabel("tool-search_docs", "vi")).toBe("Tài liệu");
+    expect(getToolLabel("tool-get_doc_page", "vi")).toBe("Trang tài liệu");
+  });
+
+  it("localizes the accordion titles", () => {
+    expect(
+      getDocsToolTitle(
+        "tool-search_docs",
+        {
+          type: "doc_search_results" as never,
+          results: [],
+          count: 0,
+          query: "trigger",
+        },
+        "vi",
+      ),
+    ).toBe("Kết quả tài liệu");
+  });
+
+  it("localizes the search animation", () => {
+    expect(
+      getAnimationText(
+        {
+          type: "tool-search_docs",
+          state: "input-available",
+          input: { query: "trigger" },
+        },
+        "vi",
+      ),
+    ).toBe('Đang tìm trong tài liệu cho "trigger"');
+    expect(
+      getAnimationText(
+        {
+          type: "tool-search_docs",
+          state: "input-available",
+          input: { query: "trigger" },
+        },
+        "en",
+      ),
+    ).toBe('Searching documentation for "trigger"');
   });
 });

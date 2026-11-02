@@ -355,3 +355,35 @@ describe("getAnimationText", () => {
     expect(text.length).toBeGreaterThan(0);
   });
 });
+
+describe("getAnimationText in vietnamese", () => {
+  it("localizes the connecting and calling states", () => {
+    expect(
+      getAnimationText(
+        {
+          state: "input-available",
+          input: {
+            server_url: "https://mcp.sentry.dev/mcp",
+            tool_name: "search",
+          },
+        },
+        "vi",
+      ),
+    ).toBe("Đang gọi search trên sentry.dev");
+    expect(
+      getAnimationText(
+        {
+          state: "input-available",
+          input: { server_url: "https://mcp.sentry.dev/mcp" },
+        },
+        "vi",
+      ),
+    ).toBe("Đang kết nối tới sentry.dev…");
+  });
+
+  it("localizes the connection error", () => {
+    expect(getAnimationText({ state: "output-error" }, "vi")).toBe(
+      "Lỗi kết nối",
+    );
+  });
+});

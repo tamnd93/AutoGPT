@@ -3,6 +3,7 @@
 import type { AgentDetailsResponse } from "@/app/api/__generated__/models/agentDetailsResponse";
 import { Button } from "@/components/atoms/Button/Button";
 import { FormRenderer } from "@/components/renderers/InputRenderer/FormRenderer";
+import { useT } from "@/lib/i18n";
 import { useEffect, useState } from "react";
 import { useCopilotChatActions } from "../../../../components/CopilotChatActionsProvider/useCopilotChatActions";
 import { ContentMessage } from "../../../../components/ToolAccordion/AccordionContent";
@@ -13,6 +14,7 @@ interface Props {
 }
 
 export function AgentDetailsCard({ output }: Props) {
+  const t = useT();
   const { onSend } = useCopilotChatActions();
   const schema = buildInputSchema(output.agent.inputs);
 
@@ -58,8 +60,7 @@ export function AgentDetailsCard({ output }: Props) {
     // redundant and, once setup has succeeded, a stale backward-pointing CTA.
     return (
       <ContentMessage>
-        This workflow runs on a webhook trigger, so it can&apos;t be run or
-        scheduled directly — it&apos;s activated by setting up its trigger.
+        {t("chatTools4.runAgent.card.webhookOnly")}
       </ContentMessage>
     );
   }
@@ -68,7 +69,7 @@ export function AgentDetailsCard({ output }: Props) {
     return (
       <div className="grid gap-2">
         <ContentMessage>
-          This workflow has no configurable inputs.
+          {t("chatTools4.runAgent.card.noInputs")}
         </ContentMessage>
         <div className="flex gap-2 pt-2">
           <Button
@@ -80,7 +81,7 @@ export function AgentDetailsCard({ output }: Props) {
               )
             }
           >
-            Proceed
+            {t("chatTools4.runAgent.card.proceed")}
           </Button>
         </div>
       </div>
@@ -90,7 +91,7 @@ export function AgentDetailsCard({ output }: Props) {
   return (
     <div className="grid gap-2">
       <ContentMessage>
-        Review the inputs below and press Proceed to run.
+        {t("chatTools4.runAgent.card.reviewInputs")}
       </ContentMessage>
 
       <div className="mt-2 rounded-2xl border bg-background p-3 pt-4">
@@ -116,7 +117,7 @@ export function AgentDetailsCard({ output }: Props) {
           disabled={!valid}
           onClick={handleProceed}
         >
-          Proceed
+          {t("chatTools4.runAgent.card.proceed")}
         </Button>
       </div>
     </div>

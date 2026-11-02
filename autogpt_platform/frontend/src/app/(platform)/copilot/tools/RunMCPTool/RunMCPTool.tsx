@@ -18,6 +18,7 @@ import {
   isUnparseableJsonOutput,
   reportCorruptedToolOutput,
 } from "../../helpers/toolOutput";
+import { useLocale, useT } from "@/lib/i18n";
 import { PlugSocketIcon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
 
@@ -34,7 +35,9 @@ interface Props {
 }
 
 export function RunMCPToolComponent({ part }: Props) {
-  const text = getAnimationText(part);
+  const locale = useLocale();
+  const t = useT();
+  const text = getAnimationText(part, locale);
   const isStreaming =
     part.state === "input-streaming" || part.state === "input-available";
 
@@ -71,15 +74,16 @@ export function RunMCPToolComponent({ part }: Props) {
       <div className="flex items-center gap-2 text-sm text-muted-foreground">
         <ToolIcon isStreaming={isStreaming} isError={isError} />
         <MorphingTextAnimation
-          text={isCorrupted ? "Tool result could not be displayed" : text}
+          text={
+            isCorrupted ? t("chatTools4.mcp.card.corruptedAnimation") : text
+          }
           className={isError ? "text-error" : undefined}
         />
       </div>
 
       {isCorrupted && (
         <p className="mt-1 text-sm text-error">
-          The result data arrived corrupted, so any sign-in or setup card it
-          contained can&apos;t be shown. Ask your expert to retry this step.
+          {t("chatTools4.runAgent.card.corruptedDetail")}
         </p>
       )}
 
@@ -109,7 +113,9 @@ export function RunMCPToolComponent({ part }: Props) {
         <ToolAccordion
           icon={<Icon icon={PlugSocketIcon} size={32} />}
           title={mcpToolOutput.tool_name}
-          description={`from ${serverHost(mcpToolOutput.server_url)}`}
+          description={t("chatTools4.mcp.card.from", {
+            host: serverHost(mcpToolOutput.server_url),
+          })}
         >
           <MCPToolOutputCard output={mcpToolOutput} />
         </ToolAccordion>

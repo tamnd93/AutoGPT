@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { ToolUIPart } from "ai";
 import { fireEvent, render, screen } from "@/tests/integrations/test-utils";
+import { LocaleProvider } from "@/lib/i18n";
 import { GenericTool } from "../GenericTool";
 
 function makePart(overrides: Record<string, unknown> = {}): ToolUIPart {
@@ -518,5 +519,29 @@ describe("GenericTool icons", () => {
 
     expect(screen.getAllByText("Nothing found.").length).toBeGreaterThan(0);
     expect(document.body.textContent).not.toContain("[]");
+  });
+});
+
+describe("GenericTool (vi)", () => {
+  it("renders the bash accordion chrome in vietnamese", () => {
+    render(
+      <LocaleProvider locale="vi">
+        <GenericTool
+          part={makePart({
+            state: "output-available",
+            input: { command: "missing-bin" },
+            output: {
+              exit_code: 127,
+              stdout: "",
+              stderr: "bash: missing-bin: command not found\n",
+            },
+          })}
+        />
+      </LocaleProvider>,
+    );
+
+    const trigger = screen.getByRole("button", { expanded: false });
+    expect(trigger.textContent).toContain("Lệnh thất bại (mã thoát 127)");
+    expect(trigger.textContent).toContain("mã trạng thái 127");
   });
 });

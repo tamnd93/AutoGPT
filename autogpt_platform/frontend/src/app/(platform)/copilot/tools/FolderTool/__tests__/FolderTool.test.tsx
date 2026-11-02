@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it } from "vitest";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import type { ToolUIPart } from "ai";
+import { LocaleProvider } from "@/lib/i18n";
 import { FolderTool } from "../FolderTool";
 
 afterEach(cleanup);
@@ -168,5 +169,33 @@ describe("FolderTool tree icons", () => {
     expect(expandedGlyph).toBeTruthy();
     expect(collapsedGlyph).toBeTruthy();
     expect(collapsedGlyph).not.toBe(expandedGlyph);
+  });
+});
+
+describe("FolderTool (vi)", () => {
+  it("labels tree folders in vietnamese", () => {
+    render(
+      <LocaleProvider locale="vi">
+        <FolderTool
+          part={makePart({
+            type: "folder_list",
+            message: "Listed",
+            folders: [],
+            tree: [
+              {
+                ...FOLDER,
+                children: [],
+                agents: [{ id: "a1", name: "Agent" }],
+              },
+            ],
+            count: 1,
+          })}
+        />
+      </LocaleProvider>,
+    );
+
+    expect(
+      screen.getByRole("button", { name: /Research \(2 workflow\)/ }),
+    ).toBeDefined();
   });
 });

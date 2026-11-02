@@ -1,7 +1,7 @@
 "use client";
 
 import { HorizontalScroll } from "@/app/(platform)/build/components/NewControlPanel/NewBlockMenu/HorizontalScroll";
-import { useLocale } from "@/lib/i18n";
+import { useLocale, useT } from "@/lib/i18n";
 import type { Locale } from "@/lib/i18n/locale";
 import { MorphingTextAnimation } from "../../components/MorphingTextAnimation/MorphingTextAnimation";
 import {
@@ -60,6 +60,7 @@ function CapabilityCard({
 
 export function FindCapabilitiesTool({ part }: Props) {
   const locale = useLocale();
+  const t = useT();
   const text = getAnimationText(part, locale);
   const isStreaming =
     part.state === "input-streaming" || part.state === "input-available";
@@ -71,7 +72,12 @@ export function FindCapabilitiesTool({ part }: Props) {
     : [];
   const query = queryOf(part);
   const description = parsed
-    ? `${parsed.count} result${parsed.count === 1 ? "" : "s"}${query ? ` for "${query}"` : ""}`
+    ? `${t(
+        parsed.count === 1
+          ? "chatTools4.findCapabilities.resultOne"
+          : "chatTools4.findCapabilities.resultMany",
+        { count: parsed.count },
+      )}${query ? ` ${t("chatTools4.find.forQuery", { query })}` : ""}`
     : undefined;
 
   return (
@@ -87,7 +93,7 @@ export function FindCapabilitiesTool({ part }: Props) {
       {items.length > 0 && (
         <ToolAccordion
           icon={<AccordionIcon />}
-          title="Results"
+          title={t("chatTools4.findCapabilities.title")}
           description={description}
         >
           <HorizontalScroll dependencyList={[items.length]}>
