@@ -18,9 +18,11 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/molecules/DropdownMenu/DropdownMenu";
+import { useT } from "@/lib/i18n";
 import { useAPISection } from "./useAPISection";
 
 export function APIKeysSection() {
+  const t = useT();
   const { apiKeys, isLoading, isDeleting, handleRevokeKey } = useAPISection();
 
   return (
@@ -35,11 +37,11 @@ export function APIKeysSection() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>API Key</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Created</TableHead>
-                <TableHead>Last Used</TableHead>
+                <TableHead>{t("profile1.apiKeys.table.name")}</TableHead>
+                <TableHead>{t("profile1.apiKeys.table.apiKey")}</TableHead>
+                <TableHead>{t("profile1.apiKeys.table.status")}</TableHead>
+                <TableHead>{t("profile1.apiKeys.table.created")}</TableHead>
+                <TableHead>{t("profile1.apiKeys.table.lastUsed")}</TableHead>
                 <TableHead></TableHead>
               </TableRow>
             </TableHeader>
@@ -79,7 +81,7 @@ export function APIKeysSection() {
                   <TableCell>
                     {key.last_used_at
                       ? new Date(key.last_used_at).toLocaleDateString()
-                      : "Never"}
+                      : t("profile1.apiKeys.table.never")}
                   </TableCell>
                   <TableCell>
                     <DropdownMenu>
@@ -98,7 +100,7 @@ export function APIKeysSection() {
                           onClick={() => handleRevokeKey(key.id)}
                           disabled={isDeleting}
                         >
-                          Revoke
+                          {t("profile1.apiKeys.table.revoke")}
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Button } from "@/components/atoms/Button/Button";
 import { Dialog } from "@/components/molecules/Dialog/Dialog";
 import { Skeleton } from "@/components/atoms/Skeleton/Skeleton";
+import { useT } from "@/lib/i18n";
 import { useSubscriptionTierSection } from "./useSubscriptionTierSection";
 import { PendingChangeBanner } from "./components/PendingChangeBanner/PendingChangeBanner";
 import {
@@ -16,6 +17,7 @@ import {
 } from "./helpers";
 
 export function SubscriptionTierSection() {
+  const t = useT();
   const {
     subscription,
     isLoading,
@@ -255,7 +257,7 @@ export function SubscriptionTierSection() {
                 // TODO(tokens): no exact role (text-neutral-500 #737373, dark:text-neutral-400)
                 className="mb-4 text-neutral-500 dark:text-neutral-400"
               >
-                {tier.description}
+                {t(tier.descriptionKey)}
               </Text>
 
               {!isCurrent && isPaymentEnabled && (

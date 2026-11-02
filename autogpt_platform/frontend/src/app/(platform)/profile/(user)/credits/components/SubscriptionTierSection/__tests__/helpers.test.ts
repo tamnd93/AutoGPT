@@ -62,6 +62,20 @@ describe("formatPendingDate", () => {
   });
 });
 
+describe("localized tier copy", () => {
+  it("words the free price, the monthly suffix and the no-subscription label in Vietnamese", () => {
+    expect(formatCost(0, "BASIC", "vi")).toBe("Miễn phí");
+    expect(formatCost(999, "PRO", "vi")).toBe("$9.99/tháng");
+    expect(getTierLabel("NO_TIER", "vi")).toBe("Chưa đăng ký gói");
+  });
+
+  it("words the rate-limit badge in Vietnamese", () => {
+    expect(
+      formatRelativeMultiplier("PRO", { BASIC: 1, PRO: 4, MAX: 20 }, "vi"),
+    ).toBe("4.0x giới hạn tốc độ");
+  });
+});
+
 describe("TIERS / TIER_ORDER", () => {
   it("every entry in TIERS has a key that appears in TIER_ORDER", () => {
     for (const tier of TIERS) {

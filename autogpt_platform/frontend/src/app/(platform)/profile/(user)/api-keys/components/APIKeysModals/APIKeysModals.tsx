@@ -15,10 +15,12 @@ import { Text } from "@/components/atoms/Text/Text";
 import { Checkbox } from "@/components/atoms/Checkbox/Checkbox";
 import { Button } from "@/components/atoms/Button/Button";
 
+import { useT } from "@/lib/i18n";
 import { useAPIkeysModals } from "./useAPIkeysModals";
 import { APIKeyPermission } from "@/app/api/__generated__/models/aPIKeyPermission";
 
 export const APIKeysModals = () => {
+  const t = useT();
   const {
     isCreating,
     handleCreateKey,
@@ -35,18 +37,20 @@ export const APIKeysModals = () => {
     <div className="mb-4 flex justify-end">
       <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
         <DialogTrigger asChild>
-          <Button variant="legacy-default">Create Key</Button>
+          <Button variant="legacy-default">
+            {t("profile1.apiKeys.createKey")}
+          </Button>
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Create New API Key</DialogTitle>
+            <DialogTitle>{t("profile1.apiKeys.createTitle")}</DialogTitle>
             <DialogDescription>
-              Create a new AutoGPT Platform API key
+              {t("profile1.apiKeys.createDescription")}
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid gap-2">
-              <Label htmlFor="name">Name</Label>
+              <Label htmlFor="name">{t("profile1.apiKeys.name")}</Label>
               <BaseInput
                 id="name"
                 value={keyState.newKeyName}
@@ -56,11 +60,13 @@ export const APIKeysModals = () => {
                     newKeyName: e.target.value,
                   }))
                 }
-                placeholder="My AutoGPT Platform API Key"
+                placeholder={t("profile1.apiKeys.namePlaceholder")}
               />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="description">Description (Optional)</Label>
+              <Label htmlFor="description">
+                {t("profile1.apiKeys.description")}
+              </Label>
               <BaseInput
                 id="description"
                 value={keyState.newKeyDescription}
@@ -70,11 +76,11 @@ export const APIKeysModals = () => {
                     newKeyDescription: e.target.value,
                   }))
                 }
-                placeholder="Used for..."
+                placeholder={t("profile1.apiKeys.descriptionPlaceholder")}
               />
             </div>
             <div className="grid gap-2">
-              <Label>Permissions</Label>
+              <Label>{t("profile1.apiKeys.permissions")}</Label>
               <div className="max-h-48 space-y-2 overflow-y-auto">
                 {Object.values(APIKeyPermission).map((permission) => (
                   <div className="flex items-center space-x-2" key={permission}>
@@ -105,14 +111,14 @@ export const APIKeysModals = () => {
               variant="legacy-outline"
               onClick={() => setIsCreateOpen(false)}
             >
-              Cancel
+              {t("profile1.common.cancel")}
             </Button>
             <Button
               variant="legacy-default"
               onClick={handleCreateKey}
               disabled={isCreating}
             >
-              Create
+              {t("profile1.apiKeys.create")}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -121,10 +127,9 @@ export const APIKeysModals = () => {
       <Dialog open={isKeyDialogOpen} onOpenChange={setIsKeyDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>AutoGPT Platform API Key Created</DialogTitle>
+            <DialogTitle>{t("profile1.apiKeys.createdTitle")}</DialogTitle>
             <DialogDescription>
-              Please copy your AutoGPT API key now. You won&apos;t be able to
-              see it again!
+              {t("profile1.apiKeys.createdDescription")}
             </DialogDescription>
           </DialogHeader>
           <div className="flex items-center space-x-2">
@@ -149,7 +154,7 @@ export const APIKeysModals = () => {
               variant="legacy-default"
               onClick={() => setIsKeyDialogOpen(false)}
             >
-              Close
+              {t("profile1.apiKeys.close")}
             </Button>
           </DialogFooter>
         </DialogContent>

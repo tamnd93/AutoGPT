@@ -6,10 +6,12 @@ import {
 import { APIKeyPermission } from "@/app/api/__generated__/models/aPIKeyPermission";
 import { CreateAPIKeyResponse } from "@/app/api/__generated__/models/createAPIKeyResponse";
 import { useToast } from "@/components/molecules/Toast/use-toast";
+import { useT } from "@/lib/i18n";
 import { getQueryClient } from "@/lib/react-query/queryClient";
 import { useState } from "react";
 
 export const useAPIkeysModals = () => {
+  const t = useT();
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [isKeyDialogOpen, setIsKeyDialogOpen] = useState(false);
   const [keyState, setKeyState] = useState({
@@ -49,8 +51,8 @@ export const useAPIkeysModals = () => {
       setIsKeyDialogOpen(true);
     } catch {
       toast({
-        title: "Error",
-        description: "Failed to create AutoGPT Platform API key",
+        title: t("profile1.common.error"),
+        description: t("profile1.apiKeys.toast.createFailed"),
         variant: "destructive",
       });
     }
@@ -59,8 +61,8 @@ export const useAPIkeysModals = () => {
   const handleCopyKey = () => {
     navigator.clipboard.writeText(keyState.newApiKey);
     toast({
-      title: "Copied",
-      description: "AutoGPT Platform API key copied to clipboard",
+      title: t("profile1.apiKeys.copiedTitle"),
+      description: t("profile1.apiKeys.toast.copied"),
     });
   };
 
