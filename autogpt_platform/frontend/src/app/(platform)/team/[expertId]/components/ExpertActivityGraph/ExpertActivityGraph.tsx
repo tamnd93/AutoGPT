@@ -14,7 +14,7 @@ interface Props {
 export function ExpertActivityGraph({ days, color }: Props) {
   const t = useT();
   const locale = useLocale();
-  const cells = getActivityCells(days);
+  const cells = getActivityCells(days, locale);
   const { rangeLabel } = getActivitySummary(days, locale);
   // The dither ramp's first stop is the -400 shade, dark enough to read at
   // 25% opacity for the lightest level.

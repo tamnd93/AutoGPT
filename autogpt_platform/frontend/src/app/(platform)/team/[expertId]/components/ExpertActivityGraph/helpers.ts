@@ -1,6 +1,7 @@
 import { ExpertActivityDay } from "@/app/api/__generated__/models/expertActivityDay";
 import { format, subDays } from "date-fns";
 import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/locale";
+import type { MessageKey } from "@/lib/i18n/messages/en";
 import { getMessage } from "@/lib/i18n/translate";
 
 export const DAYS_PER_WEEK = 7;
@@ -68,24 +69,61 @@ export function getActivityLevel(total: number, max: number): ActivityLevel {
   return Math.min(LEVEL_COUNT, Math.max(1, level)) as ActivityLevel;
 }
 
-function pluralize(count: number, noun: string) {
-  return `${count} ${noun}${count === 1 ? "" : "s"}`;
+function activityCount(
+  count: number,
+  locale: Locale,
+  one: MessageKey,
+  many: MessageKey,
+) {
+  return getMessage(locale, count === 1 ? one : many, { count });
 }
 
-export function describeActivityDay(day: ExpertActivityDay) {
-  const when = format(parseDayKey(toDayKey(day.day)), "MMM d");
+/** "Aug 12" in English, "12 thg 8" in Vietnamese; the locale's own month
+ *  abbreviation, not date-fns's English one. */
+function formatActivityDay(dayKey: string, locale: Locale) {
+  return new Intl.DateTimeFormat(locale === "vi" ? "vi-VN" : "en-US", {
+    month: "short",
+    day: "numeric",
+  }).format(parseDayKey(dayKey));
+}
+
+export function describeActivityDay(
+  day: ExpertActivityDay,
+  locale: Locale = DEFAULT_LOCALE,
+) {
+  const when = formatActivityDay(toDayKey(day.day), locale);
   const parts = [
-    day.sessions > 0 ? pluralize(day.sessions, "session") : null,
-    day.runs > 0 ? pluralize(day.runs, "run") : null,
+    day.sessions > 0
+      ? activityCount(
+          day.sessions,
+          locale,
+          "errors5.activity.sessionsOne",
+          "errors5.activity.sessionsMany",
+        )
+      : null,
+    day.runs > 0
+      ? activityCount(
+          day.runs,
+          locale,
+          "errors5.activity.runsOne",
+          "errors5.activity.runsMany",
+        )
+      : null,
   ].filter(Boolean);
   return parts.length > 0
-    ? `${parts.join(", ")} on ${when}`
-    : `No activity on ${when}`;
+    ? getMessage(locale, "errors5.activity.onDate", {
+        parts: parts.join(", "),
+        date: when,
+      })
+    : getMessage(locale, "errors5.activity.noActivity", { date: when });
 }
 
 /** Cells in column-major order for a Sunday-first week grid: blank leading
  *  cells pad the first column so every column starts on a Sunday. */
-export function getActivityCells(days: ExpertActivityDay[]): ActivityCell[] {
+export function getActivityCells(
+  days: ExpertActivityDay[],
+  locale: Locale = DEFAULT_LOCALE,
+): ActivityCell[] {
   if (days.length === 0) return [];
   const max = Math.max(...days.map(getActivityTotal));
   const leadingBlanks = parseDayKey(toDayKey(days[0].day)).getDay();
@@ -99,7 +137,7 @@ export function getActivityCells(days: ExpertActivityDay[]): ActivityCell[] {
     ...days.map((day) => ({
       key: toDayKey(day.day),
       level: getActivityLevel(getActivityTotal(day), max),
-      label: describeActivityDay(day),
+      label: describeActivityDay(day, locale),
     })),
   ];
 }
@@ -122,7 +160,20 @@ export function getActivitySummary(
           : days.length >= DAYS_PER_MONTH
             ? getMessage(locale, "errors5.range.lastMonth")
             : getMessage(locale, "errors5.range.lastWeeks", { weeks }),
-    totalsLabel: `${pluralize(sessions, "session")} · ${pluralize(runs, "run")}`,
+    totalsLabel: getMessage(locale, "errors5.activity.totals", {
+      sessions: activityCount(
+        sessions,
+        locale,
+        "errors5.activity.sessionsOne",
+        "errors5.activity.sessionsMany",
+      ),
+      runs: activityCount(
+        runs,
+        locale,
+        "errors5.activity.runsOne",
+        "errors5.activity.runsMany",
+      ),
+    }),
   };
 }
 

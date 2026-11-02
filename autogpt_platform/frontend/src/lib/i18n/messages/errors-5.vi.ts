@@ -29,4 +29,11 @@ export const Errors5Vi: Partial<Record<keyof typeof Errors5En, string>> = {
   "errors5.range.lastMonth": "tháng qua",
   "errors5.range.lastWeeks": "{weeks} tuần qua",
   "errors5.dayOne.title": "Những gì {name} thiết lập ngay ngày đầu",
+  "errors5.activity.sessionsOne": "{count} phiên",
+  "errors5.activity.sessionsMany": "{count} phiên",
+  "errors5.activity.runsOne": "{count} lượt chạy",
+  "errors5.activity.runsMany": "{count} lượt chạy",
+  "errors5.activity.onDate": "{parts} vào {date}",
+  "errors5.activity.noActivity": "Không có hoạt động vào {date}",
+  "errors5.activity.totals": "{sessions} · {runs}",
 };

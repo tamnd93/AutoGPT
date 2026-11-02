@@ -6,8 +6,7 @@ export const Errors5En = {
   "errors5.mcpOutput.resultFrom": "Result from {name}",
   "errors5.understanding.body":
     "From your onboarding and your chats. Every new chat with Otto starts with this.",
-  "errors5.understanding.forgetTitle":
-    "Forget what Otto knows about your work",
+  "errors5.understanding.forgetTitle": "Forget what Otto knows about your work",
   "errors5.understanding.forgetTrigger": "Forget this",
   "errors5.understanding.forgetBody":
     "Otto stops starting new chats with this. Your recent memories stay.",
@@ -27,4 +26,11 @@ export const Errors5En = {
   "errors5.range.lastMonth": "last month",
   "errors5.range.lastWeeks": "last {weeks} weeks",
   "errors5.dayOne.title": "What {name} sets up on day one",
+  "errors5.activity.sessionsOne": "{count} session",
+  "errors5.activity.sessionsMany": "{count} sessions",
+  "errors5.activity.runsOne": "{count} run",
+  "errors5.activity.runsMany": "{count} runs",
+  "errors5.activity.onDate": "{parts} on {date}",
+  "errors5.activity.noActivity": "No activity on {date}",
+  "errors5.activity.totals": "{sessions} · {runs}",
 } as const;
