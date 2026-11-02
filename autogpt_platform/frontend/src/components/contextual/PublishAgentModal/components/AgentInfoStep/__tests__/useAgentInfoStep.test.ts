@@ -52,7 +52,7 @@ describe("useAgentInfoStep", () => {
 
   it("reads the image-required error in Vietnamese", async () => {
     const wrapper = ({ children }: { children: ReactNode }) =>
-      createElement(LocaleProvider, { locale: "vi" }, children);
+      createElement(LocaleProvider, { locale: "vi", children });
     const { result } = renderHook(
       () => {
         const step = useAgentInfoStep(baseArgs);

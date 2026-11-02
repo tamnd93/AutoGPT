@@ -1,10 +1,11 @@
 import z from "zod";
 import { validateYouTubeUrl } from "@/lib/utils";
 import { DEFAULT_LOCALE } from "@/lib/i18n/locale";
+import type { MessageKey } from "@/lib/i18n/messages/en";
 import { getMessage } from "@/lib/i18n/translate";
 
 export type Translate = (
-  key: string,
+  key: MessageKey,
   values?: Record<string, string | number>,
 ) => string;
 

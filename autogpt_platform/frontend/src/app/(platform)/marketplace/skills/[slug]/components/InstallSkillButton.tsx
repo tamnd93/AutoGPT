@@ -14,7 +14,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/molecules/DropdownMenu/DropdownMenu";
 import { useT } from "@/lib/i18n";
-import { useT } from "@/lib/i18n";
 import { ArrowDown01Icon } from "@hugeicons/core-free-icons";
 
 export const MENU_LABEL = "Install for an expert";
