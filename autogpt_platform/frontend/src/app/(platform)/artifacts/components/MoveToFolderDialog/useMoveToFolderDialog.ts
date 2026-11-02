@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useLocale } from "@/lib/i18n";
 import { useArtifactsFolders } from "../../useArtifactsFolders";
 import {
   buildTreeRows,
@@ -15,6 +16,7 @@ interface Args {
 }
 
 export function useMoveToFolderDialog({ move, canMoveToRoot, onDone }: Args) {
+  const locale = useLocale();
   const { folders, moveFilesToFolder, moveFolder, isMovingFolder } =
     useArtifactsFolders();
   const [selectedKey, setSelectedKey] = useState<string | null>(null);
@@ -30,8 +32,20 @@ export function useMoveToFolderDialog({ move, canMoveToRoot, onDone }: Args) {
   }
   const [isMovingFiles, setIsMovingFiles] = useState(false);
 
-  const rows = buildTreeRows({ folders, move, expanded, canMoveToRoot });
-  const target = selectedTarget({ folders, move, canMoveToRoot, selectedKey });
+  const rows = buildTreeRows({
+    folders,
+    move,
+    expanded,
+    canMoveToRoot,
+    locale,
+  });
+  const target = selectedTarget({
+    folders,
+    move,
+    canMoveToRoot,
+    selectedKey,
+    locale,
+  });
 
   function toggleExpanded(folderId: string) {
     setExpanded((prev) => {

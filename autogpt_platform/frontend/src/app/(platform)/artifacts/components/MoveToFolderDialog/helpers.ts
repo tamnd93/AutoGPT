@@ -4,6 +4,8 @@ import {
   childrenOf,
   descendantIdsOf,
 } from "../WorkspaceFolders/folderTree";
+import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/locale";
+import { getMessage } from "@/lib/i18n/translate";
 
 /** What is being moved: a set of files, or one folder. */
 export type MoveSubject =
@@ -31,15 +33,17 @@ export function buildTreeRows(args: {
   move: MoveSubject;
   expanded: ReadonlySet<string>;
   canMoveToRoot: boolean;
+  locale?: Locale;
 }): TreeRow[] {
   const { folders, move, expanded, canMoveToRoot } = args;
-  const refused = refusedTargets(folders, move);
+  const locale = args.locale ?? DEFAULT_LOCALE;
+  const refused = refusedTargets(folders, move, locale);
   const rows: TreeRow[] = [];
 
   if (canMoveToRoot) {
     rows.push({
       id: null,
-      name: "Files (root)",
+      name: getMessage(locale, "artifacts1.moveToFolder.rootOption"),
       level: 1,
       hasChildren: false,
       isExpanded: false,
@@ -91,10 +95,16 @@ export function selectedTarget(args: {
   move: MoveSubject;
   canMoveToRoot: boolean;
   selectedKey: string | null;
+  locale?: Locale;
 }): { id: string | null } | null {
   const { folders, move, canMoveToRoot, selectedKey } = args;
   if (selectedKey === null) return null;
-  if (refusedTargets(folders, move).has(selectedKey)) return null;
+  if (
+    refusedTargets(folders, move, args.locale ?? DEFAULT_LOCALE).has(
+      selectedKey,
+    )
+  )
+    return null;
   if (selectedKey === ROOT_KEY) return canMoveToRoot ? { id: null } : null;
   return folders.some((f) => f.id === selectedKey) ? { id: selectedKey } : null;
 }
@@ -104,21 +114,34 @@ const ROOT_KEY = "__root__";
 function refusedTargets(
   folders: WorkspaceFolder[],
   move: MoveSubject,
+  locale: Locale,
 ): Map<string, string> {
   const refused = new Map<string, string>();
   if (move.kind === "folder") {
     const self = folders.find((folder) => folder.id === move.folderId);
-    refused.set(move.folderId, "Folder being moved");
+    refused.set(
+      move.folderId,
+      getMessage(locale, "artifacts1.moveToFolder.folderBeingMoved"),
+    );
     for (const id of descendantIdsOf(folders, move.folderId)) {
-      refused.set(id, "Inside the folder being moved");
+      refused.set(
+        id,
+        getMessage(locale, "artifacts1.moveToFolder.insideFolderBeingMoved"),
+      );
     }
-    refused.set(rowKey(self?.parent_id ?? null), "Current location");
+    refused.set(
+      rowKey(self?.parent_id ?? null),
+      getMessage(locale, "artifacts1.moveToFolder.currentLocation"),
+    );
     return refused;
   }
   // Null means "at the root" or "spread across folders", and only the first
   // is a location; `canMoveToRoot` already hides the root row in that case.
   if (move.currentFolderId) {
-    refused.set(move.currentFolderId, "Current location");
+    refused.set(
+      move.currentFolderId,
+      getMessage(locale, "artifacts1.moveToFolder.currentLocation"),
+    );
   }
   return refused;
 }

@@ -4,6 +4,7 @@ import { Text } from "@/components/atoms/Text/Text";
 import { cn } from "@/lib/utils";
 import { LayoutGroup, motion, type Transition } from "framer-motion";
 import type { OriginFilter as OriginFilterValue } from "../../useArtifactsPage";
+import { useT, type MessageKey } from "@/lib/i18n";
 
 interface Props {
   value: OriginFilterValue;
@@ -12,13 +13,13 @@ interface Props {
 
 interface Option {
   value: OriginFilterValue;
-  label: string;
+  labelKey: MessageKey;
 }
 
 const OPTIONS: Option[] = [
-  { value: "all", label: "All" },
-  { value: "uploaded", label: "Uploaded" },
-  { value: "generated", label: "Generated" },
+  { value: "all", labelKey: "artifacts1.origin.all" },
+  { value: "uploaded", labelKey: "artifacts1.origin.uploaded" },
+  { value: "generated", labelKey: "artifacts1.origin.generated" },
 ];
 
 const snappySpring: Transition = {
@@ -29,6 +30,8 @@ const snappySpring: Transition = {
 };
 
 export function OriginFilter({ value, onChange }: Props) {
+  const t = useT();
+
   return (
     <LayoutGroup id="artifacts-origin-filter">
       <div className="flex flex-col gap-1">
@@ -37,18 +40,19 @@ export function OriginFilter({ value, onChange }: Props) {
           as="span"
           className="pl-4 text-foreground-tertiary"
         >
-          Type
+          {t("artifacts1.origin.type")}
         </Text>
         <div
           role="tablist"
-          aria-label="Filter by type"
+          aria-label={t("artifacts1.origin.aria")}
           className="flex items-center gap-1"
           data-testid="artifacts-origin-filter"
         >
           {OPTIONS.map((opt) => (
             <OriginTab
               key={opt.value}
-              option={opt}
+              value={opt.value}
+              label={t(opt.labelKey)}
               active={value === opt.value}
               onClick={() => onChange(opt.value)}
             />
@@ -60,12 +64,13 @@ export function OriginFilter({ value, onChange }: Props) {
 }
 
 interface OriginTabProps {
-  option: Option;
+  value: string;
+  label: string;
   active: boolean;
   onClick: () => void;
 }
 
-function OriginTab({ option, active, onClick }: OriginTabProps) {
+function OriginTab({ value, label, active, onClick }: OriginTabProps) {
   return (
     <button
       type="button"
@@ -79,7 +84,7 @@ function OriginTab({ option, active, onClick }: OriginTabProps) {
           ? "text-foreground-strong"
           : "text-foreground-tertiary hover:text-foreground-strong",
       )}
-      data-testid={`artifacts-origin-filter-${option.value}`}
+      data-testid={`artifacts-origin-filter-${value}`}
     >
       {active ? (
         <motion.span
@@ -88,7 +93,7 @@ function OriginTab({ option, active, onClick }: OriginTabProps) {
           transition={snappySpring}
         />
       ) : null}
-      <span className="relative z-10">{option.label}</span>
+      <span className="relative z-10">{label}</span>
     </button>
   );
 }

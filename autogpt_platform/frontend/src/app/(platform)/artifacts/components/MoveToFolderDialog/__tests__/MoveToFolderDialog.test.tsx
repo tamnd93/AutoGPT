@@ -8,6 +8,7 @@ import {
 import { server } from "@/mocks/mock-server";
 import { http, HttpResponse } from "msw";
 import { MoveToFolderDialog } from "../MoveToFolderDialog";
+import { LocaleProvider } from "@/lib/i18n";
 
 vi.mock("framer-motion", async (importActual) => {
   const actual = await importActual<typeof import("framer-motion")>();
@@ -112,6 +113,25 @@ describe("MoveToFolderDialog", () => {
     expect(move.hasAttribute("disabled")).toBe(false);
     fireEvent.click(move);
     await waitFor(() => expect(movedTo).toBe("fld-3"));
+  });
+});
+
+describe("MoveToFolderDialog (vi)", () => {
+  test("speaks vietnamese for the dialog and the tree", async () => {
+    render(
+      <LocaleProvider locale="vi">
+        <MoveToFolderDialog
+          move={{ kind: "folder", folderId: "fld-2" }}
+          subject="“2026”"
+          isOpen
+          setIsOpen={() => {}}
+        />
+      </LocaleProvider>,
+    );
+
+    expect(await screen.findByText("Chuyển vào thư mục")).toBeDefined();
+    expect(await screen.findByText("Chuyển “2026” vào:")).toBeDefined();
+    expect(await screen.findByText("Thư mục đang được chuyển")).toBeDefined();
   });
 });
 

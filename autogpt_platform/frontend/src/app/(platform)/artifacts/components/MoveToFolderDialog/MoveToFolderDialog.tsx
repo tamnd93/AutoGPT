@@ -6,6 +6,7 @@ import { useArtifactsFolders } from "../../useArtifactsFolders";
 import { FolderTree } from "./components/FolderTree";
 import type { MoveSubject } from "./helpers";
 import { useMoveToFolderDialog } from "./useMoveToFolderDialog";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   move: MoveSubject;
@@ -29,6 +30,7 @@ export function MoveToFolderDialog({
   setIsOpen,
   onMoved,
 }: Props) {
+  const t = useT();
   const { folders } = useArtifactsFolders();
   const offerRoot = canMoveToRoot ?? defaultCanMoveToRoot(move, folders);
   const {
@@ -52,17 +54,19 @@ export function MoveToFolderDialog({
     <Dialog
       controlled={{ isOpen, set: setIsOpen }}
       styling={{ maxWidth: "28rem" }}
-      title="Move to folder"
+      title={t("artifacts1.moveToFolder.title")}
     >
       <Dialog.Content>
         <div className="flex flex-col gap-1">
           <Text variant="small" className="mb-1 text-foreground-tertiary">
-            Move {subject} to:
+            {t("artifacts1.moveToFolder.prompt", { subject })}
           </Text>
           {rows.length === 0 ? (
             <div className="flex h-20 items-center justify-center">
               <Text variant="small" className="text-foreground-subtle">
-                {folders.length === 0 ? "No folders yet" : "No other folders"}
+                {folders.length === 0
+                  ? t("artifacts1.moveToFolder.noFolders")
+                  : t("artifacts1.moveToFolder.noOtherFolders")}
               </Text>
             </div>
           ) : (
@@ -81,7 +85,7 @@ export function MoveToFolderDialog({
             size="small"
             onClick={() => setIsOpen(false)}
           >
-            Cancel
+            {t("artifacts1.moveToFolder.cancel")}
           </Button>
           <Button
             type="button"
@@ -92,7 +96,7 @@ export function MoveToFolderDialog({
             onClick={confirm}
             data-testid="confirm-move-to-folder"
           >
-            Move
+            {t("artifacts1.moveToFolder.move")}
           </Button>
         </Dialog.Footer>
       </Dialog.Content>

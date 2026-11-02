@@ -13,6 +13,7 @@ import type { KeyboardEvent } from "react";
 import { useRef } from "react";
 import { FOLDER_STYLE } from "../../WorkspaceFolders/folder-constants";
 import { rowKey, type TreeRow } from "../helpers";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   rows: TreeRow[];
@@ -31,6 +32,7 @@ export function FolderTree({
   onSelect,
   onToggleExpanded,
 }: Props) {
+  const t = useT();
   const listRef = useRef<HTMLUListElement>(null);
   // One row in the tab order: the selected one, else the first.
   const tabbableIndex = Math.max(
@@ -78,7 +80,7 @@ export function FolderTree({
     <ul
       ref={listRef}
       role="tree"
-      aria-label="Destination folders"
+      aria-label={t("artifacts1.moveToFolder.destinationAria")}
       className="max-h-[20rem] overflow-y-auto py-1"
     >
       {rows.map((row, index) => {
@@ -111,7 +113,15 @@ export function FolderTree({
               <button
                 type="button"
                 tabIndex={-1}
-                aria-label={`${row.isExpanded ? "Collapse" : "Expand"} ${row.name}`}
+                aria-label={
+                  row.isExpanded
+                    ? t("artifacts1.moveToFolder.collapseAria", {
+                        name: row.name,
+                      })
+                    : t("artifacts1.moveToFolder.expandAria", {
+                        name: row.name,
+                      })
+                }
                 onClick={(e) => {
                   e.stopPropagation();
                   onToggleExpanded(row.id as string);
