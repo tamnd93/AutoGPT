@@ -18,8 +18,10 @@ import { ControlPanelButton } from "../ControlPanelButton";
 import { useNewSaveControl } from "./useNewSaveControl";
 import { FloppyDiskIcon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 
 export const NewSaveControl = () => {
+  const t = useT();
   const { form, isSaving, graphVersion, handleSave } = useNewSaveControl();
   const { saveControlOpen, setSaveControlOpen, forceOpenSave } =
     useControlPanelStore();
@@ -46,7 +48,9 @@ export const NewSaveControl = () => {
             </ControlPanelButton>
           </PopoverTrigger>
         </TooltipTrigger>
-        <TooltipContent side="right">Save</TooltipContent>
+        <TooltipContent side="right">
+          {t("build5.save.tooltip")}
+        </TooltipContent>
       </Tooltip>
       {/* TODO(tokens): today's popover look. No exact role: border-neutral-200
           #E5E5E5; text-neutral-950 #0A0A0A is the `focus` role, a ring colour,
@@ -73,9 +77,9 @@ export const NewSaveControl = () => {
                     render={({ field }) => (
                       <Input
                         id="name"
-                        label="Name"
+                        label={t("build5.save.name")}
                         size="small"
-                        placeholder="Enter your workflow name"
+                        placeholder={t("build5.save.namePlaceholder")}
                         data-id="save-control-name-input"
                         data-testid="save-control-name-input"
                         maxLength={100}
@@ -92,8 +96,10 @@ export const NewSaveControl = () => {
                       <Input
                         id="description"
                         size="small"
-                        label="Description"
-                        placeholder="Your workflow description"
+                        label={t("build5.save.description")}
+                        placeholder={t(
+                          "build5.save.descriptionPlaceholder",
+                        )}
                         data-id="save-control-description-input"
                         data-testid="save-control-description-input"
                         maxLength={500}
@@ -106,13 +112,13 @@ export const NewSaveControl = () => {
                   {graphVersion && (
                     <Input
                       id="version"
-                      placeholder="Version"
+                      placeholder={t("build5.save.version")}
                       size="small"
                       value={graphVersion || "-"}
                       disabled
                       data-testid="save-control-version-output"
                       data-tutorial-id="save-control-version-output"
-                      label="Version"
+                      label={t("build5.save.version")}
                       wrapperClassName="!mb-0"
                     />
                   )}
@@ -131,7 +137,7 @@ export const NewSaveControl = () => {
                   disabled={isSaving}
                   loading={isSaving}
                 >
-                  Save Workflow
+                  {t("build5.save.saveWorkflow")}
                 </Button>
               </CardFooter>
             </form>

@@ -8,15 +8,20 @@ import { GraphModel } from "@/app/api/__generated__/models/graphModel";
 import { useControlPanelStore } from "../../../stores/controlPanelStore";
 import { useSaveGraph } from "../../../hooks/useSaveGraph";
 import { retryUnlessClientError } from "../../../helpers/graphLoadError";
+import { useT } from "@/lib/i18n";
 
-const formSchema = z.object({
-  name: z.string().min(1, "Name is required").max(100),
-  description: z.string().max(500),
-});
+function makeFormSchema(t: ReturnType<typeof useT>) {
+  return z.object({
+    name: z.string().min(1, t("build5.save.nameRequired")).max(100),
+    description: z.string().max(500),
+  });
+}
 
-type SaveableGraphFormValues = z.infer<typeof formSchema>;
+type SaveableGraphFormValues = z.infer<ReturnType<typeof makeFormSchema>>;
 
 export const useNewSaveControl = () => {
+  const t = useT();
+  const formSchema = makeFormSchema(t);
   const { setSaveControlOpen } = useControlPanelStore();
 
   const onSuccess = (graph: GraphModel) => {

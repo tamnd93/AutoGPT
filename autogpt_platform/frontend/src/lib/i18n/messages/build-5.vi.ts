@@ -39,4 +39,20 @@ export const Build5Vi: Partial<Record<keyof typeof Build5En, string>> = {
     "{names} được giữ ở phiên bản trước vì phiên bản mới dùng trigger khác. Cấu hình lại trigger của nó trên phiên bản mới để tiếp tục chạy.",
   "build5.skipped.manyBody":
     "{names} được giữ ở phiên bản trước vì phiên bản mới dùng trigger khác. Cấu hình lại trigger của chúng trên phiên bản mới để tiếp tục chạy.",
+
+  "build5.save.tooltip": "Lưu",
+  "build5.save.name": "Tên",
+  "build5.save.namePlaceholder": "Nhập tên workflow của bạn",
+  "build5.save.description": "Mô tả",
+  "build5.save.descriptionPlaceholder": "Mô tả workflow của bạn",
+  "build5.save.version": "Phiên bản",
+  "build5.save.saveWorkflow": "Lưu workflow",
+  "build5.save.nameRequired": "Cần nhập tên",
+  "build5.save.successTitle": "Đã lưu workflow",
+  "build5.save.successBody": "Workflow đã được lưu thành công.",
+  "build5.save.noChangesTitle": "Không có thay đổi để lưu",
+  "build5.save.noChangesBody": "Workflow giống bản đã lưu.",
+  "build5.duplicate.failedTitle": "Nhân bản workflow thất bại",
+  "build5.duplicate.forkError":
+    "Bản sao không trả về workflow để mở.",
 };

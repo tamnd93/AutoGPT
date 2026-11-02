@@ -27,6 +27,7 @@ import {
   describeSaveError,
   markInvalidFields,
 } from "../helpers/saveGraphError";
+import { useLocale, useT } from "@/lib/i18n";
 
 export type SaveGraphOptions = {
   showToast?: boolean;
@@ -40,6 +41,8 @@ export const useSaveGraph = ({
   onError,
 }: SaveGraphOptions) => {
   const { toast } = useToast();
+  const t = useT();
+  const locale = useLocale();
 
   const [{ flowID, flowVersion }, setQueryStates] = useQueryStates({
     flowID: parseAsString,
@@ -81,8 +84,8 @@ export const useSaveGraph = ({
           onSuccess?.(data);
           if (showToast) {
             toast({
-              title: "Workflow saved successfully",
-              description: "The workflow has been saved successfully.",
+              title: t("build5.save.successTitle"),
+              description: t("build5.save.successBody"),
               variant: "default",
             });
           }
@@ -108,8 +111,8 @@ export const useSaveGraph = ({
           onSuccess?.(data);
           if (showToast) {
             toast({
-              title: "Workflow saved successfully",
-              description: "The workflow has been saved successfully.",
+              title: t("build5.save.successTitle"),
+              description: t("build5.save.successBody"),
               variant: "default",
             });
           }
@@ -137,8 +140,8 @@ export const useSaveGraph = ({
         if (graphsEquivalent(graph, data)) {
           if (showToast) {
             toast({
-              title: "No changes to save",
-              description: "The workflow is the same as the saved version.",
+              title: t("build5.save.noChangesTitle"),
+              description: t("build5.save.noChangesBody"),
               variant: "default",
             });
           }
@@ -153,7 +156,11 @@ export const useSaveGraph = ({
           graphData.credentials_input_schema,
           graphData.output_schema,
         );
-        notifySkippedWebhookPresets(toast, result.skipped_webhook_presets);
+        notifySkippedWebhookPresets(
+          toast,
+          result.skipped_webhook_presets,
+          locale,
+        );
         return graphData;
       } else {
         const data: Graph = {
@@ -187,7 +194,7 @@ export const useSaveGraph = ({
       } catch (error) {
         onError?.(error);
         markInvalidFields(error);
-        toast(describeSaveError(error));
+        toast(describeSaveError(error, locale));
         return null;
       }
       useNodeStore.getState().clearAllNodeErrors();

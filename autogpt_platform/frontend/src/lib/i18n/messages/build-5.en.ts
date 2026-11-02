@@ -36,4 +36,21 @@ export const Build5En = {
     "{names} was kept on its previous version because the new version uses a different trigger. Reconfigure its trigger on the new version to keep it running.",
   "build5.skipped.manyBody":
     "{names} were kept on their previous version because the new version uses a different trigger. Reconfigure their triggers on the new version to keep them running.",
+
+  "build5.save.tooltip": "Save",
+  "build5.save.name": "Name",
+  "build5.save.namePlaceholder": "Enter your workflow name",
+  "build5.save.description": "Description",
+  "build5.save.descriptionPlaceholder": "Your workflow description",
+  "build5.save.version": "Version",
+  "build5.save.saveWorkflow": "Save Workflow",
+  "build5.save.nameRequired": "Name is required",
+  "build5.save.successTitle": "Workflow saved successfully",
+  "build5.save.successBody": "The workflow has been saved successfully.",
+  "build5.save.noChangesTitle": "No changes to save",
+  "build5.save.noChangesBody":
+    "The workflow is the same as the saved version.",
+  "build5.duplicate.failedTitle": "Failed to duplicate workflow",
+  "build5.duplicate.forkError":
+    "The copy did not return a workflow to open.",
 } as const;
