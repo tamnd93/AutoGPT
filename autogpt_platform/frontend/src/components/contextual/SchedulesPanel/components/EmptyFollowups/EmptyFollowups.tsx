@@ -1,8 +1,10 @@
 import { Text } from "@/components/atoms/Text/Text";
 import { Calendar03Icon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 
 export function EmptyFollowups() {
+  const t = useT();
   return (
     <div
       className="flex flex-col items-center justify-center gap-3 rounded-large border border-dashed border-border-base px-6 py-16 text-center"
@@ -20,12 +22,10 @@ export function EmptyFollowups() {
         />
       </div>
       <Text variant="h4" className="text-foreground-strong">
-        Nothing scheduled yet
+        {t("schedule1.empty.title")}
       </Text>
       <Text variant="body" className="max-w-md !text-foreground-tertiary">
-        Your experts&apos; scheduled follow-ups and recurring workflow runs show
-        up here. Select <strong>New scheduled task</strong> to set one up, or
-        schedule a workflow from the builder.
+        {t("schedule1.empty.body")}
       </Text>
     </div>
   );

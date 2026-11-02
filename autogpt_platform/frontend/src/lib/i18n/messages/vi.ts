@@ -61,6 +61,7 @@ import { Profile2Vi } from "./profile-2.vi";
 import { profile3Vi } from "./profile-3.vi";
 import { Profile4Vi } from "./profile-4.vi";
 import { profile5Vi } from "./profile-5.vi";
+import { Schedule1Vi } from "./schedule-1.vi";
 import { settingsRest1Vi } from "./settings-rest-1.vi";
 import { settingsRest2Vi } from "./settings-rest-2.vi";
 import { settingsRest3Vi } from "./settings-rest-3.vi";
@@ -138,6 +139,7 @@ export const vi: Partial<Record<MessageKey, string>> = {
   ...profile3Vi,
   ...Profile4Vi,
   ...profile5Vi,
+  ...Schedule1Vi,
   ...settingsRest1Vi,
   ...settingsRest2Vi,
   ...settingsRest3Vi,

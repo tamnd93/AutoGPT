@@ -7,7 +7,7 @@ import { CronScheduler } from "@/components/contextual/CronScheduler/cron-schedu
 import { Dialog } from "@/components/molecules/Dialog/Dialog";
 import { getTimezoneDisplayName } from "@/lib/timezone-utils";
 import { useUserTimezone } from "@/lib/hooks/useUserTimezone";
-import { useLocale } from "@/lib/i18n";
+import { useLocale, useT } from "@/lib/i18n";
 import { InfoIcon } from "lucide-react";
 
 // Base type for cron expression only
@@ -38,11 +38,12 @@ type CronSchedulerDialogProps = {
 );
 
 export function CronSchedulerDialog(props: CronSchedulerDialogProps) {
+  const t = useT();
   const {
     open,
     setOpen,
     defaultCronExpression = "",
-    title = "Schedule Task",
+    title,
   } = props;
 
   const { toast } = useToast();
@@ -69,7 +70,7 @@ export function CronSchedulerDialog(props: CronSchedulerDialogProps) {
   const handleDone = () => {
     if (props.mode === "with-name" && !scheduleName.trim()) {
       toast({
-        title: "Please enter a schedule name",
+        title: t("schedule1.dialog.nameRequired"),
         variant: "destructive",
       });
       return;
@@ -79,8 +80,8 @@ export function CronSchedulerDialog(props: CronSchedulerDialogProps) {
     if (!cronExpression || cronExpression.trim() === "") {
       toast({
         variant: "destructive",
-        title: "Invalid schedule",
-        description: "Please enter a valid cron expression",
+        title: t("schedule1.dialog.invalidTitle"),
+        description: t("schedule1.dialog.invalidBody"),
       });
       return;
     }
@@ -96,7 +97,7 @@ export function CronSchedulerDialog(props: CronSchedulerDialogProps) {
   return (
     <Dialog
       controlled={{ isOpen: open, set: setOpen }}
-      title={title}
+      title={title ?? t("schedule1.dialog.defaultTitle")}
       styling={{ maxWidth: "600px" }}
     >
       <Dialog.Content>
@@ -104,12 +105,12 @@ export function CronSchedulerDialog(props: CronSchedulerDialogProps) {
           {props.mode === "with-name" && (
             <div className="flex max-w-[448px] flex-col space-y-2">
               <Text variant="body-medium-tight" as="label" tone="inherit">
-                Schedule Name
+                {t("schedule1.dialog.scheduleName")}
               </Text>
               <BaseInput
                 value={scheduleName}
                 onChange={(e) => setScheduleName(e.target.value)}
-                placeholder="Enter a name for this schedule"
+                placeholder={t("schedule1.dialog.namePlaceholder")}
               />
             </div>
           )}
@@ -128,9 +129,9 @@ export function CronSchedulerDialog(props: CronSchedulerDialogProps) {
                 className="h-4 w-4 text-amber-600"
               />
               <Text variant="body-tight" tone="warning-strong">
-                No timezone set. Schedule will run in UTC.
+                {t("schedule1.dialog.noTimezone")}
                 <a href="/settings/account" className="ml-1 underline">
-                  Set your timezone
+                  {t("schedule1.dialog.setTimezone")}
                 </a>
               </Text>
             </div>
@@ -138,7 +139,7 @@ export function CronSchedulerDialog(props: CronSchedulerDialogProps) {
             <div className="flex items-center gap-2 rounded-md bg-muted/50 p-3">
               <InfoIcon className="h-4 w-4 text-muted-foreground" />
               <Text variant="body-tight" className="text-muted-foreground">
-                Schedule will run in your timezone:{" "}
+                {t("schedule1.dialog.timezoneLead")}{" "}
                 <span className="font-medium">{timezoneDisplay}</span>
               </Text>
             </div>
@@ -146,10 +147,10 @@ export function CronSchedulerDialog(props: CronSchedulerDialogProps) {
         </div>
         <div className="mt-8 flex justify-end space-x-2">
           <Button variant="legacy-outline" onClick={() => setOpen(false)}>
-            Cancel
+            {t("schedule1.dialog.cancel")}
           </Button>
           <Button variant="legacy-default" onClick={handleDone}>
-            Done
+            {t("schedule1.dialog.done")}
           </Button>
         </div>
       </Dialog.Content>
@@ -163,7 +164,7 @@ export function CronExpressionDialog({
   setOpen,
   onSubmit,
   defaultCronExpression,
-  title = "Set Schedule",
+  title,
 }: {
   open: boolean;
   setOpen: (open: boolean) => void;
@@ -171,6 +172,7 @@ export function CronExpressionDialog({
   defaultCronExpression?: string;
   title?: string;
 }) {
+  const t = useT();
   return (
     <CronSchedulerDialog
       open={open}
@@ -178,7 +180,7 @@ export function CronExpressionDialog({
       mode="cron-only"
       onSubmit={onSubmit}
       defaultCronExpression={defaultCronExpression}
-      title={title}
+      title={title ?? t("schedule1.dialog.setScheduleTitle")}
     />
   );
 }
@@ -189,7 +191,7 @@ export function ScheduleTaskDialog({
   onSubmit,
   defaultScheduleName,
   defaultCronExpression,
-  title = "Schedule Task",
+  title,
 }: {
   open: boolean;
   setOpen: (open: boolean) => void;
@@ -206,7 +208,7 @@ export function ScheduleTaskDialog({
       onSubmit={onSubmit}
       defaultScheduleName={defaultScheduleName}
       defaultCronExpression={defaultCronExpression}
-      title={title}
+      title={title ?? t("schedule1.dialog.defaultTitle")}
     />
   );
 }

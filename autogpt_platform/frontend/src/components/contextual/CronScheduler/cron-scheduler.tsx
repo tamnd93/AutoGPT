@@ -11,6 +11,7 @@ import { BaseInput } from "@/components/atoms/Input/BaseInput";
 import { Text } from "@/components/atoms/Text/Text";
 import { Button } from "@/components/atoms/Button/Button";
 import { CronFrequency, makeCronExpression } from "@/lib/cron-expression-utils";
+import { useLocale, useT } from "@/lib/i18n";
 
 const weekDays = [
   { label: "Su", value: 0 },
@@ -46,6 +47,29 @@ export function CronScheduler({
   onCronExpressionChange,
   initialCronExpression,
 }: CronSchedulerProps): React.ReactElement {
+  const t = useT();
+  const locale = useLocale();
+  const weekdayLabels =
+    locale === "vi"
+      ? ["CN", "T2", "T3", "T4", "T5", "T6", "T7"]
+      : weekDays.map((day) => day.label);
+  const monthLabels =
+    locale === "vi"
+      ? [
+          "Th1",
+          "Th2",
+          "Th3",
+          "Th4",
+          "Th5",
+          "Th6",
+          "Th7",
+          "Th8",
+          "Th9",
+          "Th10",
+          "Th11",
+          "Th12",
+        ]
+      : months.map((month) => month.label);
   const [frequency, setFrequency] = useState<CronFrequency>("daily");
   const [selectedMinute, setSelectedMinute] = useState<string>("0");
   const [selectedTime, setSelectedTime] = useState<string>("09:00");
@@ -228,7 +252,7 @@ export function CronScheduler({
       <div className="space-y-4">
         <Label>
           <Text variant="large-medium-tight" as="span" tone="inherit">
-            Repeat
+            {t("schedule1.repeat")}
           </Text>
         </Label>
 
@@ -237,24 +261,24 @@ export function CronScheduler({
           onValueChange={(value: CronFrequency) => setFrequency(value)}
         >
           <SelectTrigger>
-            <SelectValue placeholder="Select frequency" />
+            <SelectValue placeholder={t("schedule1.selectFrequency")} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="hourly">Every Hour</SelectItem>
-            <SelectItem value="daily">Daily</SelectItem>
-            <SelectItem value="weekly">Weekly</SelectItem>
-            <SelectItem value="monthly">Monthly</SelectItem>
-            <SelectItem value="yearly">Yearly</SelectItem>
-            <SelectItem value="custom">Custom</SelectItem>
+            <SelectItem value="hourly">{t("schedule1.everyHour")}</SelectItem>
+            <SelectItem value="daily">{t("schedule1.daily")}</SelectItem>
+            <SelectItem value="weekly">{t("schedule1.weekly")}</SelectItem>
+            <SelectItem value="monthly">{t("schedule1.monthly")}</SelectItem>
+            <SelectItem value="yearly">{t("schedule1.yearly")}</SelectItem>
+            <SelectItem value="custom">{t("schedule1.custom")}</SelectItem>
           </SelectContent>
         </Select>
 
         {frequency === "hourly" && (
           <div className="flex items-center gap-2">
-            <Label>At minute</Label>
+            <Label>{t("schedule1.atMinute")}</Label>
             <Select value={selectedMinute} onValueChange={setSelectedMinute}>
               <SelectTrigger className="w-24">
-                <SelectValue placeholder="Select minute" />
+                <SelectValue placeholder={t("schedule1.selectMinute")} />
               </SelectTrigger>
               <SelectContent>
                 {[0, 15, 30, 45].map((min) => (
@@ -269,7 +293,7 @@ export function CronScheduler({
 
         {frequency === "custom" && (
           <div className="flex items-center gap-2">
-            <Label>Every</Label>
+            <Label>{t("schedule1.every")}</Label>
             <BaseInput
               type="number"
               min="1"
@@ -292,9 +316,9 @@ export function CronScheduler({
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="minutes">Minutes</SelectItem>
-                <SelectItem value="hours">Hours</SelectItem>
-                <SelectItem value="days">Days</SelectItem>
+                <SelectItem value="minutes">{t("schedule1.minutes")}</SelectItem>
+                <SelectItem value="hours">{t("schedule1.hours")}</SelectItem>
+                <SelectItem value="days">{t("schedule1.days")}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -304,7 +328,7 @@ export function CronScheduler({
       {frequency === "weekly" && (
         <div className="space-y-2">
           <div className="flex items-center gap-2">
-            <Label>On</Label>
+            <Label>{t("schedule1.on")}</Label>
             <Button
               variant="legacy-outline"
               className="h-8 px-2 py-1"
@@ -318,8 +342,8 @@ export function CronScheduler({
             >
               <Text variant="small-medium-tight" as="span" tone="inherit">
                 {selectedWeekDays.length === weekDays.length
-                  ? "Deselect All"
-                  : "Select All"}
+                  ? t("schedule1.deselectAll")
+                  : t("schedule1.selectAll")}
               </Text>
             </Button>
             <Button
@@ -328,7 +352,7 @@ export function CronScheduler({
               onClick={() => setSelectedWeekDays([1, 2, 3, 4, 5])}
             >
               <Text variant="small-medium-tight" as="span" tone="inherit">
-                Weekdays
+                {t("schedule1.weekdays")}
               </Text>
             </Button>
             <Button
@@ -337,7 +361,7 @@ export function CronScheduler({
               onClick={() => setSelectedWeekDays([0, 6])}
             >
               <Text variant="small-medium-tight" as="span" tone="inherit">
-                Weekends
+                {t("schedule1.weekends")}
               </Text>
             </Button>
           </div>
@@ -359,20 +383,20 @@ export function CronScheduler({
                   );
                 }}
               >
-                {day.label}
+                {weekdayLabels[day.value]}
               </Button>
             ))}
           </div>
           {selectedWeekDays.length === 0 && (
             <Text variant="body-tight" tone="error">
-              Please select at least one day of the week
+              {t("schedule1.errorWeekday")}
             </Text>
           )}
         </div>
       )}
       {frequency === "monthly" && (
         <div className="space-y-4">
-          <Label>Days of Month</Label>
+          <Label>{t("schedule1.daysOfMonth")}</Label>
           <div className="flex gap-2">
             <Button
               variant={
@@ -386,7 +410,7 @@ export function CronScheduler({
                 );
               }}
             >
-              All Days
+              {t("schedule1.allDays")}
             </Button>
             <Button
               variant={
@@ -398,7 +422,7 @@ export function CronScheduler({
                 setSelectedMonthDays([]);
               }}
             >
-              Customize
+              {t("schedule1.customize")}
             </Button>
             <Button
               variant="legacy-outline"
@@ -410,7 +434,7 @@ export function CronScheduler({
               variant="legacy-outline"
               onClick={() => setSelectedMonthDays([31])}
             >
-              Last Day
+              {t("schedule1.lastDay")}
             </Button>
           </div>
           {selectedMonthDays.length < 31 && (
@@ -439,14 +463,14 @@ export function CronScheduler({
           )}
           {selectedMonthDays.length === 0 && (
             <Text variant="body-tight" tone="error">
-              Please select at least one day of the month
+              {t("schedule1.errorMonthDay")}
             </Text>
           )}
         </div>
       )}
       {frequency === "yearly" && (
         <div className="space-y-4">
-          <Label>Months</Label>
+          <Label>{t("schedule1.months")}</Label>
           <div className="flex gap-2">
             <Button
               variant="legacy-outline"
@@ -463,8 +487,8 @@ export function CronScheduler({
             >
               <Text variant="small-medium-tight" as="span" tone="inherit">
                 {selectedMonths.length === months.length
-                  ? "Deselect All"
-                  : "Select All"}
+                  ? t("schedule1.deselectAll")
+                  : t("schedule1.selectAll")}
               </Text>
             </Button>
           </div>
@@ -488,14 +512,14 @@ export function CronScheduler({
                     );
                   }}
                 >
-                  {month.label}
+                  {monthLabels[i]}
                 </Button>
               );
             })}
           </div>
           {selectedMonths.length === 0 && (
             <Text variant="body-tight" tone="error">
-              Please select at least one month
+              {t("schedule1.errorMonth")}
             </Text>
           )}
         </div>
@@ -504,7 +528,7 @@ export function CronScheduler({
       {frequency !== "hourly" &&
         !(frequency === "custom" && customInterval.unit !== "days") && (
           <div className="flex items-center gap-4 space-y-2">
-            <Label className="pt-2">At</Label>
+            <Label className="pt-2">{t("schedule1.at")}</Label>
             <BaseInput
               type="time"
               value={selectedTime}
