@@ -7,6 +7,7 @@ import { useTextReveal } from "../../useTextReveal";
 import { ArrowUp02Icon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { isKey } from "@/lib/keyboard";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   prompt: string | null;
@@ -15,6 +16,7 @@ interface Props {
 }
 
 export function TourPromptBar({ prompt, isStreaming, onSend }: Props) {
+  const t = useT();
   const ref = useRef<HTMLDivElement>(null);
   // The parent re-keys this component per turn, so the reveal restarts
   // whenever a new prompt prefills — it types itself in like the transcript.
@@ -47,7 +49,11 @@ export function TourPromptBar({ prompt, isStreaming, onSend }: Props) {
       ref={ref}
       role="button"
       tabIndex={isDisabled ? -1 : 0}
-      aria-label={prompt ? `Send: ${prompt}` : "Otto is working"}
+      aria-label={
+        prompt
+          ? t("sharing2.promptBar.sendAria", { prompt })
+          : t("sharing2.promptBar.workingAria")
+      }
       aria-disabled={isDisabled}
       onKeyDown={handleKeyDown}
       onClick={send}
@@ -64,7 +70,7 @@ export function TourPromptBar({ prompt, isStreaming, onSend }: Props) {
       </span>
       {!isDisabled && isTyped && (
         <span className="hidden shrink-0 items-center gap-1 text-xs text-zinc-400 sm:flex">
-          Press
+          {t("sharing2.promptBar.press")}
           <kbd className="rounded border border-zinc-200 bg-zinc-50 px-1.5 py-0.5 font-sans text-[0.7rem] text-zinc-500">
             Enter
           </kbd>

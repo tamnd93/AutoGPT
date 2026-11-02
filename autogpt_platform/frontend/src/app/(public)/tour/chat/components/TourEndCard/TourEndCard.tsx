@@ -10,8 +10,10 @@ import {
 import { useTourEndCard } from "./useTourEndCard";
 import { PlayIcon, Tick02Icon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 
 export function TourEndCard() {
+  const t = useT();
   const { handlePricingClick, handleSelfHostClick, handleWatchAnother } =
     useTourEndCard();
 
@@ -21,17 +23,20 @@ export function TourEndCard() {
         <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1">
           <Icon icon={Tick02Icon} className="size-3.5 text-emerald-700" />
           <Text variant="small-medium" className="!text-emerald-700">
-            Workflow built &amp; first run complete — {TOUR_DEMO_CLAIM_SECONDS}{" "}
-            seconds
+            {t("sharing2.endCard.badge", {
+              seconds: TOUR_DEMO_CLAIM_SECONDS,
+            })}
           </Text>
         </span>
         <Text variant="h4" as="h3" className="mt-1 text-zinc-900">
-          That took {TOUR_DEMO_CLAIM_SECONDS} seconds.
+          {t("sharing2.endCard.headline", {
+            seconds: TOUR_DEMO_CLAIM_SECONDS,
+          })}
           <br />
-          Yours will too.
+          {t("sharing2.endCard.headlineSecond")}
         </Text>
         <Text variant="body" className="text-zinc-500">
-          Same chat, your real tasks — hosted and running for you.
+          {t("sharing2.endCard.body")}
         </Text>
       </div>
 
@@ -45,9 +50,9 @@ export function TourEndCard() {
           onClick={handlePricingClick}
           className="h-auto w-full flex-col gap-0 py-2.5 shadow-[0_0_20px_-6px_rgba(124,58,237,0.6)]"
         >
-          <span className="font-medium">Make this workflow yours</span>
+          <span className="font-medium">{t("sharing2.endCard.primary")}</span>
           <span className="text-xs font-normal opacity-80">
-            Start with Pro · $42.50/mo · cancel anytime
+            {t("sharing2.endCard.primarySub", { price: "$42.50/mo" })}
           </span>
         </Button>
         <Button
@@ -56,7 +61,7 @@ export function TourEndCard() {
           leftIcon={<Icon icon={PlayIcon} className="size-4" />}
           className="w-full"
         >
-          Watch another scenario
+          {t("sharing2.endCard.watchAnother")}
         </Button>
         <a
           href={TOUR_GITHUB_URL}
@@ -65,7 +70,7 @@ export function TourEndCard() {
           onClick={handleSelfHostClick}
           className="mt-1 text-center text-sm text-zinc-500 underline underline-offset-2 hover:text-zinc-700"
         >
-          or self-host free
+          {t("sharing2.endCard.selfHost")}
         </a>
       </div>
     </div>

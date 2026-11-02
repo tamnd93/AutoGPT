@@ -13,6 +13,7 @@ vi.mock("../components/DotDistortionShader/DotDistortionShader", () => ({
   DotDistortionShader: () => null,
 }));
 
+import { LocaleProvider } from "@/lib/i18n";
 import TourChatPage from "../page";
 import { DEFAULT_SCENARIO_ID } from "../script/tourScenarios";
 import { useTourStore } from "../tourStore";
@@ -57,6 +58,31 @@ describe("Tour demo end state", () => {
   afterEach(() => {
     vi.runOnlyPendingTimers();
     vi.useRealTimers();
+  });
+
+  test("reads the end card in Vietnamese after the demo", async () => {
+    render(
+      <LocaleProvider locale="vi">
+        <TourChatPage />
+      </LocaleProvider>,
+    );
+
+    // The vi prompt bar announces itself as "Gửi: …", so drive the turn here
+    // rather than through the English-only helper.
+    await advanceThroughTurn();
+    fireEvent.keyDown(screen.getByRole("button", { name: /^Gửi:/i }), {
+      key: "Enter",
+    });
+    await advanceThroughTurn();
+
+    expect(screen.getByText(/Chỉ mất \d+ giây\./i)).toBeDefined();
+    expect(screen.getByText(/Bạn cũng vậy\./i)).toBeDefined();
+    expect(
+      screen.getByText("Biến workflow này thành của bạn"),
+    ).toBeDefined();
+    expect(
+      screen.getByRole("button", { name: /Xem kịch bản khác/i }),
+    ).toBeDefined();
   });
 
   test("shows the end card with pricing + another-scenario CTAs after the demo", async () => {

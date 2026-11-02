@@ -13,6 +13,7 @@ import {
   PlusSignCircleIcon,
 } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 
 const STEP_STAGGER_MS = 200;
 
@@ -20,16 +21,18 @@ const STEP_STAGGER_MS = 200;
  * shell, but the steps stream in with a staggered fade/slide and the check
  * icons pop in after each row. */
 export function TourPlanCard({ plan }: { plan: TourPlan }) {
+  const t = useT();
+
   return (
     <ToolAccordion
       icon={<Icon icon={PlusSignCircleIcon} size={32} />}
-      title={`Build Plan — ${plan.steps.length} steps`}
+      title={t("sharing2.planCard.title", { count: plan.steps.length })}
       description={plan.goal}
       defaultExpanded
     >
       <ContentGrid>
         <ContentMessage>
-          {`Here's the plan (${plan.steps.length} steps):`}
+          {t("sharing2.planCard.intro", { count: plan.steps.length })}
         </ContentMessage>
 
         <div className="mb-6 rounded-lg bg-card p-3">
@@ -55,6 +58,8 @@ function TourPlanStepItem({
   step: TourPlanStep;
   index: number;
 }) {
+  const t = useT();
+
   return (
     <div
       className="flex items-start gap-3 py-1.5 duration-500 animate-in fade-in slide-in-from-bottom-2 fill-mode-both"
@@ -63,7 +68,7 @@ function TourPlanStepItem({
       <Icon
         icon={CheckmarkCircle02Icon}
         size={18}
-        aria-label="completed"
+        aria-label={t("sharing2.planCard.completedAria")}
         className="mt-0.5 shrink-0 text-emerald-500 duration-300 animate-in fade-in zoom-in-50 fill-mode-both"
         style={{ animationDelay: `${index * STEP_STAGGER_MS + 200}ms` }}
       />

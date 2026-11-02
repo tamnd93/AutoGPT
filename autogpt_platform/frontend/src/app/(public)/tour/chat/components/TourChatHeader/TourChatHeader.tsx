@@ -7,6 +7,7 @@ import { useTourChatHeader } from "./useTourChatHeader";
 import { Link02Icon, Tick02Icon } from "@hugeicons/core-free-icons";
 import type { IconSvgElement } from "@hugeicons/react";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   scenarioLabel: string;
@@ -14,6 +15,7 @@ interface Props {
 }
 
 export function TourChatHeader({ scenarioLabel, scenarioIcon }: Props) {
+  const t = useT();
   const { isCopied, handleShare } = useTourChatHeader();
 
   return (
@@ -44,7 +46,11 @@ export function TourChatHeader({ scenarioLabel, scenarioIcon }: Props) {
         }
         className="shrink-0"
       >
-        <span>{isCopied ? "Link copied" : "Share this demo"}</span>
+        <span>
+          {isCopied
+            ? t("sharing2.header.linkCopied")
+            : t("sharing2.header.shareDemo")}
+        </span>
       </Button>
     </header>
   );

@@ -8,6 +8,7 @@ import {
   Clock01Icon,
 } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   agent: TourAgent;
@@ -16,6 +17,8 @@ interface Props {
 }
 
 export function TourAgentCard({ agent, runCompleted }: Props) {
+  const t = useT();
+
   return (
     <div className="flex flex-col gap-3 rounded-xl border border-zinc-200/70 bg-white p-4 shadow-sm">
       <div className="flex items-center justify-between gap-3">
@@ -32,7 +35,7 @@ export function TourAgentCard({ agent, runCompleted }: Props) {
           {runCompleted ? (
             <>
               <Icon icon={CheckmarkCircle02Icon} className="size-4 shrink-0" />
-              Run completed
+              {t("sharing2.agentCard.runCompleted")}
             </>
           ) : (
             <>
@@ -45,7 +48,7 @@ export function TourAgentCard({ agent, runCompleted }: Props) {
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-500 opacity-75" />
                 <span className="relative inline-flex size-2 rounded-full bg-emerald-500" />
               </span>
-              Running
+              {t("sharing2.agentCard.running")}
             </>
           )}
         </span>
@@ -53,7 +56,9 @@ export function TourAgentCard({ agent, runCompleted }: Props) {
 
       <div className="flex items-center gap-1.5 text-sm text-zinc-600">
         <Icon icon={Clock01Icon} className="size-4 shrink-0" />
-        <span>{agent.schedule} · created from your sentence</span>
+        <span>
+          {agent.schedule} · {t("sharing2.agentCard.createdFrom")}
+        </span>
       </div>
 
       <div className="flex flex-wrap items-center gap-2">

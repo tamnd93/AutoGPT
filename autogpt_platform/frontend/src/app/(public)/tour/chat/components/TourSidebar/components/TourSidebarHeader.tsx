@@ -9,15 +9,21 @@ import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { SidebarLeftIcon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 
 export function TourSidebarHeader() {
+  const t = useT();
   const { state, toggleSidebar } = useSidebar();
   const isCollapsed = state === "collapsed";
 
   const toggleButton = (
     <button
       type="button"
-      aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+      aria-label={
+        isCollapsed
+          ? t("sharing2.sidebarHeader.expand")
+          : t("sharing2.sidebarHeader.collapse")
+      }
       onClick={toggleSidebar}
       className={cn(
         "size-8 shrink-0 items-center justify-center rounded-md transition-colors hover:bg-zinc-200",

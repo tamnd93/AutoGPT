@@ -40,6 +40,7 @@ import type { IconSvgElement } from "@hugeicons/react";
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { Text } from "@/components/atoms/Text/Text";
 import { CookieSettingsLink } from "@/components/molecules/CookieSettingsLink/CookieSettingsLink";
+import { useT } from "@/lib/i18n";
 
 function DisabledMenuItem({
   icon,
@@ -71,6 +72,7 @@ interface Props {
 const SHEET_CLOSE_MS = 200;
 
 export function TourSidebar({ variant = "tour" }: Props) {
+  const t = useT();
   const reduceMotion = useReducedMotion();
   const itemVariants = getSidebarItemVariants(!!reduceMotion);
   // In the tour, the end card replaces the sidebar upsell after completion.
@@ -107,11 +109,13 @@ export function TourSidebar({ variant = "tour" }: Props) {
                   <SidebarMenuItem>
                     <SidebarMenuButton
                       aria-disabled="true"
-                      tooltip="New Task"
+                      tooltip={t("sharing2.sidebar.newTask")}
                       className="cursor-not-allowed justify-center rounded-lg bg-zinc-800 font-medium text-white opacity-50 hover:!bg-zinc-800 hover:!text-white group-data-[collapsible=icon]:justify-start"
                     >
                       <Icon icon={SparklesIcon} className="size-4" />
-                      <span className="truncate">New Task</span>
+                      <span className="truncate">
+                        {t("sharing2.sidebar.newTask")}
+                      </span>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 </SidebarMenu>
@@ -123,21 +127,32 @@ export function TourSidebar({ variant = "tour" }: Props) {
             <SidebarGroup className="mt-2 py-1 group-data-[collapsible=icon]:mt-0">
               <SidebarGroupContent>
                 <SidebarMenu className="group-data-[collapsible=icon]:gap-1">
-                  <DisabledMenuItem icon={Search01Icon} label="Search" />
-                  <DisabledMenuItem icon={GridViewIcon} label="Workflows" />
+                  <DisabledMenuItem
+                    icon={Search01Icon}
+                    label={t("sharing2.sidebar.search")}
+                  />
+                  <DisabledMenuItem
+                    icon={GridViewIcon}
+                    label={t("sharing2.sidebar.workflows")}
+                  />
                   <SidebarMenuItem>
                     <SidebarMenuButton
                       asChild
-                      tooltip="Marketplace"
+                      tooltip={t("sharing2.sidebar.marketplace")}
                       className="font-normal hover:!bg-zinc-200 group-data-[collapsible=icon]:!p-1.5 [&>svg]:size-5"
                     >
                       <Link href="/marketplace">
                         <Icon icon={Store01Icon} className="size-5" />
-                        <span className="truncate">Marketplace</span>
+                        <span className="truncate">
+                          {t("sharing2.sidebar.marketplace")}
+                        </span>
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
-                  <DisabledMenuItem icon={FlowIcon} label="Build" />
+                  <DisabledMenuItem
+                    icon={FlowIcon}
+                    label={t("sharing2.sidebar.build")}
+                  />
                 </SidebarMenu>
               </SidebarGroupContent>
             </SidebarGroup>
@@ -158,7 +173,7 @@ export function TourSidebar({ variant = "tour" }: Props) {
                       variant="body-sm-medium-inherit"
                       tone="inherit"
                     >
-                      Workspace
+                      {t("sharing2.sidebar.workspace")}
                     </Text>
                     <Icon
                       icon={ArrowDown01Icon}
@@ -169,7 +184,10 @@ export function TourSidebar({ variant = "tour" }: Props) {
                 <CollapsibleContent className="overflow-hidden data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down motion-reduce:animate-none">
                   <SidebarGroupContent>
                     <SidebarMenu className="group-data-[collapsible=icon]:gap-1">
-                      <DisabledMenuItem icon={Folder01Icon} label="Files" />
+                      <DisabledMenuItem
+                        icon={Folder01Icon}
+                        label={t("sharing2.sidebar.files")}
+                      />
                     </SidebarMenu>
                   </SidebarGroupContent>
                 </CollapsibleContent>

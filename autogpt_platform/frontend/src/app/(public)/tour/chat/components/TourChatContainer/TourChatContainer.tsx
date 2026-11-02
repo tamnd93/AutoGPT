@@ -6,12 +6,14 @@ import { TourMessageList } from "../TourMessageList/TourMessageList";
 import { TourPromptBar } from "../TourPromptBar/TourPromptBar";
 import { FlashIcon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   chat: ReturnType<typeof useTourCopilot>;
 }
 
 export function TourChatContainer({ chat }: Props) {
+  const t = useT();
   const isDemoComplete = useTourStore((s) => s.isDemoComplete);
 
   return (
@@ -34,7 +36,7 @@ export function TourChatContainer({ chat }: Props) {
             />
             <p className="mt-2 flex items-center justify-center gap-1 text-sm text-zinc-400">
               <Icon icon={FlashIcon} className="size-3.5 shrink-0" />
-              Simulated demo — sign up to put Otto to work on your own tasks.
+              {t("sharing2.chatContainer.demoNotice")}
             </p>
           </div>
         )}
