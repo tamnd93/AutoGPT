@@ -1,22 +1,31 @@
 import { ApiError } from "@/lib/autogpt-server-api/helpers";
 import type { GraphValidationErrorResponse } from "@/lib/autogpt-server-api/types";
 import { useNodeStore } from "../stores/nodeStore";
+import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/locale";
+import { getMessage } from "@/lib/i18n/translate";
 
 // A graph the backend refuses to save comes back as a structured validation
 // error naming each node's bad fields, e.g. "Agent Output › Name: This field
 // is required"; anything else is shown as it arrives.
-export function describeSaveError(error: unknown) {
+export function describeSaveError(
+  error: unknown,
+  locale: Locale = DEFAULT_LOCALE,
+) {
   if (isValidationError(error)) {
     return {
-      title: "Couldn't save your workflow",
-      description: `${error.response.detail.message}. Fix the highlighted fields and save again.`,
+      title: getMessage(locale, "build5.saveError.validationTitle"),
+      description: getMessage(locale, "build5.saveError.validationBody", {
+        message: error.response.detail.message,
+      }),
       variant: "destructive" as const,
     };
   }
   return {
-    title: "Error saving workflow",
+    title: getMessage(locale, "build5.saveError.title"),
     description:
-      error instanceof Error ? error.message : "An unexpected error occurred.",
+      error instanceof Error
+        ? error.message
+        : getMessage(locale, "build5.loadError.unexpected"),
     variant: "destructive" as const,
   };
 }

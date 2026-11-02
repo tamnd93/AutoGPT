@@ -2,6 +2,7 @@ import { fireEvent, render, screen } from "@/tests/integrations/test-utils";
 import { describe, expect, test, vi } from "vitest";
 import { BlockUIType } from "../../../../types";
 import type { SearchableNode } from "../../GraphMenuSearchBar/useGraphMenuSearchBar";
+import { LocaleProvider } from "@/lib/i18n";
 import { GraphSearchContent } from "../GraphContent";
 
 function makeNode(
@@ -48,6 +49,46 @@ function renderContent(query: string, nodes: SearchableNode[]) {
   );
   return { onNodeSelect };
 }
+
+describe("GraphSearchContent in Vietnamese", () => {
+  test("reads the search chrome in Vietnamese", () => {
+    render(
+      <LocaleProvider locale="vi">
+        <GraphSearchContent
+          searchQuery="zzz"
+          onSearchChange={vi.fn()}
+          filteredNodes={[]}
+          onNodeSelect={vi.fn()}
+        />
+      </LocaleProvider>,
+    );
+    expect(screen.getByText("Tìm thấy 0 node")).toBeDefined();
+    expect(
+      screen.getByText("Không tìm thấy node nào khớp tìm kiếm"),
+    ).toBeDefined();
+    expect(
+      screen.getByPlaceholderText(
+        "Tìm block, đầu vào, đầu ra trong workflow này...",
+      ),
+    ).toBeDefined();
+  });
+
+  test("reads the start-typing hint in Vietnamese", () => {
+    render(
+      <LocaleProvider locale="vi">
+        <GraphSearchContent
+          searchQuery=""
+          onSearchChange={vi.fn()}
+          filteredNodes={[]}
+          onNodeSelect={vi.fn()}
+        />
+      </LocaleProvider>,
+    );
+    expect(
+      screen.getByText("Bắt đầu nhập để tìm node"),
+    ).toBeDefined();
+  });
+});
 
 describe("GraphSearchContent", () => {
   test("asks for a query before anything is typed", () => {

@@ -10,6 +10,7 @@ import { build1En } from "./build-1.en";
 import { build2En } from "./build-2.en";
 import { build3En } from "./build-3.en";
 import { build4En } from "./build-4.en";
+import { Build5En } from "./build-5.en";
 import { chatFiles1En } from "./chat-files-1.en";
 import { chatFiles2En } from "./chat-files-2.en";
 import { chatInput1En } from "./chat-input-1.en";
@@ -65,6 +66,7 @@ export const en = {
   ...build2En,
   ...build3En,
   ...build4En,
+  ...Build5En,
   ...chatFiles1En,
   ...chatFiles2En,
   ...chatInput1En,

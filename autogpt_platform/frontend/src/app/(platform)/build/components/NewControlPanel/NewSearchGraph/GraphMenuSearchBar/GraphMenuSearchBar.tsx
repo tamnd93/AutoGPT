@@ -5,6 +5,7 @@ import { Button } from "@/components/atoms/Button/Button";
 import { useGraphMenuSearchBarComponent } from "./useGraphMenuSearchBarComponent";
 import { Cancel01Icon, Search01Icon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 
 interface GraphMenuSearchBarProps {
   className?: string;
@@ -19,6 +20,7 @@ export const GraphMenuSearchBar: React.FC<GraphMenuSearchBarProps> = ({
   onSearchChange,
   onKeyDown,
 }) => {
+  const t = useT();
   const { inputRef, handleClear } = useGraphMenuSearchBarComponent({
     onSearchChange,
   });
@@ -43,7 +45,7 @@ export const GraphMenuSearchBar: React.FC<GraphMenuSearchBarProps> = ({
         value={searchQuery}
         onChange={(e) => onSearchChange(e.target.value)}
         onKeyDown={onKeyDown}
-        placeholder={"Search this workflow for blocks, inputs, outputs..."}
+        placeholder={t("build5.searchBar.placeholder")}
         className={cn(
           "m-0 border-none p-0 font-sans text-body-lg font-normal leading-6 text-foreground-emphasis shadow-none outline-none",
           "placeholder:text-foreground-subtle focus:shadow-none focus:outline-none focus:ring-0",

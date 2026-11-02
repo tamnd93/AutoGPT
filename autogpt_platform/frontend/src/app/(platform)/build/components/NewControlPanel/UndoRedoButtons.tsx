@@ -13,8 +13,10 @@ import {
   ArrowTurnForwardIcon,
 } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 
 export const UndoRedoButtons = () => {
+  const t = useT();
   const { undo, redo, canUndo, canRedo } = useHistoryStore();
 
   // Keyboard shortcuts for undo and redo
@@ -55,7 +57,9 @@ export const UndoRedoButtons = () => {
             <Icon icon={ArrowTurnBackwardIcon} className="size-5" />
           </ControlPanelButton>
         </TooltipTrigger>
-        <TooltipContent side="right">Undo</TooltipContent>
+        <TooltipContent side="right">
+          {t("build5.undoRedo.undo")}
+        </TooltipContent>
       </Tooltip>
       <Separator
         // TODO(tokens): no exact role: text-[#E1E1E1] #E1E1E1
@@ -72,7 +76,9 @@ export const UndoRedoButtons = () => {
             <Icon icon={ArrowTurnForwardIcon} className="size-5" />
           </ControlPanelButton>
         </TooltipTrigger>
-        <TooltipContent side="right">Redo</TooltipContent>
+        <TooltipContent side="right">
+          {t("build5.undoRedo.redo")}
+        </TooltipContent>
       </Tooltip>
     </>
   );

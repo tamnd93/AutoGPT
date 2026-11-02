@@ -1,5 +1,7 @@
 import type { SkippedWebhookPreset } from "@/app/api/__generated__/models/skippedWebhookPreset";
 import type { toast } from "@/components/molecules/Toast/use-toast";
+import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/locale";
+import { getMessage } from "@/lib/i18n/translate";
 
 // When a new graph version swaps or reconfigures the trigger block, presets
 // whose webhook was registered for the old trigger are left pinned to their
@@ -8,6 +10,7 @@ import type { toast } from "@/components/molecules/Toast/use-toast";
 export function notifySkippedWebhookPresets(
   toastFn: typeof toast,
   skippedPresets: SkippedWebhookPreset[] | undefined | null,
+  locale: Locale = DEFAULT_LOCALE,
 ) {
   if (!skippedPresets || skippedPresets.length === 0) return;
 
@@ -18,10 +21,10 @@ export function notifySkippedWebhookPresets(
     variant: "info",
     duration: 10000,
     title: single
-      ? "A trigger preset needs reconfiguration"
-      : "Some trigger presets need reconfiguration",
+      ? getMessage(locale, "build5.skipped.singleTitle")
+      : getMessage(locale, "build5.skipped.manyTitle"),
     description: single
-      ? `${names} was kept on its previous version because the new version uses a different trigger. Reconfigure its trigger on the new version to keep it running.`
-      : `${names} were kept on their previous version because the new version uses a different trigger. Reconfigure their triggers on the new version to keep them running.`,
+      ? getMessage(locale, "build5.skipped.singleBody", { names })
+      : getMessage(locale, "build5.skipped.manyBody", { names }),
   });
 }

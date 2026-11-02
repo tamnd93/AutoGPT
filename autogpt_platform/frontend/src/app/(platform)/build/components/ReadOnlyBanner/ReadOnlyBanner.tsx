@@ -4,8 +4,10 @@ import { useState } from "react";
 import { useDuplicateGraph } from "../../hooks/useDuplicateGraph";
 import { Cancel01Icon, Copy01Icon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 
 export function ReadOnlyBanner() {
+  const t = useT();
   const { duplicate, isDuplicating, canDuplicate, isCheckingLibrary } =
     useDuplicateGraph();
   const [isDismissed, setIsDismissed] = useState(false);
@@ -24,11 +26,11 @@ export function ReadOnlyBanner() {
       className="absolute left-1/2 top-4 z-20 flex -translate-x-1/2 select-none items-center gap-3 rounded-full bg-surface px-4 py-2 shadow-lg"
     >
       <Text variant="body" tone="body" className="px-2">
-        You&apos;re viewing a read-only copy of this workflow.
+        {t("build5.readOnly.viewing")}
         <br />
         {showDuplicate
-          ? "Duplicate it to make changes."
-          : "Add it to your library to enable duplication."}
+          ? t("build5.readOnly.duplicateHint")
+          : t("build5.readOnly.libraryHint")}
       </Text>
       {showDuplicate && (
         <Button
@@ -39,15 +41,15 @@ export function ReadOnlyBanner() {
           disabled={!canDuplicate}
           leftIcon={<Icon icon={Copy01Icon} className="size-4" />}
         >
-          Duplicate
+          {t("build5.readOnly.duplicate")}
         </Button>
       )}
       <Button
         variant="ghost"
         size="icon"
         onClick={() => setIsDismissed(true)}
-        aria-label="Dismiss"
-        title="Dismiss"
+        aria-label={t("build5.readOnly.dismiss")}
+        title={t("build5.readOnly.dismiss")}
       >
         <Icon icon={Cancel01Icon} className="h-4 w-4" />
       </Button>

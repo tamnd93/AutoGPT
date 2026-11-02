@@ -9,6 +9,7 @@ import { useGraphContent } from "./useGraphContent";
 import { CornerUpRightIcon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { Text } from "@/components/atoms/Text/Text";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   searchQuery: string;
@@ -23,6 +24,7 @@ export function GraphSearchContent({
   filteredNodes,
   onNodeSelect,
 }: Props) {
+  const t = useT();
   const { selectedIndex, setSelectedIndex, setItemRef, handleKeyDown } =
     useGraphContent({
       searchQuery,
@@ -53,8 +55,13 @@ export function GraphSearchContent({
             tone="muted"
             className="px-4 pt-3"
           >
-            Found {filteredNodes.length} node
-            {filteredNodes.length !== 1 ? "s" : ""}
+            {filteredNodes.length === 1
+              ? t("build5.graphContent.foundOne", {
+                  count: filteredNodes.length,
+                })
+              : t("build5.graphContent.foundMany", {
+                  count: filteredNodes.length,
+                })}
           </Text>
         )}
         <ScrollArea className="h-full w-full">
@@ -67,8 +74,8 @@ export function GraphSearchContent({
                 className="flex h-32 items-center justify-center"
               >
                 {trimmedQuery
-                  ? "No nodes found matching your search"
-                  : "Start typing to search nodes"}
+                  ? t("build5.graphContent.noMatch")
+                  : t("build5.graphContent.startTyping")}
               </Text>
             ) : (
               filteredNodes.map((node, index) => {
