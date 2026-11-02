@@ -137,7 +137,7 @@ export function ConnectToolsPanel({
                 </div>
               ) : isError ? (
                 <ErrorCard
-                  context="providers"
+                  context={t("errors2.context.providers")}
                   responseError={
                     error instanceof Error
                       ? { message: error.message }
@@ -157,7 +157,9 @@ export function ConnectToolsPanel({
                       type="text"
                       value={query}
                       onChange={(e) => setQuery(e.target.value)}
-                      placeholder={t("chatStates2.connectTools.searchPlaceholder")}
+                      placeholder={t(
+                        "chatStates2.connectTools.searchPlaceholder",
+                      )}
                       aria-label={t("chatStates2.connectTools.searchAria")}
                       className="h-9 w-full rounded-md border border-border-base bg-surface pl-9 pr-3 text-sm leading-5.5 text-foreground-strong transition-colors placeholder:text-foreground-subtle focus:border-action-hover focus:outline-none"
                     />

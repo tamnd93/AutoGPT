@@ -91,7 +91,7 @@ export function WorkspaceFileList({
               ? error.message
               : t("chatInput2.workspaceFiles.loadFailed"),
         }}
-        context="workspace files"
+        context={t("errors2.context.workspaceFiles")}
       />
     );
   }

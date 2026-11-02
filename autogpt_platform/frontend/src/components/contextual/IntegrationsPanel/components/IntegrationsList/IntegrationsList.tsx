@@ -113,7 +113,7 @@ export function IntegrationsList({
       <div className="flex w-full flex-col gap-3">
         <IntegrationsSearch value={query} onChange={setQuery} disabled />
         <ErrorCard
-          context="integrations"
+          context={t("errors2.context.integrations")}
           responseError={
             error instanceof Error ? { message: error.message } : undefined
           }

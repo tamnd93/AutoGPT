@@ -1,0 +1,17 @@
+export const errors2En = {
+  "errors2.context.folders": "folders",
+  "errors2.context.artifacts": "artifacts",
+  "errors2.context.blockMenu": "block menu",
+  "errors2.context.workspaceFiles": "workspace files",
+  "errors2.context.providers": "providers",
+  "errors2.context.expertIntegrations": "this expert's integrations",
+  "errors2.context.itsSchedule": "its schedule",
+  "errors2.context.home": "home",
+  "errors2.context.workflowPage": "workflow page",
+  "errors2.context.marketplacePage": "marketplace page",
+  "errors2.context.marketplaceSkills": "marketplace skills",
+  "errors2.context.settings": "settings",
+  "errors2.context.availableIntegrations": "available integrations",
+  "errors2.context.integrations": "integrations",
+  "errors2.context.skills": "skills",
+} as const;

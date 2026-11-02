@@ -111,7 +111,7 @@ export function ConnectServiceDialog({
                       <ListLoading />
                     ) : isError ? (
                       <ErrorCard
-                        context="providers"
+                        context={t("errors2.context.providers")}
                         responseError={
                           error instanceof Error
                             ? { message: error.message }
@@ -126,7 +126,8 @@ export function ConnectServiceDialog({
                         providers={providers}
                         onSelect={handleSelect}
                         description={
-                          description ?? t("connectServices1.dialog.description")
+                          description ??
+                          t("connectServices1.dialog.description")
                         }
                       />
                     )}

@@ -36,11 +36,10 @@ export const PaginatedBlocksContent: React.FC<PaginatedBlocksContentProps> = ({
             status: status,
             statusText: t("build5.myAgents.requestFailed"),
             message:
-              (error?.detail as string) ||
-              t("build5.myAgents.errorFallback"),
+              (error?.detail as string) || t("build5.myAgents.errorFallback"),
           }}
           responseError={error || undefined}
-          context="block menu"
+          context={t("errors2.context.blockMenu")}
           onRetry={() => refetch()}
         />
       </div>

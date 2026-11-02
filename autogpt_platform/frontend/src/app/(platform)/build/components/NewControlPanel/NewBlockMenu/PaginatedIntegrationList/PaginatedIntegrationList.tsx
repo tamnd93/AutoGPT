@@ -27,13 +27,12 @@ export const PaginatedIntegrationList = () => {
         <ErrorCard
           isSuccess={false}
           responseError={error || undefined}
-          context="block menu"
+          context={t("errors2.context.blockMenu")}
           httpError={{
             status: status,
             statusText: t("build5.myAgents.requestFailed"),
             message:
-              (error?.detail as string) ||
-              t("build5.myAgents.errorFallback"),
+              (error?.detail as string) || t("build5.myAgents.errorFallback"),
           }}
           onRetry={() => refetch()}
         />

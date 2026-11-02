@@ -54,7 +54,7 @@ export function RunLessOftenDialog({ scheduleKey, isOpen, setIsOpen }: Props) {
             responseError={{
               message: t("chatStates2.runLessOften.loadFailed"),
             }}
-            context="its schedule"
+            context={t("errors2.context.itsSchedule")}
           />
         ) : (
           <CadenceChoices

@@ -39,7 +39,7 @@ export function WorkspaceFolders({ parentId, onSelectFolder }: Props) {
   if (isError) {
     return (
       <ErrorCard
-        context="folders"
+        context={t("errors2.context.folders")}
         responseError={
           error instanceof Error ? { message: error.message } : undefined
         }

@@ -57,7 +57,7 @@ export function MainMarkeplacePage() {
               responseError={{
                 message: t("marketplace1.mainMarketplacePage.loadFailed"),
               }}
-              context="marketplace page"
+              context={t("errors2.context.marketplacePage")}
               onRetry={() => window.location.reload()}
               className="w-full max-w-md"
             />

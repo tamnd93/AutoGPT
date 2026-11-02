@@ -2,6 +2,7 @@
 
 import type { WorkspaceFolder } from "@/app/api/__generated__/models/workspaceFolder";
 import { ErrorCard } from "@/components/molecules/ErrorCard/ErrorCard";
+import { useT } from "@/lib/i18n";
 import { useState } from "react";
 import { useArtifactsFolders } from "../../../useArtifactsFolders";
 import { FolderDialogs } from "../../WorkspaceFolders/FolderDialogs";
@@ -19,6 +20,7 @@ interface Props {
 }
 
 export function FolderRows({ parentId, onSelectFolder }: Props) {
+  const t = useT();
   const { folders, isLoading, isError, error, moveFilesToFolder } =
     useArtifactsFolders();
   const [editing, setEditing] = useState<WorkspaceFolder | null>(null);
@@ -37,7 +39,7 @@ export function FolderRows({ parentId, onSelectFolder }: Props) {
     return (
       <li className="py-3">
         <ErrorCard
-          context="folders"
+          context={t("errors2.context.folders")}
           responseError={
             error instanceof Error ? { message: error.message } : undefined
           }

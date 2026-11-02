@@ -56,7 +56,7 @@ export default function SettingsPage() {
                 }
               : undefined
           }
-          context="settings"
+          context={t("errors2.context.settings")}
           onRetry={() => {
             void refetchPreferences();
           }}

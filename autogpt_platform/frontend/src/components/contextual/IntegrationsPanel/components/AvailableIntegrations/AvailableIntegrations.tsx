@@ -43,7 +43,7 @@ export function AvailableIntegrations({ query, onSelect }: Props) {
         </div>
       ) : catalog.isError ? (
         <ErrorCard
-          context="available integrations"
+          context={t("errors2.context.availableIntegrations")}
           responseError={
             catalog.error instanceof Error
               ? { message: catalog.error.message }

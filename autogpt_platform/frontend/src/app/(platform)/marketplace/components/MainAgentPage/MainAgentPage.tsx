@@ -45,7 +45,7 @@ export function MainAgentPage({ params }: Props) {
               responseError={{
                 message: t("marketplace1.mainAgentPage.loadFailed"),
               }}
-              context="workflow page"
+              context={t("errors2.context.workflowPage")}
               onRetry={() => window.location.reload()}
               className="w-full max-w-md"
             />
@@ -66,7 +66,7 @@ export function MainAgentPage({ params }: Props) {
               responseError={{
                 message: t("marketplace1.mainAgentPage.notFound"),
               }}
-              context="workflow page"
+              context={t("errors2.context.workflowPage")}
             />
           </div>
         </main>

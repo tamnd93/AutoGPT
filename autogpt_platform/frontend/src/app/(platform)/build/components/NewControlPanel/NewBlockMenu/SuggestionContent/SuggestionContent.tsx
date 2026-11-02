@@ -37,10 +37,9 @@ export const SuggestionContent = () => {
             status: data?.status,
             statusText: t("build5.myAgents.requestFailed"),
             message:
-              (error?.detail as string) ||
-              t("build5.myAgents.errorFallback"),
+              (error?.detail as string) || t("build5.myAgents.errorFallback"),
           }}
-          context="block menu"
+          context={t("errors2.context.blockMenu")}
           onRetry={() => refetch()}
         />
       </div>
@@ -69,8 +68,9 @@ export const SuggestionContent = () => {
                     <SearchHistoryChip
                       key={entry.search_id || `${entry.search_query}-${index}`}
                       content={
-              entry.search_query || t("build5.suggestion.untitledSearch")
-            }
+                        entry.search_query ||
+                        t("build5.suggestion.untitledSearch")
+                      }
                       onClick={() => {
                         setSearchQuery(entry.search_query || "");
                         setSearchId(entry.search_id || undefined);

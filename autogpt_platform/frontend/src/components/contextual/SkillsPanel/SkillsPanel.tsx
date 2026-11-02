@@ -68,7 +68,7 @@ export function SkillsPanel({ onGuidedPrompt, withHeading = true }: Props) {
                 ? error.message
                 : t("skills1.panel.loadFailed"),
           }}
-          context="skills"
+          context={t("errors2.context.skills")}
         />
       ) : isLoading ? (
         <div

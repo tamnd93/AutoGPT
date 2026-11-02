@@ -2,6 +2,7 @@
 
 import type { WorkspaceFileItem } from "@/app/api/__generated__/models/workspaceFileItem";
 import { ErrorCard } from "@/components/molecules/ErrorCard/ErrorCard";
+import { useT } from "@/lib/i18n";
 import { useState } from "react";
 import type { ArtifactsView } from "../../useArtifactsPage";
 import { FileViewerModal } from "../FileViewerModal/FileViewerModal";
@@ -45,12 +46,13 @@ export function ArtifactsList({
   folderParentId,
   onSelectFolder,
 }: Props) {
+  const t = useT();
   const [openFile, setOpenFile] = useState<WorkspaceFileItem | null>(null);
 
   if (isError) {
     return (
       <ErrorCard
-        context="artifacts"
+        context={t("errors2.context.artifacts")}
         responseError={
           error instanceof Error ? { message: error.message } : undefined
         }

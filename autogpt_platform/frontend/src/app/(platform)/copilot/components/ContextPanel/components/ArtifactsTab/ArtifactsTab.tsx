@@ -52,7 +52,7 @@ export function ArtifactsTab({ sessionId }: Props) {
       <div className="p-3">
         <ErrorCard
           isSuccess={false}
-          context="artifacts"
+          context={t("errors2.context.artifacts")}
           responseError={{ message: t("chatFiles1.artifactsTab.loadFailed") }}
         />
       </div>

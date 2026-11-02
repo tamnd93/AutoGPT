@@ -89,7 +89,7 @@ export function SkillsBrowsePage() {
           responseError={{
             message: t("marketplace2.browse.loadFailed"),
           }}
-          context="marketplace skills"
+          context={t("errors2.context.marketplaceSkills")}
           onRetry={() => refetch()}
           className="max-w-md"
         />

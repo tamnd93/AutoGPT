@@ -33,7 +33,7 @@ export function HomeRecap() {
       <section className={SHELL_CLASS}>
         <div className={CONTENT_CLASS}>
           <ErrorCard
-            context="home"
+            context={t("errors2.context.home")}
             httpError={{ message: t("home1.recap.error") }}
             onRetry={() => refetch()}
           />

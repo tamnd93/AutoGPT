@@ -88,7 +88,7 @@ function IntegrationsTabContent({ expert }: { expert: ContextPanelExpert }) {
         <Skeleton className="h-24 w-full rounded-lg" />
       ) : isError ? (
         <ErrorCard
-          context="this expert's integrations"
+          context={t("errors2.context.expertIntegrations")}
           hint={t("chatFiles1.integrationsTab.errorHint")}
           onRetry={refetch}
         />
