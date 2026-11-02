@@ -6,8 +6,11 @@ import { useCopilotUIStore } from "../../store";
 import { getCachedArtifactContent } from "./components/useArtifactContent";
 import { downloadArtifact } from "./downloadArtifact";
 import { classifyArtifactRef } from "./helpers";
+import { useLocale, useT } from "@/lib/i18n";
 
 export function useArtifactPanel() {
+  const locale = useLocale();
+  const t = useT();
   const artifactPanel = useCopilotUIStore((s) => s.artifactPanel);
   const closeArtifactPanel = useCopilotUIStore((s) => s.closeArtifactPanel);
   const clearArtifactPreview = useCopilotUIStore((s) => s.clearArtifactPreview);
@@ -24,7 +27,7 @@ export function useArtifactPanel() {
   const { activeArtifact } = artifactPanel;
 
   const classification = activeArtifact
-    ? classifyArtifactRef(activeArtifact)
+    ? classifyArtifactRef(activeArtifact, locale)
     : null;
 
   // Reset source view when switching artifacts
@@ -58,12 +61,12 @@ export function useArtifactPanel() {
     textPromise
       .then((text) => navigator.clipboard.writeText(text))
       .then(() => {
-        toast({ title: "Copied to clipboard" });
+        toast({ title: t("chatFiles1.artifactPanel.copied") });
       })
       .catch(() => {
         toast({
-          title: "Copy failed",
-          description: "Couldn't read the file or access the clipboard.",
+          title: t("chatFiles1.artifactPanel.copyFailedTitle"),
+          description: t("chatFiles1.artifactPanel.copyFailedDescription"),
           variant: "destructive",
         });
       });
@@ -73,8 +76,8 @@ export function useArtifactPanel() {
     if (!activeArtifact) return;
     downloadArtifact(activeArtifact).catch(() => {
       toast({
-        title: "Download failed",
-        description: "Couldn't fetch the file.",
+        title: t("chatFiles1.artifactCard.downloadFailedTitle"),
+        description: t("chatFiles1.artifactCard.downloadFailedDescription"),
         variant: "destructive",
       });
     });

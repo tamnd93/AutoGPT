@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { ArtifactSkeleton } from "./ArtifactSkeleton";
+import { getMessage, useLocale, useT } from "@/lib/i18n";
 import {
   buildReactArtifactSrcDoc,
   collectPreviewStyles,
@@ -14,6 +15,8 @@ interface Props {
 }
 
 export function ArtifactReactPreview({ source, title }: Props) {
+  const locale = useLocale();
+  const t = useT();
   const [srcDoc, setSrcDoc] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -27,7 +30,12 @@ export function ArtifactReactPreview({ source, title }: Props) {
       .then((compiledCode) => {
         if (cancelled) return;
         setSrcDoc(
-          buildReactArtifactSrcDoc(compiledCode, title, collectPreviewStyles()),
+          buildReactArtifactSrcDoc(
+            compiledCode,
+            title,
+            collectPreviewStyles(),
+            locale,
+          ),
         );
       })
       .catch((nextError: unknown) => {
@@ -35,14 +43,14 @@ export function ArtifactReactPreview({ source, title }: Props) {
         setError(
           nextError instanceof Error
             ? nextError.message
-            : "Failed to build artifact preview",
+            : getMessage(locale, "chatFiles1.reactPreview.buildFailed"),
         );
       });
 
     return () => {
       cancelled = true;
     };
-  }, [source, title]);
+  }, [source, title, locale]);
 
   if (error) {
     return (
@@ -51,7 +59,7 @@ export function ArtifactReactPreview({ source, title }: Props) {
           // TODO(tokens): no fitting role for text-red-600 #D93636; #D93636 is error-hover (a fill and line colour)
           className="text-sm font-medium text-red-600"
         >
-          Failed to render React preview
+          {t("chatFiles1.reactPreview.renderFailed")}
         </p>
         <pre
           // TODO(tokens): no exact role for text-red-900
@@ -72,7 +80,7 @@ export function ArtifactReactPreview({ source, title }: Props) {
       sandbox="allow-scripts"
       srcDoc={srcDoc}
       className="h-full w-full border-0"
-      title={`${title} preview`}
+      title={t("chatFiles1.reactPreview.frameTitle", { name: title })}
     />
   );
 }

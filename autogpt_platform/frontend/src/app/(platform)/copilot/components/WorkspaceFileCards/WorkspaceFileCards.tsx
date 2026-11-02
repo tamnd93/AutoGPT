@@ -12,6 +12,7 @@ import { WorkspaceFilesContent } from "./components/WorkspaceFilesContent";
 import { useExpertDocuments } from "./useExpertDocuments";
 import { useSessionActivity } from "./useSessionActivity";
 import { useWorkspaceFileCards } from "./useWorkspaceFileCards";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   sessionId: string;
@@ -21,6 +22,7 @@ interface Props {
 /** The chat's files, then the runs and schedules it set in motion — the
  *  files tab of the docked side panel. */
 export function WorkspaceFileCards({ sessionId, expert = null }: Props) {
+  const t = useT();
   const {
     files,
     documentCount: sessionDocumentCount,
@@ -55,7 +57,7 @@ export function WorkspaceFileCards({ sessionId, expert = null }: Props) {
       )}
       {showFilesCard && (
         <StackSection
-          title="Files in this chat"
+          title={t("chatFiles1.filesCard.title")}
           icon={File02Icon}
           plain
           count={files.length || undefined}
@@ -66,7 +68,7 @@ export function WorkspaceFileCards({ sessionId, expert = null }: Props) {
                 size="icon"
                 onClick={handleDownloadAll}
                 loading={isZipping}
-                aria-label="Download all"
+                aria-label={t("chatFiles1.filesContent.downloadAll")}
                 className="size-6 rounded-lg !p-0 text-foreground-subtle"
               >
                 <Icon icon={Download01Icon} size={14} />
@@ -90,7 +92,9 @@ export function WorkspaceFileCards({ sessionId, expert = null }: Props) {
       )}
       {expert && (
         <StackSection
-          title={`All ${expert.name}'s documents`}
+          title={t("chatFiles1.filesCard.expertDocuments", {
+            name: expert.name,
+          })}
           icon={File02Icon}
           plain
         >
@@ -103,7 +107,9 @@ export function WorkspaceFileCards({ sessionId, expert = null }: Props) {
             onDownload={handleDownload}
             onRequestDelete={setPendingDelete}
             onDownloadAll={() => undefined}
-            emptyMessage={`${expert.name} hasn't created any documents yet.`}
+            emptyMessage={t("chatFiles1.filesCard.expertEmpty", {
+              name: expert.name,
+            })}
             showHeader={false}
             rowStyle="detailed"
           />

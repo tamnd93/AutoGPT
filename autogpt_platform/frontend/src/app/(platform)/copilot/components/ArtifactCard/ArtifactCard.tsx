@@ -10,6 +10,7 @@ import { downloadArtifact } from "../ArtifactPanel/downloadArtifact";
 import { classifyArtifact } from "../ArtifactPanel/helpers";
 import { ArrowRight01Icon, Download01Icon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useLocale, useT } from "@/lib/i18n";
 
 interface Props {
   artifact: ArtifactRef;
@@ -34,6 +35,8 @@ function formatSize(bytes?: number): string {
 }
 
 export function ArtifactCard({ artifact, readOnly }: Props) {
+  const locale = useLocale();
+  const t = useT();
   const isActive = useCopilotUIStore(
     (s) => s.artifactPanel.activeArtifact?.id === artifact.id,
   );
@@ -59,13 +62,14 @@ export function ArtifactCard({ artifact, readOnly }: Props) {
     artifact.mimeType,
     artifact.title,
     artifact.sizeBytes,
+    locale,
   );
 
   function handleDownloadOnly() {
     downloadArtifact(artifact).catch(() => {
       toast({
-        title: "Download failed",
-        description: "Couldn't fetch the file.",
+        title: t("chatFiles1.artifactCard.downloadFailedTitle"),
+        description: t("chatFiles1.artifactCard.downloadFailedDescription"),
         variant: "destructive",
       });
     });

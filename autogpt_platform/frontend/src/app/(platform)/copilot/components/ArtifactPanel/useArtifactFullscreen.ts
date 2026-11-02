@@ -2,8 +2,10 @@
 
 import { toast } from "@/components/molecules/Toast/use-toast";
 import { useEffect, useRef, useState } from "react";
+import { useT } from "@/lib/i18n";
 
 export function useArtifactFullscreen() {
+  const t = useT();
   const fullscreenRef = useRef<HTMLDivElement>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [canFullscreen, setCanFullscreen] = useState(false);
@@ -33,7 +35,7 @@ export function useArtifactFullscreen() {
       return true;
     } catch {
       toast({
-        title: "Couldn't change fullscreen mode",
+        title: t("chatFiles1.artifactPanel.fullscreenFailed"),
         variant: "destructive",
       });
       return false;
@@ -50,7 +52,7 @@ export function useArtifactFullscreen() {
       await fullscreenRef.current.requestFullscreen();
     } catch {
       toast({
-        title: "Couldn't change fullscreen mode",
+        title: t("chatFiles1.artifactPanel.fullscreenFailed"),
         variant: "destructive",
       });
     }

@@ -11,6 +11,7 @@ import { fileItemToArtifactRef } from "../FilesTab/helpers";
 import type { SessionFile } from "../FilesTab/useSessionFiles";
 import { useSessionFiles } from "../FilesTab/useSessionFiles";
 import { ArtifactMiniCard } from "./components/ArtifactMiniCard";
+import { useT } from "@/lib/i18n";
 
 // The panel previews what this chat produced; /artifacts stays one click away
 // for the workspace-wide library.
@@ -21,6 +22,7 @@ interface Props {
 }
 
 export function ArtifactsTab({ sessionId }: Props) {
+  const t = useT();
   const openArtifact = useCopilotUIStore((s) => s.openArtifact);
   const { uploaded, deliverables, isLoading, isError } =
     useSessionFiles(sessionId);
@@ -28,7 +30,10 @@ export function ArtifactsTab({ sessionId }: Props) {
 
   function handleDownload(file: SessionFile) {
     downloadArtifact(fileItemToArtifactRef(file.item)).catch(() =>
-      toast({ title: "Download failed", variant: "destructive" }),
+      toast({
+        title: t("chatFiles1.artifactCard.downloadFailedTitle"),
+        variant: "destructive",
+      }),
     );
   }
 
@@ -48,7 +53,7 @@ export function ArtifactsTab({ sessionId }: Props) {
         <ErrorCard
           isSuccess={false}
           context="artifacts"
-          responseError={{ message: "Failed to load artifacts." }}
+          responseError={{ message: t("chatFiles1.artifactsTab.loadFailed") }}
         />
       </div>
     );
@@ -64,8 +69,8 @@ export function ArtifactsTab({ sessionId }: Props) {
           className="max-w-[17rem] text-center"
         >
           {files.length === 0
-            ? "Nothing to preview yet."
-            : "Pick an artifact from this chat to preview it here."}
+            ? t("chatFiles1.artifactsTab.nothingToPreview")
+            : t("chatFiles1.artifactsTab.pickToPreview")}
         </Text>
         <Button
           as="NextLink"
@@ -73,7 +78,7 @@ export function ArtifactsTab({ sessionId }: Props) {
           variant="secondary"
           size="small"
         >
-          Open artifacts
+          {t("chatFiles1.artifactsTab.openArtifacts")}
         </Button>
       </div>
       {files.length > 0 && (

@@ -21,6 +21,7 @@ import { WorkspaceFileCards } from "../WorkspaceFileCards/WorkspaceFileCards";
 import { ArtifactsTab } from "./components/ArtifactsTab/ArtifactsTab";
 import { IntegrationsTab } from "./components/IntegrationsTab/IntegrationsTab";
 import { useContextPanel } from "./useContextPanel";
+import { useT, type MessageKey } from "@/lib/i18n";
 
 interface Props {
   sessionId: string | null;
@@ -32,19 +33,20 @@ interface Props {
 const PANEL_EASE: [number, number, number, number] = [0.32, 0.72, 0, 1];
 const PANEL_DURATION = 0.3;
 
-const TAB_TITLES: Record<ContextPanelTab, string> = {
-  files: "Files",
-  artifacts: "Artifacts",
-  integrations: "Integrations",
+const TAB_TITLES: Record<ContextPanelTab, MessageKey> = {
+  files: "chatFiles1.contextPanel.tabFiles",
+  artifacts: "chatFiles1.contextPanel.tabArtifacts",
+  integrations: "chatFiles1.contextPanel.tabIntegrations",
 };
 
-const TAB_DESCRIPTIONS: Record<ContextPanelTab, string> = {
-  files: "Files from this chat.",
-  artifacts: "Artifacts from this chat to preview.",
-  integrations: "The tools this chat's expert can use.",
+const TAB_DESCRIPTIONS: Record<ContextPanelTab, MessageKey> = {
+  files: "chatFiles1.contextPanel.descFiles",
+  artifacts: "chatFiles1.contextPanel.descArtifacts",
+  integrations: "chatFiles1.contextPanel.descIntegrations",
 };
 
 export function ContextPanel({ sessionId, mobile }: Props) {
+  const t = useT();
   const expert = useCopilotUIStore((s) => s.contextPanelExpert);
   const {
     activeTab,
@@ -69,7 +71,7 @@ export function ContextPanel({ sessionId, mobile }: Props) {
           tone="primary"
           className="mx-6 mb-1 mt-6 shrink-0"
         >
-          {TAB_TITLES[activeTab]}
+          {t(TAB_TITLES[activeTab])}
         </Text>
       )}
       {activeTab === "artifacts" ? (
@@ -105,11 +107,11 @@ export function ContextPanel({ sessionId, mobile }: Props) {
                 // TODO(tokens): no exact role for dark:text-neutral-50 (#FAFAFA); SheetTitle's dark colour, kept on the copy that renders it
                 className="dark:text-neutral-50"
               >
-                {TAB_TITLES[activeTab]}
+                {t(TAB_TITLES[activeTab])}
               </Text>
             </SheetTitle>
             <SheetDescription className="sr-only">
-              {TAB_DESCRIPTIONS[activeTab]}
+              {t(TAB_DESCRIPTIONS[activeTab])}
             </SheetDescription>
           </SheetHeader>
           {content}

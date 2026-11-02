@@ -23,6 +23,8 @@ import {
   FRAGMENT_LINK_INTERCEPTOR_SCRIPT,
   TAILWIND_CDN_URL,
 } from "@/lib/iframe-sandbox-csp";
+import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/locale";
+import { getMessage } from "@/lib/i18n/translate";
 
 export { transpileReactArtifactSource } from "./transpileReactArtifact";
 
@@ -53,15 +55,25 @@ export function buildReactArtifactSrcDoc(
   compiledCode: string,
   title: string,
   stylesMarkup: string,
+  locale: Locale = DEFAULT_LOCALE,
 ) {
   const safeTitle = escapeHtml(title);
   const runtime = JSON.stringify(compiledCode).replace(/</g, "\\u003c");
+  const noRenderable = JSON.stringify(
+    getMessage(locale, "chatFiles1.reactPreview.iframeNoRenderable"),
+  );
+  const unsupportedImport = JSON.stringify(
+    getMessage(locale, "chatFiles1.reactPreview.unsupportedImport"),
+  );
+  const propsHelp = JSON.stringify(
+    "\n\n" + getMessage(locale, "chatFiles1.reactPreview.propsHelp"),
+  );
 
   // TODO(tokens): no exact role for the raw colours and font stacks in this
   // document (#f8fafc, #18181b, #fecaca, #fff1f2, #991b1b): it renders in the
   // sandboxed artifact iframe, which does not load the app's tokens.
   return `<!doctype html>
-<html lang="en">
+<html lang="${locale}">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -157,9 +169,7 @@ export function buildReactArtifactSrcDoc(
             return App;
           }
 
-          throw new Error(
-            "No renderable component found. Export a default component, export App, or export a named component.",
-          );
+          throw new Error(${noRenderable});
         }
 
         function wrapWithProviders(Component, moduleExports) {
@@ -238,7 +248,7 @@ export function buildReactArtifactSrcDoc(
             return { Fragment: React.Fragment, jsx: jsx, jsxs: jsx };
           }
 
-          throw new Error("Unsupported import in artifact preview: " + name);
+          throw new Error(${unsupportedImport} + name);
         }
 
         class PreviewErrorBoundary extends React.Component {
@@ -255,7 +265,7 @@ export function buildReactArtifactSrcDoc(
             if (this.state.error) {
               const propsHelp =
                 this.props.componentExpectsProps && !this.props.hasPreviewProps
-                  ? "\\n\\nThis component appears to expect props. Export a named previewProps object with sample values to render it in artifact preview."
+                  ? ${propsHelp}
                   : "";
 
               return React.createElement(

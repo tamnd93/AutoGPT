@@ -3,6 +3,9 @@
 import { useEffect, useRef, useState } from "react";
 import type { ArtifactRef } from "../../../store";
 import type { ArtifactClassification } from "../helpers";
+import { useLocale } from "@/lib/i18n";
+import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/locale";
+import { getMessage } from "@/lib/i18n/translate";
 
 // Cap on cached text artifacts. Long sessions with many large artifacts
 // would otherwise hold every opened one in memory.
@@ -63,8 +66,13 @@ function getArtifactErrorMessage(body: unknown): string | null {
   return null;
 }
 
-async function parseArtifactFetchError(response: Response): Promise<string> {
-  const prefix = `Failed to fetch: ${response.status}`;
+async function parseArtifactFetchError(
+  response: Response,
+  locale: Locale,
+): Promise<string> {
+  const prefix = getMessage(locale, "chatFiles1.artifactContent.fetchFailed", {
+    status: response.status,
+  });
   const contentType =
     response.headers?.get?.("content-type")?.toLowerCase() ?? "";
 
@@ -90,7 +98,10 @@ async function parseArtifactFetchError(response: Response): Promise<string> {
   return prefix;
 }
 
-async function fetchArtifactResponse(url: string): Promise<Response> {
+async function fetchArtifactResponse(
+  url: string,
+  locale: Locale = DEFAULT_LOCALE,
+): Promise<Response> {
   for (let attempt = 0; attempt <= CONTENT_FETCH_MAX_RETRIES; attempt++) {
     try {
       const response = await fetch(url);
@@ -100,21 +111,30 @@ async function fetchArtifactResponse(url: string): Promise<Response> {
         !isTransientArtifactFetchStatus(response.status) ||
         attempt === CONTENT_FETCH_MAX_RETRIES
       ) {
-        throw new ArtifactFetchError(await parseArtifactFetchError(response));
+        throw new ArtifactFetchError(
+          await parseArtifactFetchError(response, locale),
+        );
       }
     } catch (error) {
       if (error instanceof ArtifactFetchError) throw error;
       if (attempt === CONTENT_FETCH_MAX_RETRIES) {
         throw error instanceof Error
           ? error
-          : new Error("Failed to fetch artifact");
+          : new Error(
+              getMessage(
+                locale,
+                "chatFiles1.artifactContent.fetchFailedGeneric",
+              ),
+            );
       }
     }
 
     await sleep(CONTENT_FETCH_RETRY_DELAY_MS);
   }
 
-  throw new Error("Failed to fetch artifact");
+  throw new Error(
+    getMessage(locale, "chatFiles1.artifactContent.fetchFailedGeneric"),
+  );
 }
 
 export function getCachedArtifactContent(id: string): string | undefined {
@@ -129,6 +149,7 @@ export function useArtifactContent(
   artifact: ArtifactRef,
   classification: ArtifactClassification,
 ) {
+  const locale = useLocale();
   const [content, setContent] = useState<string | null>(null);
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -189,7 +210,7 @@ export function useArtifactContent(
       let objectUrl: string | null = null;
       setContent(null);
       setPdfUrl(null);
-      fetchArtifactResponse(artifact.sourceUrl)
+      fetchArtifactResponse(artifact.sourceUrl, locale)
         .then((res) => res.blob())
         .then((blob) => {
           objectUrl = URL.createObjectURL(blob);
@@ -227,7 +248,7 @@ export function useArtifactContent(
         cancelled = true;
       };
     }
-    fetchArtifactResponse(artifact.sourceUrl)
+    fetchArtifactResponse(artifact.sourceUrl, locale)
       .then((res) => res.text())
       .then((text) => {
         if (!cancelled) {
@@ -251,7 +272,13 @@ export function useArtifactContent(
     return () => {
       cancelled = true;
     };
-  }, [artifact.id, artifact.sourceUrl, classification.type, retryNonce]);
+  }, [
+    artifact.id,
+    artifact.sourceUrl,
+    classification.type,
+    retryNonce,
+    locale,
+  ]);
 
   return { content, pdfUrl, isLoading, error, scrollRef, retry };
 }

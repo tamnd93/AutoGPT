@@ -7,10 +7,13 @@ import {
 } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { PanelEmptyState } from "../../ContextPanel/components/PanelEmptyState/PanelEmptyState";
+import { useT } from "@/lib/i18n";
 
 // Only Otto's chats reach this: an expert's chat always lists that expert's
 // documents instead.
 export function FilesEmptyState() {
+  const t = useT();
+
   return (
     <PanelEmptyState
       tiles={[
@@ -36,8 +39,8 @@ export function FilesEmptyState() {
           className="text-violet-500"
         />,
       ]}
-      title="No files yet"
-      description="Files you attach and documents Otto creates in this chat will show up here."
+      title={t("chatFiles1.filesEmpty.title")}
+      description={t("chatFiles1.filesEmpty.description")}
     />
   );
 }

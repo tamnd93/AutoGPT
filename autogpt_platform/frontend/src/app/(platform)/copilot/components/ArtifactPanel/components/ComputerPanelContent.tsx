@@ -13,6 +13,7 @@ import { useToast } from "@/components/molecules/Toast/use-toast";
 import { cn } from "@/lib/utils";
 import { useQueryClient } from "@tanstack/react-query";
 import { useCopilotUIStore } from "../../../store";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   sessionId: string;
@@ -42,6 +43,7 @@ function Pill({ tone, label }: PillProps) {
 }
 
 export function ComputerPanelContent({ sessionId }: Props) {
+  const t = useT();
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const stream = useCopilotUIStore((s) => s.artifactPanel.computer);
@@ -74,8 +76,8 @@ export function ComputerPanelContent({ sessionId }: Props) {
       },
       onError: () => {
         toast({
-          title: "Could not open the desktop",
-          description: "The sandbox did not come up. Try again in a moment.",
+          title: t("chatFiles1.computer.toastTitle"),
+          description: t("chatFiles1.computer.toastDescription"),
           variant: "destructive",
         });
       },
@@ -85,31 +87,41 @@ export function ComputerPanelContent({ sessionId }: Props) {
   const isExpert = computer?.owner_kind === "expert";
   const box = computer?.box ?? null;
   const machineLabel = !box
-    ? "None"
+    ? t("chatFiles1.computer.machineNone")
     : box.state === "running"
-      ? "Running"
-      : "Suspended";
+      ? t("chatFiles1.computer.machineRunning")
+      : t("chatFiles1.computer.machineSuspended");
   const machineTone = !box ? "none" : box.state === "running" ? "on" : "off";
   const screenOn = computer?.screen_on === true;
   const actionLabel = stream
-    ? "Refresh"
+    ? t("chatFiles1.computer.actionRefresh")
     : screenOn
-      ? "Open desktop"
-      : "Turn on screen";
+      ? t("chatFiles1.computer.actionOpenDesktop")
+      : t("chatFiles1.computer.actionTurnOnScreen");
 
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto p-3">
       <div className="flex items-center justify-between gap-3 rounded-lg border border-border-base bg-surface px-3 py-2">
         <div className="flex items-center gap-3 text-sm">
           <span className="flex items-center gap-1.5">
-            <span className="text-foreground-tertiary">Machine</span>
+            <span className="text-foreground-tertiary">
+              {t("chatFiles1.computer.labelMachine")}
+            </span>
             <Pill tone={machineTone} label={machineLabel} />
           </span>
           <span className="flex items-center gap-1.5">
-            <span className="text-foreground-tertiary">Screen</span>
+            <span className="text-foreground-tertiary">
+              {t("chatFiles1.computer.labelScreen")}
+            </span>
             <Pill
               tone={!box ? "none" : screenOn ? "on" : "off"}
-              label={!box ? "None" : screenOn ? "On" : "Off"}
+              label={
+                !box
+                  ? t("chatFiles1.computer.machineNone")
+                  : screenOn
+                    ? t("chatFiles1.computer.stateOn")
+                    : t("chatFiles1.computer.stateOff")
+              }
             />
           </span>
         </div>
@@ -130,18 +142,20 @@ export function ComputerPanelContent({ sessionId }: Props) {
         </div>
       ) : (
         <div className="flex flex-1 flex-col items-center justify-center gap-1 rounded-lg border border-dashed border-border-base p-6 text-center">
-          <Text variant="small-medium">Screen is not on this panel yet</Text>
+          <Text variant="small-medium">
+            {t("chatFiles1.computer.screenOffTitle")}
+          </Text>
           <Text variant="small" className="max-w-xs text-foreground-tertiary">
             {isExpert
-              ? "This chat runs on the expert's own computer. Turn on its screen to watch it work in a real browser, or ask for one in the chat."
-              : "Turn on this chat's screen to watch it work in a real browser, or ask for one in the chat. It is the same machine your commands run in."}
+              ? t("chatFiles1.computer.screenOffExpert")
+              : t("chatFiles1.computer.screenOffDefault")}
           </Text>
         </div>
       )}
 
       {computer && !computer.e2b_active ? (
         <Text variant="small" className="text-warning-foreground">
-          Cloud sandboxes are not configured on this deployment.
+          {t("chatFiles1.computer.sandboxNotConfigured")}
         </Text>
       ) : null}
     </div>

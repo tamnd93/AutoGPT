@@ -15,6 +15,7 @@ import { Icon } from "@/components/atoms/Icon/Icon";
 import { useIsMobile } from "../../useIsMobile";
 import { IntegrationsToggle } from "./components/IntegrationsToggle/IntegrationsToggle";
 import { useSessionFiles } from "./components/FilesTab/useSessionFiles";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   sessionId?: string | null;
@@ -40,6 +41,7 @@ export function ContextPanelToggle({
   expert = null,
   hideIntegrationsOnMobile = false,
 }: Props) {
+  const t = useT();
   const { deliverables, documentCount: liveDocumentCount } =
     useSessionFiles(sessionId);
   const documentCount = Math.max(deliverables.length, liveDocumentCount);
@@ -89,9 +91,18 @@ export function ContextPanelToggle({
               variant="compact-ghost"
               size="compact-icon"
               onClick={() => toggleContextPanelTab("files")}
-              aria-label={`${isFilesOpen ? "Hide" : "Open"} files${
+              aria-label={`${
+                isFilesOpen
+                  ? t("chatFiles1.toggle.hideFiles")
+                  : t("chatFiles1.toggle.openFiles")
+              }${
                 documentCount > 0
-                  ? ` (${documentCount} ${documentCount === 1 ? "document" : "documents"})`
+                  ? ` (${t(
+                      documentCount === 1
+                        ? "chatFiles1.toggle.documentOne"
+                        : "chatFiles1.toggle.documentMany",
+                      { count: documentCount },
+                    )})`
                   : ""
               }`}
               aria-pressed={isFilesOpen}
@@ -119,7 +130,9 @@ export function ContextPanelToggle({
           </TooltipTrigger>
           <TooltipPortal>
             <TooltipContent side="bottom">
-              {isFilesOpen ? "Hide files" : "Files"}
+              {isFilesOpen
+                ? t("chatFiles1.toggle.hideFiles")
+                : t("chatFiles1.filesContent.sectionTitle")}
             </TooltipContent>
           </TooltipPortal>
         </Tooltip>
@@ -132,7 +145,11 @@ export function ContextPanelToggle({
               variant="compact-ghost"
               size="compact-icon"
               onClick={handleComputerToggle}
-              aria-label={isComputerOpen ? "Hide computer" : "Open computer"}
+              aria-label={
+                isComputerOpen
+                  ? t("chatFiles1.toggle.hideComputer")
+                  : t("chatFiles1.toggle.openComputer")
+              }
               aria-pressed={isComputerOpen}
               className={cn(
                 toggleClass,
@@ -148,7 +165,9 @@ export function ContextPanelToggle({
           </TooltipTrigger>
           <TooltipPortal>
             <TooltipContent side="bottom">
-              {isComputerOpen ? "Hide computer" : "Computer"}
+              {isComputerOpen
+                ? t("chatFiles1.toggle.hideComputer")
+                : t("chatFiles1.toggle.computer")}
             </TooltipContent>
           </TooltipPortal>
         </Tooltip>

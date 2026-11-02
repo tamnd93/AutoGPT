@@ -17,6 +17,7 @@ import {
   wrapWithHeadInjection,
 } from "@/lib/iframe-sandbox-csp";
 import { useArtifactContent } from "./useArtifactContent";
+import { useLocale, useT } from "@/lib/i18n";
 
 // Text is typed with <p> props; the retry buttons keep their type="button".
 const BUTTON_TYPE = { type: "button" } as const;
@@ -34,6 +35,8 @@ function ArtifactContentLoader({
 }: Props) {
   const { content, pdfUrl, isLoading, error, scrollRef, retry } =
     useArtifactContent(artifact, classification);
+  const locale = useLocale();
+  const t = useT();
 
   if (isLoading) {
     return <ArtifactSkeleton extraLine />;
@@ -46,7 +49,7 @@ function ArtifactContentLoader({
         className="flex flex-col items-center justify-center gap-3 p-8 text-center"
       >
         <Text variant="body-tight" as="p" tone="muted">
-          Failed to load content
+          {t("chatFiles1.artifactContent.loadFailed")}
         </Text>
         <Text variant="small-tight" as="p" tone="subtle">
           {error}
@@ -60,7 +63,7 @@ function ArtifactContentLoader({
           // TODO(tokens): no exact role for focus-visible:ring-violet-400
           className="rounded-md border border-border-base bg-surface px-3 py-1.5 shadow-sm transition-colors hover:bg-surface-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-400"
         >
-          Try again
+          {t("chatFiles1.artifactContent.tryAgain")}
         </Text>
       </div>
     );
@@ -72,6 +75,7 @@ function ArtifactContentLoader({
         artifactID={artifact.id}
         artifactTitle={artifact.title}
         artifactType={classification.type}
+        locale={locale}
       >
         <ArtifactRenderer
           artifact={artifact}
@@ -92,6 +96,7 @@ function withCacheBust(src: string, nonce: number): string {
 }
 
 function ArtifactImage({ src, alt }: { src: string; alt: string }) {
+  const t = useT();
   const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState(false);
   // Incremented on every Try Again so the URL changes and the browser
@@ -105,7 +110,7 @@ function ArtifactImage({ src, alt }: { src: string; alt: string }) {
         className="flex flex-col items-center justify-center gap-3 p-8 text-center"
       >
         <Text variant="body-tight" as="p" tone="muted">
-          Failed to load image
+          {t("chatFiles1.artifactContent.loadImageFailed")}
         </Text>
         <Text
           as="button"
@@ -120,7 +125,7 @@ function ArtifactImage({ src, alt }: { src: string; alt: string }) {
           // TODO(tokens): no exact role for focus-visible:ring-violet-400
           className="rounded-md border border-border-base bg-surface px-3 py-1.5 shadow-sm transition-colors hover:bg-surface-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-400"
         >
-          Try again
+          {t("chatFiles1.artifactContent.tryAgain")}
         </Text>
       </div>
     );
@@ -147,6 +152,7 @@ function ArtifactImage({ src, alt }: { src: string; alt: string }) {
 }
 
 function ArtifactVideo({ src }: { src: string }) {
+  const t = useT();
   const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState(false);
   const [retryNonce, setRetryNonce] = useState(0);
@@ -158,7 +164,7 @@ function ArtifactVideo({ src }: { src: string }) {
         className="flex flex-col items-center justify-center gap-3 p-8 text-center"
       >
         <Text variant="body-tight" as="p" tone="muted">
-          Failed to load video
+          {t("chatFiles1.artifactContent.loadVideoFailed")}
         </Text>
         <Text
           as="button"
@@ -173,7 +179,7 @@ function ArtifactVideo({ src }: { src: string }) {
           // TODO(tokens): no exact role for focus-visible:ring-violet-400
           className="rounded-md border border-border-base bg-surface px-3 py-1.5 shadow-sm transition-colors hover:bg-surface-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-400"
         >
-          Try again
+          {t("chatFiles1.artifactContent.tryAgain")}
         </Text>
       </div>
     );

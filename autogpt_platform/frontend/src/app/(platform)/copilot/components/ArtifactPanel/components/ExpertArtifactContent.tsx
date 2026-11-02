@@ -6,6 +6,7 @@ import { swatchClassFor } from "@/app/(platform)/raise/components/ColorStep/help
 import { ExpertAvatar } from "@/components/molecules/ExpertAvatar/ExpertAvatar";
 import { cn } from "@/lib/utils";
 import type { ExpertArtifact } from "../../../store";
+import { useT, type MessageKey } from "@/lib/i18n";
 
 interface Props {
   expert: ExpertArtifact;
@@ -32,10 +33,13 @@ function Section({ title, text }: SectionProps) {
   );
 }
 
-const KIND_LABELS: Record<NonNullable<ExpertArtifact["kind"]>, string> = {
-  hire: "Hired from the roster",
-  raise: "Raised from a charter",
-  update: "Charter update",
+const KIND_LABEL_KEYS: Record<
+  NonNullable<ExpertArtifact["kind"]>,
+  MessageKey
+> = {
+  hire: "chatFiles1.expertArtifact.kindHire",
+  raise: "chatFiles1.expertArtifact.kindRaise",
+  update: "chatFiles1.expertArtifact.kindUpdate",
 };
 
 /** Messages saved before the applied response carried the charter only
@@ -64,10 +68,11 @@ function useCharterFallback(artifact: ExpertArtifact): ExpertArtifact {
 /** The whole charter of a proposed or newly created expert — the card in
  *  the chat shows one line, this is everything the model wrote for them. */
 export function ExpertArtifactContent({ expert: artifact }: Props) {
+  const t = useT();
   const expert = useCharterFallback(artifact);
   const status = expert.applied
-    ? "On the team"
-    : "Proposed — nothing created yet";
+    ? t("chatFiles1.expertArtifact.statusOnTeam")
+    : t("chatFiles1.expertArtifact.statusProposed");
 
   return (
     <div className="flex flex-1 flex-col gap-6 overflow-y-auto p-5">
@@ -94,28 +99,47 @@ export function ExpertArtifactContent({ expert: artifact }: Props) {
           {expert.tagline}
         </p>
       )}
-      <Section title="Status" text={status} />
-      {expert.kind && <Section title="Kind" text={KIND_LABELS[expert.kind]} />}
+      <Section
+        title={t("chatFiles1.expertArtifact.sectionStatus")}
+        text={status}
+      />
+      {expert.kind && (
+        <Section
+          title={t("chatFiles1.expertArtifact.sectionKind")}
+          text={t(KIND_LABEL_KEYS[expert.kind])}
+        />
+      )}
       {expert.about && (
-        <Section title="Identity and personality" text={expert.about} />
+        <Section
+          title={t("chatFiles1.expertArtifact.sectionIdentity")}
+          text={expert.about}
+        />
       )}
       {expert.voicePreferences && (
-        <Section title="Voice" text={expert.voicePreferences} />
+        <Section
+          title={t("chatFiles1.expertArtifact.sectionVoice")}
+          text={expert.voicePreferences}
+        />
       )}
       {expert.boundaries && (
-        <Section title="Boundaries" text={expert.boundaries} />
+        <Section
+          title={t("chatFiles1.expertArtifact.sectionBoundaries")}
+          text={expert.boundaries}
+        />
       )}
       <Section
-        title="Weekly budget"
+        title={t("chatFiles1.expertArtifact.sectionBudget")}
         text={
           expert.weeklyBudget === null
-            ? "Default"
-            : `${expert.weeklyBudget} credits`
+            ? t("chatFiles1.expertArtifact.budgetDefault")
+            : t("chatFiles1.expertArtifact.budgetCredits", {
+                count: expert.weeklyBudget,
+              })
         }
       />
       {expert.color && swatchClassFor(expert.color) && (
         <section>
-          <div className={LABEL}>Accent</div>
+          <div className={LABEL}>{t("chatFiles1.expertArtifact.accent")}</div>
           <div className="flex items-center gap-2 text-sm text-foreground-secondary">
             <span
               aria-hidden="true"
@@ -128,7 +152,12 @@ export function ExpertArtifactContent({ expert: artifact }: Props) {
           </div>
         </section>
       )}
-      {expert.id && <Section title="Expert ID" text={expert.id} />}
+      {expert.id && (
+        <Section
+          title={t("chatFiles1.expertArtifact.expertId")}
+          text={expert.id}
+        />
+      )}
     </div>
   );
 }

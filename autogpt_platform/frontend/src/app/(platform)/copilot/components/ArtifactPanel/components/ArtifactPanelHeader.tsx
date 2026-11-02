@@ -20,6 +20,7 @@ import {
   ArrowShrinkIcon,
 } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   /** Null while the panel shows only its computer face. */
@@ -89,6 +90,7 @@ export function ArtifactPanelHeader({
   showModeSwitch = false,
   onModeChange,
 }: Props) {
+  const t = useT();
   const isComputer = mode === "computer" || artifact == null;
   const isFile = !isComputer && !artifact?.expert;
   const hasViewControls =
@@ -98,7 +100,10 @@ export function ArtifactPanelHeader({
     <header className="shrink-0 border-b border-border bg-card">
       <div className="flex h-12 items-center gap-2 px-3 sm:px-4">
         {!isComputer && canGoBack && (
-          <HeaderButton onClick={onBack} title="Back">
+          <HeaderButton
+            onClick={onBack}
+            title={t("chatFiles1.panelHeader.back")}
+          >
             <Icon icon={ArrowLeft02Icon} size={18} />
           </HeaderButton>
         )}
@@ -106,7 +111,9 @@ export function ArtifactPanelHeader({
           {isComputer ? (
             <>
               <Icon icon={ComputerIcon} size={18} className="shrink-0" />
-              <span className="truncate">Computer</span>
+              <span className="truncate">
+                {t("chatFiles1.panelHeader.computer")}
+              </span>
             </>
           ) : (
             <>
@@ -121,16 +128,25 @@ export function ArtifactPanelHeader({
         </div>
         <div className="flex shrink-0 items-center gap-0.5">
           {!isComputer && canCopy && (
-            <HeaderButton onClick={onCopy} title="Copy">
+            <HeaderButton
+              onClick={onCopy}
+              title={t("chatFiles1.panelHeader.copy")}
+            >
               <Icon icon={Copy01Icon} size={18} />
             </HeaderButton>
           )}
           {isFile && (
             <>
-              <HeaderButton onClick={onOpenFiles} title="All files">
+              <HeaderButton
+                onClick={onOpenFiles}
+                title={t("chatFiles1.panelHeader.allFiles")}
+              >
                 <Icon icon={Folder01Icon} size={18} />
               </HeaderButton>
-              <HeaderButton onClick={onDownload} title="Download">
+              <HeaderButton
+                onClick={onDownload}
+                title={t("chatFiles1.panelHeader.download")}
+              >
                 <Icon icon={Download01Icon} size={18} />
               </HeaderButton>
             </>
@@ -138,7 +154,11 @@ export function ArtifactPanelHeader({
           {onToggleFullscreen && (
             <HeaderButton
               onClick={onToggleFullscreen}
-              title={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
+              title={
+                isFullscreen
+                  ? t("chatFiles1.panelHeader.exitFullscreen")
+                  : t("chatFiles1.panelHeader.enterFullscreen")
+              }
             >
               <Icon
                 icon={
@@ -148,7 +168,10 @@ export function ArtifactPanelHeader({
               />
             </HeaderButton>
           )}
-          <HeaderButton onClick={onClose} title="Close">
+          <HeaderButton
+            onClick={onClose}
+            title={t("chatFiles1.panelHeader.close")}
+          >
             <Icon icon={Cancel01Icon} size={18} />
           </HeaderButton>
         </div>

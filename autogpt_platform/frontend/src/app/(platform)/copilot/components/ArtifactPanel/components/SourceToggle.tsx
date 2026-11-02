@@ -1,6 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   isSourceView: boolean;
@@ -8,6 +9,8 @@ interface Props {
 }
 
 export function SourceToggle({ isSourceView, onToggle }: Props) {
+  const t = useT();
+
   return (
     <div className="flex items-center rounded-md border border-border-base bg-surface-muted p-0.5 text-xs font-medium">
       <button
@@ -21,7 +24,7 @@ export function SourceToggle({ isSourceView, onToggle }: Props) {
         )}
         onClick={() => onToggle(false)}
       >
-        Preview
+        {t("chatFiles1.sourceToggle.preview")}
       </button>
       <button
         type="button"
@@ -34,7 +37,7 @@ export function SourceToggle({ isSourceView, onToggle }: Props) {
         )}
         onClick={() => onToggle(true)}
       >
-        Source
+        {t("chatFiles1.sourceToggle.source")}
       </button>
     </div>
   );

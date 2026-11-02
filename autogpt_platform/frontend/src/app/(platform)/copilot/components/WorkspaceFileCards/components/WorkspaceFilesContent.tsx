@@ -8,6 +8,7 @@ import { Skeleton } from "@/components/atoms/Skeleton/Skeleton";
 import type { SessionFile } from "../../ContextPanel/components/FilesTab/useSessionFiles";
 import { WorkspaceFileCard } from "./WorkspaceFileCard";
 import { WorkspaceFileRow } from "./WorkspaceFileRow";
+import { useT } from "@/lib/i18n";
 
 export interface WorkspaceFilesContentProps {
   files: SessionFile[];
@@ -39,12 +40,15 @@ export function WorkspaceFilesContent({
   showHeader = true,
   rowStyle = "compact",
 }: WorkspaceFilesContentProps) {
+  const t = useT();
+
   return (
     <>
       {showHeader && (
         <div className="flex items-center justify-between gap-2 pb-1.5">
           <span className="text-body-md leading-inherit text-foreground-subtle">
-            Files{files.length > 0 && ` (${files.length})`}
+            {t("chatFiles1.filesContent.sectionTitle")}
+            {files.length > 0 && ` (${files.length})`}
           </span>
           {files.length > 0 && (
             <Button
@@ -52,7 +56,7 @@ export function WorkspaceFilesContent({
               size="icon"
               onClick={onDownloadAll}
               loading={isZipping}
-              aria-label="Download all"
+              aria-label={t("chatFiles1.filesContent.downloadAll")}
               className="size-7 rounded-lg !p-0 text-foreground-tertiary"
             >
               <Icon icon={Download01Icon} size={15} />
@@ -97,6 +101,7 @@ function Body({
   emptyMessage,
   rowStyle,
 }: BodyProps) {
+  const t = useT();
   const [showAll, setShowAll] = useState(false);
 
   if (isLoading) {
@@ -111,7 +116,7 @@ function Body({
   if (isError) {
     return (
       <p className="py-2 text-body-sm leading-inherit text-foreground-subtle">
-        Failed to load files.
+        {t("chatFiles1.filesContent.loadFailed")}
       </p>
     );
   }
@@ -119,8 +124,7 @@ function Body({
   if (files.length === 0) {
     return (
       <p className="py-2 text-body-sm leading-inherit text-foreground-subtle">
-        {emptyMessage ??
-          "No files yet. Upload one or ask an expert to create something."}
+        {emptyMessage ?? t("chatFiles1.filesContent.emptyDefault")}
       </p>
     );
   }
@@ -163,7 +167,9 @@ function Body({
           onClick={() => setShowAll(!showAll)}
           className="w-full pb-0.5 pt-1.5 text-left text-body-sm leading-inherit text-foreground-tertiary transition-colors hover:text-foreground-emphasis"
         >
-          {showAll ? "Show less" : `View more (${hiddenCount})`}
+          {showAll
+            ? t("chatFiles1.filesContent.showLess")
+            : t("chatFiles1.filesContent.viewMore", { count: hiddenCount })}
         </button>
       )}
     </>

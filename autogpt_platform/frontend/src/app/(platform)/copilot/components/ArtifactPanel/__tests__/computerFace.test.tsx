@@ -8,6 +8,7 @@ import { cleanup } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { useCopilotUIStore } from "../../../store";
+import { LocaleProvider } from "@/lib/i18n";
 import { ComputerPanelContent } from "../components/ComputerPanelContent";
 import { PanelModeSwitch } from "../components/PanelModeSwitch";
 
@@ -207,5 +208,38 @@ describe("ComputerPanelContent", () => {
     await waitFor(() =>
       expect(screen.getByTitle("Interactive desktop (sbx-1)")).toBeDefined(),
     );
+  });
+
+  it("speaks vietnamese in the computer panel", async () => {
+    server.use(
+      getGetV2GetSessionComputerMockHandler({
+        owner_kind: "expert",
+        owner_id: "exp-1",
+        e2b_active: true,
+        box: {
+          sandbox_id: "sb",
+          state: "paused",
+          started_at: new Date("2026-09-05T12:00:00Z"),
+          cpu_count: 2,
+          memory_mb: 512,
+          template_id: "base",
+          mounts_attached: true,
+        },
+        screen_on: false,
+        mounts: {},
+        workspace_path: "/home/user/workspace",
+        shared_path: "/home/user/shared",
+      }),
+    );
+
+    render(
+      <LocaleProvider locale="vi">
+        <ComputerPanelContent sessionId="sess-1" />
+      </LocaleProvider>,
+    );
+
+    expect(await screen.findByText("Tạm dừng")).toBeDefined();
+    expect(screen.getByText("Máy")).toBeDefined();
+    expect(screen.getByRole("button", { name: "Bật màn hình" })).toBeDefined();
   });
 });

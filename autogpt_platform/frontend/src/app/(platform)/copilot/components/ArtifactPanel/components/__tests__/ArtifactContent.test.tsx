@@ -12,6 +12,7 @@ import { classifyArtifact, type ArtifactClassification } from "../../helpers";
 import { globalRegistry } from "@/components/contextual/OutputRenderers";
 import { codeRenderer } from "@/components/contextual/OutputRenderers/renderers/CodeRenderer";
 import { ArtifactReactPreview } from "../ArtifactReactPreview";
+import { LocaleProvider } from "@/lib/i18n";
 
 // Mock the renderers so we don't pull in the full renderer dependency tree
 vi.mock("@/components/contextual/OutputRenderers", () => ({
@@ -162,6 +163,32 @@ describe("ArtifactContent", () => {
     const errorAlert = screen.queryByRole("alert");
     expect(errorAlert).toBeTruthy();
     expect(screen.queryByText("Failed to load image")).toBeTruthy();
+  });
+
+  it("speaks vietnamese in the image error state", () => {
+    const artifact = makeArtifact({
+      id: "img-error-vi",
+      title: "broken.png",
+      mimeType: "image/png",
+      sourceUrl: "/api/proxy/api/workspace/files/img-error-vi/download",
+    });
+    const classification = makeClassification({ type: "image" });
+
+    const { container } = render(
+      <LocaleProvider locale="vi">
+        <ArtifactContent
+          artifact={artifact}
+          isSourceView={false}
+          classification={classification}
+        />
+      </LocaleProvider>,
+    );
+
+    const img = container.querySelector("img");
+    fireEvent.error(img!);
+
+    expect(screen.queryByText("Không tải được ảnh")).toBeTruthy();
+    expect(screen.getByRole("button", { name: "Thử lại" })).toBeDefined();
   });
 
   it("image retry resets error and re-shows img", async () => {

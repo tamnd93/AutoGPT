@@ -2,12 +2,15 @@
 
 import * as Sentry from "@sentry/nextjs";
 import { Component, type ErrorInfo, type ReactNode } from "react";
+import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/locale";
+import { getMessage } from "@/lib/i18n/translate";
 
 interface Props {
   children: ReactNode;
   artifactID: string;
   artifactTitle: string;
   artifactType: string;
+  locale?: Locale;
 }
 
 interface State {
@@ -65,7 +68,10 @@ export class ArtifactErrorBoundary extends Component<Props, State> {
     const { error } = this.state;
     if (!error) return this.props.children;
 
-    const message = error.message || "Unknown rendering error";
+    const locale = this.props.locale ?? DEFAULT_LOCALE;
+    const message =
+      error.message ||
+      getMessage(locale, "chatFiles1.artifactError.unknownError");
 
     return (
       <div
@@ -73,12 +79,12 @@ export class ArtifactErrorBoundary extends Component<Props, State> {
         className="flex h-full flex-col items-center justify-center gap-3 p-8 text-center"
       >
         <p className="text-sm font-medium text-foreground-body">
-          This artifact couldn&apos;t be rendered
+          {getMessage(locale, "chatFiles1.artifactError.title")}
         </p>
         <p className="max-w-md break-words text-xs text-foreground-tertiary">
-          Something in{" "}
-          <span className="font-mono">{this.props.artifactTitle}</span> threw an
-          error while rendering. The chat and sidebar are still working.
+          {getMessage(locale, "chatFiles1.artifactError.bodyPrefix")}{" "}
+          <span className="font-mono">{this.props.artifactTitle}</span>{" "}
+          {getMessage(locale, "chatFiles1.artifactError.bodySuffix")}
         </p>
         <pre className="max-h-32 max-w-md overflow-auto whitespace-pre-wrap break-words rounded-md bg-surface-hover px-3 py-2 text-left text-xs text-foreground-body">
           {message}
@@ -89,10 +95,10 @@ export class ArtifactErrorBoundary extends Component<Props, State> {
           // TODO(tokens): no exact role for focus-visible:ring-violet-400
           className="rounded-md border border-border-base bg-surface px-3 py-1.5 text-xs font-medium text-foreground-body shadow-sm transition-colors hover:bg-surface-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-400"
         >
-          Copy error details
+          {getMessage(locale, "chatFiles1.artifactError.copyDetails")}
         </button>
         <p className="max-w-md text-xs text-foreground-subtle">
-          Paste this into the chat so a working version can be regenerated.
+          {getMessage(locale, "chatFiles1.artifactError.pasteHint")}
         </p>
       </div>
     );

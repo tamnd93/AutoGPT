@@ -36,6 +36,7 @@ describe("ArtifactReactPreview", () => {
         "module.exports.default = function Artifact() { return null; };",
         "Artifact.tsx",
         "<style>preview</style>",
+        "en",
       );
     });
 

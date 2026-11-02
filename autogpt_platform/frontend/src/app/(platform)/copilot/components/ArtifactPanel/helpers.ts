@@ -10,6 +10,9 @@ import {
 } from "@hugeicons/core-free-icons";
 import type { IconSvgElement } from "@hugeicons/react";
 import type { ArtifactRef } from "../../store";
+import type { MessageKey } from "@/lib/i18n/messages/en";
+import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/locale";
+import { getMessage } from "@/lib/i18n/translate";
 
 export interface ArtifactClassification {
   type:
@@ -35,81 +38,85 @@ const TEN_MB = 10 * 1024 * 1024;
 
 // Catalog of classification kinds. Each entry defines the shared output
 // shape; extension/MIME → kind mapping is handled by the lookup tables below.
-const KIND: Record<string, ArtifactClassification> = {
+type KindSpec = Omit<ArtifactClassification, "label"> & {
+  labelKey: MessageKey;
+};
+
+const KIND: Record<string, KindSpec> = {
   image: {
     type: "image",
     icon: Image01Icon,
-    label: "Image",
+    labelKey: "chatFiles1.fileType.image",
     openable: true,
     hasSourceToggle: false,
   },
   video: {
     type: "video",
     icon: Video01Icon,
-    label: "Video",
+    labelKey: "chatFiles1.fileType.video",
     openable: true,
     hasSourceToggle: false,
   },
   pdf: {
     type: "pdf",
     icon: File02Icon,
-    label: "PDF",
+    labelKey: "chatFiles1.fileType.pdf",
     openable: true,
     hasSourceToggle: false,
   },
   csv: {
     type: "csv",
     icon: TableIcon,
-    label: "Spreadsheet",
+    labelKey: "chatFiles1.fileType.spreadsheet",
     openable: true,
     hasSourceToggle: true,
   },
   html: {
     type: "html",
     icon: HtmlFile01Icon,
-    label: "HTML",
+    labelKey: "chatFiles1.fileType.html",
     openable: true,
     hasSourceToggle: true,
   },
   react: {
     type: "react",
     icon: HtmlFile01Icon,
-    label: "React",
+    labelKey: "chatFiles1.fileType.react",
     openable: true,
     hasSourceToggle: true,
   },
   markdown: {
     type: "markdown",
     icon: File02Icon,
-    label: "Document",
+    labelKey: "chatFiles1.fileType.document",
     openable: true,
     hasSourceToggle: true,
   },
   json: {
     type: "json",
     icon: CodeIcon,
-    label: "Data",
+    labelKey: "chatFiles1.fileType.data",
     openable: true,
     hasSourceToggle: true,
   },
   code: {
     type: "code",
     icon: CodeIcon,
-    label: "Code",
+    labelKey: "chatFiles1.fileType.code",
     openable: true,
     hasSourceToggle: false,
   },
   text: {
     type: "text",
     icon: File02Icon,
-    label: "Text",
+    labelKey: "chatFiles1.fileType.text",
     openable: true,
     hasSourceToggle: false,
   },
   "download-only": {
     type: "download-only",
     icon: FileEmpty02Icon,
-    label: "File",
+    labelKey: "chatFiles1.fileType.file",
     openable: false,
     hasSourceToggle: false,
   },
@@ -295,24 +302,47 @@ const NATIVELY_RENDERED = new Set<ArtifactClassification["type"]>([
   "pdf",
 ]);
 
-const EXPERT_CLASSIFICATION: ArtifactClassification = {
+const EXPERT_KIND: KindSpec = {
   type: "expert",
   icon: UserIcon,
-  label: "Expert",
+  labelKey: "chatFiles1.fileType.expert",
   openable: true,
   hasSourceToggle: false,
 };
 
+// ArtifactPanel compares classifications by identity to decide when to re-render
+// (lastShown !== live), so each (locale, kind) resolves to one stable object.
+const KIND_BY_LOCALE = new Map<string, ArtifactClassification>();
+
+function withLabel(kind: KindSpec, locale: Locale): ArtifactClassification {
+  const cacheKey = `${locale}:${kind.type}`;
+  const cached = KIND_BY_LOCALE.get(cacheKey);
+  if (cached) return cached;
+  const localized: ArtifactClassification = {
+    type: kind.type,
+    icon: kind.icon,
+    label: getMessage(locale, kind.labelKey),
+    openable: kind.openable,
+    hasSourceToggle: kind.hasSourceToggle,
+  };
+  KIND_BY_LOCALE.set(cacheKey, localized);
+  return localized;
+}
+
 /** An expert ref is not a file — it skips the MIME/extension tables. */
-export function classifyArtifactRef(ref: ArtifactRef): ArtifactClassification {
-  if (ref.expert) return EXPERT_CLASSIFICATION;
-  return classifyArtifact(ref.mimeType, ref.title, ref.sizeBytes);
+export function classifyArtifactRef(
+  ref: ArtifactRef,
+  locale: Locale = DEFAULT_LOCALE,
+): ArtifactClassification {
+  if (ref.expert) return withLabel(EXPERT_KIND, locale);
+  return classifyArtifact(ref.mimeType, ref.title, ref.sizeBytes, locale);
 }
 
 export function classifyArtifact(
   mimeType: string | null,
   filename?: string,
   sizeBytes?: number,
+  locale: Locale = DEFAULT_LOCALE,
 ): ArtifactClassification {
   const kind = classifyByTypeOnly(mimeType, filename);
   // Size gate: >10MB is download-only, but only for content we actually
@@ -320,15 +350,15 @@ export function classifyArtifact(
   // browser — gating them produced "broken previews" for hi-res files
   // (SECRT-2221).
   if (sizeBytes && sizeBytes > TEN_MB && !NATIVELY_RENDERED.has(kind.type)) {
-    return KIND["download-only"];
+    return withLabel(KIND["download-only"], locale);
   }
-  return kind;
+  return withLabel(kind, locale);
 }
 
 function classifyByTypeOnly(
   mimeType: string | null,
   filename?: string,
-): ArtifactClassification {
+): KindSpec {
   const mime = (mimeType ?? "").toLowerCase();
   if (OFFICE_MIMES.has(mime)) return KIND["download-only"];
 

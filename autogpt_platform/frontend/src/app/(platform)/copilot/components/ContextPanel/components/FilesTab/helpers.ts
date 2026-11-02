@@ -2,6 +2,8 @@ import JSZip from "jszip";
 import { getGetWorkspaceDownloadFileByIdUrl } from "@/app/api/__generated__/endpoints/workspace/workspace";
 import type { WorkspaceFileItem } from "@/app/api/__generated__/models/workspaceFileItem";
 import type { ArtifactRef } from "../../../../store";
+import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/locale";
+import { getMessage } from "@/lib/i18n/translate";
 
 export function fileDownloadUrl(fileId: string): string {
   return `/api/proxy${getGetWorkspaceDownloadFileByIdUrl(fileId)}`;
@@ -84,6 +86,7 @@ function triggerDownload(blob: Blob, filename: string): void {
 export async function downloadFilesAsZip(
   entries: ZipEntry[],
   deps: DownloadZipDeps = {},
+  locale: Locale = DEFAULT_LOCALE,
 ): Promise<void> {
   const fetchImpl = deps.fetchImpl ?? ((url: string) => fetch(url));
   const save = deps.save ?? triggerDownload;
@@ -100,7 +103,7 @@ export async function downloadFilesAsZip(
     added++;
   }
   if (added === 0) {
-    throw new Error("No files could be downloaded.");
+    throw new Error(getMessage(locale, "chatFiles1.filesContent.zipEmpty"));
   }
   const blob = await zip.generateAsync({ type: "blob" });
   save(blob, "workspace-files.zip");

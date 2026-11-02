@@ -2,6 +2,7 @@ import { account1En } from "./account-1.en";
 import { account2En } from "./account-2.en";
 import { auth1En } from "./auth-1.en";
 import { auth2En } from "./auth-2.en";
+import { chatFiles1En } from "./chat-files-1.en";
 import { chatInput1En } from "./chat-input-1.en";
 import { chatInput2En } from "./chat-input-2.en";
 import { chatInput3En } from "./chat-input-3.en";
@@ -39,6 +40,7 @@ export const en = {
   ...account2En,
   ...auth1En,
   ...auth2En,
+  ...chatFiles1En,
   ...chatInput1En,
   ...chatInput2En,
   ...chatInput3En,

@@ -1,4 +1,5 @@
 import { render, screen } from "@/tests/integrations/test-utils";
+import { LocaleProvider } from "@/lib/i18n";
 import { describe, expect, it, vi } from "vitest";
 import type { ExpertArtifact } from "../../../../store";
 import { ExpertArtifactContent } from "../ExpertArtifactContent";
@@ -104,5 +105,19 @@ describe("ExpertArtifactContent", () => {
 
     expect(fetched.enabled).toBe(false);
     expect(screen.getByText("You group the morning inbox.")).toBeDefined();
+  });
+
+  it("speaks vietnamese for the section chrome", () => {
+    render(
+      <LocaleProvider locale="vi">
+        <ExpertArtifactContent expert={expert()} />
+      </LocaleProvider>,
+    );
+
+    expect(screen.getByText("Đề xuất — chưa tạo gì")).toBeDefined();
+    expect(screen.getByText("Bản sắc và tính cách")).toBeDefined();
+    expect(screen.getByText("Giới hạn")).toBeDefined();
+    expect(screen.getByText("Tạo từ bản mô tả")).toBeDefined();
+    expect(screen.getByText("2000 credit")).toBeDefined();
   });
 });

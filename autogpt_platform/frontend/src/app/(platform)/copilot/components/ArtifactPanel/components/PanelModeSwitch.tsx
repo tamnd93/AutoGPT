@@ -4,6 +4,7 @@ import { Icon } from "@/components/atoms/Icon/Icon";
 import { cn } from "@/lib/utils";
 import { ComputerIcon, LicenseDraftIcon } from "@hugeicons/core-free-icons";
 import type { ArtifactPanelMode } from "../../../store";
+import { useT, type MessageKey } from "@/lib/i18n";
 
 interface Props {
   mode: ArtifactPanelMode;
@@ -13,20 +14,30 @@ interface Props {
 
 const OPTIONS: {
   value: ArtifactPanelMode;
-  label: string;
+  labelKey: MessageKey;
   icon: typeof ComputerIcon;
 }[] = [
-  { value: "artifact", label: "Artifact", icon: LicenseDraftIcon },
-  { value: "computer", label: "Computer", icon: ComputerIcon },
+  {
+    value: "artifact",
+    labelKey: "chatFiles1.panelMode.artifact",
+    icon: LicenseDraftIcon,
+  },
+  {
+    value: "computer",
+    labelKey: "chatFiles1.panelMode.computer",
+    icon: ComputerIcon,
+  },
 ];
 
 /** Two faces of one side panel: the document being worked on, or the
  *  machine doing the work. */
 export function PanelModeSwitch({ mode, hasArtifact, onChange }: Props) {
+  const t = useT();
+
   return (
     <div
       role="group"
-      aria-label="Panel view"
+      aria-label={t("chatFiles1.panelMode.groupLabel")}
       className="flex shrink-0 items-center rounded-md bg-surface-hover p-0.5"
     >
       {OPTIONS.map((option) => {
@@ -49,7 +60,7 @@ export function PanelModeSwitch({ mode, hasArtifact, onChange }: Props) {
             )}
           >
             <Icon icon={option.icon} size={14} />
-            {option.label}
+            {t(option.labelKey)}
           </button>
         );
       })}

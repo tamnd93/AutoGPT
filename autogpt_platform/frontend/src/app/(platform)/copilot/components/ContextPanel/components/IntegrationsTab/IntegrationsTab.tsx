@@ -28,6 +28,7 @@ import { cn } from "@/lib/utils";
 import { useCopilotUIStore, type ContextPanelExpert } from "../../../../store";
 import { StackSection } from "../../../WorkspaceFileCards/components/StackSection";
 import { PanelEmptyState } from "../PanelEmptyState/PanelEmptyState";
+import { useT } from "@/lib/i18n";
 
 /** The chat's expert's integrations, laid out like the files tab: a titled
  *  card of rows, or an empty state that offers the first connection. Same
@@ -40,6 +41,7 @@ export function IntegrationsTab() {
 }
 
 function IntegrationsTabContent({ expert }: { expert: ContextPanelExpert }) {
+  const t = useT();
   const {
     granted,
     grantable,
@@ -71,15 +73,14 @@ function IntegrationsTabContent({ expert }: { expert: ContextPanelExpert }) {
             variant="small"
             className="!text-amber-800"
           >
-            Couldn&apos;t load your connected services, so &ldquo;Use
-            existing&rdquo; is unavailable.
+            {t("chatFiles1.integrationsTab.grantableError")}
           </Text>
           <Button
             variant="secondary"
             size="small"
             onClick={() => void refetch()}
           >
-            Retry
+            {t("chatFiles1.integrationsTab.retry")}
           </Button>
         </div>
       ) : null}
@@ -88,7 +89,7 @@ function IntegrationsTabContent({ expert }: { expert: ContextPanelExpert }) {
       ) : isError ? (
         <ErrorCard
           context="this expert's integrations"
-          hint="We could not load what this expert can reach."
+          hint={t("chatFiles1.integrationsTab.errorHint")}
           onRetry={refetch}
         />
       ) : groups.length === 0 ? (
@@ -98,8 +99,10 @@ function IntegrationsTabContent({ expert }: { expert: ContextPanelExpert }) {
             <IntegrationLogo key="notion" provider="notion" size={24} />,
             <IntegrationLogo key="google" provider="google" size={24} />,
           ]}
-          title="No integrations yet"
-          description={`Connect a tool and ${expert.name} can use it on your behalf.`}
+          title={t("chatFiles1.integrationsTab.emptyTitle")}
+          description={t("chatFiles1.integrationsTab.emptyDescription", {
+            name: expert.name,
+          })}
           footer={<ExpertPageLink expert={expert} className="justify-center" />}
         >
           <Button
@@ -108,7 +111,7 @@ function IntegrationsTabContent({ expert }: { expert: ContextPanelExpert }) {
             leadingIcon={PlusSignIcon}
             onClick={openConnect}
           >
-            Add integration
+            {t("chatFiles1.integrationsTab.addIntegration")}
           </Button>
           {canUseExisting && (
             <Button
@@ -117,13 +120,15 @@ function IntegrationsTabContent({ expert }: { expert: ContextPanelExpert }) {
               leadingIcon={Share01Icon}
               onClick={openUseExisting}
             >
-              Use existing
+              {t("chatFiles1.integrationsTab.useExisting")}
             </Button>
           )}
         </PanelEmptyState>
       ) : (
         <StackSection
-          title={`${expert.name}'s integrations`}
+          title={t("chatFiles1.integrationsTab.sectionTitle", {
+            name: expert.name,
+          })}
           icon={PlugSocketIcon}
           count={granted.length}
           action={
@@ -133,7 +138,7 @@ function IntegrationsTabContent({ expert }: { expert: ContextPanelExpert }) {
                   variant="ghost"
                   size="icon"
                   onClick={openUseExisting}
-                  aria-label="Use existing"
+                  aria-label={t("chatFiles1.integrationsTab.useExisting")}
                   className="size-6 rounded-lg !p-0 text-foreground-subtle"
                 >
                   <Icon icon={Share01Icon} size={14} />
@@ -143,7 +148,7 @@ function IntegrationsTabContent({ expert }: { expert: ContextPanelExpert }) {
                 variant="ghost"
                 size="icon"
                 onClick={openConnect}
-                aria-label="Add integration"
+                aria-label={t("chatFiles1.integrationsTab.addIntegration")}
                 className="size-6 rounded-lg !p-0 text-foreground-subtle"
               >
                 <Icon icon={PlusSignIcon} size={14} />
@@ -201,6 +206,8 @@ interface ExpertPageLinkProps {
 }
 
 function ExpertPageLink({ expert, className }: ExpertPageLinkProps) {
+  const t = useT();
+
   return (
     <Link
       href={`/team/${expert.id}`}
@@ -209,7 +216,7 @@ function ExpertPageLink({ expert, className }: ExpertPageLinkProps) {
         className,
       )}
     >
-      Open {expert.name}&apos;s page
+      {t("chatFiles1.integrationsTab.openExpertPage", { name: expert.name })}
       <Icon icon={ArrowRight01Icon} size={14} aria-hidden />
     </Link>
   );
@@ -232,6 +239,7 @@ function IntegrationRow({
   isRemoving,
   onRemove,
 }: RowProps) {
+  const t = useT();
   const name = formatCredentialName(integration.title, integration.provider);
 
   return (
@@ -242,7 +250,7 @@ function IntegrationRow({
       <span className="flex size-10 shrink-0 items-center justify-center rounded-xl border border-border-base bg-surface">
         <IntegrationLogo
           provider={icon}
-          alt={`${serviceName} logo`}
+          alt={t("chatFiles1.integrationsTab.logoAlt", { name: serviceName })}
           size={20}
         />
       </span>
@@ -264,7 +272,7 @@ function IntegrationRow({
       </span>
       <span
         aria-hidden
-        title="Ready"
+        title={t("chatFiles1.integrationsTab.ready")}
         // TODO(tokens): no exact role for bg-emerald-500
         className="size-1.5 shrink-0 rounded-full bg-emerald-500"
       />
@@ -274,7 +282,7 @@ function IntegrationRow({
         onClick={onRemove}
         disabled={isRemoving}
         aria-busy={isRemoving}
-        aria-label={`Remove ${name}`}
+        aria-label={t("chatFiles1.integrationsTab.remove", { name })}
         className="size-7 shrink-0 rounded-lg !p-0 text-foreground-tertiary opacity-0 transition-opacity hover:text-error focus-visible:opacity-100 group-hover:opacity-100 [@media(hover:none)]:opacity-100"
       >
         <Icon
