@@ -24,7 +24,7 @@ import { McpFirstPanel } from "./McpFirstPanel";
 import { getAuthMethodLabel, MethodPanel } from "./MethodPanel";
 import { ProviderAvatar } from "./ProviderAvatar";
 import { UnsupportedNotice } from "./UnsupportedNotice";
-import { useT } from "@/lib/i18n";
+import { useLocale, useT } from "@/lib/i18n";
 import { ArrowLeft02Icon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
 
@@ -59,6 +59,7 @@ export function DetailView({
   preferMcp = false,
 }: Props) {
   const t = useT();
+  const locale = useLocale();
   const description = provider.description;
   const reduceMotion = useReducedMotion();
   const tabs = TAB_PRIORITY.filter((method) =>
@@ -168,7 +169,7 @@ export function DetailView({
               size="small"
               onClick={() => setShowNative(false)}
             >
-              {getSignInFallbackLabel(provider)}
+              {getSignInFallbackLabel(provider, locale)}
             </Button>
           ) : null}
         </div>

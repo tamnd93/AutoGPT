@@ -4,6 +4,7 @@ import type { ProviderMetadata } from "@/app/api/__generated__/models/providerMe
 
 import {
   filterConnectableProviders,
+  getSignInFallbackLabel,
   toConnectableProviders,
   type ConnectableProvider,
 } from "../helpers";
@@ -153,6 +154,57 @@ describe("toConnectableProviders", () => {
       authProviderByType: { oauth2: "codex" },
       searchTerms: ["codex"],
     });
+  });
+});
+
+describe("localized copy", () => {
+  function provider(
+    overrides: Partial<ConnectableProvider>,
+  ): ConnectableProvider {
+    return {
+      id: "github",
+      serviceId: "github",
+      name: "GitHub",
+      supportedAuthTypes: [],
+      ...overrides,
+    };
+  }
+
+  test("words the sign-in fallback in Vietnamese", () => {
+    const notion = provider({
+      id: "notion",
+      serviceId: "notion",
+      name: "Notion",
+      mcpServer: {
+        auth_methods: ["oauth"],
+      } as ConnectableProvider["mcpServer"],
+    });
+    expect(getSignInFallbackLabel(notion, "vi")).toBe(
+      "Dùng đăng nhập Notion thay thế",
+    );
+    expect(getSignInFallbackLabel(provider({ name: "OpenAI" }), "vi")).toBe(
+      "Dùng token OpenAI thay thế",
+    );
+  });
+
+  test("words the OpenAI subscription description in Vietnamese", () => {
+    const result = toConnectableProviders(
+      [
+        makeMeta({
+          name: "codex",
+          supported_auth_types: ["oauth2"],
+        }),
+        makeMeta({
+          name: "openai",
+          supported_auth_types: ["api_key"],
+        }),
+      ],
+      "vi",
+    );
+
+    expect(result[0].description).toBe(
+      "Mô hình OpenAI qua khoá API hoặc gói ChatGPT của bạn",
+    );
   });
 });
 

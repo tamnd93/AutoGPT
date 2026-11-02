@@ -1,7 +1,19 @@
 import type { ProviderMetadata } from "@/app/api/__generated__/models/providerMetadata";
 import { ProviderMetadataSupportedAuthTypesItem as AuthType } from "@/app/api/__generated__/models/providerMetadataSupportedAuthTypesItem";
 
+import type { Locale } from "@/lib/i18n";
+import type { MessageKey } from "@/lib/i18n/messages/en";
+import { getMessage } from "@/lib/i18n/translate";
+
 import { serviceIcon, serviceKey, serviceName } from "../../helpers";
+
+function translate(
+  locale: Locale | undefined,
+  key: MessageKey,
+  values?: Record<string, string | number>,
+) {
+  return getMessage(locale ?? "en", key, values);
+}
 
 export type AuthMethod = (typeof AuthType)[keyof typeof AuthType];
 
@@ -52,16 +64,25 @@ export function withoutDuplicateKeyMethod(
   return authMethods.length ? { ...server, auth_methods: authMethods } : server;
 }
 
-export function getSignInFallbackLabel(provider: ConnectableProvider): string {
+export function getSignInFallbackLabel(
+  provider: ConnectableProvider,
+  locale?: Locale,
+): string {
   if (provider.mcpServer?.auth_methods.includes("oauth")) {
-    return `Use the ${provider.name} sign-in instead`;
+    return translate(locale, "connectServices2.signInFallback.oauth", {
+      name: provider.name,
+    });
   }
   const article = /^[aeiou]/i.test(provider.name) ? "an" : "a";
-  return `Use ${article} ${provider.name} token instead`;
+  return translate(locale, "connectServices2.signInFallback.token", {
+    article,
+    name: provider.name,
+  });
 }
 
 export function toConnectableProviders(
   metadata: ProviderMetadata[],
+  locale?: Locale,
 ): ConnectableProvider[] {
   const seen = new Set<string>();
   const byService = new Map<string, ConnectableProvider>();
@@ -129,8 +150,10 @@ export function toConnectableProviders(
 
   const openai = byService.get("openai");
   if (openai?.authProviderByType?.oauth2 === "codex") {
-    openai.description =
-      "OpenAI models via API key or your ChatGPT subscription";
+    openai.description = translate(
+      locale,
+      "connectServices2.provider.openaiDescription",
+    );
   }
 
   const result = Array.from(byService.values());

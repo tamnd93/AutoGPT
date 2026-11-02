@@ -25,6 +25,7 @@ import { chatTools2En } from "./chat-tools-2.en";
 import { chatTools3En } from "./chat-tools-3.en";
 import { chatTools4En } from "./chat-tools-4.en";
 import { chatTools5En } from "./chat-tools-5.en";
+import { ConnectServices2En } from "./connect-services-2.en";
 import { credentials1En } from "./credentials-1.en";
 import { formatEn } from "./format.en";
 import { home1En } from "./home-1.en";
@@ -79,6 +80,7 @@ export const en = {
   ...chatTools3En,
   ...chatTools4En,
   ...chatTools5En,
+  ...ConnectServices2En,
   ...credentials1En,
   ...formatEn,
   ...home1En,

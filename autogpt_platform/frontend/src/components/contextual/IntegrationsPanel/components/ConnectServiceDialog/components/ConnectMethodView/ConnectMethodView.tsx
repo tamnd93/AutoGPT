@@ -29,7 +29,7 @@ import {
 } from "@hugeicons/core-free-icons";
 import type { IconSvgElement } from "@hugeicons/react";
 import { AnimatePresence, domAnimation, LazyMotion, m } from "framer-motion";
-import { useT } from "@/lib/i18n";
+import { useLocale, useT } from "@/lib/i18n";
 
 interface Props {
   provider: ConnectableProvider;
@@ -112,6 +112,7 @@ export function ConnectMethodView({
   mcpSignIn,
 }: Props) {
   const t = useT();
+  const locale = useLocale();
   const methodCopy = getMethodCopy(t);
   const methods = METHOD_ORDER.filter((method) =>
     provider.supportedAuthTypes.includes(method),
@@ -301,7 +302,7 @@ export function ConnectMethodView({
             </div>
             {offersMcp ? (
               <Button variant="ghost" size="small" onClick={handleUseSignIn}>
-                {getSignInFallbackLabel(provider)}
+                {getSignInFallbackLabel(provider, locale)}
               </Button>
             ) : null}
           </div>
