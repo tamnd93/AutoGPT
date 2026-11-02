@@ -1,79 +1,97 @@
-import { callPrepScript } from "./callPrepScript";
-import {
-  callPrepArtifact,
-  competitorWatchArtifact,
-  dailyBriefArtifact,
-  supportQueueArtifact,
-} from "./completionArtifacts";
-import { competitorWatchScript } from "./competitorWatchScript";
-import { dailyBriefScript } from "./dailyBriefScript";
-import { supportQueueScript } from "./supportQueueScript";
-import type { TourScenario } from "./types";
 import {
   CallRinging01Icon,
   HeadsetIcon,
   Search01Icon,
   Sun01Icon,
 } from "@hugeicons/core-free-icons";
+import type { MessageKey } from "@/lib/i18n/messages/en";
+import { DEFAULT_LOCALE } from "@/lib/i18n/locale";
+import { getMessage } from "@/lib/i18n/translate";
+import {
+  callPrepArtifact,
+  competitorWatchArtifact,
+  dailyBriefArtifact,
+  supportQueueArtifact,
+} from "./completionArtifacts";
+import { getCallPrepScript } from "./callPrepScript";
+import { getCompetitorWatchScript } from "./competitorWatchScript";
+import { getDailyBriefScript } from "./dailyBriefScript";
+import { getSupportQueueScript } from "./supportQueueScript";
+import type { TourScenario } from "./types";
 
-export const tourScenarios: TourScenario[] = [
-  {
-    id: "daily-brief",
-    label: "Daily brief",
-    icon: Sun01Icon,
-    script: dailyBriefScript,
-    completionArtifact: dailyBriefArtifact,
-  },
-  {
-    id: "call-prep",
-    label: "Call prep",
-    icon: CallRinging01Icon,
-    script: callPrepScript,
-    completionArtifact: callPrepArtifact,
-  },
-  {
-    id: "competitor-watch",
-    label: "Competitor watch",
-    icon: Search01Icon,
-    script: competitorWatchScript,
-    completionArtifact: competitorWatchArtifact,
-  },
-  {
-    id: "support-queue",
-    label: "Support queue",
-    icon: HeadsetIcon,
-    script: supportQueueScript,
-    completionArtifact: supportQueueArtifact,
-  },
-];
+type Translate = (
+  key: MessageKey,
+  values?: Record<string, string | number>,
+) => string;
+
+const defaultTranslate: Translate = (key, values) =>
+  getMessage(DEFAULT_LOCALE, key, values);
+
+export function getTourScenarios(t: Translate = defaultTranslate): TourScenario[] {
+  return [
+    {
+      id: "daily-brief",
+      label: t("sharing2.scenario.dailyBrief"),
+      icon: Sun01Icon,
+      script: getDailyBriefScript(t),
+      completionArtifact: dailyBriefArtifact,
+    },
+    {
+      id: "call-prep",
+      label: t("sharing2.scenario.callPrep"),
+      icon: CallRinging01Icon,
+      script: getCallPrepScript(t),
+      completionArtifact: callPrepArtifact,
+    },
+    {
+      id: "competitor-watch",
+      label: t("sharing2.scenario.competitorWatch"),
+      icon: Search01Icon,
+      script: getCompetitorWatchScript(t),
+      completionArtifact: competitorWatchArtifact,
+    },
+    {
+      id: "support-queue",
+      label: t("sharing2.scenario.supportQueue"),
+      icon: HeadsetIcon,
+      script: getSupportQueueScript(t),
+      completionArtifact: supportQueueArtifact,
+    },
+  ];
+}
+
+export const tourScenarios: TourScenario[] = getTourScenarios();
 
 export const DEFAULT_SCENARIO_ID = "competitor-watch";
 
-/** The scenario the end-of-demo nudge points at: the next unwatched one in
- * scenario order (wrapping around), or simply the next one once all are
- * watched — "Watch another scenario" should always lead somewhere. */
 export function getNextTourScenario(
   activeScenarioId: string,
   watchedScenarioIds: string[],
+  t: Translate = defaultTranslate,
 ): TourScenario {
-  const activeIndex = tourScenarios.findIndex(
+  const all = getTourScenarios(t);
+  const activeIndex = all.findIndex(
     (scenario) => scenario.id === activeScenarioId,
   );
   const others = [
-    ...tourScenarios.slice(activeIndex + 1),
-    ...tourScenarios.slice(0, Math.max(activeIndex, 0)),
+    ...all.slice(activeIndex + 1),
+    ...all.slice(0, Math.max(activeIndex, 0)),
   ];
   return (
     others.find((scenario) => !watchedScenarioIds.includes(scenario.id)) ??
     others[0] ??
-    tourScenarios[0]
+    all[0]
   );
 }
 
-export function getTourScenario(id: string): TourScenario {
+export function getTourScenario(
+  id: string,
+  t: Translate = defaultTranslate,
+): TourScenario {
+  const all = getTourScenarios(t);
   return (
-    tourScenarios.find((scenario) => scenario.id === id) ??
-    tourScenarios.find((scenario) => scenario.id === DEFAULT_SCENARIO_ID) ??
-    tourScenarios[0]
+    all.find((scenario) => scenario.id === id) ??
+    all.find((scenario) => scenario.id === DEFAULT_SCENARIO_ID) ??
+    all[0]
   );
 }

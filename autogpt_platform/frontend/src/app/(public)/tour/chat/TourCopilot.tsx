@@ -15,6 +15,7 @@ import { TourChatHeader } from "./components/TourChatHeader/TourChatHeader";
 import { TourSidebar } from "./components/TourSidebar/TourSidebar";
 import { buildTourArtifactRef } from "./helpers";
 import { getTourScenario } from "./script/tourScenarios";
+import { useT } from "@/lib/i18n";
 import { useTourStore } from "./tourStore";
 import { trackTourScenarioComplete, trackTourStart } from "./tracking";
 
@@ -39,10 +40,11 @@ function TourBackdrop() {
 }
 
 export function TourCopilot() {
+  const t = useT();
   const activeScenarioId = useTourStore((s) => s.activeScenarioId);
   const runId = useTourStore((s) => s.runId);
   const setDemoComplete = useTourStore((s) => s.setDemoComplete);
-  const scenario = getTourScenario(activeScenarioId);
+  const scenario = getTourScenario(activeScenarioId, t);
   const isMobile = useIsMobile();
   const openArtifact = useCopilotUIStore((s) => s.openArtifact);
   const closeArtifactPanel = useCopilotUIStore((s) => s.closeArtifactPanel);
@@ -71,7 +73,9 @@ export function TourCopilot() {
           key={`${scenario.id}-${runId}`}
           sessionId={scenario.id}
           script={scenario.script}
-          completionNotice={`Your **"${scenario.completionArtifact.filename}"** will appear in a moment on the right side.`}
+          completionNotice={t("sharing2.copilot.completionNotice", {
+            filename: scenario.completionArtifact.filename,
+          })}
           onComplete={() => {
             trackTourScenarioComplete(scenario.id);
             setDemoComplete();

@@ -1,101 +1,103 @@
 import { RUN_DELAY_MS } from "./constants";
+import type { MessageKey } from "@/lib/i18n/messages/en";
+import { DEFAULT_LOCALE } from "@/lib/i18n/locale";
+import { getMessage } from "@/lib/i18n/translate";
 import type { TourScript } from "./types";
 
-export const callPrepScript: TourScript = [
-  {
-    assistantMessageId: "callprep-asst-1",
-    userPrompt: "Brief me on the company and person before every sales call",
-    steps: [
-      {
-        delayMs: 400,
-        part: {
-          type: "text",
-          text: "Great use case. Here's how I'll set that up.",
+type Translate = (
+  key: MessageKey,
+  values?: Record<string, string | number>,
+) => string;
+
+const defaultTranslate: Translate = (key, values) =>
+  getMessage(DEFAULT_LOCALE, key, values);
+
+export function getCallPrepScript(
+  t: Translate = defaultTranslate,
+): TourScript {
+  return [
+    {
+      assistantMessageId: "callprep-asst-1",
+      userPrompt: "Brief me on the company and person before every sales call",
+      steps: [
+        {
+          delayMs: 400,
+          part: { type: "text", text: t("sharing2.callPrep.assistant1") },
         },
-      },
-      {
-        delayMs: 700,
-        part: {
-          type: "plan",
-          plan: {
-            goal: "Prep me before each external call on my calendar",
-            steps: [
-              {
-                description: "Spot upcoming external calls on my calendar",
-                blockName: "Google Calendar",
-              },
-              {
-                description: "Research the company and attendees",
-                blockName: "Web Search",
-              },
-              {
-                description: "Send a one-page brief 30 minutes before",
-                blockName: "Send Email",
-              },
-            ],
+        {
+          delayMs: 700,
+          part: {
+            type: "plan",
+            plan: {
+              goal: t("sharing2.callPrep.goal"),
+              steps: [
+                {
+                  description: t("sharing2.callPrep.step1"),
+                  blockName: "Google Calendar",
+                },
+                {
+                  description: t("sharing2.callPrep.step2"),
+                  blockName: "Web Search",
+                },
+                {
+                  description: t("sharing2.callPrep.step3"),
+                  blockName: "Send Email",
+                },
+              ],
+            },
           },
         },
-      },
-      {
-        delayMs: 500,
-        part: {
-          type: "text",
-          text: "Want me to build and run it right now?",
+        {
+          delayMs: 500,
+          part: { type: "text", text: t("sharing2.script.ask") },
         },
-      },
-    ],
-  },
-  {
-    assistantMessageId: "callprep-asst-2",
-    userPrompt: "Sounds great, set it up",
-    steps: [
-      {
-        delayMs: 500,
-        part: {
-          type: "text",
-          text: "Building your workflow — picking blocks, wiring them up, setting the trigger.",
+      ],
+    },
+    {
+      assistantMessageId: "callprep-asst-2",
+      userPrompt: "Sounds great, set it up",
+      steps: [
+        {
+          delayMs: 500,
+          part: { type: "text", text: t("sharing2.script.buildingTrigger") },
         },
-      },
-      {
-        delayMs: 900,
-        part: {
-          type: "agent",
-          agent: {
-            name: "Call Prep Briefer",
-            schedule: "30 min before each call",
-            blocks: ["Google Calendar", "Web Search", "Send Email"],
+        {
+          delayMs: 900,
+          part: {
+            type: "agent",
+            agent: {
+              name: "Call Prep Briefer",
+              schedule: "30 min before each call",
+              blocks: ["Google Calendar", "Web Search", "Send Email"],
+            },
           },
         },
-      },
-      {
-        delayMs: RUN_DELAY_MS,
-        part: {
-          type: "text",
-          text: "Done — first run just finished. Here's what it produced:",
+        {
+          delayMs: RUN_DELAY_MS,
+          part: { type: "text", text: t("sharing2.script.done") },
         },
-      },
-      {
-        delayMs: 700,
-        part: {
-          type: "artifact",
-          artifact: {
-            caption: "what lands in your inbox",
-            title: "Call prep — Acme Corp · 2:00 PM",
-            bullets: [
-              "Series B, ~140 people — raised $30M in March",
-              "You're meeting Dana Patel, VP Ops — second call",
-              "Open thread: pricing objection on the per-seat model",
-            ],
+        {
+          delayMs: 700,
+          part: {
+            type: "artifact",
+            artifact: {
+              caption: t("sharing2.script.captionInbox"),
+              title: t("sharing2.callPrep.artifactTitle"),
+              bullets: [
+                t("sharing2.callPrep.bullet1"),
+                t("sharing2.callPrep.bullet2"),
+                t("sharing2.callPrep.bullet3"),
+              ],
+            },
           },
         },
-      },
-      {
-        delayMs: 600,
-        part: {
-          type: "text",
-          text: "Done — you'll get a brief like this before every call on your calendar. 🎉",
+        {
+          delayMs: 600,
+          part: { type: "text", text: t("sharing2.callPrep.final") },
         },
-      },
-    ],
-  },
-];
+      ],
+    },
+  ];
+}
+
+export const callPrepScript = getCallPrepScript();

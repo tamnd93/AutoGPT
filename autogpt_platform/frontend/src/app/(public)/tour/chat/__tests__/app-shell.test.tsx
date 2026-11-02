@@ -65,6 +65,23 @@ async function pressEnterToSend() {
 }
 
 describe("Tour chat app shell", () => {
+  test("reads the tour script and scenario label in Vietnamese", async () => {
+    render(
+      <LocaleProvider locale="vi">
+        <TourChatPage />
+      </LocaleProvider>,
+    );
+
+    expect(screen.getByText("Theo dõi đối thủ")).toBeDefined();
+
+    await advanceThroughTurn();
+
+    expect(
+      screen.getByText("Mục tiêu hay! Để tôi chia thành các bước."),
+    ).toBeDefined();
+    expect(screen.getByText("Kế hoạch xây dựng — 3 bước")).toBeDefined();
+  });
+
   test("reads the tour upsell card in Vietnamese", () => {
     render(
       <LocaleProvider locale="vi">

@@ -1,102 +1,104 @@
 import { RUN_DELAY_MS } from "./constants";
+import type { MessageKey } from "@/lib/i18n/messages/en";
+import { DEFAULT_LOCALE } from "@/lib/i18n/locale";
+import { getMessage } from "@/lib/i18n/translate";
 import type { TourScript } from "./types";
 
-export const dailyBriefScript: TourScript = [
-  {
-    assistantMessageId: "brief-asst-1",
-    userPrompt:
-      "Every morning, pull my unread emails and calendar into one brief",
-    steps: [
-      {
-        delayMs: 400,
-        part: {
-          type: "text",
-          text: "Love it. Here's how I'll set that up.",
+type Translate = (
+  key: MessageKey,
+  values?: Record<string, string | number>,
+) => string;
+
+const defaultTranslate: Translate = (key, values) =>
+  getMessage(DEFAULT_LOCALE, key, values);
+
+export function getDailyBriefScript(
+  t: Translate = defaultTranslate,
+): TourScript {
+  return [
+    {
+      assistantMessageId: "brief-asst-1",
+      userPrompt:
+        "Every morning, pull my unread emails and calendar into one brief",
+      steps: [
+        {
+          delayMs: 400,
+          part: { type: "text", text: t("sharing2.dailyBrief.assistant1") },
         },
-      },
-      {
-        delayMs: 700,
-        part: {
-          type: "plan",
-          plan: {
-            goal: "Send me one morning brief with my email and calendar",
-            steps: [
-              {
-                description: "Read unread emails and today's calendar",
-                blockName: "Gmail Read",
-              },
-              {
-                description: "Summarize everything into a short brief",
-                blockName: "AI Text Generator",
-              },
-              {
-                description: "Deliver it every morning at 7:30",
-                blockName: "Send Email",
-              },
-            ],
+        {
+          delayMs: 700,
+          part: {
+            type: "plan",
+            plan: {
+              goal: t("sharing2.dailyBrief.goal"),
+              steps: [
+                {
+                  description: t("sharing2.dailyBrief.step1"),
+                  blockName: "Gmail Read",
+                },
+                {
+                  description: t("sharing2.dailyBrief.step2"),
+                  blockName: "AI Text Generator",
+                },
+                {
+                  description: t("sharing2.dailyBrief.step3"),
+                  blockName: "Send Email",
+                },
+              ],
+            },
           },
         },
-      },
-      {
-        delayMs: 500,
-        part: {
-          type: "text",
-          text: "Want me to build and run it right now?",
+        {
+          delayMs: 500,
+          part: { type: "text", text: t("sharing2.script.ask") },
         },
-      },
-    ],
-  },
-  {
-    assistantMessageId: "brief-asst-2",
-    userPrompt: "Perfect, set it up",
-    steps: [
-      {
-        delayMs: 500,
-        part: {
-          type: "text",
-          text: "Building your workflow — picking blocks, wiring them up, setting the schedule.",
+      ],
+    },
+    {
+      assistantMessageId: "brief-asst-2",
+      userPrompt: "Perfect, set it up",
+      steps: [
+        {
+          delayMs: 500,
+          part: { type: "text", text: t("sharing2.script.building") },
         },
-      },
-      {
-        delayMs: 900,
-        part: {
-          type: "agent",
-          agent: {
-            name: "Morning Brief",
-            schedule: "Daily · 7:30 AM",
-            blocks: ["Gmail Read", "AI Text Generator", "Send Email"],
+        {
+          delayMs: 900,
+          part: {
+            type: "agent",
+            agent: {
+              name: "Morning Brief",
+              schedule: "Daily · 7:30 AM",
+              blocks: ["Gmail Read", "AI Text Generator", "Send Email"],
+            },
           },
         },
-      },
-      {
-        delayMs: RUN_DELAY_MS,
-        part: {
-          type: "text",
-          text: "Done — first run just finished. Here's what it produced:",
+        {
+          delayMs: RUN_DELAY_MS,
+          part: { type: "text", text: t("sharing2.script.done") },
         },
-      },
-      {
-        delayMs: 700,
-        part: {
-          type: "artifact",
-          artifact: {
-            caption: "what lands in your inbox",
-            title: "Your brief — Thu, Jul 2",
-            bullets: [
-              "9:30 AM roadmap review — deck still unshared",
-              "3 unread from Acme Corp, contract redlines attached",
-              "Reply owed: Jordan on the Q3 pricing proposal",
-            ],
+        {
+          delayMs: 700,
+          part: {
+            type: "artifact",
+            artifact: {
+              caption: t("sharing2.script.captionInbox"),
+              title: t("sharing2.dailyBrief.artifactTitle"),
+              bullets: [
+                t("sharing2.dailyBrief.bullet1"),
+                t("sharing2.dailyBrief.bullet2"),
+                t("sharing2.dailyBrief.bullet3"),
+              ],
+            },
           },
         },
-      },
-      {
-        delayMs: 600,
-        part: {
-          type: "text",
-          text: "All set — a brief like this will be waiting in your inbox at 7:30 every morning. 🎉",
+        {
+          delayMs: 600,
+          part: { type: "text", text: t("sharing2.dailyBrief.final") },
         },
-      },
-    ],
-  },
-];
+      ],
+    },
+  ];
+}
+
+export const dailyBriefScript = getDailyBriefScript();
