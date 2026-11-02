@@ -229,7 +229,9 @@ export function ToolChain({ parts, isStreaming, readOnly = false }: Props) {
         parts
           .map((part, i) => toChainRow(part, i, locale))
           .filter((row): row is ChainRow => row !== null)
-          .map((row) => applyHeldOutcome(row, heldOutcomes, heldAnswers))
+          .map((row) =>
+            applyHeldOutcome(row, heldOutcomes, heldAnswers, locale),
+          )
           // Unanswered clarifying questions and setup cards render their work
           // in the card below the chain — their rows are lifted out of view.
           .map((row) =>

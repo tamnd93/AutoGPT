@@ -215,3 +215,20 @@ describe("getAnimationText", () => {
     expect(text.toLowerCase()).toContain("analyzing");
   });
 });
+
+describe("DecomposeGoal getAnimationText in Vietnamese", () => {
+  it("words the analyzing, plan and error copy in Vietnamese", () => {
+    expect(getAnimationText({ state: "input-available" }, "vi")).toBe(
+      "Đang phân tích mục tiêu của bạn…",
+    );
+    expect(
+      getAnimationText(
+        { state: "output-available", output: DECOMPOSITION },
+        "vi",
+      ),
+    ).toBe("Kế hoạch sẵn sàng (3 bước)");
+    expect(getAnimationText({ state: "output-error" }, "vi")).toBe(
+      "Lỗi phân tích mục tiêu",
+    );
+  });
+});

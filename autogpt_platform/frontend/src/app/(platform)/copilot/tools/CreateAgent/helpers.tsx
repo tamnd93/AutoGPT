@@ -3,6 +3,8 @@ import type { AgentSavedResponse } from "@/app/api/__generated__/models/agentSav
 import type { ErrorResponse } from "@/app/api/__generated__/models/errorResponse";
 import { ResponseType } from "@/app/api/__generated__/models/responseType";
 import type { SuggestedGoalResponse } from "@/app/api/__generated__/models/suggestedGoalResponse";
+import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/locale";
+import { getMessage } from "@/lib/i18n/translate";
 import type { ToolUIPart } from "ai";
 import { ScaleLoader } from "../../components/ScaleLoader/ScaleLoader";
 import {
@@ -88,27 +90,37 @@ export function isErrorOutput(
   return output.type === ResponseType.error || "error" in output;
 }
 
-export function getAnimationText(part: {
-  state: ToolUIPart["state"];
-  input?: unknown;
-  output?: unknown;
-}): string {
+export function getAnimationText(
+  part: {
+    state: ToolUIPart["state"];
+    input?: unknown;
+    output?: unknown;
+  },
+  locale: Locale = DEFAULT_LOCALE,
+): string {
   switch (part.state) {
     case "input-streaming":
     case "input-available":
-      return "Creating workflow, this might take a minute";
+      return getMessage(locale, "chatTools3.createAgent.creating");
     case "output-available": {
       const output = parseOutput(part.output);
-      if (!output) return "Creating workflow, this might take a minute";
-      if (isAgentSavedOutput(output)) return `Saved ${output.agent_name}`;
-      if (isAgentPreviewOutput(output)) return `Preview "${output.agent_name}"`;
-      if (isSuggestedGoalOutput(output)) return "Goal needs refinement";
-      return "Error creating workflow";
+      if (!output) return getMessage(locale, "chatTools3.createAgent.creating");
+      if (isAgentSavedOutput(output))
+        return getMessage(locale, "chatTools3.createAgent.saved", {
+          name: output.agent_name,
+        });
+      if (isAgentPreviewOutput(output))
+        return getMessage(locale, "chatTools3.createAgent.preview", {
+          name: output.agent_name,
+        });
+      if (isSuggestedGoalOutput(output))
+        return getMessage(locale, "chatTools3.createAgent.goalRefinement");
+      return getMessage(locale, "chatTools3.createAgent.error");
     }
     case "output-error":
-      return "Error creating workflow";
+      return getMessage(locale, "chatTools3.createAgent.error");
     default:
-      return "Creating workflow, this might take a minute";
+      return getMessage(locale, "chatTools3.createAgent.creating");
   }
 }
 

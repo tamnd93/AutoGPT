@@ -1,6 +1,8 @@
 "use client";
 
 import type { DecompositionStepModel } from "@/app/api/__generated__/models/decompositionStepModel";
+import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/locale";
+import { getMessage } from "@/lib/i18n/translate";
 import type { ToolUIPart } from "ai";
 import { ScaleLoader } from "../../components/ScaleLoader/ScaleLoader";
 import {
@@ -12,6 +14,7 @@ import {
   Loading03Icon,
 } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 
 // Re-export generated step type for consumers that need it.
 export type DecompositionStep = DecompositionStepModel;
@@ -90,24 +93,29 @@ export function isErrorOutput(
   return !isDecompositionOutput(output);
 }
 
-export function getAnimationText(part: {
-  state: ToolUIPart["state"];
-  output?: unknown;
-}): string {
+export function getAnimationText(
+  part: {
+    state: ToolUIPart["state"];
+    output?: unknown;
+  },
+  locale: Locale = DEFAULT_LOCALE,
+): string {
   switch (part.state) {
     case "input-streaming":
     case "input-available":
-      return "Analyzing your goal...";
+      return getMessage(locale, "chatTools3.decomposeGoal.analyzing");
     case "output-available": {
       const output = parseOutput(part.output);
       if (output && isDecompositionOutput(output))
-        return `Plan ready (${output.step_count} steps)`;
-      return "Analyzing your goal...";
+        return getMessage(locale, "chatTools3.decomposeGoal.planReady", {
+          count: output.step_count,
+        });
+      return getMessage(locale, "chatTools3.decomposeGoal.analyzing");
     }
     case "output-error":
-      return "Error analyzing goal";
+      return getMessage(locale, "chatTools3.decomposeGoal.error");
     default:
-      return "Analyzing your goal...";
+      return getMessage(locale, "chatTools3.decomposeGoal.analyzing");
   }
 }
 
@@ -133,6 +141,7 @@ export function AccordionIcon() {
 }
 
 export function StepStatusIcon({ status }: { status: string }) {
+  const t = useT();
   switch (status) {
     case "completed":
       return (
@@ -141,7 +150,7 @@ export function StepStatusIcon({ status }: { status: string }) {
           size={18}
           // TODO(tokens): no exact role for emerald-500 #10B981
           className="text-emerald-500"
-          aria-label="completed"
+          aria-label={t("chatTools3.decomposeGoal.statusCompleted")}
         />
       );
     case "in_progress":
@@ -150,7 +159,7 @@ export function StepStatusIcon({ status }: { status: string }) {
           icon={Loading03Icon}
           size={18}
           className="animate-spin text-info"
-          aria-label="in progress"
+          aria-label={t("chatTools3.decomposeGoal.statusInProgress")}
         />
       );
     case "failed":
@@ -159,7 +168,7 @@ export function StepStatusIcon({ status }: { status: string }) {
           icon={CancelCircleIcon}
           size={18}
           className="text-error"
-          aria-label="failed"
+          aria-label={t("chatTools3.decomposeGoal.statusFailed")}
         />
       );
     default:
@@ -169,7 +178,7 @@ export function StepStatusIcon({ status }: { status: string }) {
           size={18}
           // TODO(tokens): no exact role for neutral-400 #A3A3A3
           className="text-neutral-400"
-          aria-label="pending"
+          aria-label={t("chatTools3.decomposeGoal.statusPending")}
         />
       );
   }

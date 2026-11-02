@@ -1,6 +1,9 @@
 "use client";
 
 import type { ToolUIPart } from "ai";
+import { useLocale, useT } from "@/lib/i18n";
+import type { Locale } from "@/lib/i18n/locale";
+import { getMessage } from "@/lib/i18n/translate";
 import { AgentSavedCard } from "../../components/AgentSavedCard/AgentSavedCard";
 import { useCopilotChatActions } from "../../components/CopilotChatActionsProvider/useCopilotChatActions";
 import { ToolErrorCard } from "../../components/ToolErrorCard/ToolErrorCard";
@@ -39,20 +42,29 @@ interface Props {
   part: CreateAgentToolPart;
 }
 
-function getAccordionMeta(output: CreateAgentToolOutput | null) {
+function getAccordionMeta(
+  output: CreateAgentToolOutput | null,
+  locale: Locale,
+) {
   const icon = <AccordionIcon />;
 
   if (output && isAgentPreviewOutput(output)) {
     return {
       icon,
       title: output.agent_name,
-      description: `${output.node_count} block${output.node_count === 1 ? "" : "s"}`,
+      description: getMessage(
+        locale,
+        output.node_count === 1
+          ? "chatTools3.createAgent.blockOne"
+          : "chatTools3.createAgent.blockMany",
+        { count: output.node_count },
+      ),
     };
   }
   if (output && isSuggestedGoalOutput(output)) {
     return {
       icon,
-      title: "Goal needs refinement",
+      title: getMessage(locale, "chatTools3.createAgent.goalRefinement"),
       expanded: true,
     };
   }
@@ -60,7 +72,9 @@ function getAccordionMeta(output: CreateAgentToolOutput | null) {
 }
 
 export function CreateAgentTool({ part }: Props) {
-  const text = getAnimationText(part);
+  const t = useT();
+  const locale = useLocale();
+  const text = getAnimationText(part, locale);
   const { onSend } = useCopilotChatActions();
 
   const isStreaming =
@@ -92,16 +106,16 @@ export function CreateAgentTool({ part }: Props) {
       {isError && output && isErrorOutput(output) && (
         <ToolErrorCard
           message={output.message}
-          fallbackMessage="Failed to generate the workflow. Please try again."
+          fallbackMessage={t("chatTools3.createAgent.failed")}
           error={output.error ? formatMaybeJson(output.error) : undefined}
           details={output.details ? formatMaybeJson(output.details) : undefined}
           actions={[
             {
-              label: "Try again",
+              label: t("chatInput3.card.tryAgain"),
               onClick: () => onSend("Please try creating the workflow again."),
             },
             {
-              label: "Simplify goal",
+              label: t("chatTools3.createAgent.simplifyGoal"),
               variant: "ghost",
               onClick: () => onSend("Can you help me simplify this goal?"),
             },
@@ -112,7 +126,7 @@ export function CreateAgentTool({ part }: Props) {
       {output &&
         !isError &&
         (isAgentPreviewOutput(output) || isSuggestedGoalOutput(output)) && (
-          <ToolAccordion {...getAccordionMeta(output)}>
+          <ToolAccordion {...getAccordionMeta(output, locale)}>
             {isAgentPreviewOutput(output) && (
               <ContentGrid>
                 <ContentMessage>{output.message}</ContentMessage>
@@ -142,7 +156,7 @@ export function CreateAgentTool({ part }: Props) {
       {output && isAgentSavedOutput(output) && (
         <AgentSavedCard
           agentName={output.agent_name}
-          message="has been saved to your library!"
+          message={t("chatTools3.createAgent.savedMessage")}
           libraryAgentLink={output.library_agent_link}
           agentPageLink={output.agent_page_link}
         />

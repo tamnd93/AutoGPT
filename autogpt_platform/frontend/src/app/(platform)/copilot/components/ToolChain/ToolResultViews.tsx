@@ -8,7 +8,7 @@ import {
   ImageIcon,
 } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
-import { useT } from "@/lib/i18n";
+import { useLocale, useT } from "@/lib/i18n";
 import { useLayoutEffect, useRef, useState } from "react";
 import type { ChainRow } from "./helpers";
 import { CARD, HALF } from "./ResultCards";
@@ -18,7 +18,6 @@ import {
   displayValue,
   formatBytes,
   isBlankOutput,
-  NOTHING_FOUND,
   humanizeKey,
   inline,
   parseTruncatedOutput,
@@ -264,6 +263,7 @@ export function FileCard({ row }: RowProps) {
 
 export function OutputList({ items }: ItemsProps) {
   const t = useT();
+  const locale = useLocale();
   return (
     <div className={`${CARD} ${HALF} divide-y divide-separator`}>
       {items.map((item, i) => (
@@ -273,7 +273,7 @@ export function OutputList({ items }: ItemsProps) {
               t("chatTools2.view.outputItem", { number: i + 1 })}
           </p>
           <p className="mt-0.5 whitespace-pre-wrap break-words text-body-sm leading-inherit text-foreground-emphasis">
-            {displayValue(item.value ?? item)}
+            {displayValue(item.value ?? item, locale)}
           </p>
         </div>
       ))}
@@ -283,7 +283,9 @@ export function OutputList({ items }: ItemsProps) {
 
 export function KeyValueList({ value }: ValueProps) {
   const t = useT();
-  if (isBlankOutput(value)) return <KeyValueList value={NOTHING_FOUND} />;
+  const locale = useLocale();
+  if (isBlankOutput(value))
+    return <KeyValueList value={t("chatTools3.result.nothingFound")} />;
   const obj = asObject(value);
   if (!obj || Object.keys(obj).length === 0) {
     if (typeof value !== "string" || !value.trim()) return null;
@@ -311,7 +313,8 @@ export function KeyValueList({ value }: ValueProps) {
   const entries = Object.entries(obj).filter(
     ([, entryValue]) => entryValue !== null && entryValue !== undefined,
   );
-  if (entries.length === 0) return <KeyValueList value={NOTHING_FOUND} />;
+  if (entries.length === 0)
+    return <KeyValueList value={t("chatTools3.result.nothingFound")} />;
   return (
     <div className={`${CARD} ${HALF} p-2.5`}>
       {entries.map(([key, entryValue]) => (
@@ -323,7 +326,7 @@ export function KeyValueList({ value }: ValueProps) {
             {humanizeKey(key)}
           </span>
           <span className="ml-auto min-w-0 break-words text-right font-medium text-foreground-body">
-            {displayValue(entryValue)}
+            {displayValue(entryValue, locale)}
           </span>
         </div>
       ))}

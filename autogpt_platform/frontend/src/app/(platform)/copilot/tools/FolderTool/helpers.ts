@@ -1,3 +1,5 @@
+import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/locale";
+import { getMessage } from "@/lib/i18n/translate";
 import type { ToolUIPart } from "ai";
 
 interface FolderAgentSummary {
@@ -133,11 +135,14 @@ export function isErrorOutput(o: FolderToolOutput): o is ErrorOutput {
   return o.type === "error";
 }
 
-export function getAnimationText(part: {
-  type: string;
-  state: ToolUIPart["state"];
-  output?: unknown;
-}): string {
+export function getAnimationText(
+  part: {
+    type: string;
+    state: ToolUIPart["state"];
+    output?: unknown;
+  },
+  locale: Locale = DEFAULT_LOCALE,
+): string {
   const toolName = part.type.replace(/^tool-/, "");
 
   switch (part.state) {
@@ -145,30 +150,31 @@ export function getAnimationText(part: {
     case "input-available": {
       switch (toolName) {
         case "create_folder":
-          return "Creating folder…";
+          return getMessage(locale, "chatTools3.folderTool.creating");
         case "list_folders":
-          return "Loading folders…";
+          return getMessage(locale, "chatTools3.folderTool.loading");
         case "update_folder":
-          return "Updating folder…";
+          return getMessage(locale, "chatTools3.folderTool.updating");
         case "move_folder":
-          return "Moving folder…";
+          return getMessage(locale, "chatTools3.folderTool.moving");
         case "delete_folder":
-          return "Deleting folder…";
+          return getMessage(locale, "chatTools3.folderTool.deleting");
         case "move_agents_to_folder":
-          return "Moving workflows…";
+          return getMessage(locale, "chatTools3.folderTool.movingWorkflows");
         default:
-          return "Managing folders…";
+          return getMessage(locale, "chatTools3.folderTool.managing");
       }
     }
     case "output-available": {
       const output = getFolderToolOutput(part);
-      if (!output) return "Done";
-      if (isErrorOutput(output)) return "Folder operation failed";
+      if (!output) return getMessage(locale, "chatTools2.chain.done");
+      if (isErrorOutput(output))
+        return getMessage(locale, "chatTools3.folderTool.failed");
       return output.message;
     }
     case "output-error":
-      return "Folder operation failed";
+      return getMessage(locale, "chatTools3.folderTool.failed");
     default:
-      return "Managing folders…";
+      return getMessage(locale, "chatTools3.folderTool.managing");
   }
 }

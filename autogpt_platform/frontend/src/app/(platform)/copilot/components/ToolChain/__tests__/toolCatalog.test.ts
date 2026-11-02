@@ -310,3 +310,53 @@ describe("getCatalogLabel", () => {
     ).toBe('Resumed "Send Web Request"');
   });
 });
+
+describe("getCatalogLabel in Vietnamese", () => {
+  it("words running, done, error and empty labels in Vietnamese", () => {
+    const input = { query: "copilot news" };
+
+    expect(getCatalogLabel("web_search", input, "running", {}, "vi")).toEqual({
+      category: "web",
+      text: 'Đang tìm trên web "copilot news"…',
+    });
+    expect(getCatalogLabel("web_search", input, "done", {}, "vi")?.text).toBe(
+      'Đã tìm trên web "copilot news"',
+    );
+    expect(getCatalogLabel("web_search", input, "error", {}, "vi")?.text).toBe(
+      'Lỗi khi đang tìm trên web "copilot news"',
+    );
+    expect(
+      getCatalogLabel(
+        "list_routines",
+        {},
+        "done",
+        { output: { routines: [] } },
+        "vi",
+      )?.text,
+    ).toBe("Đã kiểm tra routine của bạn – chưa có gì");
+  });
+
+  it("words workflow and expert labels in Vietnamese", () => {
+    expect(
+      getCatalogLabel(
+        "run_agent",
+        { library_agent_id: "id" },
+        "running",
+        {},
+        "vi",
+      )?.text,
+    ).toBe("Đang chạy workflow…");
+    expect(getCatalogLabel("create_agent", {}, "done", {}, "vi")?.text).toBe(
+      "Đã tạo workflow",
+    );
+    expect(
+      getCatalogLabel(
+        "consult_teammate",
+        { question: "Có nên?" },
+        "done",
+        {},
+        "vi",
+      )?.text,
+    ).toBe('Chuyên gia đã kiểm tra: "Có nên?"');
+  });
+});

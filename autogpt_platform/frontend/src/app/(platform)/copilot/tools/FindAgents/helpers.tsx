@@ -3,6 +3,8 @@ import type { AgentsFoundResponse } from "@/app/api/__generated__/models/agentsF
 import type { ErrorResponse } from "@/app/api/__generated__/models/errorResponse";
 import type { NoResultsResponse } from "@/app/api/__generated__/models/noResultsResponse";
 import { ResponseType } from "@/app/api/__generated__/models/responseType";
+import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/locale";
+import { getMessage } from "@/lib/i18n/translate";
 import { ToolUIPart } from "ai";
 import {
   FolderOpenIcon,
@@ -82,35 +84,52 @@ export function isErrorOutput(
   return output.type === ResponseType.error || "error" in output;
 }
 
-export function getSourceLabelFromToolType(toolType?: FindAgentsToolType): {
+export function getSourceLabelFromToolType(
+  toolType?: FindAgentsToolType,
+  locale: Locale = DEFAULT_LOCALE,
+): {
   source: "marketplace" | "library" | "unknown";
   label: string;
 } {
   if (toolType === "tool-find_library_agent") {
-    return { source: "library", label: "Library" };
+    return {
+      source: "library",
+      label: getMessage(locale, "nav1.search.target.library"),
+    };
   }
   if (toolType === "tool-find_agent") {
-    return { source: "marketplace", label: "Marketplace" };
+    return {
+      source: "marketplace",
+      label: getMessage(locale, "nav.marketplace"),
+    };
   }
-  return { source: "unknown", label: "Workflows" };
+  return {
+    source: "unknown",
+    label: getMessage(locale, "chatTools3.findAgents.workflows"),
+  };
 }
 
-export function getAnimationText(part: {
-  type?: FindAgentsToolType;
-  state: ToolUIPart["state"];
-  input?: unknown;
-  output?: unknown;
-}): string {
-  const { source } = getSourceLabelFromToolType(part.type);
+export function getAnimationText(
+  part: {
+    type?: FindAgentsToolType;
+    state: ToolUIPart["state"];
+    input?: unknown;
+    output?: unknown;
+  },
+  locale: Locale = DEFAULT_LOCALE,
+): string {
+  const { source } = getSourceLabelFromToolType(part.type, locale);
   const query = (part.input as FindAgentInput | undefined)?.query?.trim();
 
-  // Action phrase matching legacy ToolCallMessage
-  const actionPhrase =
+  const actionPhrase = getMessage(
+    locale,
     source === "library"
-      ? "Looking for library workflows"
-      : "Looking for workflows in the marketplace";
-
-  const queryText = query ? ` matching "${query}"` : "";
+      ? "chatTools3.findAgents.lookingLibrary"
+      : "chatTools3.findAgents.lookingMarketplace",
+  );
+  const queryText = query
+    ? ` ${getMessage(locale, "chatTools3.findAgents.matching", { query })}`
+    : "";
 
   switch (part.state) {
     case "input-streaming":
@@ -123,20 +142,26 @@ export function getAnimationText(part: {
         return `${actionPhrase}${queryText}`;
       }
       if (isNoResultsOutput(output)) {
-        return `No workflows found${queryText}`;
+        return `${getMessage(locale, "chatTools3.findAgents.none")}${queryText}`;
       }
       if (isAgentsFoundOutput(output)) {
         const count = output.count ?? output.agents?.length ?? 0;
-        return `Found ${count} workflow${count === 1 ? "" : "s"}${queryText}`;
+        return `${getMessage(
+          locale,
+          count === 1
+            ? "chatTools3.findAgents.foundOne"
+            : "chatTools3.findAgents.foundMany",
+          { count },
+        )}${queryText}`;
       }
       if (isErrorOutput(output)) {
-        return `Error finding workflows${queryText}`;
+        return `${getMessage(locale, "chatTools3.findAgents.error")}${queryText}`;
       }
       return `${actionPhrase}${queryText}`;
     }
 
     case "output-error":
-      return `Error finding workflows${queryText}`;
+      return `${getMessage(locale, "chatTools3.findAgents.error")}${queryText}`;
 
     default:
       return actionPhrase;

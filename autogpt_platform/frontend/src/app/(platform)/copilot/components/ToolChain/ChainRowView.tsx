@@ -3,6 +3,7 @@
 import { ArrowDown01Icon } from "@hugeicons/core-free-icons";
 import { useEffect, useRef, useState } from "react";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useLocale } from "@/lib/i18n";
 import { HIDDEN_FROM_REPLAY } from "@/lib/replay-privacy";
 import { cn } from "@/lib/utils";
 import { useCopilotUIStore } from "../../store";
@@ -77,6 +78,7 @@ function isLiveSubSessionRow(row: ChainRow): boolean {
 }
 
 export function ChainRowView({ row, isLast, readOnly = false }: Props) {
+  const locale = useLocale();
   const [open, setOpen] = useState(row.requiresAction === true);
   const isReasoning = row.category === "reasoning";
   const artifactPanelOpen = useCopilotUIStore((s) => s.artifactPanel.isOpen);
@@ -136,7 +138,8 @@ export function ChainRowView({ row, isLast, readOnly = false }: Props) {
     <SwapText
       text={
         stillWorking && row.tool
-          ? (getCatalogLabel(row.tool, row.input, "running")?.text ?? row.text)
+          ? (getCatalogLabel(row.tool, row.input, "running", {}, locale)
+              ?.text ?? row.text)
           : row.text
       }
       shimmer={row.state === "running" || stillWorking}

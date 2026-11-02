@@ -1,6 +1,7 @@
 "use client";
 
 import type { SetupRequirementsResponse } from "@/app/api/__generated__/models/setupRequirementsResponse";
+import { useT } from "@/lib/i18n";
 import type { ToolUIPart } from "ai";
 import { MorphingTextAnimation } from "../../components/MorphingTextAnimation/MorphingTextAnimation";
 import { SetupRequirementsCard } from "../../components/SetupRequirementsCard/SetupRequirementsCard";
@@ -41,6 +42,7 @@ function parseError(raw: unknown): string | null {
 }
 
 export function ConnectIntegrationTool({ part }: Props) {
+  const t = useT();
   const isStreaming =
     part.state === "input-streaming" || part.state === "input-available";
 
@@ -62,7 +64,7 @@ export function ConnectIntegrationTool({ part }: Props) {
   const errorMessage =
     part.state === "output-error"
       ? (parseError((part as { output?: unknown }).output) ??
-        "Failed to connect integration")
+        t("chatTools3.connect.errorFallback"))
       : null;
 
   const rawProvider =
@@ -71,15 +73,19 @@ export function ConnectIntegrationTool({ part }: Props) {
     output?.setup_info?.agent_name ??
     // Sanitize LLM-controlled provider slug: trim and cap at 64 chars to
     // prevent runaway text in the DOM.
-    (rawProvider ? rawProvider.trim().slice(0, 64) : "integration");
+    (rawProvider
+      ? rawProvider.trim().slice(0, 64)
+      : t("chatTools3.connect.defaultName"));
 
   const label = isStreaming
-    ? `Connecting ${providerName}…`
+    ? t("chatTools3.connect.connecting", { name: providerName })
     : isError
-      ? `Failed to connect ${providerName}`
+      ? t("chatTools3.connect.failed", { name: providerName })
       : output
-        ? `Connect ${output.setup_info?.agent_name ?? providerName}`
-        : `Connect ${providerName}`;
+        ? t("chatTools3.connect.connect", {
+            name: output.setup_info?.agent_name ?? providerName,
+          })
+        : t("chatTools3.connect.connect", { name: providerName });
 
   return (
     <div className="py-2">
@@ -96,8 +102,7 @@ export function ConnectIntegrationTool({ part }: Props) {
 
       {isCorrupted && (
         <p className="mt-1 text-sm text-error">
-          The sign-in card data arrived corrupted and can&apos;t be shown. Ask
-          your expert to retry connecting {providerName}.
+          {t("chatTools3.connect.corrupted", { name: providerName })}
         </p>
       )}
 
@@ -105,7 +110,9 @@ export function ConnectIntegrationTool({ part }: Props) {
         <div className="mt-2">
           <SetupRequirementsCard
             output={output}
-            credentialsLabel={`${output.setup_info?.agent_name ?? providerName} credentials`}
+            credentialsLabel={t("chatTools2.toolResult.namedCredentials", {
+              name: output.setup_info?.agent_name ?? providerName,
+            })}
             retryInstruction="I've connected my account. Please continue."
           />
         </div>

@@ -72,3 +72,45 @@ describe("FindAgents getAnimationText", () => {
     ).toBe("Error finding workflows");
   });
 });
+
+describe("FindAgents in Vietnamese", () => {
+  it("words the source labels in Vietnamese", () => {
+    expect(
+      getSourceLabelFromToolType("tool-find_library_agent", "vi").label,
+    ).toBe("Thư viện");
+    expect(getSourceLabelFromToolType("tool-find_agent", "vi").label).toBe(
+      "Marketplace",
+    );
+    expect(getSourceLabelFromToolType(undefined, "vi").label).toBe("Workflow");
+  });
+
+  it("words the progress lines in Vietnamese", () => {
+    expect(
+      getAnimationText(
+        { type: "tool-find_agent", state: "input-streaming" },
+        "vi",
+      ),
+    ).toBe("Đang tìm workflow trên marketplace");
+    expect(
+      getAnimationText(
+        {
+          type: "tool-find_library_agent",
+          state: "input-available",
+          input: { query: "digest" },
+        },
+        "vi",
+      ),
+    ).toBe('Đang tìm workflow trong thư viện khớp "digest"');
+    expect(
+      getAnimationText(
+        {
+          type: "tool-find_agent",
+          state: "output-available",
+          input: { query: "digest" },
+          output: { type: "no_results", message: "none", suggestions: [] },
+        },
+        "vi",
+      ),
+    ).toBe('Không tìm thấy workflow khớp "digest"');
+  });
+});

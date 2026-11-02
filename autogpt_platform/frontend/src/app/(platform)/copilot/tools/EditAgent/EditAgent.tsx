@@ -1,6 +1,9 @@
 "use client";
 
 import type { ToolUIPart } from "ai";
+import { useLocale, useT } from "@/lib/i18n";
+import type { Locale } from "@/lib/i18n/locale";
+import { getMessage } from "@/lib/i18n/translate";
 import { AgentSavedCard } from "../../components/AgentSavedCard/AgentSavedCard";
 import { useCopilotChatActions } from "../../components/CopilotChatActionsProvider/useCopilotChatActions";
 import { ToolErrorCard } from "../../components/ToolErrorCard/ToolErrorCard";
@@ -37,7 +40,10 @@ interface Props {
   part: EditAgentToolPart;
 }
 
-function getAccordionMeta(output: EditAgentToolOutput | null): {
+function getAccordionMeta(
+  output: EditAgentToolOutput | null,
+  locale: Locale,
+): {
   icon: React.ReactNode;
   title: string;
   titleClassName?: string;
@@ -50,14 +56,22 @@ function getAccordionMeta(output: EditAgentToolOutput | null): {
     return {
       icon,
       title: output.agent_name,
-      description: `${output.node_count} block${output.node_count === 1 ? "" : "s"}`,
+      description: getMessage(
+        locale,
+        output.node_count === 1
+          ? "chatTools3.createAgent.blockOne"
+          : "chatTools3.createAgent.blockMany",
+        { count: output.node_count },
+      ),
     };
   }
   return { icon, title: "" };
 }
 
 export function EditAgentTool({ part }: Props) {
-  const text = getAnimationText(part);
+  const t = useT();
+  const locale = useLocale();
+  const text = getAnimationText(part, locale);
   const { onSend } = useCopilotChatActions();
   const isStreaming =
     part.state === "input-streaming" || part.state === "input-available";
@@ -83,12 +97,12 @@ export function EditAgentTool({ part }: Props) {
       {isError && output && isErrorOutput(output) && (
         <ToolErrorCard
           message={output.message}
-          fallbackMessage="Failed to edit the workflow. Please try again."
+          fallbackMessage={t("chatTools3.editAgent.failed")}
           error={output.error ? formatMaybeJson(output.error) : undefined}
           details={output.details ? formatMaybeJson(output.details) : undefined}
           actions={[
             {
-              label: "Try again",
+              label: t("chatInput3.card.tryAgain"),
               onClick: () => onSend("Please try editing the workflow again."),
             },
           ]}
@@ -96,7 +110,7 @@ export function EditAgentTool({ part }: Props) {
       )}
 
       {output && !isError && isAgentPreviewOutput(output) && (
-        <ToolAccordion {...getAccordionMeta(output)}>
+        <ToolAccordion {...getAccordionMeta(output, locale)}>
           <ContentGrid>
             <ContentMessage>{output.message}</ContentMessage>
             {output.description?.trim() && (
@@ -114,7 +128,7 @@ export function EditAgentTool({ part }: Props) {
       {output && isAgentSavedOutput(output) && (
         <AgentSavedCard
           agentName={output.agent_name}
-          message="has been updated!"
+          message={t("chatTools3.editAgent.savedMessage")}
           libraryAgentLink={output.library_agent_link}
           agentPageLink={output.agent_page_link}
         />

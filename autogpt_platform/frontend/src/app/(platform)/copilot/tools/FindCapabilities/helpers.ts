@@ -1,3 +1,6 @@
+import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/locale";
+import { getMessage } from "@/lib/i18n/translate";
+
 export type ConnectionState = boolean | "needs_expert_grant" | null;
 
 export interface CapabilityListing {
@@ -69,49 +72,74 @@ export function queryOf(part: FindCapabilityToolPart): string | undefined {
   return typeof query === "string" ? query.trim() : undefined;
 }
 
-export function getAnimationText(part: FindCapabilityToolPart): string {
+export function getAnimationText(
+  part: FindCapabilityToolPart,
+  locale: Locale = DEFAULT_LOCALE,
+): string {
   const query = queryOf(part);
-  const queryText = query ? ` for "${query}"` : "";
+  const queryText = query
+    ? ` ${getMessage(locale, "chatTools3.findCapabilities.for", { query })}`
+    : "";
   switch (part.state) {
     case "input-streaming":
     case "input-available":
-      return `Searching capabilities${queryText}`;
+      return `${getMessage(locale, "chatTools3.findCapabilities.searching")}${queryText}`;
     case "output-available": {
       const parsed = parseOutput(part.output);
       if (parsed) {
-        return `Found ${parsed.count} capabilit${parsed.count === 1 ? "y" : "ies"}${queryText}`;
+        return `${getMessage(
+          locale,
+          parsed.count === 1
+            ? "chatTools3.findCapabilities.foundOne"
+            : "chatTools3.findCapabilities.foundMany",
+          { count: parsed.count },
+        )}${queryText}`;
       }
-      return `Searched capabilities${queryText}`;
+      return `${getMessage(locale, "chatTools3.findCapabilities.searched")}${queryText}`;
     }
     case "output-error":
-      return `Search failed${queryText}`;
+      return `${getMessage(locale, "chatTools3.findCapabilities.failed")}${queryText}`;
     default:
-      return "Searching capabilities";
+      return getMessage(locale, "chatTools3.findCapabilities.searching");
   }
 }
 
 export function connectionBadge(
   item: CapabilityListing,
+  locale: Locale = DEFAULT_LOCALE,
 ): ConnectionBadge | null {
   if (item.connected === undefined || item.connected === null) return null;
   if (item.connected === "needs_expert_grant") {
     // TODO(tokens): no exact role for amber-100 #FEF3C7, amber-800 #92400E
-    return { label: "grant needed", className: "bg-amber-100 text-amber-800" };
+    return {
+      label: getMessage(locale, "chatTools3.findCapabilities.grantNeeded"),
+      className: "bg-amber-100 text-amber-800",
+    };
   }
   if (item.connected) {
     // TODO(tokens): no exact role for green-100 #B7E2C7, green-800 #0C5A29
-    return { label: "connected", className: "bg-green-100 text-green-800" };
+    return {
+      label: getMessage(locale, "chatTools3.findCapabilities.connected"),
+      className: "bg-green-100 text-green-800",
+    };
   }
   return {
-    label: "sign in",
+    label: getMessage(locale, "chatTools3.findCapabilities.signIn"),
     className: "bg-surface-hover text-foreground-tertiary",
   };
 }
 
-export function kindLabel(item: CapabilityListing): string {
-  if (item.kind === "mcp_server") return "integration";
-  if (item.kind === "skill") return "skill";
-  if (item.class === "primitive") return "building block";
-  if (item.kind === "tool") return "tool";
-  return "action";
+export function kindLabel(
+  item: CapabilityListing,
+  locale: Locale = DEFAULT_LOCALE,
+): string {
+  if (item.kind === "mcp_server")
+    return getMessage(locale, "chatTools3.findCapabilities.kindIntegration");
+  if (item.kind === "skill")
+    return getMessage(locale, "chatTools3.findCapabilities.kindSkill");
+  if (item.class === "primitive")
+    return getMessage(locale, "chatTools3.findCapabilities.kindBlock");
+  if (item.kind === "tool")
+    return getMessage(locale, "chatTools3.findCapabilities.kindTool");
+  return getMessage(locale, "chatTools3.findCapabilities.kindAction");
 }

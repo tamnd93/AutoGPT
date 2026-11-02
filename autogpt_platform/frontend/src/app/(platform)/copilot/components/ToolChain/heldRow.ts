@@ -1,3 +1,4 @@
+import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/locale";
 import type {
   HeldCard,
   HeldOutcome,
@@ -33,6 +34,7 @@ export function applyHeldOutcome(
   row: ChainRow,
   outcomes: ReadonlyMap<string, HeldOutcome>,
   answers: Readonly<Record<string, HeldAnswer>> = {},
+  locale: Locale = DEFAULT_LOCALE,
 ): ChainRow {
   const data = asObject(row.output);
   if (!row.tool || data?.type !== "approval_required") return row;
@@ -73,7 +75,8 @@ export function applyHeldOutcome(
     return settle(row, didnt, outcome.outcome, reviewId, read, outcome.card);
   }
   const result = asObject(outcome.output);
-  const done = getCatalogLabel(tool, row.input, "done")?.text ?? ask;
+  const done =
+    getCatalogLabel(tool, row.input, "done", {}, locale)?.text ?? ask;
   // It ran and failed: the normal error row, still marked as approved.
   if (result?.type === "error") {
     return {

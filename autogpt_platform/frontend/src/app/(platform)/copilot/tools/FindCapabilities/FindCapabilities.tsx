@@ -1,6 +1,8 @@
 "use client";
 
 import { HorizontalScroll } from "@/app/(platform)/build/components/NewControlPanel/NewBlockMenu/HorizontalScroll";
+import { useLocale } from "@/lib/i18n";
+import type { Locale } from "@/lib/i18n/locale";
 import { MorphingTextAnimation } from "../../components/MorphingTextAnimation/MorphingTextAnimation";
 import {
   ContentCard,
@@ -23,8 +25,14 @@ interface Props {
   part: FindCapabilityToolPart;
 }
 
-function CapabilityCard({ item }: { item: CapabilityListing }) {
-  const badge = connectionBadge(item);
+function CapabilityCard({
+  item,
+  locale,
+}: {
+  item: CapabilityListing;
+  locale: Locale;
+}) {
+  const badge = connectionBadge(item, locale);
   return (
     <ContentCard className="w-52 shrink-0">
       <div className="flex items-start justify-between gap-2">
@@ -44,14 +52,15 @@ function CapabilityCard({ item }: { item: CapabilityListing }) {
         {item.purpose}
       </ContentCardDescription>
       <p className="mt-1 text-caption-sm leading-inherit text-foreground-tertiary">
-        {kindLabel(item)}
+        {kindLabel(item, locale)}
       </p>
     </ContentCard>
   );
 }
 
 export function FindCapabilitiesTool({ part }: Props) {
-  const text = getAnimationText(part);
+  const locale = useLocale();
+  const text = getAnimationText(part, locale);
   const isStreaming =
     part.state === "input-streaming" || part.state === "input-available";
   const isError = part.state === "output-error";
@@ -83,7 +92,7 @@ export function FindCapabilitiesTool({ part }: Props) {
         >
           <HorizontalScroll dependencyList={[items.length]}>
             {items.map((item) => (
-              <CapabilityCard key={item.id} item={item} />
+              <CapabilityCard key={item.id} item={item} locale={locale} />
             ))}
           </HorizontalScroll>
         </ToolAccordion>

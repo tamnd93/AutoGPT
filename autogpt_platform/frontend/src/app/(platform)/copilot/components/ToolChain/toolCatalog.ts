@@ -1,3 +1,5 @@
+import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/locale";
+import { getMessage } from "@/lib/i18n/translate";
 import { isEmptyResult } from "./resultHelpers";
 import { AGENT_TOOL_CATALOG } from "./toolCatalog.agent";
 import { PLATFORM_TOOL_CATALOG } from "./toolCatalog.platform";
@@ -15,11 +17,16 @@ export const COPILOT_TOOL_CATALOG: Record<string, ToolMeta> = {
   ...PLATFORM_TOOL_CATALOG,
 };
 
+function lowerFirst(text: string): string {
+  return text.charAt(0).toLowerCase() + text.slice(1);
+}
+
 export function getCatalogLabel(
   toolName: string,
   input: unknown,
   state: "running" | "done" | "error",
   context: ToolDisplayContext = {},
+  locale: Locale = DEFAULT_LOCALE,
 ): { category: ChainCategory; text: string; emptyResult?: true } | null {
   const meta = COPILOT_TOOL_CATALOG[toolName];
   if (!meta) return null;
@@ -29,15 +36,20 @@ export function getCatalogLabel(
       context,
     ) ?? null;
   const suffix = subject ? ` ${subject}` : "";
+  const running = getMessage(locale, meta.running);
+  const done = getMessage(locale, meta.done);
+  const empty = meta.empty ? getMessage(locale, meta.empty) : null;
   const emptyResult =
-    state === "done" && !!meta.empty && isEmptyResult(context.output);
+    state === "done" && !!empty && isEmptyResult(context.output);
   const text =
     state === "running"
-      ? `${meta.running}${suffix}…`
+      ? `${running}${suffix}…`
       : state === "error"
-        ? `Failed while ${meta.running.charAt(0).toLowerCase()}${meta.running.slice(1)}${suffix}`
+        ? getMessage(locale, "chatTools3.catalog.failed", {
+            action: `${lowerFirst(running)}${suffix}`,
+          })
         : emptyResult
-          ? `${meta.done}${suffix} – ${meta.empty}`
-          : `${meta.done}${suffix}`;
+          ? `${done}${suffix} – ${empty}`
+          : `${done}${suffix}`;
   return { category: meta.category, text, ...(emptyResult && { emptyResult }) };
 }

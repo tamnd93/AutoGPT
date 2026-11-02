@@ -98,3 +98,67 @@ describe("find_capability helpers", () => {
     }
   });
 });
+
+describe("FindCapabilities in Vietnamese", () => {
+  it("words the progress lines in Vietnamese", () => {
+    const base = {
+      type: "tool-find_capability",
+      toolCallId: "c",
+      input: { query: "linear issue" },
+    };
+    expect(getAnimationText({ ...base, state: "input-available" }, "vi")).toBe(
+      'Đang tìm khả năng cho "linear issue"',
+    );
+    expect(
+      getAnimationText(
+        { ...base, state: "output-available", output: OUTPUT },
+        "vi",
+      ),
+    ).toBe('Tìm thấy 2 khả năng cho "linear issue"');
+  });
+
+  it("words badges and kind labels in Vietnamese", () => {
+    expect(
+      connectionBadge(
+        { id: "b", name: "B", purpose: "", kind: "block", connected: true },
+        "vi",
+      )?.label,
+    ).toBe("đã kết nối");
+    expect(
+      connectionBadge(
+        { id: "b", name: "B", purpose: "", kind: "block", connected: false },
+        "vi",
+      )?.label,
+    ).toBe("đăng nhập");
+    expect(
+      connectionBadge(
+        {
+          id: "b",
+          name: "B",
+          purpose: "",
+          kind: "block",
+          connected: "needs_expert_grant",
+        },
+        "vi",
+      )?.label,
+    ).toBe("cần cấp quyền");
+    expect(
+      kindLabel({ id: "b", name: "B", purpose: "", kind: "mcp_server" }, "vi"),
+    ).toBe("tích hợp");
+    expect(
+      kindLabel({ id: "b", name: "B", purpose: "", kind: "skill" }, "vi"),
+    ).toBe("kỹ năng");
+    expect(
+      kindLabel(
+        { id: "b", name: "B", purpose: "", kind: "block", class: "primitive" },
+        "vi",
+      ),
+    ).toBe("khối xây dựng");
+    expect(
+      kindLabel({ id: "b", name: "B", purpose: "", kind: "tool" }, "vi"),
+    ).toBe("công cụ");
+    expect(
+      kindLabel({ id: "b", name: "B", purpose: "", kind: "widget" }, "vi"),
+    ).toBe("hành động");
+  });
+});

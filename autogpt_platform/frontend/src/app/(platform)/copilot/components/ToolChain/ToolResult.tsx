@@ -60,7 +60,6 @@ import {
   isBlankOutput,
   isEmptyResult,
   isWebhookIngressUrl,
-  NOTHING_FOUND,
   str,
   stripBaseFields,
 } from "./resultHelpers";
@@ -634,11 +633,16 @@ function ToolOutput({ row, readOnly }: Required<Props>) {
     (target === row ? null : toolCard(row, output, readOnly, t));
   if (card) return card;
 
-  if (isBlankOutput(row.output)) return <KeyValueList value={NOTHING_FOUND} />;
+  if (isBlankOutput(row.output))
+    return <KeyValueList value={t("chatTools3.result.nothingFound")} />;
   // An empty list can be the point of a change (the last grant revoked), so
   // what the tool said comes first.
   if (output && isEmptyResult(output))
-    return <KeyValueList value={str(output, "message") ?? NOTHING_FOUND} />;
+    return (
+      <KeyValueList
+        value={str(output, "message") ?? t("chatTools3.result.nothingFound")}
+      />
+    );
   if (!output) return <KeyValueList value={row.output} />;
 
   const data = stripBaseFields(output);

@@ -1,5 +1,7 @@
 import type { BlockListResponse } from "@/app/api/__generated__/models/blockListResponse";
 import { ResponseType } from "@/app/api/__generated__/models/responseType";
+import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/locale";
+import { getMessage } from "@/lib/i18n/translate";
 import { FindBlockInput, FindBlockToolPart } from "./FindBlocks";
 import { CubeIcon, Package01Icon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
@@ -24,28 +26,41 @@ export function parseOutput(output: unknown): BlockListResponse | null {
   return null;
 }
 
-export function getAnimationText(part: FindBlockToolPart): string {
+export function getAnimationText(
+  part: FindBlockToolPart,
+  locale: Locale = DEFAULT_LOCALE,
+): string {
   const query = (part.input as FindBlockInput | undefined)?.query?.trim();
-  const queryText = query ? ` matching "${query}"` : "";
+  const queryText = query
+    ? ` ${getMessage(locale, "chatTools3.findBlocks.matching", { query })}`
+    : "";
 
   switch (part.state) {
     case "input-streaming":
     case "input-available":
-      return `Searching for actions${queryText}`;
+      return `${getMessage(locale, "chatTools3.findBlocks.searching")}${queryText}`;
 
     case "output-available": {
       const parsed = parseOutput(part.output);
       if (parsed) {
-        return `Found ${parsed.count} action${parsed.count === 1 ? "" : "s"}${queryText}`;
+        return `${getMessage(
+          locale,
+          parsed.count === 1
+            ? "chatTools3.findBlocks.foundOne"
+            : "chatTools3.findBlocks.foundMany",
+          { count: parsed.count },
+        )}${queryText}`;
       }
-      return `Searching for actions${queryText}`;
+      return `${getMessage(locale, "chatTools3.findBlocks.searching")}${queryText}`;
     }
 
     case "output-error":
-      return `Search failed${query ? ` for "${query}"` : ""}`;
+      return query
+        ? getMessage(locale, "chatTools3.findBlocks.failedFor", { query })
+        : getMessage(locale, "chatTools3.findBlocks.failed");
 
     default:
-      return "Searching for actions";
+      return getMessage(locale, "chatTools3.findBlocks.searching");
   }
 }
 

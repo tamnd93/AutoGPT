@@ -1,5 +1,7 @@
 import type { ClarifyingQuestion } from "@/app/api/__generated__/models/clarifyingQuestion";
 import { ResponseType } from "@/app/api/__generated__/models/responseType";
+import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/locale";
+import { getMessage } from "@/lib/i18n/translate";
 import type { ToolUIPart } from "ai";
 
 export interface AskQuestionOutput {
@@ -62,20 +64,25 @@ export function isErrorOutput(
   return output.type === "error" || "error" in output;
 }
 
-export function getAnimationText(part: ToolUIPart): string {
+export function getAnimationText(
+  part: ToolUIPart,
+  locale: Locale = DEFAULT_LOCALE,
+): string {
   switch (part.state) {
     case "input-streaming":
     case "input-available":
-      return "Asking question...";
+      return getMessage(locale, "chatTools3.ask.asking");
     case "output-available": {
       const output = parseOutput(part.output);
-      if (output && isClarificationOutput(output)) return "Needs your input";
-      if (output && isErrorOutput(output)) return "Failed to ask question";
-      return "Asking question...";
+      if (output && isClarificationOutput(output))
+        return getMessage(locale, "chatTools3.ask.needsInput");
+      if (output && isErrorOutput(output))
+        return getMessage(locale, "chatTools3.ask.failed");
+      return getMessage(locale, "chatTools3.ask.asking");
     }
     case "output-error":
-      return "Failed to ask question";
+      return getMessage(locale, "chatTools3.ask.failed");
     default:
-      return "Asking question...";
+      return getMessage(locale, "chatTools3.ask.asking");
   }
 }

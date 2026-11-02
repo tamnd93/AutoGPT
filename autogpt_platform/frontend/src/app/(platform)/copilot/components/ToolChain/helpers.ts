@@ -248,15 +248,16 @@ function narrationText(part: MessagePart): string | null {
 function getRowCatalogLabel(
   row: ChainRow,
   context: { displayName: unknown; output: unknown },
+  locale: Locale,
 ) {
   const target = capabilityTargetRow(row);
   const viaDispatch =
     target.tool && target !== row && asObject(target.input)?.connect !== true
-      ? getCatalogLabel(target.tool, target.input, row.state, context)
+      ? getCatalogLabel(target.tool, target.input, row.state, context, locale)
       : null;
   return (
     viaDispatch ??
-    getCatalogLabel(row.tool ?? "", row.input, row.state, context)
+    getCatalogLabel(row.tool ?? "", row.input, row.state, context, locale)
   );
 }
 
@@ -325,6 +326,7 @@ export function toChainRow(
     const catalogLabel = getRowCatalogLabel(
       { key: tool.toolCallId, category: "other", text: "", state, ...data },
       { displayName: tool.title, output: tool.output },
+      locale,
     );
     if (catalogLabel) {
       return {

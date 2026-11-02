@@ -58,3 +58,32 @@ describe("EditAgent getAnimationText", () => {
     ).toBe("Error editing workflow");
   });
 });
+
+describe("EditAgent getAnimationText in Vietnamese", () => {
+  it("words the loading, saved, preview and error copy in Vietnamese", () => {
+    expect(getAnimationText({ state: "input-available" }, "vi")).toBe(
+      "Đang sửa workflow, có thể mất một phút",
+    );
+    expect(
+      getAnimationText(
+        {
+          state: "output-available",
+          output: { type: "agent_builder_saved", agent_name: "Bot" },
+        },
+        "vi",
+      ),
+    ).toBe('Đã lưu "Bot"');
+    expect(
+      getAnimationText(
+        {
+          state: "output-available",
+          output: { type: "agent_builder_preview", agent_name: "Bot" },
+        },
+        "vi",
+      ),
+    ).toBe('Xem trước "Bot"');
+    expect(getAnimationText({ state: "output-error" }, "vi")).toBe(
+      "Lỗi sửa workflow",
+    );
+  });
+});

@@ -1,3 +1,5 @@
+import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/locale";
+import { getMessage } from "@/lib/i18n/translate";
 import type { ToolUIPart } from "ai";
 import {
   BulbIcon,
@@ -148,19 +150,26 @@ export function isErrorOutput(
 export function getAccordionTitle(
   toolType: FeatureRequestToolType,
   output: FeatureRequestOutput,
+  locale: Locale = DEFAULT_LOCALE,
 ): string {
   if (toolType === "tool-search_feature_requests") {
-    if (isSearchResultsOutput(output)) return "Feature requests";
-    if (isNoResultsOutput(output)) return "No feature requests found";
-    return "Feature request search error";
+    if (isSearchResultsOutput(output))
+      return getMessage(locale, "chatTools3.featureRequests.requests");
+    if (isNoResultsOutput(output))
+      return getMessage(locale, "chatTools3.featureRequests.noneFound");
+    return getMessage(locale, "chatTools3.featureRequests.searchError");
   }
   if (isCreatedOutput(output)) {
-    return output.is_new_issue
-      ? "Feature request created"
-      : "Added to feature request";
+    return getMessage(
+      locale,
+      output.is_new_issue
+        ? "chatTools3.featureRequests.created"
+        : "chatTools3.featureRequests.addedTo",
+    );
   }
-  if (isErrorOutput(output)) return "Feature request error";
-  return "Feature request";
+  if (isErrorOutput(output))
+    return getMessage(locale, "chatTools3.featureRequests.error");
+  return getMessage(locale, "chatTools3.featureRequests.request");
 }
 
 /* ------------------------------------------------------------------ */
@@ -174,29 +183,41 @@ interface AnimationPart {
   output?: unknown;
 }
 
-export function getAnimationText(part: AnimationPart): string {
+export function getAnimationText(
+  part: AnimationPart,
+  locale: Locale = DEFAULT_LOCALE,
+): string {
   if (part.type === "tool-search_feature_requests") {
     const query = (part.input as { query?: string } | undefined)?.query?.trim();
-    const queryText = query ? ` for "${query}"` : "";
+    const queryText = query
+      ? ` ${getMessage(locale, "chatTools3.featureRequests.for", { query })}`
+      : "";
 
     switch (part.state) {
       case "input-streaming":
       case "input-available":
-        return `Searching feature requests${queryText}`;
+        return `${getMessage(locale, "chatTools3.featureRequests.searching")}${queryText}`;
       case "output-available": {
         const output = parseOutput(part.output);
-        if (!output) return `Searching feature requests${queryText}`;
+        if (!output)
+          return `${getMessage(locale, "chatTools3.featureRequests.searching")}${queryText}`;
         if (isSearchResultsOutput(output)) {
-          return `Found ${output.count} feature request${output.count === 1 ? "" : "s"}${queryText}`;
+          return `${getMessage(
+            locale,
+            output.count === 1
+              ? "chatTools3.featureRequests.foundOne"
+              : "chatTools3.featureRequests.foundMany",
+            { count: output.count },
+          )}${queryText}`;
         }
         if (isNoResultsOutput(output))
-          return `No feature requests found${queryText}`;
-        return `Error searching feature requests${queryText}`;
+          return `${getMessage(locale, "chatTools3.featureRequests.noneFound")}${queryText}`;
+        return `${getMessage(locale, "chatTools3.featureRequests.errorSearching")}${queryText}`;
       }
       case "output-error":
-        return `Error searching feature requests${queryText}`;
+        return `${getMessage(locale, "chatTools3.featureRequests.errorSearching")}${queryText}`;
       default:
-        return "Searching feature requests";
+        return getMessage(locale, "chatTools3.featureRequests.searching");
     }
   }
 
@@ -207,22 +228,27 @@ export function getAnimationText(part: AnimationPart): string {
   switch (part.state) {
     case "input-streaming":
     case "input-available":
-      return `Creating feature request${titleText}`;
+      return `${getMessage(locale, "chatTools3.featureRequests.creating")}${titleText}`;
     case "output-available": {
       const output = parseOutput(part.output);
-      if (!output) return `Creating feature request${titleText}`;
+      if (!output)
+        return `${getMessage(locale, "chatTools3.featureRequests.creating")}${titleText}`;
       if (isCreatedOutput(output)) {
-        return output.is_new_issue
-          ? "Feature request created"
-          : "Added to existing feature request";
+        return getMessage(
+          locale,
+          output.is_new_issue
+            ? "chatTools3.featureRequests.created"
+            : "chatTools3.featureRequests.addedToExisting",
+        );
       }
-      if (isErrorOutput(output)) return "Error creating feature request";
-      return `Created feature request${titleText}`;
+      if (isErrorOutput(output))
+        return getMessage(locale, "chatTools3.featureRequests.errorCreating");
+      return `${getMessage(locale, "chatTools3.featureRequests.createdWithTitle")}${titleText}`;
     }
     case "output-error":
-      return "Error creating feature request";
+      return getMessage(locale, "chatTools3.featureRequests.errorCreating");
     default:
-      return "Creating feature request";
+      return getMessage(locale, "chatTools3.featureRequests.creating");
   }
 }
 

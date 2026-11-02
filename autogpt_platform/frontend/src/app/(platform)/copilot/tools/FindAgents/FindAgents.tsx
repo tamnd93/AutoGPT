@@ -1,6 +1,7 @@
 "use client";
 
 import { ToolUIPart } from "ai";
+import { useLocale } from "@/lib/i18n";
 import { MorphingTextAnimation } from "../../components/MorphingTextAnimation/MorphingTextAnimation";
 import {
   ContentBadge,
@@ -36,7 +37,8 @@ interface Props {
 }
 
 export function FindAgentsTool({ part }: Props) {
-  const text = getAnimationText(part);
+  const locale = useLocale();
+  const text = getAnimationText(part, locale);
   const output = getFindAgentsOutput(part);
   const isStreaming =
     part.state === "input-streaming" || part.state === "input-available";
@@ -59,7 +61,7 @@ export function FindAgentsTool({ part }: Props) {
     (typeof agentsFoundOutput.count !== "number" ||
       agentsFoundOutput.count > 0);
   const totalCount = agentsFoundOutput ? agentsFoundOutput.count : 0;
-  const { source } = getSourceLabelFromToolType(part.type);
+  const { source } = getSourceLabelFromToolType(part.type, locale);
   const scopeText =
     source === "library"
       ? "in your library"

@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/atoms/Button/Button";
 import { Text } from "@/components/atoms/Text/Text";
+import { useT } from "@/lib/i18n";
 import { ArrowRight02Icon, BulbIcon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
 
@@ -20,6 +21,7 @@ export function SuggestedGoalCard({
   goalType,
   onUseSuggestedGoal,
 }: Props) {
+  const t = useT();
   return (
     <div className="rounded-xl border border-warning-border bg-warning-surface/50 p-4">
       <div className="flex items-start gap-3">
@@ -30,8 +32,8 @@ export function SuggestedGoalCard({
             {/* TODO(tokens): no exact role for slate-900 #2A313A */}
             <Text variant="body-medium" className="font-medium text-slate-900">
               {goalType === "unachievable"
-                ? "Goal cannot be accomplished"
-                : "Goal needs more detail"}
+                ? t("chatTools3.suggestedGoal.unachievable")
+                : t("chatTools3.suggestedGoal.needsDetail")}
             </Text>
             {/* TODO(tokens): no exact role for slate-600 #5B6A7E */}
             <Text variant="small" className="text-slate-600">
@@ -43,7 +45,7 @@ export function SuggestedGoalCard({
           <div className="rounded-lg border border-amber-300 bg-surface p-3">
             {/* TODO(tokens): no exact role for amber-800 #92400E */}
             <Text variant="small" className="mb-1 font-semibold text-amber-800">
-              Suggested alternative:
+              {t("chatTools3.suggestedGoal.alternative")}
             </Text>
             {/* TODO(tokens): no exact role for slate-900 #2A313A */}
             <Text variant="body-medium" className="text-slate-900">
@@ -56,7 +58,8 @@ export function SuggestedGoalCard({
             variant="primary"
           >
             <span className="inline-flex items-center gap-1.5">
-              Use this goal <Icon icon={ArrowRight02Icon} size={14} />
+              {t("chatTools2.info.useGoal")}{" "}
+              <Icon icon={ArrowRight02Icon} size={14} />
             </span>
           </Button>
         </div>

@@ -1,3 +1,6 @@
+import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/locale";
+import { getMessage } from "@/lib/i18n/translate";
+
 export { integrationIconSrc } from "@/components/molecules/IntegrationLogo/helpers";
 
 /** Text the backend escaped for a model's context (`&`, `<`, `>`), as the
@@ -110,6 +113,12 @@ export function isEmptyResult(output: unknown): boolean {
 }
 
 /** How an empty result reads wherever one is shown. */
+export function nothingFound(locale: Locale = DEFAULT_LOCALE): string {
+  return getMessage(locale, "chatTools3.result.nothingFound");
+}
+
+// shortcut: GenericTool (A14) still reads the plain-English constant until its
+// catalog fallback is localized; ToolChain cards use nothingFound(locale).
 export const NOTHING_FOUND = "Nothing found.";
 
 /** Output with nothing in it at all: `null`, an empty list or object, blank
@@ -131,8 +140,13 @@ export function isBlankOutput(value: unknown): boolean {
 
 /** A value as a result card shows it: empty lists and objects read "None"
  *  instead of their JSON. */
-export function displayValue(value: unknown): string {
-  return isEmptyCollection(value) ? "None" : inline(value);
+export function displayValue(
+  value: unknown,
+  locale: Locale = DEFAULT_LOCALE,
+): string {
+  return isEmptyCollection(value)
+    ? getMessage(locale, "marketplace1.agentInfo.none")
+    : inline(value);
 }
 
 // Block/agent outputs arrive as {output_name: [values]}; flatten to

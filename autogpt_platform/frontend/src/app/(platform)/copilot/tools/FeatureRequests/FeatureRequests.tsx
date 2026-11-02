@@ -1,6 +1,7 @@
 "use client";
 
 import type { ToolUIPart } from "ai";
+import { useLocale } from "@/lib/i18n";
 
 import { MorphingTextAnimation } from "../../components/MorphingTextAnimation/MorphingTextAnimation";
 import {
@@ -46,15 +47,16 @@ function truncate(text: string, maxChars: number): string {
 }
 
 export function SearchFeatureRequestsTool({ part }: Props) {
+  const locale = useLocale();
   const output = getFeatureRequestOutput(part);
-  const text = getAnimationText(part);
+  const text = getAnimationText(part, locale);
   const isStreaming =
     part.state === "input-streaming" || part.state === "input-available";
   const isError =
     part.state === "output-error" || (!!output && isErrorOutput(output));
 
   const normalized = output
-    ? { title: getAccordionTitle(part.type, output) }
+    ? { title: getAccordionTitle(part.type, output, locale) }
     : null;
 
   const isOutputAvailable = part.state === "output-available" && !!output;
@@ -145,15 +147,16 @@ export function SearchFeatureRequestsTool({ part }: Props) {
 }
 
 export function CreateFeatureRequestTool({ part }: Props) {
+  const locale = useLocale();
   const output = getFeatureRequestOutput(part);
-  const text = getAnimationText(part);
+  const text = getAnimationText(part, locale);
   const isStreaming =
     part.state === "input-streaming" || part.state === "input-available";
   const isError =
     part.state === "output-error" || (!!output && isErrorOutput(output));
 
   const normalized = output
-    ? { title: getAccordionTitle(part.type, output) }
+    ? { title: getAccordionTitle(part.type, output, locale) }
     : null;
 
   const isOutputAvailable = part.state === "output-available" && !!output;

@@ -3,10 +3,12 @@ import {
   asItems,
   asObject,
   dictToOutputItems,
+  displayValue,
   formatBytes,
   formatWhen,
   humanizeKey,
   inline,
+  nothingFound,
   integrationIconSrc,
   isWebhookIngressUrl,
   resultItemKey,
@@ -201,5 +203,14 @@ describe("isWebhookIngressUrl", () => {
     expect(
       isWebhookIngressUrl("https://example.com/webhooks/wh-1/ingress-guide"),
     ).toBe(false);
+  });
+});
+
+describe("empty result copy in Vietnamese", () => {
+  it("words nothing found and none in Vietnamese", () => {
+    expect(nothingFound()).toBe("Nothing found.");
+    expect(nothingFound("vi")).toBe("Không tìm thấy gì.");
+    expect(displayValue([], "vi")).toBe("Không có");
+    expect(displayValue("value", "vi")).toBe("value");
   });
 });

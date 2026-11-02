@@ -1,3 +1,4 @@
+import type { MessageKey } from "@/lib/i18n/messages/en";
 import { type ToolCategory, truncate } from "../../tools/GenericTool/helpers";
 
 export type ChainCategory =
@@ -31,10 +32,10 @@ export interface ToolDisplayContext {
 
 export interface ToolMeta {
   category: ChainCategory;
-  running: string;
-  done: string;
+  running: MessageKey;
+  done: MessageKey;
   /** Appended to the done label when a lookup finds nothing ("none yet"). */
-  empty?: string;
+  empty?: MessageKey;
   subject?: (input: ToolInput, context: ToolDisplayContext) => string | null;
 }
 

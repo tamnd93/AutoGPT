@@ -9,6 +9,7 @@ import {
 } from "../../components/ToolAccordion/AccordionContent";
 import type { BlockListResponse } from "@/app/api/__generated__/models/blockListResponse";
 import type { BlockInfoSummary } from "@/app/api/__generated__/models/blockInfoSummary";
+import { useLocale } from "@/lib/i18n";
 import { ToolUIPart } from "ai";
 import { HorizontalScroll } from "@/app/(platform)/build/components/NewControlPanel/NewBlockMenu/HorizontalScroll";
 import {
@@ -50,7 +51,8 @@ function BlockCard({ block }: { block: BlockInfoSummary }) {
 }
 
 export function FindBlocksTool({ part }: Props) {
-  const text = getAnimationText(part);
+  const locale = useLocale();
+  const text = getAnimationText(part, locale);
   const isStreaming =
     part.state === "input-streaming" || part.state === "input-available";
   const isError = part.state === "output-error";

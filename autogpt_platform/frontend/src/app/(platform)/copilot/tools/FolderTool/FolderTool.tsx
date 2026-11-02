@@ -42,6 +42,7 @@ import {
   FolderOpenIcon,
 } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useLocale } from "@/lib/i18n";
 
 interface Props {
   part: ToolUIPart;
@@ -269,7 +270,8 @@ function getAccordionIcon(output: FolderToolOutput) {
 }
 
 export function FolderTool({ part }: Props) {
-  const text = getAnimationText(part);
+  const locale = useLocale();
+  const text = getAnimationText(part, locale);
   const output = getFolderToolOutput(part);
 
   const isStreaming =

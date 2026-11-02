@@ -7,7 +7,8 @@ import {
 import type { SessionDetailResponse } from "@/app/api/__generated__/models/sessionDetailResponse";
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { ExpertAvatar } from "@/components/molecules/ExpertAvatar/ExpertAvatar";
-import { useT } from "@/lib/i18n";
+import { useLocale, useT } from "@/lib/i18n";
+import type { Locale } from "@/lib/i18n/locale";
 import { cn } from "@/lib/utils";
 import { LinkSquare01Icon } from "@hugeicons/core-free-icons";
 import type { ToolUIPart } from "ai";
@@ -53,6 +54,7 @@ interface LiveStep {
  *  delegate's final answer. */
 export function SubSessionLive({ subSessionId, active }: Props) {
   const t = useT();
+  const locale = useLocale();
   const { session, isError, isPaused } = useLiveSubSession(
     subSessionId,
     active,
@@ -67,7 +69,7 @@ export function SubSessionLive({ subSessionId, active }: Props) {
 
   const isLive = !!session && isSessionLive(session) && !isPaused && !isError;
   const rows = recent.map((step, i) =>
-    toMiniRow(step, i, isLive && i === recent.length - 1),
+    toMiniRow(step, i, isLive && i === recent.length - 1, locale),
   );
 
   return (
@@ -78,9 +80,7 @@ export function SubSessionLive({ subSessionId, active }: Props) {
           {latestText}
         </p>
       )}
-      {notice && (
-        <LiveNotice text={t(notice)} subSessionId={subSessionId} />
-      )}
+      {notice && <LiveNotice text={t(notice)} subSessionId={subSessionId} />}
     </div>
   );
 }
@@ -222,12 +222,23 @@ function collectCurrentTurn(session: SessionDetailResponse) {
 
 /** Dress a polled tool call as a ChainRow so the delegate's steps reuse the
  *  main chain's icons and labels instead of raw tool names. */
-function toMiniRow(step: LiveStep, index: number, running: boolean): ChainRow {
+function toMiniRow(
+  step: LiveStep,
+  index: number,
+  running: boolean,
+  locale: Locale,
+): ChainRow {
   const state = running ? "running" : "done";
-  const catalog = getCatalogLabel(step.name, step.input, state, {
-    displayName: step.displayName,
-    output: step.output,
-  });
+  const catalog = getCatalogLabel(
+    step.name,
+    step.input,
+    state,
+    {
+      displayName: step.displayName,
+      output: step.output,
+    },
+    locale,
+  );
   const category = catalog?.category ?? getToolCategory(step.name);
   const text =
     catalog?.text ??
