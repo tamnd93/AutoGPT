@@ -135,7 +135,10 @@ export function RunAgentInputs({
             // TODO(tokens): no exact role for text-gray-500 (#6B7280)
             className="text-sm text-gray-500"
           >
-            {placeholder || (value ? "Enabled" : "Disabled")}
+            {placeholder ||
+              (value
+                ? t("errors6.inputs.enabled")
+                : t("errors6.inputs.disabled"))}
           </span>
           <Switch
             className="ml-auto"
@@ -272,7 +275,11 @@ export function RunAgentInputs({
       const tableSchema = valueSchema as BlockIOTableSubSchema;
       const headers = tableSchema.items?.properties
         ? Object.keys(tableSchema.items.properties)
-        : ["Column 1", "Column 2", "Column 3"];
+        : [
+            t("errors6.inputs.column", { number: 1 }),
+            t("errors6.inputs.column", { number: 2 }),
+            t("errors6.inputs.column", { number: 3 }),
+          ];
 
       const tableData: TableRow[] = Array.isArray(value) ? value : [];
 
@@ -365,7 +372,7 @@ export function RunAgentInputs({
             className="w-full"
           >
             <Icon icon={PlusSignIcon} className="mr-2 h-4 w-4" />
-            Add Row
+            {t("errors6.inputs.addRow")}
           </Button>
         </div>
       );

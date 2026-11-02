@@ -39,6 +39,7 @@ import { errors2En } from "./errors-2.en";
 import { errors3En } from "./errors-3.en";
 import { Errors4En } from "./errors-4.en";
 import { Errors5En } from "./errors-5.en";
+import { Errors6En } from "./errors-6.en";
 import { formatEn } from "./format.en";
 import { home1En } from "./home-1.en";
 import { home2En } from "./home-2.en";
@@ -135,6 +136,7 @@ export const en = {
   ...errors3En,
   ...Errors4En,
   ...Errors5En,
+  ...Errors6En,
   ...formatEn,
   ...home1En,
   ...home2En,

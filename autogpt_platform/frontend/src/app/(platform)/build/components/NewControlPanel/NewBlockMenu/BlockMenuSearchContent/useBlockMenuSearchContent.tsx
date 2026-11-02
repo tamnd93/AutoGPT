@@ -200,9 +200,10 @@ export const useBlockMenuSearchContent = () => {
     } catch (error) {
       Sentry.captureException(error);
       toast({
-        title: "Failed to add workflow to library",
+        title: t("errors6.blockMenu.addToLibraryFailed"),
         description:
-          ((error as any).message as string) || "An unexpected error occurred.",
+          ((error as any).message as string) ||
+          t("errors6.blockMenu.unexpected"),
         variant: "destructive",
       });
     } finally {
