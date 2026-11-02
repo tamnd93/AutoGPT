@@ -36,4 +36,14 @@ describe("a send Send at reset made at once", () => {
       title: "Sending needs an active plan",
     });
   });
+
+  it("writes the paywall toast in Vietnamese when asked", () => {
+    const paywall = new ApiError("Payment required", 402, {});
+
+    toastSendFailure({ ...ARGS, error: paywall, locale: "vi" });
+
+    expect(vi.mocked(toast).mock.calls[0][0]).toMatchObject({
+      title: "Gửi cần gói đang hoạt động",
+    });
+  });
 });

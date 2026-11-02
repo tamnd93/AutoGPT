@@ -1,6 +1,8 @@
 import { isPaywallError } from "@/components/contextual/PaywallToast/helpers";
 import { toast } from "@/components/molecules/Toast/use-toast";
 import { uploadFileDirect } from "@/lib/direct-upload";
+import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/locale";
+import { getMessage } from "@/lib/i18n/translate";
 import type { FileUIPart, UIMessage } from "ai";
 import {
   useCopilotStreamStore,
@@ -42,6 +44,8 @@ interface SendArgs {
   /** Awaited once the uploads are done and before the send: `true` sends,
    *  `false` drops the message. The placeholder shows the whole time. */
   waitUntilReady?: () => Promise<boolean>;
+  /** Locale for the toast copy; defaults to English. */
+  locale?: Locale;
 }
 
 export function hasAttachments(message: OutgoingMessage): boolean {
@@ -50,13 +54,18 @@ export function hasAttachments(message: OutgoingMessage): boolean {
 
 /** Backstop for the composer's own caps; toasts and returns false when the
  *  message cannot go out. */
-export function validateAttachments(message: OutgoingMessage): boolean {
+export function validateAttachments(
+  message: OutgoingMessage,
+  locale: Locale = DEFAULT_LOCALE,
+): boolean {
   // Workspace references count too — uploaded or not, every attachment
   // becomes one `file_ids` entry on the request the backend bounds.
   if (message.files.length + message.parts.length > MAX_ATTACHMENTS) {
     toast({
-      title: "Too many attachments",
-      description: `You can attach up to ${MAX_ATTACHMENTS} attachments per message.`,
+      title: getMessage(locale, "chatStates3.attachments.tooManyTitle"),
+      description: getMessage(locale, "chatStates3.attachments.tooManyBody", {
+        count: MAX_ATTACHMENTS,
+      }),
       variant: "destructive",
     });
     return false;
@@ -64,8 +73,10 @@ export function validateAttachments(message: OutgoingMessage): boolean {
   const oversized = message.files.filter((f) => f.size > MAX_FILE_SIZE_BYTES);
   if (oversized.length > 0) {
     toast({
-      title: "File too large",
-      description: `${oversized[0].name} exceeds the 100 MB limit.`,
+      title: getMessage(locale, "chatStates3.attachments.tooLargeTitle"),
+      description: getMessage(locale, "chatStates3.attachments.tooLargeBody", {
+        name: oversized[0].name,
+      }),
       variant: "destructive",
     });
     return false;
@@ -105,12 +116,15 @@ export async function sendWithAttachments({
   useCopilotStreamStore.getState().setPendingUploadSend(sessionId, pending);
   let send: Promise<void> | undefined;
   try {
-    const uploaded = await uploadFiles(files, sessionId);
+    const uploaded = await uploadFiles(files, sessionId, locale);
     let sentParts = [...parts, ...buildFileParts(uploaded)];
     if (files.length > 0 && uploaded.length === 0) {
       toast({
-        title: "File upload failed",
-        description: "Could not upload any files. Please try again.",
+        title: getMessage(locale, "chatStates3.attachments.uploadFailedTitle"),
+        description: getMessage(
+          locale,
+          "chatStates3.attachments.uploadNoneBody",
+        ),
         variant: "destructive",
       });
       // The workspace references didn't fail to upload (they need no upload),
@@ -158,6 +172,7 @@ export function describePendingUpload(
 async function uploadFiles(
   files: File[],
   sessionId: string,
+  locale: Locale,
 ): Promise<UploadedFile[]> {
   const results = await Promise.allSettled(
     files.map(async (file) => {
@@ -174,7 +189,10 @@ async function uploadFiles(
         if (isPaywallError(err)) throw err;
         console.error("File upload failed:", err);
         toast({
-          title: "File upload failed",
+          title: getMessage(
+            locale,
+            "chatStates3.attachments.uploadFailedTitle",
+          ),
           description: file.name,
           variant: "destructive",
         });

@@ -143,6 +143,7 @@ export function useCopilotRuntimeStream({
     }
     handleStreamError({
       error,
+      locale,
       providerFailure: parseProviderFailure(rawFailure),
       onRateLimit: (message, limitFailure, origin) => {
         restoreUnsentSend();

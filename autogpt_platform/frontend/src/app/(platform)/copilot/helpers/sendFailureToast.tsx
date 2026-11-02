@@ -8,6 +8,8 @@ import {
   PAYWALL_TOAST_DURATION_MS,
 } from "@/components/contextual/PaywallToast/helpers";
 import { toast } from "@/components/molecules/Toast/use-toast";
+import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/locale";
+import { getMessage } from "@/lib/i18n/translate";
 import { describeSendFailure } from "../components/ChatInput/helpers";
 import { SentNowError } from "../components/SendAtReset/helpers";
 import { ReportedSendError } from "./reportedSendError";
@@ -20,6 +22,8 @@ interface Args {
   /** Replaces `recovery` on the paywall toast when `recovery` tells the user
    *  to retry, which can't succeed until they have a plan. */
   paywallRecovery?: string;
+  /** Locale for the toast copy; defaults to English. */
+  locale?: Locale;
 }
 
 /** The single toast for a send that failed. Every send path reports through
@@ -29,13 +33,14 @@ export function toastSendFailure({
   error,
   recovery,
   paywallRecovery = recovery,
+  locale = DEFAULT_LOCALE,
 }: Args) {
   // A send Send at reset made at once fails the way that send did.
   const failure = error instanceof SentNowError ? error.cause : error;
   if (failure instanceof ReportedSendError) return;
   if (isPaywallError(failure)) {
     toast({
-      title: "Sending needs an active plan",
+      title: getMessage(locale, "chatStates3.sendFailure.paywallTitle"),
       description: <PaywallToastDescription recovery={paywallRecovery} />,
       variant: "destructive",
       duration: PAYWALL_TOAST_DURATION_MS,

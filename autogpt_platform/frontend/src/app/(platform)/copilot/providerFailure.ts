@@ -13,6 +13,9 @@
  * the failure.
  */
 
+import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/locale";
+import { getMessage } from "@/lib/i18n/translate";
+
 export type ProviderFailureKind =
   | "auth_expired"
   | "invalid_credential"
@@ -158,34 +161,38 @@ interface FailureCopy {
   description: string;
 }
 
-const COPY_BY_KIND: Record<ProviderFailureKind, FailureCopy> = {
+const COPY_KEY_BY_KIND: Record<
+  ProviderFailureKind,
+  { titleKey: string; descriptionKey: string }
+> = {
   auth_expired: {
-    title: "Your connection needs signing in again",
-    description: "Reconnect the account in Settings, then send this again.",
+    titleKey: "chatStates3.providerFailure.authExpired.title",
+    descriptionKey: "chatStates3.providerFailure.authExpired.description",
   },
   invalid_credential: {
-    title: "That connection can't be used",
-    description: "Reconnect the account in Settings, then send this again.",
+    titleKey: "chatStates3.providerFailure.invalidCredential.title",
+    descriptionKey: "chatStates3.providerFailure.invalidCredential.description",
   },
   usage_limit: {
-    title: "You've hit this connection's limit",
-    description: "Switch connection to keep going, or wait for it to reset.",
+    titleKey: "chatStates3.providerFailure.usageLimit.title",
+    descriptionKey: "chatStates3.providerFailure.usageLimit.description",
   },
   model_unavailable: {
-    title: "That model isn't available",
-    description: "Pick another model tier, or switch connection.",
+    titleKey: "chatStates3.providerFailure.modelUnavailable.title",
+    descriptionKey: "chatStates3.providerFailure.modelUnavailable.description",
   },
   policy_denied: {
-    title: "The provider declined this request",
-    description: "Rewording it may help. Retrying it unchanged won't.",
+    titleKey: "chatStates3.providerFailure.policyDenied.title",
+    descriptionKey: "chatStates3.providerFailure.policyDenied.description",
   },
   entitlement_required: {
-    title: "Your plan doesn't include this connection",
-    description: "Switch connection, or see plans to unlock it.",
+    titleKey: "chatStates3.providerFailure.entitlementRequired.title",
+    descriptionKey:
+      "chatStates3.providerFailure.entitlementRequired.description",
   },
   transient: {
-    title: "Connection hiccup",
-    description: "Something went wrong on the way to the model. Try again.",
+    titleKey: "chatStates3.providerFailure.transient.title",
+    descriptionKey: "chatStates3.providerFailure.transient.description",
   },
 };
 
@@ -196,25 +203,39 @@ const COPY_BY_KIND: Record<ProviderFailureKind, FailureCopy> = {
  * invented "try again in an hour" is worse than silence, because people plan
  * around it.
  */
-export function describeProviderFailure(failure: ProviderFailure): FailureCopy {
-  const base = COPY_BY_KIND[failure.kind];
-  const reset = formatResetHint(failure.resetsAt);
-  const detail = failure.message.trim() || base.description;
+export function describeProviderFailure(
+  failure: ProviderFailure,
+  locale: Locale = DEFAULT_LOCALE,
+): FailureCopy {
+  const keys = COPY_KEY_BY_KIND[failure.kind];
+  const title = getMessage(locale, keys.titleKey);
+  const description = getMessage(locale, keys.descriptionKey);
+  const reset = formatResetHint(failure.resetsAt, locale);
+  const detail = failure.message.trim() || description;
   return {
-    title: base.title,
-    description: reset ? `${base.description} ${reset}` : detail,
+    title,
+    description: reset ? `${description} ${reset}` : detail,
   };
 }
 
-function formatResetHint(resetsAt: number | null): string | null {
+function formatResetHint(
+  resetsAt: number | null,
+  locale: Locale,
+): string | null {
   if (resetsAt === null) return null;
   const seconds = resetsAt - Math.floor(Date.now() / 1000);
   if (seconds <= 0) return null;
-  if (seconds < 90) return "Resets in under a minute.";
+  if (seconds < 90) {
+    return getMessage(locale, "chatStates3.providerFailure.resetUnderMinute");
+  }
   const minutes = Math.round(seconds / 60);
-  if (minutes < 60) return `Resets in about ${minutes} minutes.`;
+  if (minutes < 60) {
+    return getMessage(locale, "chatStates3.providerFailure.resetMinutes", {
+      minutes,
+    });
+  }
   const hours = Math.round(minutes / 60);
   return hours === 1
-    ? "Resets in about an hour."
-    : `Resets in about ${hours} hours.`;
+    ? getMessage(locale, "chatStates3.providerFailure.resetHour")
+    : getMessage(locale, "chatStates3.providerFailure.resetHours", { hours });
 }

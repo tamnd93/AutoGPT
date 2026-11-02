@@ -4,7 +4,7 @@ import {
 } from "@/app/api/__generated__/endpoints/chat/chat";
 import { toast } from "@/components/molecules/Toast/use-toast";
 import { useMountEffect } from "@/hooks/useMountEffect";
-import { useT } from "@/lib/i18n";
+import { useLocale, useT } from "@/lib/i18n";
 import { useChat } from "@ai-sdk/react";
 import { useQueryClient } from "@tanstack/react-query";
 import type { UIMessage } from "ai";
@@ -126,6 +126,7 @@ export function useCopilotStream({
   copilotModel,
 }: UseCopilotStreamArgs) {
   const t = useT();
+  const locale = useLocale();
   const queryClient = useQueryClient();
   const setInitialPrompt = useCopilotUIStore((s) => s.setInitialPrompt);
   const [rateLimitMessage, setRateLimitMessage] = useState<string | null>(null);
@@ -324,6 +325,7 @@ export function useCopilotStream({
       let keepSendMemory = false;
       handleStreamError({
         error,
+        locale,
         providerFailure: failureForThisTurn,
         onRateLimit: (message, limitFailure, origin) => {
           keepSendMemory = true;

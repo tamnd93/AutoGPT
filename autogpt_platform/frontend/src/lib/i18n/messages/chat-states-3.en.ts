@@ -92,4 +92,86 @@ export const ChatStates3En = {
   "chatStates3.pause.couldntSetResume": "Couldn't set the resume",
   "chatStates3.pause.couldntPickBackUp": "Couldn't pick this back up",
   "chatStates3.pause.couldntCancelResume": "Couldn't cancel the resume",
+
+  "chatStates3.providerFailure.authExpired.title":
+    "Your connection needs signing in again",
+  "chatStates3.providerFailure.authExpired.description":
+    "Reconnect the account in Settings, then send this again.",
+  "chatStates3.providerFailure.invalidCredential.title":
+    "That connection can't be used",
+  "chatStates3.providerFailure.invalidCredential.description":
+    "Reconnect the account in Settings, then send this again.",
+  "chatStates3.providerFailure.usageLimit.title":
+    "You've hit this connection's limit",
+  "chatStates3.providerFailure.usageLimit.description":
+    "Switch connection to keep going, or wait for it to reset.",
+  "chatStates3.providerFailure.modelUnavailable.title":
+    "That model isn't available",
+  "chatStates3.providerFailure.modelUnavailable.description":
+    "Pick another model tier, or switch connection.",
+  "chatStates3.providerFailure.policyDenied.title":
+    "The provider declined this request",
+  "chatStates3.providerFailure.policyDenied.description":
+    "Rewording it may help. Retrying it unchanged won't.",
+  "chatStates3.providerFailure.entitlementRequired.title":
+    "Your plan doesn't include this connection",
+  "chatStates3.providerFailure.entitlementRequired.description":
+    "Switch connection, or see plans to unlock it.",
+  "chatStates3.providerFailure.transient.title": "Connection hiccup",
+  "chatStates3.providerFailure.transient.description":
+    "Something went wrong on the way to the model. Try again.",
+  "chatStates3.providerFailure.resetUnderMinute":
+    "Resets in under a minute.",
+  "chatStates3.providerFailure.resetMinutes": "Resets in about {minutes} minutes.",
+  "chatStates3.providerFailure.resetHour": "Resets in about an hour.",
+  "chatStates3.providerFailure.resetHours": "Resets in about {hours} hours.",
+  "chatStates3.streamErrors.idleTimeout.title":
+    "Your expert stopped responding",
+  "chatStates3.streamErrors.idleTimeout.fallback":
+    "A tool call got stuck and the session timed out. Press Try Again to resume.",
+  "chatStates3.streamErrors.toolStalled.title": "A tool call is taking too long",
+  "chatStates3.streamErrors.toolStalled.fallback":
+    "The assistant is waiting on a tool that hasn't responded. Press Try Again to restart.",
+  "chatStates3.streamErrors.transientApiError.title": "Connection hiccup",
+  "chatStates3.streamErrors.transientApiError.fallback":
+    "We hit a temporary error talking to the model. Press Try Again to continue.",
+  "chatStates3.streamErrors.emptyToolCalls.title": "Your expert paused",
+  "chatStates3.streamErrors.emptyToolCalls.fallback":
+    "The assistant made too many empty tool calls in a row and was paused. Press Try Again to continue.",
+  "chatStates3.streamErrors.attemptsExhausted.title": "Conversation too long",
+  "chatStates3.streamErrors.attemptsExhausted.fallback":
+    "We couldn't fit this chat's history into the model after several attempts. Start a new chat or clear some history.",
+  "chatStates3.streamErrors.sdkStreamError.title":
+    "Your expert ran into an error",
+  "chatStates3.streamErrors.sdkStreamError.fallback":
+    "Something went wrong while the assistant was responding. Press Try Again to retry.",
+  "chatStates3.streamErrors.sdkError.title": "Your expert ran into an error",
+  "chatStates3.streamErrors.sdkError.fallback":
+    "The assistant couldn't complete this turn. Press Try Again to retry.",
+  "chatStates3.streamErrors.providerUnavailable.title":
+    "Your expert is temporarily unavailable",
+  "chatStates3.streamErrors.providerUnavailable.fallback":
+    "The AI model provider is temporarily unavailable. We've been alerted and are working on it. Please try again shortly.",
+  "chatStates3.streamErrors.maxBudget.title": "Turn budget reached",
+  "chatStates3.streamErrors.maxBudget.fallback":
+    "This turn reached its spending limit. Send a follow-up to continue with a smaller scope. If your account usage limit is also reached, wait for it to reset.",
+  "chatStates3.streamErrors.generic.title": "Your expert ran into a problem",
+  "chatStates3.streamErrors.generic.fallback":
+    "The assistant stopped unexpectedly. Press Try Again to retry.",
+  "chatStates3.streamErrors.usageLimitFallback":
+    "You've reached your usage limit. Please try again later.",
+  "chatStates3.streamErrors.auth.title": "Authentication error",
+  "chatStates3.streamErrors.auth.fallback":
+    "Your session may have expired. Please sign in again.",
+
+  "chatStates3.sendFailure.paywallTitle": "Sending needs an active plan",
+  "chatStates3.attachments.tooManyTitle": "Too many attachments",
+  "chatStates3.attachments.tooManyBody":
+    "You can attach up to {count} attachments per message.",
+  "chatStates3.attachments.tooLargeTitle": "File too large",
+  "chatStates3.attachments.tooLargeBody":
+    "{name} exceeds the 100 MB limit.",
+  "chatStates3.attachments.uploadFailedTitle": "File upload failed",
+  "chatStates3.attachments.uploadNoneBody":
+    "Could not upload any files. Please try again.",
 } as const;

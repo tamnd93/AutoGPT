@@ -1,4 +1,6 @@
 import { toast } from "@/components/molecules/Toast/use-toast";
+import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/locale";
+import { getMessage } from "@/lib/i18n/translate";
 
 import {
   describeProviderFailure,
@@ -30,60 +32,50 @@ export function parseBackendErrorCode(raw: string): {
  */
 const TOAST_BY_BACKEND_CODE: Record<
   string,
-  { title: string; fallbackDescription: string }
+  { titleKey: string; fallbackKey: string }
 > = {
   idle_timeout: {
-    title: "Your expert stopped responding",
-    fallbackDescription:
-      "A tool call got stuck and the session timed out. Press Try Again to resume.",
+    titleKey: "chatStates3.streamErrors.idleTimeout.title",
+    fallbackKey: "chatStates3.streamErrors.idleTimeout.fallback",
   },
   tool_stalled: {
-    title: "A tool call is taking too long",
-    fallbackDescription:
-      "The assistant is waiting on a tool that hasn't responded. Press Try Again to restart.",
+    titleKey: "chatStates3.streamErrors.toolStalled.title",
+    fallbackKey: "chatStates3.streamErrors.toolStalled.fallback",
   },
   transient_api_error: {
-    title: "Connection hiccup",
-    fallbackDescription:
-      "We hit a temporary error talking to the model. Press Try Again to continue.",
+    titleKey: "chatStates3.streamErrors.transientApiError.title",
+    fallbackKey: "chatStates3.streamErrors.transientApiError.fallback",
   },
   circuit_breaker_empty_tool_calls: {
-    title: "Your expert paused",
-    fallbackDescription:
-      "The assistant made too many empty tool calls in a row and was paused. Press Try Again to continue.",
+    titleKey: "chatStates3.streamErrors.emptyToolCalls.title",
+    fallbackKey: "chatStates3.streamErrors.emptyToolCalls.fallback",
   },
   all_attempts_exhausted: {
-    title: "Conversation too long",
-    fallbackDescription:
-      "We couldn't fit this chat's history into the model after several attempts. Start a new chat or clear some history.",
+    titleKey: "chatStates3.streamErrors.attemptsExhausted.title",
+    fallbackKey: "chatStates3.streamErrors.attemptsExhausted.fallback",
   },
   sdk_stream_error: {
-    title: "Your expert ran into an error",
-    fallbackDescription:
-      "Something went wrong while the assistant was responding. Press Try Again to retry.",
+    titleKey: "chatStates3.streamErrors.sdkStreamError.title",
+    fallbackKey: "chatStates3.streamErrors.sdkStreamError.fallback",
   },
   sdk_error: {
-    title: "Your expert ran into an error",
-    fallbackDescription:
-      "The assistant couldn't complete this turn. Press Try Again to retry.",
+    titleKey: "chatStates3.streamErrors.sdkError.title",
+    fallbackKey: "chatStates3.streamErrors.sdkError.fallback",
   },
   provider_unavailable: {
-    title: "Your expert is temporarily unavailable",
-    fallbackDescription:
-      "The AI model provider is temporarily unavailable. We've been alerted and are working on it. Please try again shortly.",
+    titleKey: "chatStates3.streamErrors.providerUnavailable.title",
+    fallbackKey: "chatStates3.streamErrors.providerUnavailable.fallback",
   },
   max_budget_exhausted: {
-    title: "Turn budget reached",
-    fallbackDescription:
-      "This turn reached its spending limit. Send a follow-up to continue with a smaller scope. If your account usage limit is also reached, wait for it to reset.",
+    titleKey: "chatStates3.streamErrors.maxBudget.title",
+    fallbackKey: "chatStates3.streamErrors.maxBudget.fallback",
   },
 };
 
 /** Fallback toast shown for any `[code:X]` we don't have specific copy for. */
 const GENERIC_BACKEND_TOAST = {
-  title: "Your expert ran into a problem",
-  fallbackDescription:
-    "The assistant stopped unexpectedly. Press Try Again to retry.",
+  titleKey: "chatStates3.streamErrors.generic.title",
+  fallbackKey: "chatStates3.streamErrors.generic.fallback",
 };
 
 /**
@@ -169,6 +161,8 @@ interface HandleStreamErrorArgs {
    * from error text.
    */
   providerFailure?: ProviderFailure | null;
+  /** Locale for the toast copy; defaults to English. */
+  locale?: Locale;
 }
 
 /**
@@ -186,6 +180,14 @@ interface HandleStreamErrorArgs {
  *     `error` into the hook's `error` return, which drives the inline
  *     error banner).
  */
+function errorMessageOrFallback(
+  locale: Locale,
+  message: string,
+  toastKeys: { fallbackKey: string },
+): string {
+  return message || getMessage(locale, toastKeys.fallbackKey);
+}
+
 export function handleStreamError({
   error,
   onRateLimit,
@@ -193,6 +195,7 @@ export function handleStreamError({
   onPaywall,
   isUserStoppingRef,
   providerFailure: streamedProviderFailure,
+  locale = DEFAULT_LOCALE,
 }: HandleStreamErrorArgs): void {
   if ((error as { status?: unknown }).status === 402) {
     onPaywall?.();
@@ -206,7 +209,7 @@ export function handleStreamError({
 
   // 0. The server said what went wrong, so stop guessing.
   if (providerFailure) {
-    const copy = describeProviderFailure(providerFailure);
+    const copy = describeProviderFailure(providerFailure, locale);
     if (providerFailure.kind === "usage_limit") {
       // Still routed through the rate-limit path: it restores the composer
       // text for a message the backend refused before persisting, which a
@@ -243,8 +246,8 @@ export function handleStreamError({
     const userToast =
       TOAST_BY_BACKEND_CODE[backendCode] ?? GENERIC_BACKEND_TOAST;
     toast({
-      title: userToast.title,
-      description: backendMessage || userToast.fallbackDescription,
+      title: getMessage(locale, userToast.titleKey),
+      description: errorMessageOrFallback(locale, backendMessage, userToast),
       variant: "destructive",
     });
     return;
@@ -253,7 +256,8 @@ export function handleStreamError({
   // 2. Rate limit (FastAPI 429 body contains "usage limit")
   if (errorDetail.toLowerCase().includes("usage limit")) {
     onRateLimit(
-      errorDetail || "You've reached your usage limit. Please try again later.",
+      errorDetail ||
+        getMessage(locale, "chatStates3.streamErrors.usageLimitFallback"),
     );
     return;
   }
@@ -266,8 +270,11 @@ export function handleStreamError({
     errorDetail.toLowerCase().includes("401");
   if (isAuthError) {
     toast({
-      title: "Authentication error",
-      description: "Your session may have expired. Please sign in again.",
+      title: getMessage(locale, "chatStates3.streamErrors.auth.title"),
+      description: getMessage(
+        locale,
+        "chatStates3.streamErrors.auth.fallback",
+      ),
       variant: "destructive",
     });
     return;

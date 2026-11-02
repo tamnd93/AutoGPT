@@ -113,6 +113,17 @@ describe("describeProviderFailure", () => {
   });
 });
 
+describe("describeProviderFailure in Vietnamese", () => {
+  it("writes the failure copy in Vietnamese when asked", () => {
+    const copy = describeProviderFailure(
+      failure({ kind: "usage_limit" }),
+      "vi",
+    );
+    expect(copy.title).toBe("Bạn đã chạm giới hạn của kết nối này");
+    expect(copy.description).toContain("Chuyển kết nối");
+  });
+});
+
 describe("latestProviderFailure", () => {
   const envelope = {
     kind: "usage_limit",

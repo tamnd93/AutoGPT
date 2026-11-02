@@ -72,6 +72,19 @@ describe("handleStreamError", () => {
     expect(onReconnect).not.toHaveBeenCalled();
   });
 
+  it("writes the backend error toast in Vietnamese when asked", () => {
+    handleStreamError({
+      error: new Error("[code:idle_timeout]"),
+      onRateLimit: vi.fn(),
+      onReconnect: vi.fn(),
+      isUserStoppingRef: makeRef(false),
+      locale: "vi",
+    });
+    expect(mockToast).toHaveBeenCalledWith(
+      expect.objectContaining({ title: "Expert của bạn ngừng phản hồi" }),
+    );
+  });
+
   it("routes rate-limit messages (case-insensitive 'usage limit') to onRateLimit", () => {
     const onRateLimit = vi.fn();
     const onReconnect = vi.fn();
