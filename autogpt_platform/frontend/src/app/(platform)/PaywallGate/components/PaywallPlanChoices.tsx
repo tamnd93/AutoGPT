@@ -8,6 +8,7 @@ import {
   YEARLY_PRICE_FACTOR,
   type PlanDef,
 } from "@/components/molecules/PlanCard/plans";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   plans: PlanDef[];
@@ -26,13 +27,17 @@ export function PaywallPlanChoices({
   pending,
   selectedTier,
 }: Props) {
+  const t = useT();
   const team = plans.find((plan) => plan.key === "BUSINESS");
   return (
-    <section aria-label="Choose your AutoGPT plan" className="w-full space-y-5">
+    <section
+      aria-label={t("billing1.choices.sectionAria")}
+      className="w-full space-y-5"
+    >
       <div className="flex justify-center">
         <div
           role="group"
-          aria-label="Billing period"
+          aria-label={t("billing1.choices.periodAria")}
           className="inline-flex rounded-full border border-zinc-200 bg-zinc-100 p-1"
         >
           {(["monthly", "yearly"] as const).map((value) => (
@@ -47,10 +52,14 @@ export function PaywallPlanChoices({
                 cycle === value ? "bg-white shadow-sm" : "text-zinc-500"
               }
             >
-              {value === "monthly" ? "Monthly" : "Yearly"}
+              {value === "monthly"
+                ? t("billing1.choices.monthly")
+                : t("billing1.choices.yearly")}
               {value === "yearly" && (
                 <span className="text-xs text-emerald-600">
-                  Save {Math.round((1 - YEARLY_PRICE_FACTOR) * 100)}%
+                  {t("billing1.choices.save", {
+                    percent: Math.round((1 - YEARLY_PRICE_FACTOR) * 100),
+                  })}
                 </span>
               )}
             </Button>
@@ -74,9 +83,9 @@ export function PaywallPlanChoices({
       {team && (
         <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-zinc-200 px-4 py-3">
           <div>
-            <Text variant="small-medium">Team</Text>
+            <Text variant="small-medium">{t("billing1.choices.team")}</Text>
             <Text variant="small" tone="secondary">
-              Custom capacity for your organization.
+              {t("billing1.choices.teamBody")}
             </Text>
           </div>
           <Button
@@ -84,12 +93,12 @@ export function PaywallPlanChoices({
             size="small"
             onClick={() => onSelect(team.key)}
           >
-            Talk to sales
+            {t("billing1.choices.talkToSales")}
           </Button>
         </div>
       )}
       <Text variant="small" tone="secondary" className="text-center text-xs">
-        Your conversations and workflows stay saved. Cancel anytime.
+        {t("billing1.choices.footnote")}
       </Text>
     </section>
   );
@@ -102,6 +111,7 @@ function PlanChoice({
   pending,
   selectedTier,
 }: { plan: PlanDef } & Omit<Props, "plans" | "onCycle">) {
+  const t = useT();
   const amount = cycle === "yearly" ? plan.usdYearly : plan.usdMonthly;
   const formatted =
     amount == null
@@ -113,19 +123,18 @@ function PlanChoice({
         }).format(amount);
   const isPro = plan.key === "PRO";
   const features = isPro
-    ? [
-        "Experts for content, sales and research, with Otto coordinating",
-        "Workflows that keep working in the background on a schedule",
-      ]
+    ? [t("billing1.choices.proFeature1"), t("billing1.choices.proFeature2")]
     : [
         plan.usage
-          ? `${plan.usage.replace(/x|×/, "")} times the usage of Pro`
-          : "More usage for demanding work",
-        "More file storage and priority support",
+          ? t("billing1.choices.maxUsage", {
+              usage: plan.usage.replace(/x|×/, ""),
+            })
+          : t("billing1.choices.maxFeature"),
+        t("billing1.choices.storage"),
       ];
   return (
     <section
-      aria-label={`${plan.name} plan`}
+      aria-label={t("billing1.choices.planAria", { name: plan.name })}
       className={`flex flex-col rounded-2xl border p-5 sm:p-6 ${isPro ? "border-purple-200 bg-gradient-to-br from-purple-50 via-white to-blue-50" : "border-zinc-200 bg-white"}`}
     >
       <div className="mb-4 flex items-center gap-2">
@@ -140,17 +149,20 @@ function PlanChoice({
       </div>
       <Text variant="small" tone="secondary" className="mb-4">
         {isPro
-          ? "For the work you do every day."
-          : "For bigger ideas and heavier work."}
+          ? t("billing1.choices.proTagline")
+          : t("billing1.choices.maxTagline")}
       </Text>
       <div className="mb-5">
         <Text variant="h3" as="span" className="tracking-tight">
-          {formatted ?? "Unavailable"}
+          {formatted ?? t("billing1.choices.unavailablePrice")}
         </Text>
         {formatted && (
           <Text variant="small" as="span" tone="secondary">
             {" "}
-            / {cycle === "yearly" ? "year" : "month"}
+            /{" "}
+            {cycle === "yearly"
+              ? t("billing1.choices.perYear")
+              : t("billing1.choices.perMonth")}
           </Text>
         )}
       </div>
@@ -175,7 +187,7 @@ function PlanChoice({
         loading={pending && selectedTier === plan.key}
         disabled={pending || !formatted}
       >
-        Start {plan.name}
+        {t("billing1.choices.start", { name: plan.name })}
       </Button>
     </section>
   );

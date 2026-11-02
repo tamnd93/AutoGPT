@@ -8,8 +8,10 @@ import {
 } from "@/app/api/__generated__/endpoints/credits/credits";
 import type { AutoTopUpConfig } from "@/app/api/__generated__/models/autoTopUpConfig";
 import { toast } from "@/components/molecules/Toast/use-toast";
+import { useT } from "@/lib/i18n";
 
 export function useAutoRefillCard() {
+  const t = useT();
   const {
     data: config,
     isLoading,
@@ -80,11 +82,11 @@ export function useAutoRefillCard() {
       setOpen(false);
     } catch (error) {
       toast({
-        title: "Couldn't save auto top-up",
+        title: t("billing1.autoRefill.saveFailedTitle"),
         description:
           error instanceof Error
             ? error.message
-            : "Auto top-up settings weren't saved. Please try again.",
+            : t("billing1.autoRefill.saveFailedBody"),
         variant: "destructive",
       });
     }
@@ -97,11 +99,11 @@ export function useAutoRefillCard() {
       setOpen(false);
     } catch (error) {
       toast({
-        title: "Couldn't disable auto top-up",
+        title: t("billing1.autoRefill.disableFailedTitle"),
         description:
           error instanceof Error
             ? error.message
-            : "Auto top-up couldn't be disabled. Please try again.",
+            : t("billing1.autoRefill.disableFailedBody"),
         variant: "destructive",
       });
     }

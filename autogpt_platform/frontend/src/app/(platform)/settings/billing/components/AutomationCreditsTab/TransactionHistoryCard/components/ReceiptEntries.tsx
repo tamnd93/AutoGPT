@@ -3,12 +3,14 @@ import { ArrowDown01Icon, ArrowUp01Icon } from "@hugeicons/core-free-icons";
 import { Button } from "@/components/atoms/Button/Button";
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { Text } from "@/components/atoms/Text/Text";
+import { useLocale, useT } from "@/lib/i18n";
 import { chargeLabel, formatActivityDate, type Transaction } from "../helpers";
 import { TransactionAmount } from "./TransactionAmount";
 
 type Props = { transaction: Transaction };
 
 export function ReceiptEntries({ transaction }: Props) {
+  const t = useT();
   const [entriesOpen, setEntriesOpen] = useState(false);
   const [referenceOpen, setReferenceOpen] = useState(false);
   const entriesID = useId();
@@ -35,7 +37,9 @@ export function ReceiptEntries({ transaction }: Props) {
               />
             }
           >
-            {entriesOpen ? "Hide" : "Show"} charge entries
+            {entriesOpen
+              ? t("billing1.entries.hide")
+              : t("billing1.entries.show")}
           </Button>
         )}
         {reference && (
@@ -47,7 +51,9 @@ export function ReceiptEntries({ transaction }: Props) {
             aria-expanded={referenceOpen}
             aria-controls={referenceOpen ? referenceID : undefined}
           >
-            {referenceOpen ? "Hide reference" : "Reference"}
+            {referenceOpen
+              ? t("billing1.entries.hideReference")
+              : t("billing1.entries.showReference")}
           </Button>
         )}
       </div>
@@ -59,7 +65,7 @@ export function ReceiptEntries({ transaction }: Props) {
       {referenceOpen && (
         <div id={referenceID} className="mt-2">
           <Text variant="small" className="text-foreground-secondary">
-            {referenceLabel(transaction)}
+            {referenceLabel(transaction, t)}
           </Text>
           <Text variant="small" as="code" className="break-all font-mono">
             {reference}
@@ -70,27 +76,32 @@ export function ReceiptEntries({ transaction }: Props) {
   );
 }
 
-function referenceLabel(transaction: Transaction) {
-  if (transaction.usage_execution_id) return "Run ID";
-  if (transaction.usage_chat_session_id) return "Chat ID";
-  return "Reference";
+function referenceLabel(transaction: Transaction, t: ReturnType<typeof useT>) {
+  if (transaction.usage_execution_id) return t("billing1.entries.runId");
+  if (transaction.usage_chat_session_id) return t("billing1.entries.chatId");
+  return t("billing1.entries.reference");
 }
 
 function ChargeEntries({ transaction }: Props) {
+  const locale = useLocale();
+  const t = useT();
   const charges = transaction.charges ?? [];
   return (
     <div className="mt-2 border-t border-border-base pt-3">
-      <table className="w-full text-left" aria-label="Recorded charge entries">
+      <table
+        className="w-full text-left"
+        aria-label={t("billing1.entries.aria")}
+      >
         <thead className="sr-only">
           <tr>
-            <th scope="col">Date and time</th>
-            <th scope="col">Charge</th>
-            <th scope="col">Amount</th>
+            <th scope="col">{t("billing1.entries.dateTime")}</th>
+            <th scope="col">{t("billing1.entries.charge")}</th>
+            <th scope="col">{t("billing1.entries.amount")}</th>
           </tr>
         </thead>
         <tbody>
           {charges.map((charge) => {
-            const posted = formatActivityDate(charge.posted_at);
+            const posted = formatActivityDate(charge.posted_at, locale);
             return (
               <tr key={charge.id}>
                 <td className="py-2 pr-3 align-top">
@@ -105,7 +116,7 @@ function ChargeEntries({ transaction }: Props) {
                   </Text>
                 </td>
                 <td className="py-2 pr-3 align-top">
-                  <Text variant="small">{chargeLabel(charge.charge_type)}</Text>
+                  {chargeLabel(charge.charge_type, t)}
                 </td>
                 <td className="py-2 text-right align-top">
                   <TransactionAmount
@@ -120,8 +131,10 @@ function ChargeEntries({ transaction }: Props) {
       </table>
       {transaction.charges_truncated && (
         <Text variant="small" className="mt-2 text-foreground-secondary">
-          Showing {charges.length} of {transaction.charges_total_count} charge
-          entries. The total includes every charge and adjustment.
+          {t("billing1.entries.truncated", {
+            shown: charges.length,
+            total: transaction.charges_total_count,
+          })}
         </Text>
       )}
     </div>

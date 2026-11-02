@@ -8,8 +8,10 @@ import {
 } from "@/app/api/__generated__/endpoints/credits/credits";
 import { toast } from "@/components/molecules/Toast/use-toast";
 import { useCheckoutRedirect } from "@/hooks/useCheckoutRedirect";
+import { useT } from "@/lib/i18n";
 
 export function useBalanceCard() {
+  const t = useT();
   const {
     data: balanceCents,
     isLoading,
@@ -63,7 +65,8 @@ export function useBalanceCard() {
         const detail =
           typeof body?.detail === "string"
             ? body.detail
-            : (body?.detail?.msg ?? `Server returned ${status}.`);
+            : (body?.detail?.msg ??
+              t("billing1.balance.serverReturned", { status }));
         throw new Error(detail);
       }
 
@@ -74,16 +77,14 @@ export function useBalanceCard() {
         return;
       }
 
-      throw new Error(
-        "Stripe didn't return a checkout URL. Check backend logs for the underlying Stripe error.",
-      );
+      throw new Error(t("billing1.balance.noCheckoutUrl"));
     } catch (error) {
       toast({
-        title: "Couldn't start checkout",
+        title: t("billing1.balance.checkoutFailedTitle"),
         description:
           error instanceof Error
             ? error.message
-            : "Something went wrong contacting Stripe. Please try again.",
+            : t("billing1.balance.checkoutFailedBody"),
         variant: "destructive",
       });
     }

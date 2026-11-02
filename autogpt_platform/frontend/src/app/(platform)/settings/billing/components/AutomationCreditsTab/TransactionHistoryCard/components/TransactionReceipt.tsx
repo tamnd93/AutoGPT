@@ -1,4 +1,5 @@
 import { Text } from "@/components/atoms/Text/Text";
+import { useT } from "@/lib/i18n";
 import { activityName, receiptNote, type Transaction } from "../helpers";
 import { ReceiptBreakdown } from "./ReceiptBreakdown";
 import { ReceiptEntries } from "./ReceiptEntries";
@@ -18,21 +19,28 @@ export function TransactionReceipt({
   loadedTransactions,
   onSelectRelated,
 }: Props) {
+  const t = useT();
   const hasRelations =
     !!transaction.parent_execution_id ||
     !!transaction.related_executions?.length ||
     !!transaction.related_executions_has_more;
   const heading =
     transaction.activity_type === "agent_run"
-      ? `Charges for this run${hasRelations ? " only" : ""}`
+      ? t(
+          hasRelations
+            ? "billing1.receipt.chargesForRunOnly"
+            : "billing1.receipt.chargesForRun",
+        )
       : transaction.activity_type === "copilot_tools"
-        ? "Tool usage in this conversation"
-        : "Credit balance change";
-  const note = receiptNote(transaction);
+        ? t("billing1.receipt.toolUsage")
+        : t("billing1.receipt.balanceChange");
+  const note = receiptNote(transaction, t);
   return (
     <section
       id={receiptID}
-      aria-label={`${activityName(transaction)} credit receipt`}
+      aria-label={t("billing1.receipt.aria", {
+        name: activityName(transaction, t),
+      })}
       className="mx-2 mb-3 rounded-medium border border-separator bg-surface-muted p-3 sm:mx-4 sm:p-5"
     >
       <Text variant="body-medium" as="h3">

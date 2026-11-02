@@ -4,6 +4,8 @@ import { motion, useReducedMotion } from "framer-motion";
 import { Button } from "@/components/atoms/Button/Button";
 import { Text } from "@/components/atoms/Text/Text";
 
+import { useT } from "@/lib/i18n";
+
 import { getSectionMotionProps } from "../../../helpers";
 import { AutoRefillDialog } from "./AutoRefillDialog";
 import { useAutoRefillCard } from "./useAutoRefillCard";
@@ -15,6 +17,7 @@ interface Props {
 }
 
 export function AutoRefillCard({ index = 0 }: Props) {
+  const t = useT();
   const reduceMotion = useReducedMotion();
   const {
     config,
@@ -46,12 +49,15 @@ export function AutoRefillCard({ index = 0 }: Props) {
         </div>
         <div className="flex min-w-0 flex-col gap-1">
           <Text variant="body-medium" as="span" className="text-textBlack">
-            Auto-refill
+            {t("billing1.autoRefill.title")}
           </Text>
           <Text variant="body" as="span" className="text-foreground-tertiary">
             {isEnabled && config
-              ? `Refills $${(config.amount / 100).toFixed(0)} when balance drops below $${(config.threshold / 100).toFixed(0)}.`
-              : "Top up automatically when your balance gets low."}
+              ? t("billing1.autoRefill.enabledBody", {
+                  amount: (config.amount / 100).toFixed(0),
+                  threshold: (config.threshold / 100).toFixed(0),
+                })
+              : t("billing1.autoRefill.disabledBody")}
           </Text>
         </div>
       </div>
@@ -62,7 +68,9 @@ export function AutoRefillCard({ index = 0 }: Props) {
         onClick={() => setOpen(true)}
         disabled={isLoading}
       >
-        {isEnabled ? "Edit" : "Set up auto-refill"}
+        {isEnabled
+          ? t("billing1.autoRefill.edit")
+          : t("billing1.autoRefill.setUp")}
       </Button>
 
       <AutoRefillDialog

@@ -9,6 +9,7 @@ import { TrialCardContent } from "@/components/organisms/TrialCard/TrialCard";
 import { PaymentRecoveryCard } from "@/components/organisms/UsageExperience/PaymentRecoveryCard";
 import { usePaymentRecovery } from "@/services/usageExperience/usePaymentRecovery";
 import { Logout03Icon } from "@hugeicons/core-free-icons";
+import { useT } from "@/lib/i18n";
 import { SwitchTierDialog } from "../settings/billing/components/SubscriptionTab/YourPlanCard/SwitchTierDialog";
 import { PausedSchedulesNotice } from "./components/PausedSchedulesNotice";
 import { PaywallPlanChoices } from "./components/PaywallPlanChoices";
@@ -16,6 +17,7 @@ import { PaywallHeader } from "./components/PaywallHeader";
 import { usePaywallModal } from "./usePaywallModal";
 
 export function PaywallModal() {
+  const t = useT();
   const {
     isLoading,
     plans,
@@ -43,7 +45,11 @@ export function PaywallModal() {
   return (
     <Dialog
       variant="compact"
-      title={recovery.paymentFailed ? "Your plan" : "Choose your plan"}
+      title={
+        recovery.paymentFailed
+          ? t("billing1.title.recovery")
+          : t("billing1.title.choose")
+      }
       styling={{
         maxWidth: trialOffer && !recovery.paymentFailed ? "1120px" : "700px",
       }}
@@ -64,14 +70,14 @@ export function PaywallModal() {
               leftIcon={<Icon icon={Logout03Icon} size={16} />}
               className="bg-white/90 text-zinc-500 hover:text-zinc-700"
             >
-              Log out
+              {t("billing1.logout")}
             </Button>
           </div>
           {recovery.paymentFailed ? (
             <>
               <PaymentRecoveryCard
                 payment={recovery.payment}
-                fallback="Update your payment method in billing to continue. Your chats, workflows and results are saved."
+                fallback={t("billing1.recoveryFallback")}
               />
               <PausedSchedulesNotice count={pausedWorkflowSchedules} />
             </>
@@ -90,8 +96,7 @@ export function PaywallModal() {
                 ) : plans.length === 0 ? (
                   <div className="flex flex-col items-center gap-3">
                     <p className="text-center text-sm text-zinc-500">
-                      Subscriptions are temporarily unavailable. Please try
-                      again shortly.
+                      {t("billing1.unavailable")}
                     </p>
                     <Button
                       variant="secondary"
@@ -99,7 +104,7 @@ export function PaywallModal() {
                       onClick={retryLoadPlans}
                       loading={isRetryingPlans}
                     >
-                      Retry
+                      {t("billing1.retry")}
                     </Button>
                   </div>
                 ) : !trialOffer ? (
@@ -147,7 +152,7 @@ export function PaywallModal() {
           )}
         </div>
         <Button variant="ghost" className="mt-3 w-full" onClick={handleClose}>
-          Back to billing
+          {t("billing1.backToBilling")}
         </Button>
       </Dialog.Content>
       {pendingTier && pendingTierLabel ? (
@@ -157,9 +162,11 @@ export function PaywallModal() {
             if (!open) cancelPendingTier();
           }}
           targetTierLabel={pendingTierLabel}
-          title={`Switch to ${pendingTierLabel}?`}
-          confirmLabel={`Switch to ${pendingTierLabel}`}
-          body="Your current Stripe subscription will be modified — you may be charged or refunded the prorated difference. Continue?"
+          title={t("billing1.switch.title", { tier: pendingTierLabel })}
+          confirmLabel={t("billing1.switch.confirm", {
+            tier: pendingTierLabel,
+          })}
+          body={t("billing1.switch.body")}
           isSaving={isPending}
           onConfirm={() => {
             void confirmPendingTier();

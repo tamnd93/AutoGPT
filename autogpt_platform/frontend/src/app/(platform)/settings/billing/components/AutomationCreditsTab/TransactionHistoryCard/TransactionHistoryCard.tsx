@@ -6,6 +6,8 @@ import { Button } from "@/components/atoms/Button/Button";
 import { Skeleton } from "@/components/atoms/Skeleton/Skeleton";
 import { Text } from "@/components/atoms/Text/Text";
 import { ErrorCard } from "@/components/molecules/ErrorCard/ErrorCard";
+import { useT } from "@/lib/i18n";
+
 import { getSectionMotionProps } from "../../../helpers";
 import { TransactionHistoryTable } from "./components/TransactionHistoryTable";
 import { useTransactionHistoryCard } from "./useTransactionHistoryCard";
@@ -13,6 +15,7 @@ import { useTransactionHistoryCard } from "./useTransactionHistoryCard";
 type Props = { index?: number };
 
 export function TransactionHistoryCard({ index = 0 }: Props) {
+  const t = useT();
   const reduceMotion = useReducedMotion();
   const history = useTransactionHistoryCard();
   const headingID = useId();
@@ -25,7 +28,7 @@ export function TransactionHistoryCard({ index = 0 }: Props) {
     <motion.section
       {...getSectionMotionProps(index, Boolean(reduceMotion))}
       className="flex w-full flex-col gap-3"
-      aria-label="Transaction history"
+      aria-label={t("billing1.history.aria")}
     >
       <div className="flex flex-wrap items-end justify-between gap-2 px-4">
         <div>
@@ -36,22 +39,22 @@ export function TransactionHistoryCard({ index = 0 }: Props) {
             tabIndex={-1}
             className="focus:outline-none"
           >
-            Transaction history
+            {t("billing1.history.title")}
           </Text>
           <Text variant="small" className="mt-1 text-foreground-secondary">
-            Changes to your automation credit balance.
+            {t("billing1.history.subtitle")}
           </Text>
         </div>
         <Text variant="small" className="text-foreground-secondary">
-          USD · Your local time
+          {t("billing1.history.currencyNote")}
         </Text>
       </div>
       {history.isLoading ? (
         <HistorySkeleton />
       ) : history.isError ? (
         <ErrorCard
-          context="transaction history"
-          hint="We couldn’t load your transactions. Please try again."
+          context={t("billing1.history.errorContext")}
+          hint={t("billing1.history.errorHint")}
           onRetry={() => void retryHistory()}
         />
       ) : history.transactions.length === 0 ? (
@@ -71,30 +74,30 @@ export function TransactionHistoryCard({ index = 0 }: Props) {
           role="alert"
         >
           <Text variant="small" className="text-foreground-secondary">
-            History couldn’t be refreshed. Showing previously loaded activity.
+            {t("billing1.history.refreshError")}
           </Text>
           <Button
             variant="ghost"
             size="small"
             onClick={() => void retryHistory()}
           >
-            Try again
+            {t("billing1.history.tryAgain")}
           </Button>
         </div>
       )}
       <Text variant="small" className="px-4 text-foreground-secondary">
-        Each workflow run combines its recorded charges and adjustments. Only
-        runs with credit activity appear here.
+        {t("billing1.history.footnote")}
       </Text>
     </motion.section>
   );
 }
 
 function HistorySkeleton() {
+  const t = useT();
   return (
     <div
       role="status"
-      aria-label="Loading transaction history"
+      aria-label={t("billing1.history.loadingAria")}
       className="rounded-large border border-border-base bg-surface p-5"
     >
       <div className="space-y-6">
@@ -110,11 +113,12 @@ function HistorySkeleton() {
 }
 
 function EmptyHistory() {
+  const t = useT();
   return (
     <div className="rounded-large border border-border-base bg-surface px-5 py-10 text-center">
-      <Text variant="body-medium">No transactions yet.</Text>
+      <Text variant="body-medium">{t("billing1.history.emptyTitle")}</Text>
       <Text variant="small" className="mt-2 text-foreground-secondary">
-        Credit purchases and paid activity will appear here.
+        {t("billing1.history.emptyBody")}
       </Text>
     </div>
   );

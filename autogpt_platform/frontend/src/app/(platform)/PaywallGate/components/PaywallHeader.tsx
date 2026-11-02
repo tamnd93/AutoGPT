@@ -1,19 +1,21 @@
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { Text } from "@/components/atoms/Text/Text";
+import { useT } from "@/lib/i18n";
 import { PlayCircleIcon } from "@hugeicons/core-free-icons";
 import Link from "next/link";
 
 export function PaywallHeader() {
+  const t = useT();
   return (
     <div className="flex flex-col items-center gap-1 text-center">
       <Text
         variant="h3"
         className="!text-[1.375rem] !leading-[1.6rem] md:!text-[1.75rem] md:!leading-[2.5rem]"
       >
-        Choose a plan to keep working
+        {t("billing1.header.title")}
       </Text>
       <Text variant="body" className="!text-zinc-500">
-        Your chats, workflows and files are saved.
+        {t("billing1.header.body")}
       </Text>
       <Link
         href="/tour/chat?utm_source=platform_paywall"
@@ -24,7 +26,7 @@ export function PaywallHeader() {
           icon={PlayCircleIcon}
           className="size-5 shrink-0 text-violet-600"
         />
-        <span>Explore a quick demo</span>
+        <span>{t("billing1.header.demo")}</span>
       </Link>
     </div>
   );

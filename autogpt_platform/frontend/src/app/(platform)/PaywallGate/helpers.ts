@@ -39,8 +39,16 @@ export function consumePaywallCheckoutCancel() {
   }
 }
 
-export function pausedSchedulesText(count: number) {
+export type Translate = (
+  key: string,
+  values?: Record<string, string | number>,
+) => string;
+
+export function pausedSchedulesText(
+  count: number,
+  t: Translate = (key) => key,
+) {
   return count === 1
-    ? "Your scheduled workflow is paused until you subscribe."
-    : `Your ${count} scheduled workflows are paused until you subscribe.`;
+    ? t("billing1.helpers.pausedOne")
+    : t("billing1.helpers.pausedMany", { count });
 }

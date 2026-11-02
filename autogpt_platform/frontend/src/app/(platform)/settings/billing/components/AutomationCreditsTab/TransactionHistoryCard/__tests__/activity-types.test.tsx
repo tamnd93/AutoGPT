@@ -1,5 +1,6 @@
 import { delay, http, HttpResponse } from "msw";
 import { describe, expect, it } from "vitest";
+import { LocaleProvider } from "@/lib/i18n";
 import { server } from "@/mocks/mock-server";
 import {
   fireEvent,
@@ -11,6 +12,25 @@ import { TransactionHistoryCard } from "../TransactionHistoryCard";
 import { executionID, run, topUp } from "./fixtures";
 
 describe("Transaction history activity and states", () => {
+  it("reads the transaction history in Vietnamese", async () => {
+    server.use(
+      http.get("*/api/credits/transactions", () =>
+        HttpResponse.json({ transactions: [], next_cursor: null }),
+      ),
+    );
+    render(
+      <LocaleProvider locale="vi">
+        <TransactionHistoryCard />
+      </LocaleProvider>,
+    );
+
+    expect(await screen.findByText("Lịch sử giao dịch")).toBeDefined();
+    expect(
+      screen.getByText("Thay đổi số dư tín dụng tự động hoá của bạn."),
+    ).toBeDefined();
+    expect(await screen.findByText("Chưa có giao dịch nào.")).toBeDefined();
+  });
+
   it.each([
     ["REFUND", -500, "Top-up refunded", "−$5.00"],
     ["SUBSCRIPTION", -2000, "Subscription payment", "−$20.00"],

@@ -1,5 +1,16 @@
 import type { CreditTransactionItem } from "@/app/api/__generated__/models/creditTransactionItem";
+import type { Locale } from "@/lib/i18n/locale";
+import type { MessageKey } from "@/lib/i18n/messages/en";
+import { getMessage } from "@/lib/i18n/translate";
+
 import { formatCents } from "../../../helpers";
+
+export type Translate = (
+  key: MessageKey,
+  values?: Record<string, string | number>,
+) => string;
+
+const english: Translate = (key, values) => getMessage("en", key, values);
 
 export type Transaction = CreditTransactionItem & {
   id: string;
@@ -8,40 +19,54 @@ export type Transaction = CreditTransactionItem & {
   receipt_as_of?: string | Date | null;
 };
 
-const transactionNames: Record<string, string> = {
-  TOP_UP: "Credits added",
-  GRANT: "Credits granted",
-  REFUND: "Top-up refunded",
-  SUBSCRIPTION: "Subscription payment",
-  CARD_CHECK: "Card verification",
+const TRANSACTION_NAME_KEYS: Record<string, MessageKey> = {
+  TOP_UP: "billing1.history.name.topUp",
+  GRANT: "billing1.history.name.grant",
+  REFUND: "billing1.history.name.refund",
+  SUBSCRIPTION: "billing1.history.name.subscription",
+  CARD_CHECK: "billing1.history.name.cardCheck",
 };
 
-export function activityName(transaction: Transaction): string {
+export function activityName(
+  transaction: Transaction,
+  t: Translate = english,
+): string {
   if (transaction.activity_type === "agent_run")
-    return transaction.agent_name || "Workflow unavailable";
-  if (transaction.activity_type === "copilot_tools") return "Expert tool use";
-  if (transaction.activity_type === "block_usage") return "Direct block usage";
+    return transaction.agent_name || t("billing1.history.workflowUnavailable");
+  if (transaction.activity_type === "copilot_tools")
+    return t("billing1.history.expertToolUse");
+  if (transaction.activity_type === "block_usage")
+    return t("billing1.history.directBlockUsage");
   if (transaction.transaction_type === "USAGE")
-    return transaction.description || "Credit usage";
-  return (
-    transactionNames[transaction.transaction_type] || "Credit balance change"
-  );
+    return transaction.description || t("billing1.history.creditUsage");
+  return TRANSACTION_NAME_KEYS[transaction.transaction_type]
+    ? t(TRANSACTION_NAME_KEYS[transaction.transaction_type])
+    : t("billing1.history.balanceChange");
 }
 
-export function activityDescription(transaction: Transaction): string {
+export function activityDescription(
+  transaction: Transaction,
+  t: Translate = english,
+): string {
   if (transaction.parent_agent_name)
-    return `Part of ${transaction.parent_agent_name}`;
-  if (transaction.activity_type === "agent_run") return "Workflow run";
+    return t("billing1.history.partOf", {
+      name: transaction.parent_agent_name,
+    });
+  if (transaction.activity_type === "agent_run")
+    return t("billing1.history.workflowRun");
   if (transaction.activity_type === "copilot_tools")
-    return transaction.conversation_title || "Paid block tools";
+    return (
+      transaction.conversation_title || t("billing1.history.paidBlockTools")
+    );
   if (transaction.activity_type === "block_usage")
-    return "Outside a workflow run";
-  if (transaction.transaction_type === "TOP_UP") return "Credit purchase";
+    return t("billing1.history.outsideWorkflowRun");
+  if (transaction.transaction_type === "TOP_UP")
+    return t("billing1.history.creditPurchase");
   if (transaction.transaction_type === "REFUND")
-    return "Credit purchase refunded";
+    return t("billing1.history.creditPurchaseRefunded");
   if (transaction.transaction_type === "SUBSCRIPTION")
-    return "Paid from credit balance";
-  return "Credit balance";
+    return t("billing1.history.paidFromBalance");
+  return t("billing1.history.creditBalance");
 }
 
 export function formatAmount(amount: number): string {
@@ -49,24 +74,36 @@ export function formatAmount(amount: number): string {
   return `${sign}${formatCents(Math.abs(amount))}`;
 }
 
-export function formatActivityDate(value: string | Date | null | undefined) {
+export function formatActivityDate(
+  value: string | Date | null | undefined,
+  locale: Locale = "en",
+) {
+  const dateLocale = locale === "vi" ? "vi-VN" : undefined;
   if (!value)
-    return { date: "Unavailable", time: "", full: "Date unavailable" };
+    return {
+      date: getMessage(locale, "billing1.history.dateUnavailable"),
+      time: "",
+      full: getMessage(locale, "billing1.history.dateUnavailableFull"),
+    };
   const date = new Date(value);
   if (Number.isNaN(date.getTime()))
-    return { date: "Unavailable", time: "", full: "Date unavailable" };
+    return {
+      date: getMessage(locale, "billing1.history.dateUnavailable"),
+      time: "",
+      full: getMessage(locale, "billing1.history.dateUnavailableFull"),
+    };
   return {
-    date: date.toLocaleDateString(undefined, {
+    date: date.toLocaleDateString(dateLocale, {
       month: "short",
       day: "numeric",
       year: "numeric",
     }),
-    time: date.toLocaleTimeString(undefined, {
+    time: date.toLocaleTimeString(dateLocale, {
       hour: "2-digit",
       minute: "2-digit",
       second: "2-digit",
     }),
-    full: date.toLocaleString(undefined, {
+    full: date.toLocaleString(dateLocale, {
       dateStyle: "long",
       timeStyle: "long",
     }),
@@ -94,45 +131,51 @@ export function isRunActive(transaction: Transaction) {
   );
 }
 
-export function statusLabel(status: string) {
-  const labels: Record<string, string> = {
-    QUEUED: "Queued",
-    RUNNING: "Running",
-    REVIEW: "Needs review",
-    INCOMPLETE: "Incomplete",
-    COMPLETED: "Completed",
-    FAILED: "Failed",
-    TERMINATED: "Stopped",
-  };
-  return labels[status] || "Unavailable";
+const STATUS_LABEL_KEYS: Record<string, MessageKey> = {
+  QUEUED: "billing1.history.status.queued",
+  RUNNING: "billing1.history.status.running",
+  REVIEW: "billing1.history.status.review",
+  INCOMPLETE: "billing1.history.status.incomplete",
+  COMPLETED: "billing1.history.status.completed",
+  FAILED: "billing1.history.status.failed",
+  TERMINATED: "billing1.history.status.terminated",
+};
+
+export function statusLabel(status: string, t: Translate = english) {
+  return STATUS_LABEL_KEYS[status]
+    ? t(STATUS_LABEL_KEYS[status])
+    : t("billing1.history.unavailable");
 }
 
-export function receiptNote(transaction: Transaction) {
+export function receiptNote(transaction: Transaction, t: Translate = english) {
   if (transaction.activity_type === "agent_run") {
     if (isRunActive(transaction))
-      return "This run is still active. Charges and adjustments may continue.";
+      return t("billing1.history.receipt.runActive");
     if (transaction.amount === 0)
-      return "No net change to your credit balance.";
-    return "Recorded charges and adjustments for this run.";
+      return t("billing1.history.receipt.noNetChange");
+    return t("billing1.history.receipt.runRecorded");
   }
   if (transaction.activity_type === "copilot_tools")
-    return "Paid block tools across this conversation. Subscription usage is tracked separately.";
+    return t("billing1.history.receipt.copilotTools");
   if (transaction.activity_type === "block_usage")
-    return "A paid block call without an associated workflow run.";
+    return t("billing1.history.receipt.blockUsage");
   if (transaction.transaction_type === "REFUND")
-    return "Credits removed from your balance after the payment was refunded.";
+    return t("billing1.history.receipt.refunded");
   if (transaction.transaction_type === "SUBSCRIPTION")
-    return "This payment was taken from your credit balance.";
-  if (transaction.amount === 0) return "No change to your credit balance.";
+    return t("billing1.history.receipt.subscription");
+  if (transaction.amount === 0) return t("billing1.history.receipt.noChange");
   return "";
 }
 
-export function chargeLabel(type: string) {
-  const labels: Record<string, string> = {
-    usage: "Block usage",
-    execution_fee: "Execution fee",
-    adjustment: "Usage adjustment",
-    transaction: "Balance change",
-  };
-  return labels[type] || "Balance change";
+const CHARGE_LABEL_KEYS: Record<string, MessageKey> = {
+  usage: "billing1.history.charge.usage",
+  execution_fee: "billing1.history.charge.executionFee",
+  adjustment: "billing1.history.charge.adjustment",
+  transaction: "billing1.history.charge.transaction",
+};
+
+export function chargeLabel(type: string, t: Translate = english) {
+  return CHARGE_LABEL_KEYS[type]
+    ? t(CHARGE_LABEL_KEYS[type])
+    : t("billing1.history.charge.fallback");
 }

@@ -2,6 +2,7 @@ import type { CreditHistoryRelatedExecution } from "@/app/api/__generated__/mode
 import { Button } from "@/components/atoms/Button/Button";
 import { Link } from "@/components/atoms/Link/Link";
 import { Text } from "@/components/atoms/Text/Text";
+import { useT } from "@/lib/i18n";
 import { libraryHref, type Transaction } from "../helpers";
 import { TransactionAmount } from "./TransactionAmount";
 
@@ -16,6 +17,7 @@ export function ReceiptRelations({
   loadedTransactions,
   onSelectRelated,
 }: Props) {
+  const t = useT();
   const related = transaction.related_executions ?? [];
   if (
     !transaction.parent_execution_id &&
@@ -27,11 +29,12 @@ export function ReceiptRelations({
     <div className="mt-4 space-y-2 border-t border-border-base pt-3">
       {transaction.parent_execution_id && (
         <Text variant="small" className="text-foreground-secondary">
-          Started by
+          {t("billing1.relations.startedBy")}
         </Text>
       )}
       {transaction.parent_execution_id && (
         <RelatedExecution
+          t={t}
           execution={{
             execution_id: transaction.parent_execution_id,
             agent_name: transaction.parent_agent_name,
@@ -45,12 +48,13 @@ export function ReceiptRelations({
       )}
       {(related.length > 0 || transaction.related_executions_has_more) && (
         <Text variant="small" className="text-foreground-secondary">
-          Other workflows used by this run
+          {t("billing1.relations.otherWorkflows")}
         </Text>
       )}
       {related.map((execution) => (
         <RelatedExecution
           key={execution.execution_id}
+          t={t}
           execution={execution}
           loadedTransactions={loadedTransactions}
           receiptAsOf={transaction.receipt_as_of}
@@ -58,14 +62,12 @@ export function ReceiptRelations({
         />
       ))}
       <Text variant="small" className="text-foreground-secondary">
-        Any credit charges for related runs appear separately.
-        {related.length > 0
-          ? " The task page includes related runs in its total."
-          : ""}
+        {t("billing1.relations.note")}
+        {related.length > 0 ? t("billing1.relations.noteSuffix") : ""}
       </Text>
       {transaction.related_executions_has_more && (
         <Text variant="small" className="text-foreground-secondary">
-          More related runs are not shown here.
+          {t("billing1.relations.moreHidden")}
         </Text>
       )}
     </div>
@@ -73,17 +75,20 @@ export function ReceiptRelations({
 }
 
 function RelatedExecution({
+  t,
   execution,
   loadedTransactions,
   receiptAsOf,
   onSelectRelated,
 }: {
+  t: ReturnType<typeof useT>;
   execution: CreditHistoryRelatedExecution;
   loadedTransactions: Transaction[];
   receiptAsOf: Transaction["receipt_as_of"];
   onSelectRelated: (executionID: string) => void;
 }) {
-  const name = execution.agent_name || "Workflow unavailable";
+  const name =
+    execution.agent_name || t("billing1.history.workflowUnavailable");
   const loaded = loadedTransactions.find(
     (item) => item.usage_execution_id === execution.execution_id,
   );

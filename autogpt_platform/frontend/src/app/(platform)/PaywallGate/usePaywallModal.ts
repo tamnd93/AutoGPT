@@ -12,6 +12,7 @@ import { useCheckoutRedirect } from "@/hooks/useCheckoutRedirect";
 import { useMountEffect } from "@/hooks/useMountEffect";
 import { ApiError } from "@/lib/autogpt-server-api/helpers";
 import { useAuth } from "@/lib/auth/hooks/useAuth";
+import { useT } from "@/lib/i18n";
 import { COUNTRIES } from "@/components/molecules/PlanCard/countries";
 import {
   type BackendTierKey,
@@ -53,6 +54,7 @@ function deriveAvailablePlans(
   tierCostsYearly: Record<string, number> | undefined,
   multipliers: Record<string, number> | undefined,
   currentTier: string | undefined,
+  t: (key: string, values?: Record<string, string | number>) => string,
 ): PlanDef[] {
   if (!tierCosts) return [];
   return TIER_DISPLAY_ORDER.filter(
@@ -64,7 +66,7 @@ function deriveAvailablePlans(
       ...PLAN_METADATA[tier],
       cta:
         currentTier === "NO_TIER" && tier !== "BUSINESS"
-          ? `Start ${PLAN_METADATA[tier].name}`
+          ? t("billing1.choices.start", { name: PLAN_METADATA[tier].name })
           : PLAN_METADATA[tier].cta,
       usage:
         tier === "MAX" && multipliers?.MAX && multipliers?.PRO
@@ -77,6 +79,7 @@ function deriveAvailablePlans(
 }
 
 export function usePaywallModal() {
+  const t = useT();
   const {
     data: subscription,
     isLoading,
@@ -125,6 +128,7 @@ export function usePaywallModal() {
     subscription?.tier_costs_yearly,
     subscription?.tier_multipliers,
     subscription?.tier,
+    t,
   );
 
   // Trial checkout returns to /settings/billing, which renders the trial
@@ -188,11 +192,11 @@ export function usePaywallModal() {
         return;
       }
       toast({
-        title: "Couldn't start checkout",
+        title: t("billing1.checkout.failedTitle"),
         description:
           error instanceof Error
             ? error.message
-            : "Stripe didn't accept the request. Please try again.",
+            : t("billing1.checkout.failedDescription"),
         variant: "destructive",
       });
     } finally {

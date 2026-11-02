@@ -1,4 +1,5 @@
 import { ArrowUpRight01Icon } from "@hugeicons/core-free-icons";
+import { useLocale, useT } from "@/lib/i18n";
 import { Badge } from "@/components/atoms/Badge/Badge";
 import { Button } from "@/components/atoms/Button/Button";
 import { Icon } from "@/components/atoms/Icon/Icon";
@@ -13,16 +14,18 @@ import {
 type Props = { transaction: Transaction };
 
 export function ReceiptMetadata({ transaction }: Props) {
-  const started = formatActivityDate(transaction.execution_started_at);
-  const posted = formatActivityDate(transaction.transaction_time);
-  const cutoff = formatActivityDate(transaction.receipt_as_of);
+  const t = useT();
+  const locale = useLocale();
+  const started = formatActivityDate(transaction.execution_started_at, locale);
+  const posted = formatActivityDate(transaction.transaction_time, locale);
+  const cutoff = formatActivityDate(transaction.receipt_as_of, locale);
   return (
     <div className="mt-4 flex flex-wrap items-end justify-between gap-4 border-t border-border-base pt-4">
       <div className="flex flex-wrap gap-x-6 gap-y-3">
         {transaction.execution_status && (
           <div className="flex flex-col items-start gap-1">
             <Text variant="small" className="text-foreground-secondary">
-              Run status
+              {t("billing1.metadata.runStatus")}
             </Text>
             <Badge
               variant={
@@ -34,31 +37,31 @@ export function ReceiptMetadata({ transaction }: Props) {
               }
               size="small"
             >
-              {statusLabel(transaction.execution_status)}
+              {statusLabel(transaction.execution_status, t)}
             </Badge>
           </div>
         )}
         {transaction.execution_started_at && (
           <MetadataField
-            label="Started"
+            label={t("billing1.metadata.started")}
             value={`${started.date} · ${started.time}`}
             title={started.full}
           />
         )}
         {transaction.execution_graph_version != null && (
           <MetadataField
-            label="Version"
+            label={t("billing1.metadata.version")}
             value={`v${transaction.execution_graph_version}`}
           />
         )}
         <MetadataField
-          label="Last activity"
+          label={t("billing1.metadata.lastActivity")}
           value={`${posted.date} · ${posted.time}`}
           title={posted.full}
         />
         {transaction.receipt_as_of && (
           <MetadataField
-            label="Credits as of"
+            label={t("billing1.metadata.creditsAsOf")}
             value={`${cutoff.date} · ${cutoff.time}`}
             title={cutoff.full}
           />
@@ -91,6 +94,7 @@ function MetadataField({
 }
 
 function ReceiptDestination({ transaction }: Props) {
+  const t = useT();
   const href = taskHref(transaction);
   const conversationHref = transaction.conversation_id
     ? `/copilot?sessionId=${encodeURIComponent(transaction.conversation_id)}`
@@ -105,16 +109,18 @@ function ReceiptDestination({ transaction }: Props) {
         className="min-h-11 min-w-0"
         rightIcon={<Icon icon={ArrowUpRight01Icon} size={16} />}
       >
-        {href ? "View task" : "View conversation"}
+        {href
+          ? t("billing1.metadata.viewTask")
+          : t("billing1.metadata.viewConversation")}
       </Button>
     );
   }
   if (transaction.activity_type === "agent_run") {
     const label = transaction.library_agent_id
-      ? "Run unavailable"
+      ? t("billing1.metadata.runUnavailable")
       : transaction.execution_available
-        ? "Not in your library"
-        : "Workflow and run unavailable";
+        ? t("billing1.metadata.notInLibrary")
+        : t("billing1.metadata.workflowRunUnavailable");
     return (
       <Text variant="small" className="text-foreground-secondary">
         {label}
@@ -124,7 +130,7 @@ function ReceiptDestination({ transaction }: Props) {
   if (transaction.activity_type === "copilot_tools")
     return (
       <Text variant="small" className="text-foreground-secondary">
-        Conversation unavailable
+        {t("billing1.metadata.conversationUnavailable")}
       </Text>
     );
   return null;

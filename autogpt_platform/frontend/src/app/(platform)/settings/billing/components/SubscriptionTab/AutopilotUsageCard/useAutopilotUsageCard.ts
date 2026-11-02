@@ -5,6 +5,7 @@ import {
   getUsageStatus,
 } from "@/services/usageExperience/helpers";
 import { useUsageExperience } from "@/services/usageExperience/useUsageExperience";
+import { useLocale, useT } from "@/lib/i18n";
 import { formatRelativeReset, formatShortDate } from "../../../helpers";
 
 export interface UsageWindowView {
@@ -15,20 +16,22 @@ export interface UsageWindowView {
 }
 
 export function useAutopilotUsageCard() {
+  const t = useT();
+  const locale = useLocale();
   const { experience, usage, trial, isLoading, isError, retry } =
     useUsageExperience();
   const today: UsageWindowView | null = usage?.daily
     ? {
-        label: "Today",
+        label: t("billing1.apUsage.today"),
         percent: usage.daily.percent_used,
-        ...formatRelativeReset(usage.daily.resets_at),
+        ...formatRelativeReset(usage.daily.resets_at, locale),
       }
     : null;
   const week: UsageWindowView | null = usage?.weekly
     ? {
-        label: "This week",
+        label: t("billing1.apUsage.thisWeek"),
         percent: usage.weekly.percent_used,
-        ...formatRelativeReset(usage.weekly.resets_at),
+        ...formatRelativeReset(usage.weekly.resets_at, locale),
       }
     : null;
   const showTrialWindow =
@@ -37,10 +40,10 @@ export function useAutopilotUsageCard() {
   const trialWindow: UsageWindowView | null =
     showTrialWindow && experience.trialPercent != null
       ? {
-          label: "Trial usage",
+          label: t("billing1.apUsage.trialUsage"),
           percent: experience.trialPercent,
-          prefix: "Trial ends",
-          value: formatShortDate(trial?.ends_at),
+          prefix: t("billing1.apUsage.trialEnds"),
+          value: formatShortDate(trial?.ends_at, locale),
         }
       : null;
   const featured = showTrialWindow
@@ -49,8 +52,11 @@ export function useAutopilotUsageCard() {
       ? week
       : today;
   const secondary = showTrialWindow ? null : featured === week ? today : week;
-  const status =
-    USAGE_STATUS[getUsageStatus(getFeaturedUsagePercent(experience, usage))];
+  const statusKey =
+    USAGE_STATUS_KEYS[
+      getUsageStatus(getFeaturedUsagePercent(experience, usage))
+    ];
+  const status = { ...statusKey, label: t(statusKey.labelKey) };
   return {
     status,
     featured,
@@ -74,8 +80,17 @@ export function useAutopilotUsageCard() {
   };
 }
 
-const USAGE_STATUS = {
-  reached: { label: "Allowance reached", className: "text-orange-700" },
-  low: { label: "Running low", className: "text-warning-foreground" },
-  plenty: { label: "Plenty left", className: "text-foreground-tertiary" },
-};
+const USAGE_STATUS_KEYS = {
+  reached: {
+    labelKey: "billing1.apUsage.reached",
+    className: "text-orange-700",
+  },
+  low: {
+    labelKey: "billing1.apUsage.low",
+    className: "text-warning-foreground",
+  },
+  plenty: {
+    labelKey: "billing1.apUsage.plenty",
+    className: "text-foreground-tertiary",
+  },
+} as const;

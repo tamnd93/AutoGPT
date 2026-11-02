@@ -5,6 +5,7 @@ import { Text } from "@/components/atoms/Text/Text";
 import { Dialog } from "@/components/molecules/Dialog/Dialog";
 import { Alert01Icon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   isOpen: boolean;
@@ -33,28 +34,28 @@ export function AutoRefillDialog({
   onSave,
   onDisable,
 }: Props) {
+  const t = useT();
   return (
     <Dialog
-      title="Auto-refill"
+      title={t("billing1.autoRefill.title")}
       styling={{ maxWidth: "440px" }}
       controlled={{ isOpen, set: onOpenChange }}
     >
       <Dialog.Content>
         <div className="flex flex-col gap-4">
           <Text variant="small" as="span" className="text-foreground-tertiary">
-            Top up your balance automatically when it dips below the threshold
-            you set.
+            {t("billing1.autoRefill.dialogBody")}
           </Text>
 
           <RefillRow
             id="refill-threshold"
-            label="When balance goes below:"
+            label={t("billing1.autoRefill.thresholdLabel")}
             value={threshold}
             onChange={setThreshold}
           />
           <RefillRow
             id="refill-amount"
-            label="Automatically refill with:"
+            label={t("billing1.autoRefill.amountLabel")}
             value={refillAmount}
             onChange={setRefillAmount}
           />
@@ -67,9 +68,7 @@ export function AutoRefillDialog({
               className="mt-0.5 shrink-0 text-amber-600"
             />
             <Text variant="small" as="span" className="text-warning-foreground">
-              As a safety mechanism, auto-refill will only trigger once per
-              task. Keep this in mind when budgeting to ensure your balance does
-              not hit zero and your tasks don&apos;t pause mid-run.
+              {t("billing1.autoRefill.warning")}
             </Text>
           </div>
         </div>
@@ -92,7 +91,7 @@ export function AutoRefillDialog({
               size="small"
               onClick={() => onOpenChange(false)}
             >
-              Cancel
+              {t("billing1.autoRefill.cancel")}
             </Button>
           )}
           <Button
@@ -103,7 +102,9 @@ export function AutoRefillDialog({
             loading={isSaving}
             onClick={onSave}
           >
-            {isEnabled ? "Save changes" : "Enable Auto-Refill"}
+            {isEnabled
+              ? t("billing1.autoRefill.saveChanges")
+              : t("billing1.autoRefill.enable")}
           </Button>
         </Dialog.Footer>
       </Dialog.Content>
@@ -122,6 +123,7 @@ function RefillRow({
   value: string;
   onChange: (value: string) => void;
 }) {
+  const t = useT();
   return (
     <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
       <Text variant="body" as="span" className="text-textBlack">
@@ -135,7 +137,7 @@ function RefillRow({
           type="amount"
           amountPrefix="$"
           decimalCount={2}
-          placeholder="min $5"
+          placeholder={t("billing1.autoRefill.minPlaceholder")}
           size="small"
           value={value}
           onChange={(event) => onChange(event.target.value)}

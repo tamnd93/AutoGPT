@@ -2,6 +2,7 @@ import { Button } from "@/components/atoms/Button/Button";
 import { useId, type MouseEvent } from "react";
 import { Text } from "@/components/atoms/Text/Text";
 import type { Transaction } from "../helpers";
+import { useT } from "@/lib/i18n";
 import { useReceiptSelection } from "../useReceiptSelection";
 import { TransactionRow } from "./TransactionRow";
 
@@ -20,6 +21,7 @@ export function TransactionHistoryTable({
   isLoadMoreError,
   onLoadMore,
 }: Props) {
+  const t = useT();
   const { selectedID, toggleReceipt, selectRelated } =
     useReceiptSelection(transactions);
   const loadMoreID = useId();
@@ -39,7 +41,7 @@ export function TransactionHistoryTable({
     <div className="overflow-hidden rounded-large border border-border-base bg-surface shadow-subtle">
       <table
         className="w-full table-fixed border-collapse text-left"
-        aria-label="Automation credit transactions"
+        aria-label={t("billing1.table.aria")}
       >
         <colgroup>
           <col />
@@ -55,7 +57,7 @@ export function TransactionHistoryTable({
                 as="span"
                 className="text-foreground-secondary"
               >
-                Activity
+                {t("billing1.table.activity")}
               </Text>
             </th>
             <th scope="col" className="p-0 sm:px-2 sm:py-3">
@@ -64,7 +66,7 @@ export function TransactionHistoryTable({
                 as="span"
                 className="sr-only text-foreground-secondary sm:not-sr-only"
               >
-                Last activity
+                {t("billing1.table.lastActivity")}
               </Text>
             </th>
             <th scope="col" className="px-2 py-3 text-right">
@@ -73,11 +75,11 @@ export function TransactionHistoryTable({
                 as="span"
                 className="text-foreground-secondary"
               >
-                Amount
+                {t("billing1.table.amount")}
               </Text>
             </th>
             <th scope="col">
-              <span className="sr-only">Details</span>
+              <span className="sr-only">{t("billing1.table.details")}</span>
             </th>
           </tr>
         </thead>
@@ -96,7 +98,7 @@ export function TransactionHistoryTable({
       </table>
       <div className="flex flex-wrap items-center justify-between gap-3 px-3 py-3 sm:px-5">
         <Text variant="small" className="text-foreground-secondary">
-          Latest charges and credits first
+          {t("billing1.table.latestFirst")}
         </Text>
         {hasMore ? (
           <Button
@@ -107,7 +109,9 @@ export function TransactionHistoryTable({
             loading={isLoadingMore}
             onClick={(event) => void loadOlder(event)}
           >
-            {isLoadMoreError ? "Retry loading more" : "Load more"}
+            {isLoadMoreError
+              ? t("billing1.table.retryLoadMore")
+              : t("billing1.table.loadMore")}
           </Button>
         ) : (
           <Text
@@ -116,7 +120,7 @@ export function TransactionHistoryTable({
             tabIndex={-1}
             className="text-foreground-secondary focus:outline-none"
           >
-            End of history
+            {t("billing1.table.endOfHistory")}
           </Text>
         )}
         {isLoadMoreError && (
@@ -125,15 +129,16 @@ export function TransactionHistoryTable({
             role="alert"
             className="w-full text-foreground-secondary"
           >
-            We couldn’t load older transactions. Your loaded history is still
-            available.
+            {t("billing1.table.loadMoreError")}
           </Text>
         )}
       </div>
       <Text variant="small" className="sr-only" role="status">
         {isLoadingMore
-          ? "Loading older transactions"
-          : `${transactions.length} transactions loaded`}
+          ? t("billing1.table.loadingMore")
+          : t("billing1.table.loadedCount", {
+              count: transactions.length,
+            })}
       </Text>
     </div>
   );

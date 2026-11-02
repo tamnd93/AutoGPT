@@ -11,6 +11,7 @@ import {
   TooltipTrigger,
 } from "@/components/atoms/Tooltip/BaseTooltip";
 
+import { useT } from "@/lib/i18n";
 import { EASE_OUT, getSectionMotionProps } from "../../../helpers";
 import { useUsageCard, type DailyUsageRow } from "./useUsageCard";
 
@@ -21,6 +22,7 @@ interface Props {
 const Y_TICK_COUNT = 4;
 
 export function UsageCard({ index = 0 }: Props) {
+  const t = useT();
   const reduceMotion = useReducedMotion();
   const { usage, isLoading } = useUsageCard();
 
@@ -51,7 +53,7 @@ export function UsageCard({ index = 0 }: Props) {
     <motion.section {...sectionMotion} className="flex w-full flex-col gap-2">
       <div className="px-4">
         <Text variant="body-medium" as="span" className="text-textBlack">
-          Usage
+          {t("billing1.usage.title")}
         </Text>
       </div>
 
@@ -66,11 +68,11 @@ export function UsageCard({ index = 0 }: Props) {
               ${totalSpent.toFixed(2)}
             </Text>
             <Text variant="body" as="span" className="text-foreground-tertiary">
-              · {totalRuns} runs
+              {t("billing1.usage.runs", { runs: totalRuns })}
             </Text>
           </div>
           <Text variant="body" as="span" className="text-foreground-body">
-            Last 30 days
+            {t("billing1.usage.last30")}
           </Text>
         </div>
 
@@ -149,6 +151,7 @@ function UsageBar({
   max: number;
   reduceMotion: boolean;
 }) {
+  const t = useT();
   const heightPercent = (day.amount / max) * 100;
   const isEmpty = day.amount <= 0;
 
@@ -159,8 +162,12 @@ function UsageBar({
           type="button"
           aria-label={
             isEmpty
-              ? `${day.date}: $0.00, 0 runs`
-              : `${day.date}: $${day.amount.toFixed(2)}, ${day.runs} runs`
+              ? t("billing1.usage.barEmptyAria", { date: day.date })
+              : t("billing1.usage.barAria", {
+                  date: day.date,
+                  amount: day.amount.toFixed(2),
+                  runs: day.runs,
+                })
           }
           // TODO(tokens): no fitting role for focus-visible:ring-zinc-400 #ADADB3; #ADADB3 is foreground-subtle, a text colour
           className="group flex h-full flex-1 flex-col justify-end focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-400"
@@ -202,7 +209,7 @@ function UsageBar({
             ${day.amount.toFixed(2)}
           </span>
           <span className="text-xs tabular-nums text-foreground-subtle">
-            {day.runs} runs
+            {t("billing1.usage.runs", { runs: day.runs })}
           </span>
         </div>
       </TooltipContent>

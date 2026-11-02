@@ -6,6 +6,7 @@ import { Icon } from "@/components/atoms/Icon/Icon";
 import { Text } from "@/components/atoms/Text/Text";
 import { Skeleton } from "@/components/atoms/Skeleton/Skeleton";
 import { formatUsagePercent } from "@/services/usageExperience/helpers";
+import { useT } from "@/lib/i18n";
 import { getSectionMotionProps } from "../../../helpers";
 import {
   useAutopilotUsageCard,
@@ -18,6 +19,7 @@ interface Props {
 }
 
 export function AutopilotUsageCard({ index = 0 }: Props) {
+  const t = useT();
   const reduceMotion = useReducedMotion();
   const state = useAutopilotUsageCard();
   if (state.isLoading) return <Skeleton className="h-80 rounded-2xl" />;
@@ -29,12 +31,12 @@ export function AutopilotUsageCard({ index = 0 }: Props) {
   return (
     <motion.section
       {...getSectionMotionProps(index, Boolean(reduceMotion))}
-      aria-label="Usage"
+      aria-label={t("billing1.apUsage.aria")}
       className="flex h-full min-h-80 flex-col rounded-2xl border border-border-base bg-surface p-6"
     >
       <div className="flex flex-wrap items-center justify-between gap-2">
         <Text variant="large-medium" as="h2">
-          Usage
+          {t("billing1.apUsage.title")}
         </Text>
         {!state.inactive && (
           <Text variant="small" className={state.status.className}>
@@ -46,13 +48,13 @@ export function AutopilotUsageCard({ index = 0 }: Props) {
         <div className="my-auto py-8">
           <Text variant="large-medium" className="mb-2">
             {state.unlimited
-              ? "No usage limit"
-              : "Choose a plan to keep working"}
+              ? t("billing1.apUsage.noLimit")
+              : t("billing1.apUsage.choosePlan")}
           </Text>
           <Text variant="small" tone="secondary" className="leading-6">
             {state.unlimited
-              ? "Your plan has no daily or weekly usage limits."
-              : "Choose a plan to continue working with your saved conversations and workflows."}
+              ? t("billing1.apUsage.noLimitBody")
+              : t("billing1.apUsage.choosePlanBody")}
           </Text>
         </div>
       ) : (
@@ -66,11 +68,10 @@ export function AutopilotUsageCard({ index = 0 }: Props) {
           {state.lifetime && (
             <div className="mt-6 border-t border-separator pt-5">
               <Text variant="small-medium" className="mb-1">
-                One allowance for your whole trial
+                {t("billing1.apUsage.lifetimeTitle")}
               </Text>
               <Text variant="small" tone="secondary" className="leading-6">
-                This allowance lasts for your whole trial. It doesn’t refresh
-                each day or week.
+                {t("billing1.apUsage.lifetimeBody")}
               </Text>
             </div>
           )}
@@ -82,8 +83,8 @@ export function AutopilotUsageCard({ index = 0 }: Props) {
         className="mt-auto pt-6 text-xs leading-5"
       >
         {state.inactive
-          ? "Your work stays saved."
-          : "Bigger requests use more of your allowance. Hitting the limit never adds a charge."}
+          ? t("billing1.apUsage.workSaved")
+          : t("billing1.apUsage.allowanceNote")}
       </Text>
     </motion.section>
   );
@@ -96,6 +97,7 @@ function UsageBar({
   window: UsageWindowView;
   primary?: boolean;
 }) {
+  const t = useT();
   const percent = Math.min(Math.max(window.percent, 0), 100);
   const label = formatUsagePercent(percent).replace("%", "");
   return (
@@ -121,9 +123,11 @@ function UsageBar({
               %
             </Text>
             <Text as="span" variant="small" tone="secondary" className="ml-1">
-              used
+              {t("billing1.apUsage.used")}
             </Text>
-            <span className="sr-only">{label}% used</span>
+            <span className="sr-only">
+              {t("billing1.apUsage.usedAria", { percent: label })}
+            </span>
           </span>
         ) : (
           <Text variant="small" tone="secondary">
@@ -133,7 +137,9 @@ function UsageBar({
       </div>
       <div
         role="progressbar"
-        aria-label={`${window.label} usage`}
+        aria-label={t("billing1.apUsage.progressAria", {
+          label: window.label,
+        })}
         aria-valuemin={0}
         aria-valuemax={100}
         aria-valuenow={percent}

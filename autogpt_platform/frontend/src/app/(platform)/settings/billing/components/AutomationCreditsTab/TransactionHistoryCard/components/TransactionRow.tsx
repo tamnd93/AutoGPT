@@ -9,6 +9,7 @@ import { Button } from "@/components/atoms/Button/Button";
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { Link } from "@/components/atoms/Link/Link";
 import { Text } from "@/components/atoms/Text/Text";
+import { useLocale, useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import {
   activityDescription,
@@ -37,8 +38,10 @@ export function TransactionRow({
   loadedTransactions,
   onSelectRelated,
 }: Props) {
+  const t = useT();
+  const locale = useLocale();
   const receiptID = useId();
-  const posted = formatActivityDate(transaction.transaction_time);
+  const posted = formatActivityDate(transaction.transaction_time, locale);
   return (
     <>
       <tr className="border-b border-separator">
@@ -57,7 +60,7 @@ export function TransactionRow({
           <TransactionAmount amount={transaction.amount} />
           {isRunActive(transaction) && (
             <Text variant="small" className="text-foreground-secondary">
-              so far
+              {t("billing1.row.soFar")}
             </Text>
           )}
         </td>
@@ -68,14 +71,23 @@ export function TransactionRow({
             size="small"
             className="min-h-11 w-full min-w-0 px-1 text-foreground-secondary"
             onClick={() => onToggle(transaction.id)}
-            aria-label={`${open ? "Close" : "Open"} details for ${activityName(transaction)}, ${posted.date} at ${posted.time}`}
+            aria-label={t(
+              open ? "billing1.row.closeDetails" : "billing1.row.openDetails",
+              {
+                name: activityName(transaction, t),
+                date: posted.date,
+                time: posted.time,
+              },
+            )}
             aria-expanded={open}
             aria-controls={open ? receiptID : undefined}
             rightIcon={
               <Icon icon={open ? ArrowUp01Icon : ArrowDown01Icon} size={16} />
             }
           >
-            <span className="hidden sm:inline">Details</span>
+            <span className="hidden sm:inline">
+              {t("billing1.row.details")}
+            </span>
           </Button>
         </td>
       </tr>
@@ -96,9 +108,11 @@ export function TransactionRow({
 }
 
 function TransactionActivity({ transaction }: { transaction: Transaction }) {
+  const t = useT();
+  const locale = useLocale();
   const href = libraryHref(transaction.library_agent_id);
-  const name = activityName(transaction);
-  const posted = formatActivityDate(transaction.transaction_time);
+  const name = activityName(transaction, t);
+  const posted = formatActivityDate(transaction.transaction_time, locale);
   const agent = transaction.activity_type === "agent_run";
   return (
     <div className="flex items-center gap-3">
@@ -129,8 +143,8 @@ function TransactionActivity({ transaction }: { transaction: Transaction }) {
         )}
         <Text variant="small" className="mt-1 text-foreground-secondary">
           {isRunActive(transaction)
-            ? statusLabel(transaction.execution_status || "")
-            : activityDescription(transaction)}
+            ? statusLabel(transaction.execution_status || "", t)
+            : activityDescription(transaction, t)}
         </Text>
         <Text
           variant="small"
