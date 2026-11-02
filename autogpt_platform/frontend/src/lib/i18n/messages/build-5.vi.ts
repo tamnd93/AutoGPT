@@ -55,4 +55,17 @@ export const Build5Vi: Partial<Record<keyof typeof Build5En, string>> = {
   "build5.duplicate.failedTitle": "Nhân bản workflow thất bại",
   "build5.duplicate.forkError":
     "Bản sao không trả về workflow để mở.",
+  "build5.marketplace.failedAddTitle":
+    "Không thêm được workflow vào thư viện",
+  "build5.marketplace.addedTitle": "Đã thêm workflow",
+  "build5.marketplace.addedBody":
+    "Workflow đã được thêm vào thư viện và builder của bạn",
+  "build5.marketplace.versionNotFound":
+    "Không tìm thấy phiên bản bài đăng cửa hàng",
+  "build5.myAgents.failedAddTitle":
+    "Không thêm được workflow vào builder",
+  "build5.myAgents.errorContext": "menu block",
+  "build5.myAgents.requestFailed": "Yêu cầu thất bại",
+  "build5.myAgents.errorFallback": "Đã xảy ra lỗi",
+
 };

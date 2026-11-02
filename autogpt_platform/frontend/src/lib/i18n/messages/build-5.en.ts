@@ -53,4 +53,14 @@ export const Build5En = {
   "build5.duplicate.failedTitle": "Failed to duplicate workflow",
   "build5.duplicate.forkError":
     "The copy did not return a workflow to open.",
+  "build5.marketplace.failedAddTitle": "Failed to add workflow to library",
+  "build5.marketplace.addedTitle": "Workflow Added",
+  "build5.marketplace.addedBody":
+    "Workflow has been added to your library and builder",
+  "build5.marketplace.versionNotFound": "Store listing version not found",
+  "build5.myAgents.failedAddTitle": "Failed to add workflow to builder",
+  "build5.myAgents.errorContext": "block menu",
+  "build5.myAgents.requestFailed": "Request failed",
+  "build5.myAgents.errorFallback": "An error occurred",
+
 } as const;

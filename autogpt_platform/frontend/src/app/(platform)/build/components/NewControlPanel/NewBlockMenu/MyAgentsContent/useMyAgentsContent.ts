@@ -4,8 +4,10 @@ import { useState } from "react";
 import { LibraryAgent } from "@/app/api/__generated__/models/libraryAgent";
 import { useAddAgentToBuilder } from "../hooks/useAddAgentToBuilder";
 import { useToast } from "@/components/molecules/Toast/use-toast";
+import { useT } from "@/lib/i18n";
 
 export const useMyAgentsContent = () => {
+  const t = useT();
   const [selectedAgentId, setSelectedAgentId] = useState<string | null>(null);
   const [isGettingAgentDetails, setIsGettingAgentDetails] = useState(false);
   const { addLibraryAgentToBuilder } = useAddAgentToBuilder();
@@ -44,9 +46,10 @@ export const useMyAgentsContent = () => {
       await addLibraryAgentToBuilder(agent);
     } catch (error) {
       toast({
-        title: "Failed to add workflow to builder",
+        title: t("build5.myAgents.failedAddTitle"),
         description:
-          ((error as any).message as string) || "An unexpected error occurred.",
+          ((error as any).message as string) ||
+          t("build5.loadError.unexpected"),
         variant: "destructive",
       });
     } finally {

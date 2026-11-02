@@ -4,8 +4,10 @@ import { useMyAgentsContent } from "./useMyAgentsContent";
 import { ErrorCard } from "@/components/molecules/ErrorCard/ErrorCard";
 import { InfiniteScroll } from "@/components/contextual/InfiniteScroll/InfiniteScroll";
 import { blockMenuContainerStyle } from "../style";
+import { useT } from "@/lib/i18n";
 
 export const MyAgentsContent = () => {
+  const t = useT();
   const {
     allAgents,
     agentLoading,
@@ -36,12 +38,14 @@ export const MyAgentsContent = () => {
       <div className="h-full p-4">
         <ErrorCard
           isSuccess={false}
-          context="block menu"
+          context={t("build5.myAgents.errorContext")}
           responseError={error || undefined}
           httpError={{
             status: status,
-            statusText: "Request failed",
-            message: (error?.detail as string) || "An error occurred",
+            statusText: t("build5.myAgents.requestFailed"),
+            message:
+              (error?.detail as string) ||
+              t("build5.myAgents.errorFallback"),
           }}
           onRetry={() => refetch()}
         />

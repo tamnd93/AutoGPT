@@ -15,8 +15,10 @@ import { getQueryClient } from "@/lib/react-query/queryClient";
 import * as Sentry from "@sentry/nextjs";
 import { useState } from "react";
 import { useAddAgentToBuilder } from "../hooks/useAddAgentToBuilder";
+import { useT } from "@/lib/i18n";
 
 export const useMarketplaceAgentsContent = () => {
+  const t = useT();
   const { toast } = useToast();
   const [addingAgent, setAddingAgent] = useState<string | null>(null);
   const { addAgentToBuilder } = useAddAgentToBuilder();
@@ -60,10 +62,10 @@ export const useMarketplaceAgentsContent = () => {
       onError: (error) => {
         Sentry.captureException(error);
         toast({
-          title: "Failed to add workflow to library",
+          title: t("build5.marketplace.failedAddTitle"),
           description:
             ((error as any).message as string) ||
-            "An unexpected error occurred.",
+            t("build5.loadError.unexpected"),
           variant: "destructive",
         });
       },
@@ -85,7 +87,7 @@ export const useMarketplaceAgentsContent = () => {
       );
       if (status !== 200) {
         Sentry.captureException("Store listing version not found");
-        throw new Error("Store listing version not found");
+        throw new Error(t("build5.marketplace.versionNotFound"));
       }
 
       const response = await addMarketplaceAgent({
@@ -106,15 +108,16 @@ export const useMarketplaceAgentsContent = () => {
       addAgentToBuilder(libraryAgentDetails as LibraryAgent);
 
       toast({
-        title: "Workflow Added",
-        description: "Workflow has been added to your library and builder",
+        title: t("build5.marketplace.addedTitle"),
+        description: t("build5.marketplace.addedBody"),
       });
     } catch (error) {
       Sentry.captureException(error);
       toast({
-        title: "Failed to add workflow to library",
+        title: t("build5.marketplace.failedAddTitle"),
         description:
-          ((error as any).message as string) || "An unexpected error occurred.",
+          ((error as any).message as string) ||
+          t("build5.loadError.unexpected"),
         variant: "destructive",
       });
     } finally {
