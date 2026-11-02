@@ -28,6 +28,7 @@ import { chatTools2Vi } from "./chat-tools-2.vi";
 import { chatTools3Vi } from "./chat-tools-3.vi";
 import { chatTools4Vi } from "./chat-tools-4.vi";
 import { chatTools5Vi } from "./chat-tools-5.vi";
+import { ConnectServices1Vi } from "./connect-services-1.vi";
 import { ConnectServices2Vi } from "./connect-services-2.vi";
 import { credentials1Vi } from "./credentials-1.vi";
 import { credentials2Vi } from "./credentials-2.vi";
@@ -88,6 +89,7 @@ export const vi: Partial<Record<MessageKey, string>> = {
   ...chatTools3Vi,
   ...chatTools4Vi,
   ...chatTools5Vi,
+  ...ConnectServices1Vi,
   ...ConnectServices2Vi,
   ...credentials1Vi,
   ...credentials2Vi,
