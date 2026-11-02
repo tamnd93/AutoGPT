@@ -7,6 +7,7 @@ import sparklesImg from "./assets/sparkles.png";
 import { useCopilotChatActions } from "../CopilotChatActionsProvider/useCopilotChatActions";
 import { BookOpen01Icon, PencilIcon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   agentName: string;
@@ -21,6 +22,7 @@ export function AgentSavedCard({
   libraryAgentLink,
   agentPageLink,
 }: Props) {
+  const t = useT();
   // On the in-builder chat panel the user is already looking at the agent
   // and the panel auto-switches the URL to the new version — the two
   // "Open in …" CTAs here would open the same agent in a second tab,
@@ -39,7 +41,7 @@ export function AgentSavedCard({
           className="relative top-1"
         />
         <Text variant="large-medium" className="mb-2 leading-inherit">
-          Workflow{" "}
+          {t("chatTools2.agent.workflow")}{" "}
           <span
             // TODO(tokens): no exact role for text-violet-600
             className="text-violet-600"
@@ -59,7 +61,7 @@ export function AgentSavedCard({
             rel="noopener noreferrer"
           >
             <Icon icon={BookOpen01Icon} size={14} />
-            Open in library
+            {t("chatTools2.agent.openInLibrary")}
           </Button>
           <Button
             as="NextLink"
@@ -70,7 +72,7 @@ export function AgentSavedCard({
             rel="noopener noreferrer"
           >
             <Icon icon={PencilIcon} size={14} />
-            Open in builder
+            {t("chatTools2.agent.openInBuilder")}
           </Button>
         </div>
       )}

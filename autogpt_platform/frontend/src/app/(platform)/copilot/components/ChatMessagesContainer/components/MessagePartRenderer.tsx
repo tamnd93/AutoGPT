@@ -1,6 +1,7 @@
 import { parseSpecialMarkers } from "../../../helpers/messageMarkers";
 import { CredentialMentionMarkdown } from "../../CredentialMention/CredentialMentionMarkdown";
 import { ErrorCard } from "@/components/molecules/ErrorCard/ErrorCard";
+import { useT } from "@/lib/i18n";
 import { StoppedTaskCard } from "./StoppedTaskCard";
 import { ToolUIPart, UIDataTypes, UIMessage, UITools } from "ai";
 import { useMemo } from "react";
@@ -52,6 +53,7 @@ import { ReasoningCollapse } from "./ReasoningCollapse";
  * Falls back to <video> when an <img> fails to load for workspace files.
  */
 function WorkspaceMediaImage(props: React.JSX.IntrinsicElements["img"]) {
+  const t = useT();
   const { src, alt, ...rest } = props;
 
   if (!src) return null;
@@ -69,7 +71,7 @@ function WorkspaceMediaImage(props: React.JSX.IntrinsicElements["img"]) {
           preload="metadata"
         >
           <source src={src} />
-          Your browser does not support the video tag.
+          {t("chatRuntime2.part.videoUnsupported")}
         </video>
       </span>
     );
@@ -79,7 +81,7 @@ function WorkspaceMediaImage(props: React.JSX.IntrinsicElements["img"]) {
     // eslint-disable-next-line @next/next/no-img-element
     <img
       src={src}
-      alt={alt || "Image"}
+      alt={alt || t("chatRuntime2.part.imageAlt")}
       className="h-auto max-w-full rounded-md border border-border-base"
       loading="lazy"
       {...rest}
@@ -185,6 +187,7 @@ export function MessagePartRenderer({
   liveCompactionStats,
   isCurrentlyStreaming,
 }: Props) {
+  const t = useT();
   const key = `${messageID}-${partIndex}`;
 
   switch (part.type) {
@@ -223,7 +226,7 @@ export function MessagePartRenderer({
           <ErrorCard
             key={key}
             responseError={{ message: markerText }}
-            context="the response"
+            context={t("chatRuntime2.part.errorContext")}
             onRetry={markerType === "retryable_error" ? onRetry : undefined}
           />
         );

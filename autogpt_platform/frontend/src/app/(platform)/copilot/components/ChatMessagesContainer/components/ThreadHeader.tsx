@@ -13,12 +13,14 @@ import {
   AppSidebarTrigger,
   useAppSidebarToggle,
 } from "@/components/layout/AppSidebar/components/AppSidebarTrigger/AppSidebarTrigger";
+import { useT } from "@/lib/i18n";
+import type { MessageKey } from "@/lib/i18n/messages/en";
 import { cn } from "@/lib/utils";
 import type { ExpertIdentity } from "../../../useExpertMap";
 import { ExpertAvatar } from "./ExpertAvatar/ExpertAvatar";
 
 // Otto's product-facing title when a session carries no expert identity.
-const DEFAULT_EXPERT_ROLE = "Head of AI";
+const DEFAULT_EXPERT_ROLE: MessageKey = "chatRuntime2.threadHeader.defaultRole";
 
 export type FloatingControls = "newLayout";
 
@@ -52,11 +54,12 @@ export function ThreadHeader({
   isResolvingExpertIdentity = false,
   floatingControls,
 }: Props) {
+  const t = useT();
   // While the roster loads, the chip shows a quiet placeholder rather than
   // Otto's identity, which would be wrong for an expert session.
   const isResolving = isResolvingExpertIdentity && !expertIdentity;
   const name = expertIdentity?.name ?? "Otto";
-  const role = expertIdentity?.role ?? DEFAULT_EXPERT_ROLE;
+  const role = expertIdentity?.role ?? t(DEFAULT_EXPERT_ROLE);
   const jobTitle = expertIdentity?.jobTitle;
   const roleLabel = jobTitle || getExpertRoleLabel(role);
   const hasSidebar = Boolean(useAppSidebarToggle());
@@ -87,7 +90,9 @@ export function ThreadHeader({
                 <div
                   tabIndex={0}
                   aria-label={
-                    isResolving ? "Loading expert" : `${name} — ${roleLabel}`
+                    isResolving
+                      ? t("chatRuntime2.threadHeader.loadingExpert")
+                      : `${name} — ${roleLabel}`
                   }
                   className={cn(
                     "flex min-w-0 items-center gap-2 whitespace-nowrap rounded-full",

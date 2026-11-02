@@ -22,6 +22,7 @@ import {
   LinkSquare01Icon,
 } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 import Link from "next/link";
 import { folderSummary } from "@/app/(platform)/artifacts/components/WorkspaceFolders/folderTree";
 import type { WorkspaceFolderPartData } from "../../../helpers/workspaceAttachments";
@@ -66,6 +67,7 @@ export function MessageAttachments({
   filePattern,
   readOnly,
 }: Props) {
+  const t = useT();
   if (files.length === 0 && folders.length === 0) return null;
 
   const { images, otherFiles } = splitUserImages(files, isUser, filePattern);
@@ -124,12 +126,14 @@ export function MessageAttachments({
                 isUser ? "text-foreground-secondary" : "text-neutral-500"
               }`}
             >
-              <span className="truncate">{file.filename || "file"}</span>
+              <span className="truncate">
+                {file.filename || t("chatRuntime2.attachments.fileFallback")}
+              </span>
               {file.url && (
                 <a
                   href={file.url}
                   download
-                  aria-label="Download file"
+                  aria-label={t("chatRuntime2.attachments.download")}
                   className="ml-auto shrink-0 opacity-50 hover:opacity-100"
                 >
                   <Icon icon={Download04Icon} className="h-3.5 w-3.5" />
@@ -152,10 +156,12 @@ export function MessageAttachments({
                 />
                 <div className="min-w-0">
                   <p className="truncate text-sm font-medium text-foreground-emphasis">
-                    {file.filename || "file"}
+                    {file.filename ||
+                      t("chatRuntime2.attachments.fileFallback")}
                   </p>
                   <p className="mt-0.5 truncate font-mono text-xs text-foreground-emphasis">
-                    {file.mediaType || "file"}
+                    {file.mediaType ||
+                      t("chatRuntime2.attachments.fileFallback")}
                   </p>
                 </div>
               </div>
@@ -163,7 +169,7 @@ export function MessageAttachments({
                 <a
                   href={file.url}
                   download
-                  aria-label="Download file"
+                  aria-label={t("chatRuntime2.attachments.download")}
                   // TODO(tokens): no exact role for text-purple-400; no fitting role for hover:text-purple-600 #6C2EDF; #6C2EDF is brand-hover (a fill)
                   className="shrink-0 text-purple-400 hover:text-purple-600"
                 >
@@ -180,7 +186,7 @@ export function MessageAttachments({
                   <a
                     href={file.url}
                     download
-                    aria-label="Download file"
+                    aria-label={t("chatRuntime2.attachments.download")}
                     // TODO(tokens): no exact role for text-neutral-400, hover:text-neutral-600
                     className="shrink-0 text-neutral-400 hover:text-neutral-600"
                   >
@@ -196,9 +202,13 @@ export function MessageAttachments({
                   className="h-5 w-5 shrink-0 text-neutral-400"
                 />
                 <div className="min-w-0">
-                  <ContentCardTitle>{file.filename || "file"}</ContentCardTitle>
+                  <ContentCardTitle>
+                    {file.filename ||
+                      t("chatRuntime2.attachments.fileFallback")}
+                  </ContentCardTitle>
                   <ContentCardSubtitle>
-                    {file.mediaType || "file"}
+                    {file.mediaType ||
+                      t("chatRuntime2.attachments.fileFallback")}
                   </ContentCardSubtitle>
                 </div>
               </div>
@@ -236,6 +246,7 @@ function FolderAttachmentCard({
   folder: WorkspaceFolderPartData;
   readOnly?: boolean;
 }) {
+  const t = useT();
   return (
     <div
       // TODO(tokens): no exact role for border-purple-300, bg-purple-100
@@ -253,15 +264,19 @@ function FolderAttachmentCard({
         <span className="text-xs text-foreground-secondary">
           {/* The part counts direct files only, so zero is not "Empty". */}
           {folder.fileCount > 0
-            ? `Folder · ${folderSummary(folder.fileCount, 0)}`
-            : "Folder"}
+            ? t("chatRuntime2.attachments.folderWithFiles", {
+                summary: folderSummary(folder.fileCount, 0),
+              })
+            : t("chatRuntime2.attachments.folder")}
         </span>
       </div>
       {/* The share viewer has no Files page to send anyone to. */}
       {readOnly ? null : (
         <Link
           href={`/artifacts?folder=${encodeURIComponent(folder.id)}`}
-          aria-label={`Open folder ${folder.name} in Files`}
+          aria-label={t("chatRuntime2.attachments.openFolder", {
+            name: folder.name,
+          })}
           // TODO(tokens): no exact role for hover:bg-purple-200
           className="shrink-0 rounded-md p-1 text-foreground-tertiary transition-colors hover:bg-purple-200 hover:text-foreground-emphasis"
         >

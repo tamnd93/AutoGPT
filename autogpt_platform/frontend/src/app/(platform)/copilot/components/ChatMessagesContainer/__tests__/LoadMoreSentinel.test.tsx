@@ -4,6 +4,7 @@ import {
   fireEvent,
   cleanup,
 } from "@/tests/integrations/test-utils";
+import { LocaleProvider } from "@/lib/i18n";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { LoadMoreSentinel } from "../ChatMessagesContainer";
 
@@ -67,6 +68,22 @@ describe("LoadMoreSentinel", () => {
     );
     expect(
       screen.getByRole("button", { name: /load older messages/i }),
+    ).toBeDefined();
+  });
+
+  it("words the load-older button in Vietnamese", () => {
+    render(
+      <LocaleProvider locale="vi">
+        <LoadMoreSentinel
+          hasMore={true}
+          isLoading={false}
+          messageCount={5}
+          onLoadMore={vi.fn()}
+        />
+      </LocaleProvider>,
+    );
+    expect(
+      screen.getByRole("button", { name: "Tải tin nhắn cũ hơn" }),
     ).toBeDefined();
   });
 

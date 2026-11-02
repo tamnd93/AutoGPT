@@ -1,6 +1,7 @@
 "use client";
 
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { Loading03Icon } from "@hugeicons/core-free-icons";
 import { type ReactNode, useState } from "react";
@@ -23,6 +24,7 @@ interface Props {
 
 /** An image the user sent, shown as a picture that opens in the side panel. */
 export function MessageImageThumbnail({ artifact, readOnly }: Props) {
+  const t = useT();
   const openArtifact = useCopilotUIStore((s) => s.openArtifact);
   const [failed, setFailed] = useState(false);
 
@@ -32,7 +34,7 @@ export function MessageImageThumbnail({ artifact, readOnly }: Props) {
     <button
       type="button"
       onClick={() => openArtifact(artifact)}
-      aria-label={`Open ${artifact.title}`}
+      aria-label={t("chatRuntime2.thumbnail.open", { title: artifact.title })}
       className={cn(
         FRAME,
         // TODO(tokens): no fitting role for focus-visible:ring-zinc-400 #ADADB3; #ADADB3 is foreground-subtle (a text colour)

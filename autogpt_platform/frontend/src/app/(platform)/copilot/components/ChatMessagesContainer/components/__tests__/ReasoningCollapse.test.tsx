@@ -5,6 +5,7 @@ import {
   screen,
   waitFor,
 } from "@testing-library/react";
+import { LocaleProvider } from "@/lib/i18n";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { ReasoningCollapse } from "../ReasoningCollapse";
 
@@ -102,6 +103,23 @@ describe("ReasoningCollapse", () => {
     expect(await screen.findByTestId("reasoning-body")).toBeDefined();
 
     fireEvent.click(screen.getByRole("button", { name: /collapse/i }));
+    await waitFor(() => {
+      expect(screen.queryByTestId("reasoning-body")).toBeNull();
+    });
+  });
+
+  it("words its trigger and collapse button in Vietnamese", async () => {
+    render(
+      <LocaleProvider locale="vi">
+        <ReasoningCollapse>
+          <span data-testid="reasoning-body">thought</span>
+        </ReasoningCollapse>
+      </LocaleProvider>,
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "Suy luận" }));
+    expect(await screen.findByTestId("reasoning-body")).toBeDefined();
+    fireEvent.click(screen.getByRole("button", { name: "Thu gọn" }));
     await waitFor(() => {
       expect(screen.queryByTestId("reasoning-body")).toBeNull();
     });

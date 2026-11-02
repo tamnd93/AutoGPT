@@ -14,6 +14,7 @@ import { chatInput1Vi } from "./chat-input-1.vi";
 import { chatInput2Vi } from "./chat-input-2.vi";
 import { chatInput3Vi } from "./chat-input-3.vi";
 import { chatRuntime1Vi } from "./chat-runtime-1.vi";
+import { chatRuntime2Vi } from "./chat-runtime-2.vi";
 import { chatTools1Vi } from "./chat-tools-1.vi";
 import { chatTools2Vi } from "./chat-tools-2.vi";
 import { chatTools3Vi } from "./chat-tools-3.vi";
@@ -59,6 +60,7 @@ export const vi: Partial<Record<MessageKey, string>> = {
   ...chatInput2Vi,
   ...chatInput3Vi,
   ...chatRuntime1Vi,
+  ...chatRuntime2Vi,
   ...chatTools1Vi,
   ...chatTools2Vi,
   ...chatTools3Vi,

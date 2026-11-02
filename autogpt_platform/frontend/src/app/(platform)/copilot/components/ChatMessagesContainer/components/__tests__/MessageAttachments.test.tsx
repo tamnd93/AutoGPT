@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { LocaleProvider } from "@/lib/i18n";
 import type { FileUIPart } from "ai";
 import { useCopilotUIStore } from "../../../../store";
 import { MessageAttachments } from "../MessageAttachments";
@@ -112,5 +113,45 @@ describe("MessageAttachments", () => {
       />,
     );
     expect(screen.getByText("file.txt")).toBeDefined();
+  });
+
+  it("words the folder chip and its open link in Vietnamese", () => {
+    render(
+      <LocaleProvider locale="vi">
+        <MessageAttachments
+          files={[]}
+          folders={[{ id: "fld-1", name: "Reports", fileCount: 3 }]}
+        />
+      </LocaleProvider>,
+    );
+    expect(screen.getByText("Thư mục · 3 files")).toBeDefined();
+    expect(
+      screen.getByRole("link", { name: "Mở thư mục Reports trong Tệp" }),
+    ).toBeDefined();
+  });
+
+  it("words the image open label in Vietnamese", () => {
+    render(
+      <LocaleProvider locale="vi">
+        <MessageAttachments
+          files={[filePart(FILE_URL, "photo.jpg", "image/jpeg")]}
+          isUser
+        />
+      </LocaleProvider>,
+    );
+    expect(screen.getByRole("button", { name: "Mở photo.jpg" })).toBeDefined();
+  });
+
+  it("words the download label and the file fallback in Vietnamese", () => {
+    render(
+      <LocaleProvider locale="vi">
+        <MessageAttachments
+          files={[filePart("https://example.com/file.txt", "")]}
+          isUser
+        />
+      </LocaleProvider>,
+    );
+    expect(screen.getByRole("link", { name: "Tải tệp xuống" })).toBeDefined();
+    expect(screen.getByText("tệp")).toBeDefined();
   });
 });

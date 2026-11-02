@@ -4,6 +4,7 @@ import { PendingQuestionsContext } from "../../QuestionDock/PendingQuestionsCont
 import { PendingOnboardingContext } from "../../ExpertOnboardingCard/PendingOnboardingContext";
 import { act } from "@testing-library/react";
 import type { UIDataTypes, UIMessage, UITools } from "ai";
+import { LocaleProvider } from "@/lib/i18n";
 import { render, screen, cleanup } from "@/tests/integrations/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { ChatMessagesContainer } from "../ChatMessagesContainer";
@@ -398,6 +399,18 @@ describe("ChatMessagesContainer — queuedMessages", () => {
     );
     expect(screen.getByText("What about section 3?")).toBeDefined();
     expect(screen.getByText("Queued")).toBeDefined();
+  });
+
+  it("words the queued label in Vietnamese", () => {
+    render(
+      <LocaleProvider locale="vi">
+        <ChatMessagesContainer
+          {...baseProps}
+          queuedMessages={["What about section 3?"]}
+        />
+      </LocaleProvider>,
+    );
+    expect(screen.getByText("Đang xếp hàng")).toBeDefined();
   });
 
   it("renders queued account references as badges without exposing IDs", () => {

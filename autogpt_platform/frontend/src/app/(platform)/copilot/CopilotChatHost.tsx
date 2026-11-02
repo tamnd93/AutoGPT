@@ -6,6 +6,7 @@ import { RateLimitGate } from "./components/RateLimitResetDialog/RateLimitGate";
 import { useCopilotPage, useCopilotRuntimePage } from "./useCopilotPage";
 import { FlaskConicalIcon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 import { Flag, useGetFlag } from "@/services/feature-flags/use-get-flag";
 import { useUsageExperience } from "@/services/usageExperience/useUsageExperience";
 import { useRateLimitRefresh } from "./components/RateLimitResetDialog/useRateLimitRefresh";
@@ -75,6 +76,7 @@ function ChatHostView({
   usage: ReturnType<typeof useUsageExperience>;
   usageRefresh: ReturnType<typeof useRateLimitRefresh>;
 }) {
+  const t = useT();
   const {
     sessionId,
     messages,
@@ -132,7 +134,7 @@ function ChatHostView({
       {sessionId && sessionDryRun && (
         <div className="flex items-center justify-center gap-1.5 bg-warning-surface px-3 py-1.5 text-xs font-medium text-amber-800">
           <Icon icon={FlaskConicalIcon} size={13} />
-          Test mode — this session runs workflows as simulation
+          {t("chatRuntime2.testMode.banner")}
         </div>
       )}
       <div className="min-h-0 flex-1 overflow-hidden">

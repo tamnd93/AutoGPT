@@ -6,6 +6,7 @@ import {
   AccordionContent,
   AccordionItem,
 } from "@/components/molecules/Accordion/Accordion";
+import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import * as AccordionPrimitive from "@radix-ui/react-accordion";
 import { useState } from "react";
@@ -24,6 +25,7 @@ interface Props {
 }
 
 export function ReasoningCollapse({ children, isActive = false }: Props) {
+  const t = useT();
   const [value, setValue] = useState("");
 
   return (
@@ -53,7 +55,7 @@ export function ReasoningCollapse({ children, isActive = false }: Props) {
                 className="shrink-0 transition-transform group-data-[state=open]:rotate-90"
               />
             )}
-            Reasoning
+            {t("chatRuntime2.reasoning.title")}
           </AccordionPrimitive.Trigger>
         </AccordionPrimitive.Header>
         <AccordionContent className="pb-1 pt-0 font-sans text-sm text-foreground-tertiary [&_pre]:m-0 [&_pre]:whitespace-pre-wrap [&_pre]:bg-transparent [&_pre]:p-0 [&_pre]:font-sans [&_pre]:text-sm [&_pre]:text-foreground-tertiary">
@@ -64,7 +66,7 @@ export function ReasoningCollapse({ children, isActive = false }: Props) {
             className="mt-2"
             onClick={() => setValue("")}
           >
-            Collapse
+            {t("chatRuntime2.reasoning.collapse")}
           </Button>
         </AccordionContent>
       </AccordionItem>

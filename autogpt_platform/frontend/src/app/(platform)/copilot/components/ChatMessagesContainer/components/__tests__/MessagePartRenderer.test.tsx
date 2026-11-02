@@ -1,3 +1,4 @@
+import { LocaleProvider } from "@/lib/i18n";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { cleanup, render, screen } from "@testing-library/react";
 import type { UIDataTypes, UIMessage, UITools } from "ai";
@@ -42,7 +43,9 @@ vi.mock("@/components/organisms/Message/Message", () => ({
 }));
 
 vi.mock("@/components/molecules/ErrorCard/ErrorCard", () => ({
-  ErrorCard: () => null,
+  ErrorCard: ({ context }: { context?: string }) => (
+    <div data-testid="error-card" data-context={context} />
+  ),
 }));
 
 vi.mock("../StoppedTaskCard", () => ({
@@ -347,5 +350,32 @@ describe("MessagePartRenderer tool dispatch", () => {
       <MessagePartRenderer part={part} messageID="m1" partIndex={0} />,
     );
     expect(container.firstChild).toBeNull();
+  });
+
+  it("words the error context in Vietnamese", () => {
+    const part = {
+      type: "text",
+      text: "[__COPILOT_ERROR_f7a1__] Something failed",
+    } as unknown as Part;
+    render(
+      <LocaleProvider locale="vi">
+        <MessagePartRenderer part={part} messageID="m1" partIndex={0} />
+      </LocaleProvider>,
+    );
+    expect(screen.getByTestId("error-card").getAttribute("data-context")).toBe(
+      "phản hồi",
+    );
+  });
+
+  it("words the unsupported-video note in Vietnamese", () => {
+    const part = { type: "text", text: "A reply" } as unknown as Part;
+    render(
+      <LocaleProvider locale="vi">
+        <MessagePartRenderer part={part} messageID="m1" partIndex={0} />
+      </LocaleProvider>,
+    );
+    expect(
+      screen.getByText("Trình duyệt của bạn không hỗ trợ thẻ video."),
+    ).toBeDefined();
   });
 });

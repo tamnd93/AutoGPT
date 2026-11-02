@@ -1,6 +1,7 @@
 import { useCostReplyMoment } from "@/app/(platform)/components/ContextualTips/useTipMoment";
 import { parseSpecialMarkers } from "../../helpers/messageMarkers";
 import { CredentialMentionText } from "../CredentialMention/CredentialMentionText";
+import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { useMemo, useState } from "react";
 import {
@@ -162,6 +163,7 @@ export function LoadMoreSentinel({
   messageCount: number;
   onLoadMore: () => void;
 }) {
+  const t = useT();
   const sentinelRef = useRef<HTMLDivElement>(null);
   const onLoadMoreRef = useRef(onLoadMore);
   useInsertionEffect(() => {
@@ -258,7 +260,7 @@ export function LoadMoreSentinel({
             size="small"
             onClick={() => captureAndLoad(false)}
           >
-            Load older messages
+            {t("chatRuntime2.messages.loadOlder")}
           </Button>
         )
       )}
@@ -294,6 +296,7 @@ export function ChatMessagesContainer({
   variant = "default",
   showThreadHeader = true,
 }: Props) {
+  const t = useT();
   const isCompact = variant === "compact";
   const messages = useMemo(
     () => hideKickoffMessages(allMessages),
@@ -608,13 +611,16 @@ export function ChatMessagesContainer({
                     <ThinkingIndicator
                       active
                       startedAtMs={restoreClock.startedAtMs}
-                      statusMessage={restoreStatusMessage ?? "Reconnecting…"}
+                      statusMessage={
+                        restoreStatusMessage ??
+                        t("chatRuntime2.messages.reconnecting")
+                      }
                     />
                     <span
                       // TODO(tokens): no exact role for text-slate-400
                       className="pl-6 text-xs text-slate-400"
                     >
-                      Still syncing the latest progress.
+                      {t("chatRuntime2.messages.stillSyncing")}
                     </span>
                   </div>
                 ) : (
@@ -626,7 +632,7 @@ export function ChatMessagesContainer({
                       // TODO(tokens): no exact role for text-neutral-500
                       className="h-4 w-4 text-neutral-500"
                     />
-                    <span>Retrieving latest messages</span>
+                    <span>{t("chatRuntime2.messages.retrieving")}</span>
                   </div>
                 )}
               </MessageContent>
@@ -666,7 +672,7 @@ export function ChatMessagesContainer({
                     className="flex items-center gap-1 text-xs text-slate-500"
                   >
                     <Icon icon={Clock01Icon} className="size-3" />
-                    Queued
+                    {t("chatRuntime1.queue.queued")}
                   </span>
                 </MessageContent>
               </Message>
