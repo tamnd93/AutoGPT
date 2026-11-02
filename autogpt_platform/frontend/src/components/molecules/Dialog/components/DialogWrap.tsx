@@ -2,6 +2,7 @@ import { Button } from "@/components/atoms/Button/Button";
 import { scrollbarStyles } from "@/components/styles/scrollbars";
 import { isComposingEvent } from "@/lib/keyboard";
 import { cn } from "@/lib/utils";
+import { useT } from "@/lib/i18n";
 import * as RXDialog from "@radix-ui/react-dialog";
 import {
   CSSProperties,
@@ -42,6 +43,7 @@ export function DialogWrap({
   isForceOpen,
   handleClose,
 }: Props) {
+  const t = useT();
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const [hasVerticalScrollbar, setHasVerticalScrollbar] = useState(false);
   const isCompact = variant === "compact";
@@ -139,7 +141,7 @@ export function DialogWrap({
             </RXDialog.Title>
           ) : (
             <RXDialog.Title data-slot="dialog-title" className="sr-only">
-              Dialog
+              {t("shared2.dialog.fallbackTitle")}
             </RXDialog.Title>
           )}
 
@@ -148,7 +150,7 @@ export function DialogWrap({
               variant="icon"
               size={isCompact ? "icon-sm" : "icon"}
               onClick={handleClose}
-              aria-label="Close"
+              aria-label={t("shared2.dialog.close")}
               data-slot="dialog-close"
               className={cn(
                 "absolute right-4 top-4 z-50 bg-surface",
@@ -168,7 +170,7 @@ export function DialogWrap({
           data-slot="dialog-description"
           className="sr-only"
         >
-          Dialog
+          {t("shared2.dialog.fallbackDescription")}
         </RXDialog.Description>
         <div data-slot="dialog-body" className="flex min-h-0 flex-1 flex-col">
           <div

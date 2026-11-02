@@ -11,4 +11,7 @@ export const shared2Vi: Partial<Record<keyof typeof shared2En, string>> = {
 
   "shared2.changelog.title": "Có gì mới",
   "shared2.changelog.dismiss": "Đóng thông báo cập nhật",
+  "shared2.dialog.fallbackTitle": "Hộp thoại",
+  "shared2.dialog.fallbackDescription": "Hộp thoại",
+  "shared2.dialog.close": "Đóng",
 };

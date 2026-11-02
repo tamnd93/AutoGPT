@@ -2,6 +2,21 @@
 
 import * as React from "react";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
+import { useT } from "@/lib/i18n";
+
+/** The dialog's screen-reader-only words. */
+function DialogSrLabel({ kind }: { kind: "description" | "close" }) {
+  const t = useT();
+  return (
+    <>
+      {t(
+        kind === "close"
+          ? "shared2.dialog.close"
+          : "shared2.dialog.fallbackDescription",
+      )}
+    </>
+  );
+}
 import { Cross2Icon } from "@radix-ui/react-icons";
 
 import { cn } from "@/lib/utils";
@@ -123,7 +138,7 @@ const DialogContent = React.forwardRef<
             data-slot="dialog-description"
             className="sr-only"
           >
-            Dialog
+            <DialogSrLabel kind="description" />
           </DialogPrimitive.Description>
         ) : null}
         <DialogPrimitive.Close
@@ -132,7 +147,7 @@ const DialogContent = React.forwardRef<
         >
           <Cross2Icon data-slot="dialog-close-icon" className="h-4 w-4" />
           <span data-slot="dialog-close-label" className="sr-only">
-            Close
+            <DialogSrLabel kind="close" />
           </span>
         </DialogPrimitive.Close>
       </DialogPrimitive.Content>

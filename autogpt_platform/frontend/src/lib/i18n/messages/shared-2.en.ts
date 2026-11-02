@@ -9,4 +9,7 @@ export const shared2En = {
 
   "shared2.changelog.title": "What's new",
   "shared2.changelog.dismiss": "Dismiss changelog",
+  "shared2.dialog.fallbackTitle": "Dialog",
+  "shared2.dialog.fallbackDescription": "Dialog",
+  "shared2.dialog.close": "Close",
 } as const;

@@ -2,6 +2,7 @@ import { Button } from "@/components/atoms/Button/Button";
 import { scrollbarStyles } from "@/components/styles/scrollbars";
 import { isComposingEvent } from "@/lib/keyboard";
 import { cn } from "@/lib/utils";
+import { useT } from "@/lib/i18n";
 import { PropsWithChildren } from "react";
 import { Drawer } from "vaul";
 import { DialogCtx } from "../useDialogCtx";
@@ -26,7 +27,8 @@ export function DrawerWrap({
   isForceOpen,
   className,
 }: Props) {
-  const accessibleTitle = title || "Dialog";
+  const t = useT();
+  const accessibleTitle = title || t("shared2.dialog.fallbackTitle");
   const hasVisibleTitle = Boolean(title);
   const isCompact = variant === "compact";
 
@@ -39,7 +41,7 @@ export function DrawerWrap({
   const closeBtn = (
     <Button
       variant="legacy-link"
-      aria-label="Close"
+      aria-label={t("shared2.dialog.close")}
       onClick={handleClose}
       data-slot="drawer-close"
       className="!focus-visible:ring-0 p-0"
@@ -109,7 +111,7 @@ export function DrawerWrap({
           ) : null}
         </div>
         <Drawer.Description data-slot="drawer-description" className="sr-only">
-          Dialog
+          {t("shared2.dialog.fallbackDescription")}
         </Drawer.Description>
         <div
           data-slot="drawer-body"

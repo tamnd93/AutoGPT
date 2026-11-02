@@ -6,6 +6,12 @@ import { Cross2Icon } from "@radix-ui/react-icons";
 import { cva, type VariantProps } from "class-variance-authority";
 
 import { cn } from "@/lib/utils";
+import { useT } from "@/lib/i18n";
+
+function SheetCloseLabel() {
+  const t = useT();
+  return <>{t("shared2.dialog.close")}</>;
+}
 
 const Sheet = SheetPrimitive.Root;
 
@@ -86,7 +92,7 @@ const SheetContent = React.forwardRef<
       >
         <Cross2Icon data-slot="sheet-close-icon" className="h-4 w-4" />
         <span data-slot="sheet-close-label" className="sr-only">
-          Close
+          <SheetCloseLabel />
         </span>
       </SheetPrimitive.Close>
       {children}
