@@ -7,6 +7,8 @@ import { ExpiredLinkMessage } from "@/components/auth/ExpiredLinkMessage";
 import { FormField } from "@/components/molecules/Form/Form";
 import { LoadingSpinner } from "@/components/atoms/LoadingSpinner/LoadingSpinner";
 import { useToast } from "@/components/molecules/Toast/use-toast";
+import { useLocale } from "@/lib/i18n";
+import { getMessage } from "@/lib/i18n/translate";
 import { changePasswordFormSchema, sendEmailFormSchema } from "@/types/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -16,6 +18,7 @@ import { z } from "zod";
 import { changePassword, sendResetEmail } from "./actions";
 
 function ResetPasswordContent() {
+  const locale = useLocale();
   const { toast } = useToast();
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -50,7 +53,7 @@ function ResetPasswordContent() {
         // Also show a toast with the error detail for debugging
         if (errorDescription) {
           toast({
-            title: "Link Expired",
+            title: getMessage(locale, "auth1.reset.expiredTitle"),
             description: errorDescription,
             variant: "destructive",
           });
@@ -58,9 +61,11 @@ function ResetPasswordContent() {
       } else {
         // Show toast for other errors
         const errorMessage =
-          errorDescription || error || "Password reset failed";
+          errorDescription ||
+          error ||
+          getMessage(locale, "auth1.reset.fallbackError");
         toast({
-          title: "Password Reset Failed",
+          title: getMessage(locale, "auth1.reset.failedTitle"),
           description: errorMessage,
           variant: "destructive",
         });
@@ -73,7 +78,7 @@ function ResetPasswordContent() {
       newUrl.searchParams.delete("error_description");
       router.replace(newUrl.pathname + newUrl.search);
     }
-  }, [searchParams, toast, router]);
+  }, [searchParams, toast, router, locale]);
 
   const sendEmailForm = useForm<z.infer<typeof sendEmailFormSchema>>({
     resolver: zodResolver(sendEmailFormSchema),
@@ -103,7 +108,7 @@ function ResetPasswordContent() {
       setIsLoading(false);
       if (error) {
         toast({
-          title: "Error",
+          title: getMessage(locale, "auth1.reset.errorTitle"),
           description: error,
           variant: "destructive",
         });
@@ -111,13 +116,12 @@ function ResetPasswordContent() {
       }
       setDisabled(true);
       toast({
-        title: "Check your email",
-        description:
-          "If an account exists for this address, we've sent a reset link.",
+        title: getMessage(locale, "auth1.reset.sentTitle"),
+        description: getMessage(locale, "auth1.reset.sentBody"),
         variant: "default",
       });
     },
-    [sendEmailForm, toast],
+    [sendEmailForm, toast, locale],
   );
 
   function handleShowEmailForm() {
@@ -139,26 +143,26 @@ function ResetPasswordContent() {
       setIsLoading(false);
       if (error) {
         toast({
-          title: "Error",
+          title: getMessage(locale, "auth1.reset.errorTitle"),
           description: error,
           variant: "destructive",
         });
         return;
       }
       toast({
-        title: "Success",
-        description: "Password changed successfully. Redirecting to login.",
+        title: getMessage(locale, "auth1.reset.successTitle"),
+        description: getMessage(locale, "auth1.reset.successBody"),
         variant: "default",
       });
     },
-    [changePasswordForm, resetToken, toast],
+    [changePasswordForm, resetToken, toast, locale],
   );
 
   // Show expired link message if detected
   if (showExpiredMessage && !resetToken) {
     return (
       <div className="flex h-full min-h-[85vh] w-full flex-col items-center justify-center">
-        <AuthCard title="Reset Password">
+        <AuthCard title={getMessage(locale, "auth1.reset.cardTitle")}>
           <ExpiredLinkMessage onRequestNewLink={handleShowEmailForm} />
         </AuthCard>
         <CookieSettingsLink className="mt-6" />
@@ -168,7 +172,7 @@ function ResetPasswordContent() {
 
   return (
     <div className="flex h-full min-h-[85vh] w-full flex-col items-center justify-center">
-      <AuthCard title="Reset Password">
+      <AuthCard title={getMessage(locale, "auth1.reset.cardTitle")}>
         {resetToken ? (
           <form
             onSubmit={changePasswordForm.handleSubmit(onChangePassword)}
@@ -181,7 +185,7 @@ function ResetPasswordContent() {
                 render={({ field }) => (
                   <Input
                     id={field.name}
-                    label="Password"
+                    label={getMessage(locale, "auth1.reset.passwordLabel")}
                     type="password"
                     placeholder="••••••••••••••••"
                     error={
@@ -197,7 +201,7 @@ function ResetPasswordContent() {
                 render={({ field }) => (
                   <Input
                     id={field.name}
-                    label="Confirm Password"
+                    label={getMessage(locale, "auth1.reset.confirmLabel")}
                     type="password"
                     placeholder="••••••••••••••••"
                     error={
@@ -215,7 +219,9 @@ function ResetPasswordContent() {
                 type="submit"
                 className="mt-6 w-full"
               >
-                {isLoading ? "Updating password..." : "Update password"}
+                {isLoading
+                  ? getMessage(locale, "auth1.reset.updating")
+                  : getMessage(locale, "auth1.reset.update")}
               </Button>
             </FormProvider>
           </form>
@@ -231,7 +237,7 @@ function ResetPasswordContent() {
                 render={({ field }) => (
                   <Input
                     id={field.name}
-                    label="Email"
+                    label={getMessage(locale, "auth1.reset.emailLabel")}
                     placeholder="m@example.com"
                     type="email"
                     error={sendEmailForm.formState.errors.email?.message}
@@ -247,7 +253,7 @@ function ResetPasswordContent() {
                 type="submit"
                 className="mt-6 w-full"
               >
-                Send reset email
+                {getMessage(locale, "auth1.reset.send")}
               </Button>
             </FormProvider>
           </form>

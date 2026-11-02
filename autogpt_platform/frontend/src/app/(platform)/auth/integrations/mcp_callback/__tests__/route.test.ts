@@ -1,4 +1,12 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
+
+const { routeLocale } = vi.hoisted(() => ({
+  routeLocale: { value: "en" as "en" | "vi" },
+}));
+
+vi.mock("@/lib/i18n/server", () => ({
+  readLocale: async () => routeLocale.value,
+}));
 
 import { GET } from "../route";
 
@@ -79,6 +87,22 @@ describe("MCP OAuth callback route", () => {
     expect(message.success).toBe(false);
     expect(message).not.toHaveProperty("state");
     expect(message.message).toBe("server_error");
+  });
+
+  it("renders its page copy in Vietnamese when the locale cookie is vi", async () => {
+    routeLocale.value = "vi";
+
+    const response = await GET(
+      new Request(
+        `${origin}/auth/integrations/mcp_callback?code=abc&state=xyz`,
+      ),
+    );
+    const html = await response.text();
+    routeLocale.value = "en";
+
+    expect(html).toContain("Đăng nhập MCP");
+    expect(html).toContain("Đang hoàn tất đăng nhập...");
+    expect(html).toContain("Đăng nhập thất bại: ");
   });
 
   it("escapes script-breaking characters in query values", async () => {

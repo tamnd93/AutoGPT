@@ -16,6 +16,8 @@ import {
 import { loginFormSchema } from "@/types/auth";
 import * as Sentry from "@sentry/nextjs";
 import { APIError } from "better-auth/api";
+import { getMessage } from "@/lib/i18n/translate";
+import { readLocale } from "@/lib/i18n/server";
 import { headers } from "next/headers";
 import { getOnboardingStatus } from "../../api/helpers";
 
@@ -24,13 +26,14 @@ export async function login(
   password: string,
   next?: string | null,
 ) {
+  const locale = await readLocale();
   try {
     const parsed = loginFormSchema.safeParse({ email, password });
 
     if (!parsed.success) {
       return {
         success: false,
-        error: "Invalid email or password",
+        error: getMessage(locale, "auth1.login.invalidCredentials"),
       };
     }
 
@@ -59,7 +62,9 @@ export async function login(
         }
         return {
           success: false,
-          error: error.body?.message || "Invalid email or password",
+          error:
+            error.body?.message ||
+            getMessage(locale, "auth1.login.invalidCredentials"),
         };
       }
       throw error;
@@ -97,7 +102,7 @@ export async function login(
     Sentry.captureException(err);
     return {
       success: false,
-      error: "Failed to login. Please try again.",
+      error: getMessage(locale, "auth1.login.failed"),
     };
   }
 }

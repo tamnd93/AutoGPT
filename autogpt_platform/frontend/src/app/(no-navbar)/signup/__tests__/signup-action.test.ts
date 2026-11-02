@@ -58,6 +58,7 @@ vi.mock("@/app/api/auth/utils", () => ({
 
 vi.mock("next/headers", () => ({
   headers: vi.fn(async () => new Headers()),
+  cookies: vi.fn(async () => ({ get: () => undefined })),
 }));
 
 vi.mock("@sentry/nextjs", () => ({

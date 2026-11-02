@@ -1,3 +1,4 @@
+import { LocaleProvider } from "@/lib/i18n";
 import type { ReactNode } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import userEvent from "@testing-library/user-event";
@@ -77,6 +78,37 @@ function providerFetchCallOrder(
   );
   return fetchSpy.mock.invocationCallOrder[index];
 }
+
+describe("SignupPage in Vietnamese", () => {
+  beforeEach(() => {
+    mockUseAuth.mockReturnValue({
+      user: null,
+      isUserLoading: false,
+      isLoggedIn: false,
+    });
+    mockSignupAction.mockReset();
+    mockSignupAction.mockResolvedValue({
+      success: false,
+      error: "user_already_exists",
+    });
+    capture.mockReset();
+    setMarketingOptOutFlag.mockReset();
+    navigation.searchParams = new URLSearchParams();
+  });
+
+  test("reads the form, its action and its legal line in Vietnamese", () => {
+    render(
+      <LocaleProvider locale="vi">
+        <SignupPage />
+      </LocaleProvider>,
+    );
+
+    expect(screen.getByText("Tạo tài khoản của bạn")).toBeDefined();
+    expect(screen.getByLabelText("Mật khẩu")).toBeDefined();
+    expect(screen.getByRole("button", { name: "Đăng ký" })).toBeDefined();
+    expect(screen.getByText(/Khi tiếp tục, bạn đồng ý với/)).toBeDefined();
+  });
+});
 
 describe("SignupPage", () => {
   beforeEach(() => {

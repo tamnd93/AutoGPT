@@ -13,19 +13,21 @@ import { AuthDivider } from "@/components/auth/AuthSplitLayout/AuthDivider";
 import { AuthSplitLayout } from "@/components/auth/AuthSplitLayout/AuthSplitLayout";
 import { MobileWarningBanner } from "@/components/auth/MobileWarningBanner";
 import { Alert, AlertDescription } from "@/components/molecules/Alert/Alert";
+import { useT } from "@/lib/i18n";
 import { environment } from "@/services/environment";
 import { useSearchParams } from "next/navigation";
 import { LoadingLogin } from "./components/LoadingLogin";
 import { LoginMarketingPanel } from "./components/LoginMarketingPanel";
 import {
-  ACCOUNT_BANNED_NOTICE_COPY,
-  EMAIL_VERIFICATION_NOTICE_COPY,
+  ACCOUNT_BANNED_NOTICE_KEY,
+  EMAIL_VERIFICATION_NOTICE_KEYS,
 } from "./helpers";
 import { useLoginPage } from "./useLoginPage";
 
 export const dynamic = "force-dynamic";
 
 export default function LoginPage() {
+  const t = useT();
   const searchParams = useSearchParams();
   const nextUrl = searchParams.get("next");
   const signupHref = nextUrl
@@ -72,20 +74,20 @@ export default function LoginPage() {
     <AuthSplitLayout marketing={<LoginMarketingPanel />}>
       <div className="mb-8">
         <Text variant="h3" as="h1" className="!text-foreground-strong">
-          Log in to your account to continue
+          {t("auth1.login.title")}
         </Text>
       </div>
 
       {showBannedNotice ? (
         <Alert variant="error" className="mb-6">
-          <AlertDescription>{ACCOUNT_BANNED_NOTICE_COPY}</AlertDescription>
+          <AlertDescription>{t(ACCOUNT_BANNED_NOTICE_KEY)}</AlertDescription>
         </Alert>
       ) : null}
 
       {verificationNotice ? (
         <Alert className="mb-6">
           <AlertDescription>
-            {EMAIL_VERIFICATION_NOTICE_COPY[verificationNotice]}
+            {t(EMAIL_VERIFICATION_NOTICE_KEYS[verificationNotice])}
           </AlertDescription>
         </Alert>
       ) : null}
@@ -98,7 +100,7 @@ export default function LoginPage() {
             render={({ field }) => (
               <Input
                 id={field.name}
-                label="Email"
+                label={t("auth1.login.emailLabel")}
                 placeholder="name@company.com"
                 type="email"
                 autoComplete="username"
@@ -114,14 +116,14 @@ export default function LoginPage() {
             render={({ field }) => (
               <Input
                 id={field.name}
-                label="Password"
-                placeholder="Enter your password"
+                label={t("auth1.login.passwordLabel")}
+                placeholder={t("auth1.login.passwordPlaceholder")}
                 type="password"
                 autoComplete="current-password"
                 error={form.formState.errors.password?.message}
                 hint={
                   <Link variant="secondary" href="/reset-password">
-                    Forgot password?
+                    {t("auth1.login.forgot")}
                   </Link>
                 }
                 {...field}
@@ -136,7 +138,7 @@ export default function LoginPage() {
             type="submit"
             className="mt-6 w-full"
           >
-            {isLoading ? "Logging in..." : "Log in"}
+            {isLoading ? t("auth1.login.submitting") : t("auth1.login.submit")}
           </Button>
         </form>
 
@@ -161,10 +163,10 @@ export default function LoginPage() {
 
       <div className="mt-6 inline-flex w-full items-center justify-center gap-1">
         <Text variant="body-medium" className="!text-foreground-tertiary">
-          Don&apos;t have an account?
+          {t("auth1.login.noAccount")}
         </Text>
         <Link href={signupHref} variant="secondary">
-          Sign up
+          {t("auth1.login.signupLink")}
         </Link>
       </div>
 

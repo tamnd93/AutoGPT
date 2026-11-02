@@ -7,6 +7,7 @@ import {
   getEmailVerificationNotice,
 } from "@/lib/auth/email-verification";
 import { useAuth } from "@/lib/auth/hooks/useAuth";
+import { useT } from "@/lib/i18n";
 import { environment } from "@/services/environment";
 import { loginFormSchema, LoginProvider } from "@/types/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -17,6 +18,7 @@ import z from "zod";
 import { login as loginAction } from "./actions";
 
 export function useLoginPage() {
+  const t = useT();
   useCaptureMarketingPrompt();
 
   const { user, isUserLoading, isLoggedIn } = useAuth();
@@ -79,7 +81,7 @@ export function useLoginPage() {
 
       if (!response.ok) {
         const { error } = await response.json();
-        throw new Error(error || "Failed to start OAuth flow");
+        throw new Error(error || t("auth1.common.oauthStartFailed"));
       }
 
       const { url } = await response.json();
@@ -88,7 +90,9 @@ export function useLoginPage() {
       setIsGoogleLoading(false);
       setIsLoggingIn(false);
       setFeedback(
-        error instanceof Error ? error.message : "Failed to start OAuth flow",
+        error instanceof Error
+          ? error.message
+          : t("auth1.common.oauthStartFailed"),
       );
     }
   }
@@ -99,7 +103,7 @@ export function useLoginPage() {
 
     if (data.email.includes("@agpt.co")) {
       toast({
-        title: "Please use Google SSO to login using an AutoGPT email.",
+        title: t("auth1.login.useGoogleSso"),
         variant: "default",
       });
 
@@ -130,9 +134,7 @@ export function useLoginPage() {
     } catch (error) {
       toast({
         title:
-          error instanceof Error
-            ? error.message
-            : "Unexpected error during login",
+          error instanceof Error ? error.message : t("auth1.login.unexpected"),
         variant: "destructive",
       });
 

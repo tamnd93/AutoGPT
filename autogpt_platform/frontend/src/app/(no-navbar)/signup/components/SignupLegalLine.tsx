@@ -4,6 +4,7 @@ import {
   linkVariantClasses,
 } from "@/components/atoms/Link/Link";
 import { Text } from "@/components/atoms/Text/Text";
+import { useT } from "@/lib/i18n";
 import { PRIVACY_POLICY_URL, TERMS_OF_USE_URL } from "@/lib/legal";
 import { cn } from "@/lib/utils";
 
@@ -14,19 +15,21 @@ interface Props {
 }
 
 export function SignupLegalLine({ optedOut, onToggle, disabled }: Props) {
+  const t = useT();
+
   return (
     <Text
       variant="body"
       // TODO(tokens): no exact role for !text-slate-500 (#64748B)
       className="mt-6 text-center !text-slate-500"
     >
-      By continuing you agree to our{" "}
+      {t("auth1.signup.legal.intro")}{" "}
       <Link href={TERMS_OF_USE_URL} variant="secondary" isExternal>
-        Terms of Use
+        {t("auth1.signup.legal.terms")}
       </Link>{" "}
-      and{" "}
+      {t("auth1.signup.legal.and")}{" "}
       <Link href={PRIVACY_POLICY_URL} variant="secondary" isExternal>
-        Privacy Policy
+        {t("auth1.signup.legal.privacy")}
       </Link>
       .{" "}
       <span aria-live="polite">
@@ -35,10 +38,10 @@ export function SignupLegalLine({ optedOut, onToggle, disabled }: Props) {
             // TODO(tokens): no exact role for text-slate-950 (#020617)
             className="text-slate-950"
           >
-            You won&apos;t get marketing emails.
+            {t("auth1.signup.legal.optedOut")}
           </span>
         ) : (
-          "We may email you product updates and offers;"
+          t("auth1.signup.legal.marketing")
         )}
       </span>{" "}
       <button
@@ -53,7 +56,9 @@ export function SignupLegalLine({ optedOut, onToggle, disabled }: Props) {
           "disabled:cursor-not-allowed disabled:opacity-50",
         )}
       >
-        {optedOut ? "Undo" : "opt out"}
+        {optedOut
+          ? t("auth1.signup.legal.undo")
+          : t("auth1.signup.legal.optOut")}
       </button>
       .
     </Text>

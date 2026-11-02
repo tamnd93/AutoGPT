@@ -14,6 +14,8 @@ import {
 import { signupFormSchema } from "@/types/auth";
 import * as Sentry from "@sentry/nextjs";
 import { APIError } from "better-auth/api";
+import { getMessage } from "@/lib/i18n/translate";
+import { readLocale } from "@/lib/i18n/server";
 import { headers } from "next/headers";
 import { isWaitlistError, logWaitlistError } from "../../api/auth/utils";
 
@@ -24,6 +26,7 @@ export async function signup(
   marketingOptOut: boolean,
   next?: string | null,
 ) {
+  const locale = await readLocale();
   try {
     const parsed = signupFormSchema.safeParse({
       email,
@@ -35,7 +38,7 @@ export async function signup(
     if (!parsed.success) {
       return {
         success: false,
-        error: "Invalid signup payload",
+        error: getMessage(locale, "auth1.signup.invalidPayload"),
       };
     }
 
@@ -114,7 +117,7 @@ export async function signup(
       await rollbackSession();
       return {
         success: false,
-        error: "Failed to complete account setup. Please try again.",
+        error: getMessage(locale, "auth1.signup.accountSetupFailed"),
       };
     }
 
@@ -128,7 +131,7 @@ export async function signup(
     Sentry.captureException(err);
     return {
       success: false,
-      error: "Failed to sign up. Please try again.",
+      error: getMessage(locale, "auth1.signup.failed"),
     };
   }
 }

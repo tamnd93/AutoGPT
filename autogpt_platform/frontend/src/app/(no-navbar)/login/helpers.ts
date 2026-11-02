@@ -1,13 +1,12 @@
 import type { EmailVerificationNotice } from "@/lib/auth/email-verification";
+import type { MessageKey } from "@/lib/i18n/messages/en";
 
-export const ACCOUNT_BANNED_NOTICE_COPY =
-  "This account has been banned. If you think this is a mistake, please contact support.";
+export const ACCOUNT_BANNED_NOTICE_KEY: MessageKey = "auth1.login.banned";
 
-export const EMAIL_VERIFICATION_NOTICE_COPY: Record<
+export const EMAIL_VERIFICATION_NOTICE_KEYS: Record<
   EmailVerificationNotice,
-  string
+  MessageKey
 > = {
-  expired:
-    "That verification link has expired or was already used. Log in and we'll email you a new one.",
-  verified: "Your email is verified. Log in to continue.",
+  expired: "auth1.login.verificationExpired",
+  verified: "auth1.login.verificationVerified",
 };

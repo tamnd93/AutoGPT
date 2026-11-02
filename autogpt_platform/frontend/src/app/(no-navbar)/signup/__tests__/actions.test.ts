@@ -29,7 +29,9 @@ vi.mock("@/lib/auth/server/rollbackSession", () => ({
 }));
 vi.mock("next/headers", () => ({
   headers: vi.fn().mockResolvedValue(new Headers()),
-  cookies: vi.fn().mockResolvedValue({ set: mocks.cookieSet }),
+  cookies: vi
+    .fn()
+    .mockResolvedValue({ set: mocks.cookieSet, get: () => undefined }),
 }));
 vi.mock("@/services/analytics/datafast-server", async (importOriginal) => {
   const actual =

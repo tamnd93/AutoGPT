@@ -1,4 +1,6 @@
 import { OAuthPopupResultMessage } from "./types";
+import { readLocale } from "@/lib/i18n/server";
+import { getMessage } from "@/lib/i18n/translate";
 import { NextResponse } from "next/server";
 
 /**
@@ -19,6 +21,7 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const code = searchParams.get("code");
   const state = searchParams.get("state");
+  const locale = await readLocale();
 
   const message: OAuthPopupResultMessage =
     code && state
@@ -30,7 +33,7 @@ export async function GET(request: Request) {
           // state-keyed listeners route the failure to the right flow
           // instead of timing out silently.
           ...(state ? { state } : {}),
-          message: "OAuth callback is missing its code or state",
+          message: getMessage(locale, "auth1.oauth.missingCodeState"),
         };
 
   // Emit via three channels so the result reaches the originating page

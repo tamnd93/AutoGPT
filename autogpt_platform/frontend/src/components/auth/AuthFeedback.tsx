@@ -1,6 +1,7 @@
 import { HelpItem } from "@/components/auth/help-item";
 import { Card, CardContent } from "@/components/atoms/Card/Card";
 import { AlertCircle, CheckCircle } from "lucide-react";
+import { useT } from "@/lib/i18n";
 import { BehaveAs } from "@/services/environment";
 
 interface Props {
@@ -16,8 +17,9 @@ export default function AuthFeedback({
   isError = false,
   behaveAs = BehaveAs.CLOUD,
 }: Props) {
+  const t = useT();
   const displayMessage =
-    message || (isError ? "Something went wrong. Please try again." : "");
+    message || (isError ? t("auth1.feedback.genericError") : "");
 
   const isCloudMode = behaveAs === BehaveAs.CLOUD;
   const isLocalMode = behaveAs === BehaveAs.LOCAL;
@@ -65,19 +67,19 @@ export default function AuthFeedback({
                 className="divide-y divide-slate-100"
               >
                 <span className="my-3 block text-center text-sm font-medium text-error">
-                  The provided email may not be allowed to sign up.
+                  {t("auth1.feedback.signupNotAllowed")}
                 </span>
                 <HelpItem
-                  title="AutoGPT Platform is currently in closed beta. "
-                  description="You can join "
-                  linkText="the waitlist here"
+                  title={t("auth1.feedback.betaTitle")}
+                  description={t("auth1.feedback.joinWaitlistDesc")}
+                  linkText={t("auth1.feedback.waitlistLink")}
                   href="https://agpt.co/waitlist"
                 />
-                <HelpItem title="Make sure you use the same email address you used to sign up for the waitlist." />
+                <HelpItem title={t("auth1.feedback.sameEmail")} />
                 <HelpItem
-                  title="You can self host the platform!"
-                  description="Visit our"
-                  linkText="GitHub repository"
+                  title={t("auth1.feedback.selfHostTitle")}
+                  description={t("auth1.feedback.visitOur")}
+                  linkText={t("auth1.feedback.githubRepo")}
                   href="https://github.com/Significant-Gravitas/AutoGPT"
                 />
               </div>
@@ -95,9 +97,9 @@ export default function AuthFeedback({
                 className="divide-y divide-slate-100"
               >
                 <HelpItem
-                  title="Having trouble logging in?"
-                  description="Make sure you've already "
-                  linkText="signed up"
+                  title={t("auth1.feedback.loginTrouble")}
+                  description={t("auth1.feedback.makeSureSignedUp")}
+                  linkText={t("auth1.feedback.signedUp")}
                   href="/signup"
                 />
               </div>
@@ -117,23 +119,23 @@ export default function AuthFeedback({
             className="w-full divide-y divide-slate-100"
           >
             <HelpItem
-              title="Having trouble getting AutoGPT running locally?"
-              description="Ask for help on our"
-              linkText="Discord"
+              title={t("auth1.feedback.localTrouble")}
+              description={t("auth1.feedback.askHelp")}
+              linkText={t("auth1.feedback.discord")}
               href="https://discord.gg/autogpt"
             />
 
             <HelpItem
-              title="Think you've found a bug?"
-              description="Open an issue on our"
-              linkText="GitHub"
+              title={t("auth1.feedback.bugTitle")}
+              description={t("auth1.feedback.openIssue")}
+              linkText={t("auth1.feedback.github")}
               href="https://github.com/Significant-Gravitas/AutoGPT"
             />
 
             <HelpItem
-              title="Interested in the cloud-hosted version?"
-              description="Join our"
-              linkText="waitlist here"
+              title={t("auth1.feedback.cloudTitle")}
+              description={t("auth1.feedback.joinOur")}
+              linkText={t("auth1.feedback.waitlistHere")}
               href="https://agpt.co/waitlist"
             />
           </div>

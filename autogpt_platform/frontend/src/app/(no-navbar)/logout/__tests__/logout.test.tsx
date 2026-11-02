@@ -1,4 +1,5 @@
-import { render, waitFor } from "@/tests/integrations/test-utils";
+import { LocaleProvider } from "@/lib/i18n";
+import { render, screen, waitFor } from "@/tests/integrations/test-utils";
 import { afterEach, describe, expect, test, vi } from "vitest";
 import LogoutPage from "../page";
 
@@ -18,6 +19,16 @@ describe("LogoutPage", () => {
   afterEach(() => {
     mockReplace.mockReset();
     window.history.replaceState({}, "", "/");
+  });
+
+  test("reads its status in Vietnamese", () => {
+    render(
+      <LocaleProvider locale="vi">
+        <LogoutPage />
+      </LocaleProvider>,
+    );
+
+    expect(screen.getByText("Đang đăng xuất...")).toBeDefined();
   });
 
   test.each([

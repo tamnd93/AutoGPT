@@ -4,6 +4,7 @@ import {
   getGetOauthGetOauthAppInfoMockHandler200,
   getGetOauthGetOauthAppInfoMockHandler400,
 } from "@/app/api/__generated__/endpoints/oauth/oauth.msw";
+import { LocaleProvider } from "@/lib/i18n";
 import { server } from "@/mocks/mock-server";
 import { fireEvent, render, screen } from "@/tests/integrations/test-utils";
 import AuthorizePage from "../page";
@@ -83,6 +84,32 @@ describe("AuthorizePage", () => {
     expect(`${sentTo.origin}${sentTo.pathname}`).toBe(REGISTERED);
     expect(sentTo.searchParams.get("error")).toBe("access_denied");
     expect(sentTo.searchParams.get("state")).toBe("state-1");
+  });
+
+  test("reads its chrome in Vietnamese", async () => {
+    openWith(REGISTERED);
+    server.use(
+      getGetOauthGetOauthAppInfoMockHandler200({
+        name: "Example App",
+        scopes: ["IDENTITY"],
+      }),
+    );
+
+    render(
+      <LocaleProvider locale="vi">
+        <AuthorizePage />
+      </LocaleProvider>,
+    );
+
+    expect(await screen.findByText("Uỷ quyền ứng dụng")).toBeDefined();
+    expect(screen.getByText("Ứng dụng này đang yêu cầu quyền:")).toBeDefined();
+    expect(screen.getByRole("button", { name: "Uỷ quyền" })).toBeDefined();
+    expect(screen.getByRole("button", { name: "Từ chối" })).toBeDefined();
+    expect(
+      screen.getByText(
+        "Khi uỷ quyền, bạn cho phép ứng dụng này truy cập tài khoản AutoGPT của bạn với các quyền nêu trên.",
+      ),
+    ).toBeDefined();
   });
 
   test("encodes the client id in the app-info request", async () => {

@@ -1,3 +1,4 @@
+import { LocaleProvider } from "@/lib/i18n";
 import type { ReactNode } from "react";
 import { render, screen } from "@/tests/integrations/test-utils";
 import { describe, expect, test, vi } from "vitest";
@@ -28,6 +29,22 @@ describe("LoginPage after a banned account is signed out", () => {
     expect(
       screen.getByText(
         "This account has been banned. If you think this is a mistake, please contact support.",
+      ),
+    ).toBeDefined();
+  });
+
+  test("says why in Vietnamese", () => {
+    mockSearchParams = new URLSearchParams({ account: "banned" });
+
+    render(
+      <LocaleProvider locale="vi">
+        <LoginPage />
+      </LocaleProvider>,
+    );
+
+    expect(
+      screen.getByText(
+        "Tài khoản này đã bị cấm. Nếu bạn cho rằng có nhầm lẫn, vui lòng liên hệ bộ phận hỗ trợ.",
       ),
     ).toBeDefined();
   });

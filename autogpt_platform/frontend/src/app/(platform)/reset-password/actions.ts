@@ -1,5 +1,7 @@
 "use server";
 import { auth } from "@/lib/auth/auth";
+import { readLocale } from "@/lib/i18n/server";
+import { getMessage } from "@/lib/i18n/translate";
 import * as Sentry from "@sentry/nextjs";
 import { APIError } from "better-auth/api";
 import { redirect } from "next/navigation";
@@ -9,6 +11,7 @@ export async function sendResetEmail(email: string) {
     "sendResetEmail",
     {},
     async () => {
+      const locale = await readLocale();
       const origin =
         process.env.BETTER_AUTH_URL ||
         process.env.NEXT_PUBLIC_FRONTEND_BASE_URL ||
@@ -28,7 +31,7 @@ export async function sendResetEmail(email: string) {
         if (error instanceof APIError) {
           return error.body?.message || error.message;
         }
-        return "Failed to send reset email. Please try again.";
+        return getMessage(locale, "auth1.reset.sendFailed");
       }
     },
   );
@@ -39,6 +42,7 @@ export async function changePassword(password: string, token: string) {
     "changePassword",
     {},
     async () => {
+      const locale = await readLocale();
       try {
         await auth.api.resetPassword({
           body: {
@@ -51,7 +55,7 @@ export async function changePassword(password: string, token: string) {
         if (error instanceof APIError) {
           return error.body?.message || error.message;
         }
-        return "Failed to change password. Please try again.";
+        return getMessage(locale, "auth1.reset.changeFailed");
       }
 
       redirect("/login");

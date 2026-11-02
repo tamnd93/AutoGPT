@@ -19,6 +19,7 @@ import { useSearchParams } from "next/navigation";
 import { useMemo, useRef, useState } from "react";
 import { CircleIcon, Tick02Icon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 
 /**
  * Provider configuration for the setup wizard.
@@ -92,6 +93,7 @@ function parseProvidersParam(providersParam: string): ProviderConfig[] {
 }
 
 export default function IntegrationSetupWizardPage() {
+  const t = useT();
   const searchParams = useSearchParams();
 
   // Extract query parameters
@@ -184,13 +186,15 @@ export default function IntegrationSetupWizardPage() {
   if (missingParams.length > 0) {
     return (
       <div className="flex h-full min-h-[85vh] flex-col items-center justify-center py-10">
-        <AuthCard title="Invalid Request">
+        <AuthCard title={t("auth1.authorize.invalidRequest")}>
           <ErrorCard
-            context="request details"
+            context={t("auth1.setup.requestContext")}
             responseError={{
-              message: `Missing required parameters: ${missingParams.join(", ")}`,
+              message: t("auth1.authorize.missingParams", {
+                params: missingParams.join(", "),
+              }),
             }}
-            hint="Please contact the administrator of the app that sent you here."
+            hint={t("auth1.authorize.hint")}
             isOurProblem={false}
           />
         </AuthCard>
@@ -201,7 +205,7 @@ export default function IntegrationSetupWizardPage() {
   if (isLoading) {
     return (
       <div className="flex h-full min-h-[85vh] flex-col items-center justify-center py-10">
-        <AuthCard title="Loading...">
+        <AuthCard title={t("auth1.authorize.loadingTitle")}>
           <div className="flex flex-col items-center gap-4 py-8">
             <LoadingSpinner size="large" />
           </div>
@@ -214,11 +218,13 @@ export default function IntegrationSetupWizardPage() {
   if (error || !appInfo) {
     return (
       <div className="flex h-full min-h-[85vh] flex-col items-center justify-center py-10">
-        <AuthCard title="Invalid Request">
+        <AuthCard title={t("auth1.authorize.invalidRequest")}>
           <ErrorCard
-            context="application"
-            responseError={error ? error : { message: "Application not found" }}
-            hint="Please contact the administrator of the app that sent you here."
+            context={t("auth1.authorize.appContext")}
+            responseError={
+              error ? error : { message: t("auth1.setup.appNotFound") }
+            }
+            hint={t("auth1.authorize.hint")}
             isOurProblem={false}
           />
         </AuthCard>
@@ -229,11 +235,11 @@ export default function IntegrationSetupWizardPage() {
   if (providerConfigs.length === 0) {
     return (
       <div className="flex h-full min-h-[85vh] flex-col items-center justify-center py-10">
-        <AuthCard title="Invalid Request">
+        <AuthCard title={t("auth1.authorize.invalidRequest")}>
           <ErrorCard
-            context="providers"
-            responseError={{ message: "No providers specified" }}
-            hint="Please contact the administrator of the app that sent you here."
+            context={t("auth1.setup.providersContext")}
+            responseError={{ message: t("auth1.setup.noProviders") }}
+            hint={t("auth1.authorize.hint")}
             isOurProblem={false}
           />
           <Button
@@ -241,7 +247,7 @@ export default function IntegrationSetupWizardPage() {
             onClick={handleCancel}
             className="mt-4 w-full"
           >
-            Cancel
+            {t("auth1.setup.cancel")}
           </Button>
         </AuthCard>
       </div>
@@ -250,11 +256,10 @@ export default function IntegrationSetupWizardPage() {
 
   return (
     <div className="flex h-full min-h-[85vh] flex-col items-center justify-center py-10">
-      <AuthCard title="Connect Your Accounts">
+      <AuthCard title={t("auth1.setup.title")}>
         <div className="flex w-full flex-col gap-6">
           <Text variant="body" className="text-center text-slate-600">
-            <strong>{appInfo.name}</strong> is requesting you to connect the
-            following integrations to your AutoGPT account.
+            <strong>{appInfo.name}</strong> {t("auth1.setup.requestSuffix")}
           </Text>
 
           {/* Provider credentials list */}
@@ -272,7 +277,9 @@ export default function IntegrationSetupWizardPage() {
                     <div className="relative size-8">
                       <Image
                         src={`/integrations/${config.provider}.png`}
-                        alt={`${config.provider} icon`}
+                        alt={t("auth1.setup.iconAlt", {
+                          provider: config.provider,
+                        })}
                         fill
                         className="object-contain group-disabled:opacity-50"
                       />
@@ -296,7 +303,7 @@ export default function IntegrationSetupWizardPage() {
                     )}
                     {isSelected && (
                       <Text variant="small" className="text-green-600">
-                        Connected
+                        {t("auth1.setup.connected")}
                       </Text>
                     )}
                   </div>
@@ -324,27 +331,31 @@ export default function IntegrationSetupWizardPage() {
               className="w-full text-lg"
             >
               {isAllComplete
-                ? "Continue"
-                : `Connect ${providerConfigs.length - Object.values(selectedCredentials).filter(Boolean).length} more`}
+                ? t("auth1.setup.continue")
+                : t("auth1.setup.connectMore", {
+                    count:
+                      providerConfigs.length -
+                      Object.values(selectedCredentials).filter(Boolean).length,
+                  })}
             </Button>
             <Button
               variant="secondary"
               onClick={handleCancel}
               className="w-full text-lg"
             >
-              Cancel
+              {t("auth1.setup.cancel")}
             </Button>
           </div>
 
           {/* Link to integrations settings */}
           <Text variant="small" className="text-center text-slate-500">
-            You can view and manage all your integrations in your{" "}
+            {t("auth1.setup.settingsPrefix")}{" "}
             <Link
               href="/settings/integrations"
               target="_blank"
               className="text-purple-600 underline hover:text-purple-800"
             >
-              integration settings
+              {t("auth1.setup.settingsLink")}
             </Link>
             .
           </Text>

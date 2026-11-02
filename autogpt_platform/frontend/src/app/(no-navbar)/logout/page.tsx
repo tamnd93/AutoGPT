@@ -5,6 +5,7 @@ import { Text } from "@/components/atoms/Text/Text";
 import { useToast } from "@/components/molecules/Toast/use-toast";
 import { getPostLogoutPath } from "@/lib/auth/account-banned";
 import { useAuth } from "@/lib/auth/hooks/useAuth";
+import { useT } from "@/lib/i18n";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef } from "react";
 
@@ -17,6 +18,7 @@ function wait(ms: number): Promise<void> {
 }
 
 export default function LogoutPage() {
+  const t = useT();
   const { logOut } = useAuth();
   const { toast } = useToast();
   const router = useRouter();
@@ -32,7 +34,7 @@ export default function LogoutPage() {
           await logOut();
         } catch {
           toast({
-            title: "Failed to log out. Redirecting to login.",
+            title: t("auth1.logout.failed"),
             variant: "destructive",
           });
         } finally {
@@ -51,7 +53,7 @@ export default function LogoutPage() {
       <div className="flex flex-col items-center justify-center gap-4 py-8">
         <LoadingSpinner size="large" />
         <Text variant="body" className="text-center">
-          Logging you out...
+          {t("auth1.logout.loggingOut")}
         </Text>
       </div>
     </div>

@@ -4,6 +4,7 @@ import {
   getGetOauthGetOauthAppInfoMockHandler200,
   getGetOauthGetOauthAppInfoMockHandler400,
 } from "@/app/api/__generated__/endpoints/oauth/oauth.msw";
+import { LocaleProvider } from "@/lib/i18n";
 import { server } from "@/mocks/mock-server";
 import { fireEvent, render, screen } from "@/tests/integrations/test-utils";
 import IntegrationSetupWizardPage from "../page";
@@ -85,6 +86,32 @@ describe("IntegrationSetupWizardPage", () => {
     expect(await screen.findByText("Invalid Request")).toBeDefined();
     expect(screen.queryByRole("button", { name: "Cancel" })).toBeNull();
     expect(window.location.href).toBe(PAGE);
+  });
+
+  test("reads its chrome in Vietnamese", async () => {
+    openWith({ providers: btoa(JSON.stringify([{ provider: "github" }])) });
+    server.use(
+      getGetOauthGetOauthAppInfoMockHandler200({
+        name: "Example App",
+        scopes: ["IDENTITY"],
+      }),
+    );
+
+    render(
+      <LocaleProvider locale="vi">
+        <IntegrationSetupWizardPage />
+      </LocaleProvider>,
+    );
+
+    expect(
+      await screen.findByText("Kết nối các tài khoản của bạn"),
+    ).toBeDefined();
+    expect(
+      screen.getByRole("button", { name: "Kết nối thêm 1" }),
+    ).toBeDefined();
+    fireEvent.click(screen.getByRole("button", { name: "connect" }));
+    expect(screen.getByRole("button", { name: "Tiếp tục" })).toBeDefined();
+    expect(screen.getByRole("button", { name: "Huỷ" })).toBeDefined();
   });
 
   test("cancelling returns the user to the redirect_uri the backend accepted", async () => {

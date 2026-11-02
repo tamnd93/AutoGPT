@@ -7,9 +7,11 @@ import { WaitlistErrorContent } from "@/components/auth/WaitlistErrorContent";
 import { isWaitlistError } from "@/app/api/auth/utils";
 import { useRouter } from "next/navigation";
 import { ErrorCard } from "@/components/molecules/ErrorCard/ErrorCard";
+import { useT } from "@/lib/i18n";
 import { environment } from "@/services/environment";
 
 export default function AuthErrorPage() {
+  const t = useT();
   const [errorType, setErrorType] = useState<string | null>(null);
   const [errorCode, setErrorCode] = useState<string | null>(null);
   const [errorDescription, setErrorDescription] = useState<string | null>(null);
@@ -32,7 +34,7 @@ export default function AuthErrorPage() {
   if (!errorType && !errorCode && !errorDescription) {
     return (
       <div className="flex h-screen items-center justify-center">
-        <Text variant="body">Loading...</Text>
+        <Text variant="body">{t("auth1.authError.loading")}</Text>
       </div>
     );
   }
@@ -52,8 +54,8 @@ export default function AuthErrorPage() {
 
   // Use ErrorCard for consistent error display
   const errorMessage = errorDescription
-    ? `${errorDescription}. If this error persists, please contact support at contact@agpt.co`
-    : "An authentication error occurred. Please contact support at contact@agpt.co";
+    ? t("auth1.authError.withDescription", { description: errorDescription })
+    : t("auth1.authError.fallback");
 
   return (
     <div className="flex h-screen items-center justify-center p-4">
@@ -62,10 +64,10 @@ export default function AuthErrorPage() {
           responseError={{
             message: errorMessage,
             detail: errorCode
-              ? `Error code: ${errorCode}${errorType ? ` (${errorType})` : ""}`
+              ? `${t("auth1.authError.codeDetail", { code: errorCode })}${errorType ? ` (${errorType})` : ""}`
               : undefined,
           }}
-          context="authentication"
+          context={t("auth1.authError.context")}
           onRetry={() => router.push("/login")}
         />
       </div>

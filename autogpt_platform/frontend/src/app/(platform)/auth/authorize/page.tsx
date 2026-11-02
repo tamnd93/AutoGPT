@@ -16,8 +16,10 @@ import { SCOPE_DESCRIPTIONS } from "@/lib/api-key-scopes";
 import { CheckmarkBadge01Icon, Image01Icon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { ApiError } from "@/lib/autogpt-server-api/helpers";
+import { useT } from "@/lib/i18n";
 
 export default function AuthorizePage() {
+  const t = useT();
   const searchParams = useSearchParams();
 
   // Extract OAuth parameters from URL
@@ -86,13 +88,13 @@ export default function AuthorizePage() {
       if (response.status === 200 && response.data.redirect_url) {
         window.location.href = response.data.redirect_url;
       } else {
-        setAuthorizeError("Authorization failed: no redirect URL received");
+        setAuthorizeError(t("auth1.authorize.failedNoRedirect"));
         setIsAuthorizing(false);
       }
     } catch (err) {
       console.error("Authorization error:", err);
       setAuthorizeError(
-        err instanceof Error ? err.message : "Authorization failed",
+        err instanceof Error ? err.message : t("auth1.authorize.failed"),
       );
       setIsAuthorizing(false);
     }
@@ -113,13 +115,15 @@ export default function AuthorizePage() {
   if (missingParams.length > 0) {
     return (
       <div className="flex h-full min-h-[85vh] flex-col items-center justify-center py-10">
-        <AuthCard title="Invalid Request">
+        <AuthCard title={t("auth1.authorize.invalidRequest")}>
           <ErrorCard
-            context="request parameters"
+            context={t("auth1.authorize.paramsContext")}
             responseError={{
-              message: `Missing required parameters: ${missingParams.join(", ")}`,
+              message: t("auth1.authorize.missingParams", {
+                params: missingParams.join(", "),
+              }),
             }}
-            hint="Please contact the administrator of the app that sent you here."
+            hint={t("auth1.authorize.hint")}
             isOurProblem={false}
           />
         </AuthCard>
@@ -131,11 +135,11 @@ export default function AuthorizePage() {
   if (isLoading) {
     return (
       <div className="flex h-full min-h-[85vh] flex-col items-center justify-center py-10">
-        <AuthCard title="Loading...">
+        <AuthCard title={t("auth1.authorize.loadingTitle")}>
           <div className="flex flex-col items-center gap-4 py-8">
             <LoadingSpinner size="large" />
             <Text variant="body" className="text-center text-slate-500">
-              Loading application information...
+              {t("auth1.authorize.loadingApp")}
             </Text>
           </div>
         </AuthCard>
@@ -149,16 +153,19 @@ export default function AuthorizePage() {
     return (
       <div className="flex h-full min-h-[85vh] flex-col items-center justify-center py-10">
         <AuthCard
-          title={redirectRejected ? "Invalid Request" : "Application Not Found"}
+          title={
+            redirectRejected
+              ? t("auth1.authorize.invalidRequest")
+              : t("auth1.authorize.appNotFound")
+          }
         >
           <ErrorCard
-            context="application"
+            context={t("auth1.authorize.appContext")}
             responseError={
               error
                 ? error
                 : {
-                    message:
-                      "The application you're trying to authorize could not be found or is disabled.",
+                    message: t("auth1.authorize.appMissing"),
                   }
             }
             onRetry={refetch}
@@ -176,13 +183,15 @@ export default function AuthorizePage() {
   if (invalidScopes.length > 0) {
     return (
       <div className="flex h-full min-h-[85vh] flex-col items-center justify-center py-10">
-        <AuthCard title="Invalid Scopes">
+        <AuthCard title={t("auth1.authorize.invalidScopes")}>
           <ErrorCard
-            context="scopes"
+            context={t("auth1.authorize.scopesContext")}
             responseError={{
-              message: `The application is requesting scopes it is not authorized for: ${invalidScopes.join(", ")}`,
+              message: t("auth1.authorize.scopesMessage", {
+                scopes: invalidScopes.join(", "),
+              }),
             }}
-            hint="Please contact the administrator of the app that sent you here."
+            hint={t("auth1.authorize.hint")}
             isOurProblem={false}
           />
           <Button
@@ -190,7 +199,7 @@ export default function AuthorizePage() {
             onClick={handleDeny}
             className="mt-4 w-full"
           >
-            Return to Application
+            {t("auth1.authorize.returnToApp")}
           </Button>
         </AuthCard>
       </div>
@@ -199,7 +208,7 @@ export default function AuthorizePage() {
 
   return (
     <div className="flex h-full min-h-[85vh] flex-col items-center justify-center py-10">
-      <AuthCard title="Authorize Application">
+      <AuthCard title={t("auth1.authorize.title")}>
         <div className="flex w-full flex-col gap-6">
           {/* App info */}
           <div className="flex flex-col items-center text-center">
@@ -209,7 +218,7 @@ export default function AuthorizePage() {
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
                   src={appInfo.logo_url}
-                  alt={`${appInfo.name} logo`}
+                  alt={t("auth1.authorize.logoAlt", { name: appInfo.name })}
                   className="h-full w-full object-cover"
                 />
               ) : (
@@ -229,7 +238,7 @@ export default function AuthorizePage() {
           {/* Permissions */}
           <div>
             <Text variant="body-medium" className="mb-3">
-              This application is requesting permission to:
+              {t("auth1.authorize.requesting")}
             </Text>
             <ul className="space-y-2">
               {requestedScopes.map((scopeKey) => (
@@ -250,7 +259,7 @@ export default function AuthorizePage() {
           {/* Error message */}
           {authorizeError && (
             <ErrorCard
-              context="authorization"
+              context={t("auth1.authorize.authzContext")}
               responseError={{ message: authorizeError }}
             />
           )}
@@ -263,7 +272,9 @@ export default function AuthorizePage() {
               disabled={isAuthorizing}
               className="w-full text-lg"
             >
-              {isAuthorizing ? "Authorizing..." : "Authorize"}
+              {isAuthorizing
+                ? t("auth1.authorize.authorizing")
+                : t("auth1.authorize.authorize")}
             </Button>
             <Button
               variant="secondary"
@@ -271,14 +282,13 @@ export default function AuthorizePage() {
               disabled={isAuthorizing}
               className="w-full text-lg"
             >
-              Deny
+              {t("auth1.authorize.deny")}
             </Button>
           </div>
 
           {/* Warning */}
           <Text variant="small" className="text-center text-slate-500">
-            By authorizing, you allow this application to access your AutoGPT
-            account with the permissions listed above.
+            {t("auth1.authorize.warning")}
           </Text>
         </div>
       </AuthCard>

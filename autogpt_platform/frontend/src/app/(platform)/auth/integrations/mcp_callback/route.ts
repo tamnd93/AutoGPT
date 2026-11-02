@@ -1,9 +1,18 @@
+import { readLocale } from "@/lib/i18n/server";
+import { getMessage } from "@/lib/i18n/translate";
 import { NextResponse } from "next/server";
 
 /**
  * Safely encode a value as JSON for embedding in a script tag.
  * Escapes characters that could break out of the script context to prevent XSS.
  */
+function escapeHtml(value: string): string {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
+
 function safeJsonStringify(value: unknown): string {
   return JSON.stringify(value)
     .replace(/</g, "\\u003c")
@@ -26,6 +35,15 @@ export async function GET(request: Request) {
   const iss = searchParams.get("iss");
   const error = searchParams.get("error");
   const errorDescription = searchParams.get("error_description");
+  const locale = await readLocale();
+  const copy = {
+    title: getMessage(locale, "auth1.mcp.title"),
+    completing: getMessage(locale, "auth1.mcp.completing"),
+    completeClosing: getMessage(locale, "auth1.mcp.completeClosing"),
+    completeManual: getMessage(locale, "auth1.mcp.completeManual"),
+    failedPrefix: getMessage(locale, "auth1.mcp.failedPrefix"),
+    unknownError: getMessage(locale, "auth1.mcp.unknownError"),
+  };
 
   const success = Boolean(code && state);
   const message = success
@@ -43,16 +61,17 @@ export async function GET(request: Request) {
   return new NextResponse(
     `<!DOCTYPE html>
 <html>
-  <head><title>MCP Sign-in</title></head>
+  <head><title>${escapeHtml(copy.title)}</title></head>
   <body style="font-family: system-ui, -apple-system, sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; background: #f9fafb;">
     <div style="text-align: center; max-width: 400px; padding: 2rem;">
       <div id="spinner" style="margin: 0 auto 1rem; width: 32px; height: 32px; border: 3px solid #e5e7eb; border-top-color: #3b82f6; border-radius: 50%; animation: spin 0.8s linear infinite;"></div>
-      <p id="status" role="status" aria-live="polite" style="color: #374151; font-size: 16px;">Completing sign-in...</p>
+      <p id="status" role="status" aria-live="polite" style="color: #374151; font-size: 16px;">${escapeHtml(copy.completing)}</p>
     </div>
     <style>@keyframes spin { to { transform: rotate(360deg); } }</style>
     <script>
       (function() {
         var msg = ${safeJsonStringify(message)};
+        var copy = ${safeJsonStringify(copy)};
         var payload = { message_type: "mcp_oauth_result", success: msg.success, code: msg.code, state: msg.state, iss: msg.iss, message: msg.message };
         var sent = false;
 
@@ -87,14 +106,14 @@ export async function GET(request: Request) {
         spinnerEl.style.display = "none";
 
         if (msg.success && sent) {
-          statusEl.textContent = "Sign-in complete! This window will close.";
+          statusEl.textContent = copy.completeClosing;
           statusEl.style.color = "#059669";
           setTimeout(function() { window.close(); }, 1500);
         } else if (msg.success) {
-          statusEl.textContent = "Sign-in successful! You can close this tab and return to the builder.";
+          statusEl.textContent = copy.completeManual;
           statusEl.style.color = "#059669";
         } else {
-          statusEl.textContent = "Sign-in failed: " + (msg.message || "Unknown error");
+          statusEl.textContent = copy.failedPrefix + (msg.message || copy.unknownError);
           statusEl.style.color = "#dc2626";
         }
       })();

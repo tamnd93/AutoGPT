@@ -1,3 +1,4 @@
+import { LocaleProvider } from "@/lib/i18n";
 import { Toaster } from "@/components/molecules/Toast/toaster";
 import { fireEvent, render, screen } from "@/tests/integrations/test-utils";
 import { expect, test, vi } from "vitest";
@@ -15,6 +16,19 @@ vi.mock("../actions", () => ({
   sendResetEmail: vi.fn(async () => undefined),
   changePassword: vi.fn(),
 }));
+
+test("reads the request form in Vietnamese", () => {
+  render(
+    <LocaleProvider locale="vi">
+      <ResetPasswordPage />
+    </LocaleProvider>,
+  );
+
+  expect(screen.getByText("Đặt lại mật khẩu")).toBeDefined();
+  expect(
+    screen.getByRole("button", { name: "Gửi email đặt lại" }),
+  ).toBeDefined();
+});
 
 test("says a reset link went out only if an account exists", async () => {
   render(

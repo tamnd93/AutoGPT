@@ -13,6 +13,7 @@ import { GoogleOAuthButton } from "@/components/auth/GoogleOAuthButton";
 import { AuthDivider } from "@/components/auth/AuthSplitLayout/AuthDivider";
 import { AuthSplitLayout } from "@/components/auth/AuthSplitLayout/AuthSplitLayout";
 import { MobileWarningBanner } from "@/components/auth/MobileWarningBanner";
+import { useT } from "@/lib/i18n";
 import { environment } from "@/services/environment";
 import { useSearchParams } from "next/navigation";
 import { LoadingSignup } from "./components/LoadingSignup";
@@ -23,6 +24,7 @@ import { useSignupPage } from "./useSignupPage";
 export const dynamic = "force-dynamic";
 
 export default function SignupPage() {
+  const t = useT();
   const searchParams = useSearchParams();
   const nextUrl = searchParams.get("next");
   const loginHref = nextUrl
@@ -73,12 +75,12 @@ export default function SignupPage() {
     <AuthSplitLayout marketing={<SignupMarketingPanel />}>
       <div className="mb-8">
         <Text variant="h3" as="h1" className="!text-foreground-strong">
-          Create your account
+          {t("auth1.signup.title")}
         </Text>
         <Text variant="body" className="mt-1 !text-foreground-tertiary">
-          Already a member?{" "}
+          {t("auth1.signup.alreadyMember")}{" "}
           <Link href={loginHref} variant="secondary">
-            Log in
+            {t("auth1.signup.loginLink")}
           </Link>
         </Text>
       </div>
@@ -91,7 +93,7 @@ export default function SignupPage() {
             render={({ field }) => (
               <Input
                 id={field.name}
-                label="Email"
+                label={t("auth1.signup.emailLabel")}
                 placeholder="name@company.com"
                 type="email"
                 autoComplete="email"
@@ -106,8 +108,8 @@ export default function SignupPage() {
             render={({ field }) => (
               <Input
                 id={field.name}
-                label="Password"
-                placeholder="Create a password"
+                label={t("auth1.signup.passwordLabel")}
+                placeholder={t("auth1.signup.passwordPlaceholder")}
                 type="password"
                 autoComplete="new-password"
                 error={form.formState.errors.password?.message}
@@ -121,8 +123,8 @@ export default function SignupPage() {
             render={({ field }) => (
               <Input
                 id={field.name}
-                label="Confirm Password"
-                placeholder="Confirm your password"
+                label={t("auth1.signup.confirmLabel")}
+                placeholder={t("auth1.signup.confirmPlaceholder")}
                 type="password"
                 autoComplete="new-password"
                 error={confirmPasswordError}
@@ -137,7 +139,9 @@ export default function SignupPage() {
             type="submit"
             className="mt-6 w-full"
           >
-            {isLoading ? "Signing up..." : "Sign up"}
+            {isLoading
+              ? t("auth1.signup.submitting")
+              : t("auth1.signup.submit")}
           </Button>
         </form>
 
