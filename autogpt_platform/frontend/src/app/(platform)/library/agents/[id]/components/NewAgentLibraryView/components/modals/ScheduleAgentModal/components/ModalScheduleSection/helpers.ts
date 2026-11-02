@@ -18,7 +18,9 @@ export function scheduleFormSchemaFactory(locale: Locale = DEFAULT_LOCALE) {
   });
 }
 
-export type ScheduleFormValues = z.infer<typeof scheduleFormSchema>;
+export type ScheduleFormValues = z.infer<
+  ReturnType<typeof scheduleFormSchemaFactory>
+>;
 
 export function validateSchedule(
   values: Partial<ScheduleFormValues>,
