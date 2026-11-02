@@ -111,8 +111,6 @@ export function newRecordingId() {
   return crypto.randomUUID();
 }
 
-export const BRAIN_DUMP_HEADLINE = "Talk to me about your work";
-
 // The backend's quality gate rejects dumps with these codes when the
 // transcription succeeded but carried nothing to personalize from —
 // silence, filler, or an STT hallucination. Distinct from a transcription

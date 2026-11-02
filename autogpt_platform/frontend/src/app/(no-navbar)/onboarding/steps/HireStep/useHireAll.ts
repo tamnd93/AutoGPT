@@ -3,6 +3,7 @@ import type { RecommendedExpert } from "@/app/api/__generated__/models/recommend
 import { toast } from "@/components/molecules/Toast/use-toast";
 import { trackFunnel } from "@/services/experts/experts-analytics";
 import { invalidateExpertRosterQueries } from "@/services/experts/invalidate-experts";
+import { useT } from "@/lib/i18n";
 import { trackBrainDump } from "@/services/onboarding/brain-dump-analytics";
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
@@ -17,6 +18,7 @@ interface Args {
 // The step's primary action: hires a batch in parallel, lets each card flip
 // as its own request lands, and moves on only when every hire succeeded.
 export function useHireAll({ experts, onTeamHired }: Args) {
+  const t = useT();
   const markHired = useOnboardingWizardStore((s) => s.markHired);
   const setStepBusy = useOnboardingWizardStore((s) => s.setStepBusy);
   const queryClient = useQueryClient();
@@ -68,7 +70,7 @@ export function useHireAll({ experts, onTeamHired }: Args) {
     setFailedTemplateIds(failed.map((expert) => expert.template_id));
     setIsHiringAll(false);
     toast({
-      ...hireFailureToast(failed, batch.length, hiredCount(experts) > 0),
+      ...hireFailureToast(failed, batch.length, hiredCount(experts) > 0, t),
       variant: "destructive",
     });
   }

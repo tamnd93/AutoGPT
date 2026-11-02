@@ -3,11 +3,12 @@
 import { Button } from "@/components/atoms/Button/Button";
 import { FadeIn } from "@/components/atoms/FadeIn/FadeIn";
 import { Text } from "@/components/atoms/Text/Text";
+import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { useOnboardingWizardStore } from "../../store";
 import { AutopilotScene } from "./components/AutopilotScene";
 import { TeamScene } from "./components/TeamScene";
-import { INTRO_SLIDES, type IntroSlideId } from "./helpers";
+import { INTRO_SLIDE_KEYS, type IntroSlideId } from "./helpers";
 
 interface Props {
   slide: IntroSlideId;
@@ -21,8 +22,11 @@ const SCENES: Record<IntroSlideId, () => React.JSX.Element> = {
 // One intro slide as a wizard step of its own, so it has a URL, a dot, a
 // place in the funnel and a Back button like every other step.
 export function IntroStep({ slide }: Props) {
+  const t = useT();
   const nextStep = useOnboardingWizardStore((s) => s.nextStep);
-  const { title, body } = INTRO_SLIDES[slide];
+  const keys = INTRO_SLIDE_KEYS[slide];
+  const title = t(keys.title);
+  const body = "body" in keys ? t(keys.body) : undefined;
   const Scene = SCENES[slide];
 
   return (
@@ -63,7 +67,7 @@ export function IntroStep({ slide }: Props) {
         onClick={nextStep}
         className="h-10 w-56"
       >
-        Next
+        {t("onboarding2.intro.next")}
       </Button>
     </FadeIn>
   );

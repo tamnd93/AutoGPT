@@ -1,8 +1,9 @@
+import { useT } from "@/lib/i18n";
 import { useReducedMotion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { trackBrainDump } from "@/services/onboarding/brain-dump-analytics";
 import {
-  BRAIN_DUMP_PROMPT_SETS,
+  getBrainDumpPromptSet,
   type PromptSetName,
   promptSetNameForRole,
 } from "./prompts";
@@ -33,7 +34,10 @@ interface Args {
 }
 
 export function usePromptRotation({ role, screen }: Args) {
+  const t = useT();
   const promptSet = promptSetNameForRole(role);
+  const { questions } = getBrainDumpPromptSet(promptSet, t);
+  const questionCount = questions.length;
   const hasAmbientCards = useIsWideLayout();
   const reduceMotion = useReducedMotion() === true;
   const [rotation, setRotation] = useState<Rotation>(firstRotation(promptSet));
@@ -44,7 +48,7 @@ export function usePromptRotation({ role, screen }: Args) {
     rotation.promptSet === promptSet ? rotation : firstRotation(promptSet);
   const { index } = current;
   const shownOn = livePromptScreen(screen, hasAmbientCards);
-  const question = BRAIN_DUMP_PROMPT_SETS[promptSet].questions[index];
+  const question = questions[index];
   const seenRef = useRef(new Set<string>());
 
   useEffect(() => {
@@ -58,14 +62,22 @@ export function usePromptRotation({ role, screen }: Args) {
     const interval = AUTO_ADVANCE_MS[shownOn];
     const timer = setInterval(() => {
       if (document.visibilityState !== "visible") return;
-      setRotation(advanceFrom({ promptSet, index, screen: shownOn }, "auto"));
+      setRotation(
+        advanceFrom(
+          { promptSet, index, screen: shownOn },
+          "auto",
+          questionCount,
+        ),
+      );
     }, interval);
     return () => clearInterval(timer);
-  }, [shownOn, reduceMotion, isPaused, promptSet, index]);
+  }, [shownOn, reduceMotion, isPaused, promptSet, index, questionCount]);
 
   function advance(via: AdvanceVia) {
     if (!shownOn) return;
-    setRotation(advanceFrom({ promptSet, index, screen: shownOn }, via));
+    setRotation(
+      advanceFrom({ promptSet, index, screen: shownOn }, via, questionCount),
+    );
   }
 
   function togglePause() {
@@ -114,9 +126,9 @@ function livePromptScreen(
 function advanceFrom(
   from: { promptSet: PromptSetName; index: number; screen: PromptScreen },
   via: AdvanceVia,
+  questionCount: number,
 ): Rotation {
-  const { questions } = BRAIN_DUMP_PROMPT_SETS[from.promptSet];
-  const next = (from.index + 1) % questions.length;
+  const next = (from.index + 1) % questionCount;
   trackBrainDump("brain_dump_prompt_advanced", {
     via,
     screen: from.screen,

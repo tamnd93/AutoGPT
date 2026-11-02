@@ -2,6 +2,7 @@ import type { TrialOfferResponse } from "@/app/api/__generated__/models/trialOff
 import { Button } from "@/components/atoms/Button/Button";
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { Text } from "@/components/atoms/Text/Text";
+import { useLocale, useT } from "@/lib/i18n";
 import { SquareLock02Icon } from "@hugeicons/core-free-icons";
 import { ReadyLine } from "../ReadyLine";
 import { Timeline } from "../Timeline";
@@ -26,22 +27,24 @@ export function TrialWelcome({
   error,
   onStart,
 }: Props) {
+  const t = useT();
+  const locale = useLocale();
+
   return (
     <WelcomeShell art="letter">
       <header className="flex flex-col items-start gap-3">
         <ReadyLine experts={experts} />
         <Text variant="h3" as="h1" id="welcome-title" className="text-balance">
-          Your first {offer.duration_days} days are on us
+          {t("onboarding2.trial.title", { days: offer.duration_days })}
         </Text>
         <Text variant="large" tone="secondary" className="text-pretty">
-          Nothing to pay today, and a reminder before there&apos;s ever anything
-          to pay.
+          {t("onboarding2.trial.body")}
         </Text>
       </header>
 
       <Timeline
-        label="How your trial works"
-        milestones={getTrialMilestones(offer)}
+        label={t("onboarding2.trial.planLabel")}
+        milestones={getTrialMilestones(offer, new Date(), t, locale)}
       />
 
       <div className="mt-auto flex flex-col gap-3">
@@ -53,7 +56,7 @@ export function TrialWelcome({
           disabled={isStarting || isBlocked}
           className="h-12 w-full text-base"
         >
-          Start my free trial
+          {t("onboarding2.trial.start")}
         </Button>
         {error ? (
           <Text variant="body" role="alert" tone="danger">
@@ -66,7 +69,7 @@ export function TrialWelcome({
             size={13}
             className="mr-1 inline-block -translate-y-px align-middle"
           />
-          Stripe will ask for a card. Nothing is charged today.
+          {t("onboarding2.trial.stripeNote")}
         </Text>
       </div>
     </WelcomeShell>

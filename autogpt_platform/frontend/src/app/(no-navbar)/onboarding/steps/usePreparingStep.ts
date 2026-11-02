@@ -1,11 +1,12 @@
 import { useGetBrainDumpRecommendedProviders } from "@/app/api/__generated__/endpoints/brain-dump/brain-dump";
+import { useT } from "@/lib/i18n";
 import { peekIntroPath } from "@/services/onboarding/brain-dump-handoff";
 import { useEffect, useRef, useState } from "react";
 
 const GENERIC_CHECKLIST = [
-  "Personalizing your experience",
-  "Connecting automation engines",
-  "Building your space",
+  "onboarding2.preparing.generic1",
+  "onboarding2.preparing.generic2",
+  "onboarding2.preparing.generic3",
 ] as const;
 
 // Honest copy for the dump path — these steps are things that are
@@ -13,10 +14,10 @@ const GENERIC_CHECKLIST = [
 // gates on the provider-recommendation job so the connect dialog never
 // opens on an empty "Recommended" section.
 const BRAIN_DUMP_CHECKLIST = [
-  "Reading your brain dump",
-  "Briefing Otto on your work",
-  "Building your space",
-  "Finding tools for your work",
+  "onboarding2.preparing.dump1",
+  "onboarding2.preparing.dump2",
+  "onboarding2.preparing.dump3",
+  "onboarding2.preparing.dump4",
 ] as const;
 
 // The generic path keeps its original fixed duration; the dump path runs
@@ -36,6 +37,7 @@ const RECOMMENDATIONS_MAX_WAIT_MS = 15_000;
 const WAITING_PROGRESS_CAP = 95;
 
 export function usePreparingStep({ onComplete }: { onComplete: () => void }) {
+  const t = useT();
   const [started, setStarted] = useState(false);
   const [completedItems, setCompletedItems] = useState(0);
   const [progress, setProgress] = useState(0);
@@ -45,9 +47,9 @@ export function usePreparingStep({ onComplete }: { onComplete: () => void }) {
   // Only a user who actually dumped gets the honest copy; a skip would
   // make "Reading your brain dump" a lie.
   const isDumpPath = peekIntroPath() === "A";
-  const checklist: readonly string[] = isDumpPath
-    ? BRAIN_DUMP_CHECKLIST
-    : GENERIC_CHECKLIST;
+  const checklist: readonly string[] = (
+    isDumpPath ? BRAIN_DUMP_CHECKLIST : GENERIC_CHECKLIST
+  ).map((key) => t(key));
   const duration = isDumpPath ? BRAIN_DUMP_DURATION_MS : GENERIC_DURATION_MS;
   const stepInterval = duration / checklist.length;
 

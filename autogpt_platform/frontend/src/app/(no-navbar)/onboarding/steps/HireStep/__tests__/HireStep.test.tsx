@@ -1,6 +1,7 @@
 import { getGetBrainDumpRecommendedExpertsMockHandler200 } from "@/app/api/__generated__/endpoints/brain-dump/brain-dump.msw";
 import { getHireExpertMockHandler200 } from "@/app/api/__generated__/endpoints/experts/experts.msw";
 import type { ExpertRecommendations } from "@/app/api/__generated__/models/expertRecommendations";
+import { LocaleProvider } from "@/lib/i18n";
 import { server } from "@/mocks/mock-server";
 import { render, screen, waitFor } from "@/tests/integrations/test-utils";
 import userEvent from "@testing-library/user-event";
@@ -672,4 +673,30 @@ it("stops waiting after the deadline if transient errors persist", async () => {
 
 afterEach(() => {
   vi.unstubAllEnvs();
+});
+
+describe("HireStep — Vietnamese", () => {
+  it("reads the title, the cards and the actions in Vietnamese", async () => {
+    mockTeam(TEAM);
+
+    render(
+      <LocaleProvider locale="vi">
+        <HireStep />
+      </LocaleProvider>,
+    );
+
+    expect(
+      await screen.findByRole("heading", {
+        name: "Dựa trên những gì bạn kể, đây là những người tôi sẽ tuyển",
+      }),
+    ).toBeDefined();
+    expect(
+      await screen.findByRole("button", { name: "Tuyển tất cả 2" }),
+    ).toBeDefined();
+    expect(
+      screen.getByRole("button", { name: "Tôi sẽ thêm thành viên sau" }),
+    ).toBeDefined();
+    expect(screen.getAllByRole("button", { name: "Tuyển" })).toHaveLength(2);
+    expect(screen.getByRole("button", { name: "Chọn Maria" })).toBeDefined();
+  });
 });

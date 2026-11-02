@@ -1,4 +1,5 @@
 import { getGetV2ListChatConnectionsQueryKey } from "@/app/api/__generated__/endpoints/chat/chat";
+import { LocaleProvider } from "@/lib/i18n";
 import {
   getGetV2ListChatConnectionsMockHandler200,
   getGetV2ListProviderModelTiersMockHandler200,
@@ -369,5 +370,30 @@ describe("ConnectStep helpers", () => {
       linkedModelsSentence([{ ...chatgptTiers(), tiers: [] } as ProviderTiers]),
     ).toBe("");
     expect(linkedModelsSentence(undefined)).toBe("");
+  });
+});
+
+describe("ConnectStep — Vietnamese", () => {
+  it("reads its pitch and its action in Vietnamese", async () => {
+    mockOffers([offer()]);
+
+    render(
+      <LocaleProvider locale="vi">
+        <ConnectStep />
+      </LocaleProvider>,
+    );
+
+    expect(
+      await screen.findByRole("heading", {
+        name: "Bạn đã trả tiền cho một gói AI chưa?",
+      }),
+    ).toBeDefined();
+    expect(
+      screen.getByText(
+        "Kết nối gói đó cho các đoạn chat AutoGPT. Không cần API key, không cần thiết lập thanh toán.",
+      ),
+    ).toBeDefined();
+    await userEvent.click(await screen.findByRole("button", { name: "Tiếp" }));
+    expect(useOnboardingWizardStore.getState().currentStep).toBe(4);
   });
 });

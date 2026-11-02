@@ -1,3 +1,4 @@
+import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 
@@ -6,14 +7,14 @@ import Image from "next/image";
 const COVER_ART = {
   letter: {
     src: "/onboarding/otto-welcome.webp",
-    alt: "Otto, your personal Head of AI, beside a sealed envelope",
+    alt: "onboarding2.cover.letterAlt",
     width: 960,
     height: 628,
     sizes: "(min-width: 1024px) 26rem, (min-width: 640px) 20rem, 13rem",
   },
   hello: {
     src: "/autogpt-characters/v1.1/otto/neutral-transparent/1024.png",
-    alt: "Otto, your personal Head of AI",
+    alt: "onboarding2.cover.helloAlt",
     width: 1024,
     height: 1024,
     sizes: "(min-width: 1024px) 22rem, (min-width: 640px) 16rem, 10rem",
@@ -27,12 +28,13 @@ interface Props {
 }
 
 export function OttoCover({ art }: Props) {
+  const t = useT();
   const image = COVER_ART[art];
   return (
     <div className="flex items-center justify-center bg-[#FDFCF8] px-6 pb-2 pt-6 sm:py-10 lg:px-10">
       <Image
         src={image.src}
-        alt={image.alt}
+        alt={t(image.alt)}
         width={image.width}
         height={image.height}
         priority

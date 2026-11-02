@@ -7,6 +7,7 @@ import { Button } from "@/components/atoms/Button/Button";
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { Text } from "@/components/atoms/Text/Text";
 import { ExpertAvatar } from "@/components/molecules/ExpertAvatar/ExpertAvatar";
+import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { Tick02Icon } from "@hugeicons/core-free-icons";
 
@@ -32,6 +33,7 @@ export function RecommendedExpertCard({
   onHire,
   onToggleIncluded,
 }: Props) {
+  const t = useT();
   const isLeftOut = !isHired && !isIncluded;
   return (
     <div
@@ -50,7 +52,9 @@ export function RecommendedExpertCard({
         <button
           type="button"
           aria-pressed={isIncluded}
-          aria-label={`Include ${expert.name}`}
+          aria-label={t("onboarding2.hire.includeAria", {
+            name: expert.name,
+          })}
           disabled={disabled}
           onClick={onToggleIncluded}
           className="absolute right-2 top-2 z-10 flex size-7 items-center justify-center rounded-full disabled:cursor-not-allowed"
@@ -112,7 +116,7 @@ export function RecommendedExpertCard({
           className="mt-auto inline-flex items-center gap-1 self-start pt-1 text-foreground-strong"
         >
           <Icon icon={Tick02Icon} size={14} />
-          Hired
+          {t("onboarding2.hire.hired")}
         </Text>
       ) : (
         <Button
@@ -123,7 +127,7 @@ export function RecommendedExpertCard({
           loading={isHiringThis}
           onClick={onHire}
         >
-          Hire
+          {t("onboarding2.hire.hire")}
         </Button>
       )}
     </div>

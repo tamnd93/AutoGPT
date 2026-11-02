@@ -1,14 +1,9 @@
 export type IntroSlideId = "team" | "autopilot";
 
-export interface IntroSlide {
-  title: string;
-  body?: string;
-}
-
-export const INTRO_SLIDES: Record<IntroSlideId, IntroSlide> = {
+export const INTRO_SLIDE_KEYS = {
   team: {
-    title: "Your own team of AI experts.",
-    body: "Go beyond chat. Get experts that research, create, and handle work for you.",
+    title: "onboarding2.intro.team.title",
+    body: "onboarding2.intro.team.body",
   },
-  autopilot: { title: "Meet Otto, your Head of AI." },
-};
+  autopilot: { title: "onboarding2.intro.autopilot.title" },
+} as const;

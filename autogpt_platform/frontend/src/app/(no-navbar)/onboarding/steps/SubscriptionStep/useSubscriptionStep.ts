@@ -4,6 +4,7 @@ import {
 } from "@/app/api/__generated__/endpoints/credits/credits";
 import type { SubscriptionTierRequestTier } from "@/app/api/__generated__/models/subscriptionTierRequestTier";
 import { toast } from "@/components/molecules/Toast/use-toast";
+import { useT } from "@/lib/i18n";
 import {
   getSubscriptionValue,
   trackAdsConversionBeforeNavigation,
@@ -42,6 +43,7 @@ interface CheckoutResponse {
 }
 
 export function useSubscriptionStep() {
+  const t = useT();
   const queryClient = useQueryClient();
   const setSelectedBilling = useOnboardingWizardStore(
     (s) => s.setSelectedBilling,
@@ -160,11 +162,11 @@ export function useSubscriptionStep() {
     } catch (error) {
       setSelectedPlan(null);
       toast({
-        title: "Couldn't start checkout",
+        title: t("onboarding2.checkout.failedTitle"),
         description:
           error instanceof Error
             ? error.message
-            : "Stripe didn't accept the request. Please try again.",
+            : t("onboarding2.checkout.failedDesc"),
         variant: "destructive",
       });
     } finally {

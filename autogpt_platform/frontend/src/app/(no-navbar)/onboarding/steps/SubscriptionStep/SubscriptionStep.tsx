@@ -2,6 +2,7 @@
 
 import { Skeleton } from "@/components/atoms/Skeleton/Skeleton";
 import { getEligibleTrialOffer } from "@/components/organisms/SubscriptionPlans/helpers";
+import { useT } from "@/lib/i18n";
 import { TrialCardContent } from "@/components/organisms/TrialCard/TrialCard";
 import { useTrialCard } from "@/components/organisms/TrialCard/useTrialCard";
 import { PLAN_KEYS } from "@/components/molecules/PlanCard/plans";
@@ -15,6 +16,7 @@ import { useReadyExperts } from "./components/useReadyExperts";
 import { useSubscriptionStep } from "./useSubscriptionStep";
 
 export function SubscriptionStep() {
+  const t = useT();
   const subscription = useSubscriptionStep();
   const trial = useTrialCard("onboarding");
   const experts = useReadyExperts();
@@ -30,9 +32,7 @@ export function SubscriptionStep() {
       if (useOnboardingWizardStore.getState().userID !== ownerID) return;
       await trial.startTrial();
     } catch {
-      setSaveError(
-        "We couldn't save your progress. Please try again before continuing to checkout.",
-      );
+      setSaveError(t("onboarding2.trial.saveFailed"));
     } finally {
       setSaving(false);
     }

@@ -1,5 +1,8 @@
 import type { TrialOfferResponse } from "@/app/api/__generated__/models/trialOfferResponse";
 import { formatPlanAmount } from "@/components/organisms/TrialCard/helpers";
+import type { Locale } from "@/lib/i18n/locale";
+import type { MessageKey } from "@/lib/i18n/messages/en";
+import { getMessage } from "@/lib/i18n/translate";
 import {
   Calendar03Icon,
   Mail01Icon,
@@ -9,6 +12,13 @@ import type { Milestone } from "../Timeline";
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 
+type Language = (
+  key: MessageKey,
+  values?: Record<string, string | number>,
+) => string;
+
+const english: Language = (key, values) => getMessage("en", key, values);
+
 // Stripe sends `customer.subscription.trial_will_end` three days before the
 // trial ends, and the trial reminder email goes out on it.
 export const REMINDER_DAYS_BEFORE_CHARGE = 3;
@@ -16,6 +26,8 @@ export const REMINDER_DAYS_BEFORE_CHARGE = 3;
 export function getTrialMilestones(
   offer: TrialOfferResponse,
   now = new Date(),
+  t: Language = english,
+  locale: Locale = "en",
 ): Milestone[] {
   const chargeDate = new Date(now.getTime() + offer.duration_days * DAY_MS);
   const reminderDate = new Date(
@@ -29,42 +41,58 @@ export function getTrialMilestones(
   const lastFreeDay = new Date(chargeDate);
   lastFreeDay.setDate(lastFreeDay.getDate() - 1);
   const amount = formatPlanAmount(offer);
+  const today = t("onboarding2.milestone.today");
   return [
     {
       key: "today",
       icon: SquareUnlock02Icon,
-      when: "Today",
-      title: "Your free trial starts",
-      detail: "Full access from right now, within a trial usage allowance.",
+      when: today,
+      title: t("onboarding2.trial.today.title"),
+      detail: t("onboarding2.trial.today.detail"),
     },
     {
       key: "reminder",
       icon: Mail01Icon,
-      when: remindsToday ? "Today" : formatDay(reminderDate),
+      when: remindsToday ? today : formatDay(reminderDate, locale),
       date: remindsToday ? undefined : reminderDate,
-      title: "We email you a reminder",
+      title: t("onboarding2.trial.reminder.title"),
       detail: remindsToday
-        ? "With your trial end date, so nothing comes as a surprise."
-        : `${REMINDER_DAYS_BEFORE_CHARGE} days before your trial ends, so nothing comes as a surprise.`,
+        ? t("onboarding2.trial.reminder.detailToday")
+        : t("onboarding2.trial.reminder.detailDays", {
+            days: REMINDER_DAYS_BEFORE_CHARGE,
+          }),
     },
     {
       key: "charge",
       icon: Calendar03Icon,
-      when: formatDay(chargeDate),
+      when: formatDay(chargeDate, locale),
       date: chargeDate,
-      title: `Your first payment: ${amount}`,
-      detail: `Then ${formatCadencePrice(offer)}, plus any applicable tax. Cancel by ${formatDay(lastFreeDay)} to pay nothing.`,
+      title: t("onboarding2.trial.charge.title", { amount }),
+      detail: t("onboarding2.trial.charge.detail", {
+        price: formatCadencePrice(offer, t),
+        date: formatDay(lastFreeDay, locale),
+      }),
     },
   ];
 }
 
-export function formatCadencePrice(offer: TrialOfferResponse) {
-  const cadence = offer.billing_cycle === "yearly" ? "year" : "month";
-  return `${formatPlanAmount(offer)} a ${cadence}`;
+export function formatCadencePrice(
+  offer: TrialOfferResponse,
+  t: Language = english,
+) {
+  const cadence = t(
+    offer.billing_cycle === "yearly"
+      ? "onboarding2.billing.year"
+      : "onboarding2.billing.month",
+  );
+  return t("onboarding2.trial.cadence", {
+    amount: formatPlanAmount(offer),
+    cadence,
+  });
 }
 
-export function formatDay(date: Date) {
-  return date.toLocaleDateString(undefined, {
+export function formatDay(date: Date, locale: Locale = "en") {
+  return date.toLocaleDateString(locale === "vi" ? "vi-VN" : undefined, {
     weekday: "short",
     month: "short",
     day: "numeric",
@@ -74,18 +102,26 @@ export function formatDay(date: Date) {
 // The Experts named beside Otto; the rest are counted, to match the avatars.
 export const MAX_NAMED_EXPERTS = 3;
 
-export function formatReadyLine(names: string[]) {
+export function formatReadyLine(
+  names: string[],
+  t: Language = english,
+  locale: Locale = "en",
+) {
   const named = names.slice(0, MAX_NAMED_EXPERTS);
   const others = names.length - named.length;
   const everyone = [
     "Otto",
     ...named,
-    ...(others > 0 ? [`${others} more`] : []),
+    ...(others > 0 ? [t("onboarding2.readyLine.more", { count: others })] : []),
   ];
-  // The sentence around it is English, so the list is too.
-  const list = new Intl.ListFormat("en", {
+  const list = new Intl.ListFormat(locale === "vi" ? "vi" : "en", {
     style: "long",
     type: "conjunction",
   }).format(everyone);
-  return `${list} ${everyone.length === 1 ? "is" : "are"} ready to start`;
+  return t(
+    everyone.length === 1
+      ? "onboarding2.readyLine.one"
+      : "onboarding2.readyLine.other",
+    { list },
+  );
 }

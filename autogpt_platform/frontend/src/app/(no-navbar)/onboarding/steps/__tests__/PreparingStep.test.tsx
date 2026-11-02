@@ -3,6 +3,7 @@ import {
   getGetBrainDumpStatusMockHandler200,
 } from "@/app/api/__generated__/endpoints/brain-dump/brain-dump.msw";
 import { server } from "@/mocks/mock-server";
+import { LocaleProvider } from "@/lib/i18n";
 import { setIntroPath } from "@/services/onboarding/brain-dump-handoff";
 import {
   act,
@@ -152,5 +153,23 @@ describe("PreparingStep checklist copy", () => {
       expect(await screen.findByText(item)).toBeDefined();
     }
     expect(screen.queryByText("Reading your brain dump")).toBeNull();
+  });
+
+  it("reads its headline, checklist and states in Vietnamese", async () => {
+    setIntroPath("B");
+
+    render(
+      <LocaleProvider locale="vi">
+        <PreparingStep onComplete={vi.fn()} />
+      </LocaleProvider>,
+    );
+
+    expect(
+      await screen.findByText("Cá nhân hoá trải nghiệm của bạn"),
+    ).toBeDefined();
+    expect(screen.getByText("Kết nối các công cụ tự động hoá")).toBeDefined();
+    expect(screen.getByText("Xây dựng không gian của bạn")).toBeDefined();
+    expect(screen.getByText("Đang thực hiện")).toBeDefined();
+    expect(screen.getAllByText("Chưa làm")).toHaveLength(2);
   });
 });

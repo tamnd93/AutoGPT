@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/atoms/Button/Button";
 import { Skeleton } from "@/components/atoms/Skeleton/Skeleton";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   isPending: boolean;
@@ -24,6 +25,8 @@ export function HireStepActions({
   onPrimary,
   onSecondary,
 }: Props) {
+  const t = useT();
+
   return (
     <div className="flex flex-col items-center gap-2">
       {isPending ? (
@@ -40,7 +43,7 @@ export function HireStepActions({
           loading={isHiringAll}
           className="h-10 w-56"
         >
-          {isHiringAll ? "Hiring…" : primaryLabel}
+          {isHiringAll ? t("onboarding2.hire.hiring") : primaryLabel}
         </Button>
       ) : null}
       {secondaryLabel && !isHiringAll ? (

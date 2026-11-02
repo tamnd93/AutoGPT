@@ -12,6 +12,7 @@ import { nav2Vi } from "./nav-2.vi";
 import { nav3Vi } from "./nav-3.vi";
 import { navVi } from "./nav.vi";
 import { onboarding1Vi } from "./onboarding-1.vi";
+import { onboarding2Vi } from "./onboarding-2.vi";
 
 export const vi: Partial<Record<MessageKey, string>> = {
   ...integrationsVi,
@@ -27,5 +28,6 @@ export const vi: Partial<Record<MessageKey, string>> = {
   ...chatInput3Vi,
   ...chatTools1Vi,
   ...onboarding1Vi,
+  ...onboarding2Vi,
   "common.planSuffix": "gói {plan}",
 };

@@ -2,13 +2,13 @@ import {
   discardBrainDump,
   finalizeBrainDump,
 } from "@/app/api/__generated__/endpoints/brain-dump/brain-dump";
+import { useT } from "@/lib/i18n";
 import { setIntroPath } from "@/services/onboarding/brain-dump-handoff";
 import { useEffect, useRef, useState } from "react";
 import * as Sentry from "@sentry/nextjs";
 import { useOnboardingWizardStore } from "../../store";
 import { trackBrainDump } from "@/services/onboarding/brain-dump-analytics";
 import {
-  BRAIN_DUMP_HEADLINE,
   failureCauseOf,
   failureReason,
   type FailureCause,
@@ -42,6 +42,7 @@ export type ScreenState =
   | "insufficient";
 
 export function useBrainDumpStep() {
+  const t = useT();
   const nextStep = useOnboardingWizardStore((s) => s.nextStep);
   const setStepBusy = useOnboardingWizardStore((s) => s.setStepBusy);
   // Picked on the step before; "Other" is matched as an id, not its free text.
@@ -583,11 +584,11 @@ export function useBrainDumpStep() {
   }
 
   return {
-    headline: BRAIN_DUMP_HEADLINE,
+    headline: t("onboarding2.dump.headline"),
     screen,
     insufficientMode,
     submittedMode,
-    failureReason: failureReason(failure),
+    failureReason: failureReason(failure, t),
     typedText,
     setTypedText: handleTypedTextChange,
     elapsedSeconds: recorder.elapsedSeconds,

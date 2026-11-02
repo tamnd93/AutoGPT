@@ -1,6 +1,7 @@
 import { Button } from "@/components/atoms/Button/Button";
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { Text } from "@/components/atoms/Text/Text";
+import { useLocale, useT } from "@/lib/i18n";
 import { SquareLock02Icon } from "@hugeicons/core-free-icons";
 import type { ReactNode } from "react";
 import { getPaidMilestones } from "./paidMilestones";
@@ -28,23 +29,26 @@ export function PaidWelcome({
   onContinue,
   notice,
 }: Props) {
+  const t = useT();
+  const locale = useLocale();
+
   return (
     <WelcomeShell art="hello">
       <header className="flex flex-col items-start gap-3">
         <ReadyLine experts={experts} />
         <Text variant="h3" as="h1" id="welcome-title" className="text-balance">
-          Put your setup to work
+          {t("onboarding2.paid.title")}
         </Text>
         <Text variant="large" tone="secondary" className="text-pretty">
-          No contract, and you can cancel any time in Settings.
+          {t("onboarding2.paid.body")}
         </Text>
       </header>
 
       {notice}
 
       <Timeline
-        label="How your plan works"
-        milestones={getPaidMilestones({ price, cadence })}
+        label={t("onboarding2.paid.planLabel")}
+        milestones={getPaidMilestones({ price, cadence, t, locale })}
       />
 
       <div className="mt-auto flex flex-col gap-3">
@@ -56,7 +60,7 @@ export function PaidWelcome({
           disabled={isProcessing || isBlocked}
           className="h-12 w-full text-base"
         >
-          Continue to checkout
+          {t("onboarding2.paid.checkout")}
         </Button>
         <Text variant="small" tone="muted" className="text-balance text-center">
           <Icon
@@ -64,7 +68,7 @@ export function PaidWelcome({
             size={13}
             className="mr-1 inline-block -translate-y-px align-middle"
           />
-          Secure checkout by Stripe
+          {t("onboarding2.paid.secure")}
         </Text>
       </div>
     </WelcomeShell>

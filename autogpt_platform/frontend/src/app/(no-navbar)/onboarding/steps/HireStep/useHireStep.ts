@@ -5,6 +5,7 @@ import type { RecommendedExpert } from "@/app/api/__generated__/models/recommend
 import { toast } from "@/components/molecules/Toast/use-toast";
 import { invalidateExpertRosterQueries } from "@/services/experts/invalidate-experts";
 import { trackFunnel } from "@/services/experts/experts-analytics";
+import { useT } from "@/lib/i18n";
 import { trackBrainDump } from "@/services/onboarding/brain-dump-analytics";
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
@@ -14,11 +15,12 @@ import {
   hireStepActions,
   RECOMMENDATIONS_MAX_WAIT_MS,
   RECOMMENDATIONS_POLL_MS,
-  SKIP_ACTION,
+  skipAction,
 } from "./helpers";
 import { useHireAll } from "./useHireAll";
 
 export function useHireStep() {
+  const t = useT();
   const nextStep = useOnboardingWizardStore((s) => s.nextStep);
   const hiredTemplateIds = useOnboardingWizardStore((s) => s.hiredTemplateIds);
   const markHired = useOnboardingWizardStore((s) => s.markHired);
@@ -50,13 +52,16 @@ export function useHireStep() {
   const experts = team?.experts ?? [];
   const { isHiringAll, hiringTemplateIds, failedTemplateIds, hireAll } =
     useHireAll({ experts, onTeamHired: () => handleContinue("auto") });
-  const actions = hireStepActions({
-    experts,
-    hiredTemplateIds,
-    failedTemplateIds,
-    excludedTemplateIds,
-  });
-  const skip = isPending ? SKIP_ACTION : actions.skip;
+  const actions = hireStepActions(
+    {
+      experts,
+      hiredTemplateIds,
+      failedTemplateIds,
+      excludedTemplateIds,
+    },
+    t,
+  );
+  const skip = isPending ? skipAction(t) : actions.skip;
 
   // The ceiling is absolute from the first pending render: a pending flip
   // (transient error, then a fresh poll) re-arms the timer with what is left
@@ -110,8 +115,8 @@ export function useHireStep() {
       await invalidateExpertRosterQueries(queryClient).catch(() => undefined);
     } catch {
       toast({
-        title: `Couldn't hire ${expert.name}`,
-        description: "Something went wrong. Please try again.",
+        title: t("onboarding2.hire.fail.single", { name: expert.name }),
+        description: t("onboarding2.hire.fail.retry"),
         variant: "destructive",
       });
     } finally {

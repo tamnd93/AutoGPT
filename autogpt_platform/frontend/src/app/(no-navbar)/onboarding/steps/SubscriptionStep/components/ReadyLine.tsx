@@ -1,5 +1,6 @@
 import { AutopilotAvatar } from "@/components/molecules/AutopilotAvatar/AutopilotAvatar";
 import { ExpertAvatar } from "@/components/molecules/ExpertAvatar/ExpertAvatar";
+import { useLocale, useT } from "@/lib/i18n";
 import { OTTO_TINT } from "./ottoTint";
 import { formatReadyLine, MAX_NAMED_EXPERTS } from "./TrialWelcome/helpers";
 import type { ReadyExpert } from "./useReadyExperts";
@@ -12,6 +13,9 @@ interface Props {
 
 // The welcome comes before the billing: the user's own setup, by name.
 export function ReadyLine({ experts }: Props) {
+  const t = useT();
+  const locale = useLocale();
+
   return (
     <p
       style={{ backgroundColor: OTTO_TINT }}
@@ -35,7 +39,11 @@ export function ReadyLine({ experts }: Props) {
         ))}
       </span>
       <span className="min-w-0">
-        {formatReadyLine(experts.map((expert) => expert.name))}
+        {formatReadyLine(
+          experts.map((expert) => expert.name),
+          t,
+          locale,
+        )}
       </span>
     </p>
   );

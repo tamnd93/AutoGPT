@@ -1,3 +1,6 @@
+import type { Locale } from "@/lib/i18n/locale";
+import type { MessageKey } from "@/lib/i18n/messages/en";
+import { getMessage } from "@/lib/i18n/translate";
 import {
   Calendar03Icon,
   Settings02Icon,
@@ -6,40 +9,59 @@ import {
 import type { Milestone } from "./Timeline";
 import { formatDay } from "./TrialWelcome/helpers";
 
+type Translate = (
+  key: MessageKey,
+  values?: Record<string, string | number>,
+) => string;
+
+const english: Translate = (key, values) => getMessage("en", key, values);
+
 interface Args {
   price: string;
   cadence: "month" | "year";
   now?: Date;
+  t?: Translate;
+  locale?: Locale;
 }
 
 export function getPaidMilestones({
   price,
   cadence,
   now = new Date(),
+  t = english,
+  locale = "en",
 }: Args): Milestone[] {
   const renews = getRenewalDate(now, cadence);
+  const cadenceWord = t(
+    cadence === "year"
+      ? "onboarding2.billing.year"
+      : "onboarding2.billing.month",
+  );
   return [
     {
       key: "today",
       icon: SquareUnlock02Icon,
-      when: "Today",
-      title: `You pay ${price}`,
-      detail: "Plus any applicable tax. Full access starts straight away.",
+      when: t("onboarding2.milestone.today"),
+      title: t("onboarding2.paid.today.title", { price }),
+      detail: t("onboarding2.paid.today.detail"),
     },
     {
       key: "renew",
       icon: Calendar03Icon,
-      when: formatDay(renews),
+      when: formatDay(renews, locale),
       date: renews,
-      title: "Your plan renews",
-      detail: `${price} a ${cadence} until you cancel.`,
+      title: t("onboarding2.paid.renew.title"),
+      detail: t("onboarding2.paid.renew.detail", {
+        price,
+        cadence: cadenceWord,
+      }),
     },
     {
       key: "cancel",
       icon: Settings02Icon,
-      when: "Any time",
-      title: "Cancel in Settings",
-      detail: "You keep access until the end of the period you've paid for.",
+      when: t("onboarding2.milestone.anyTime"),
+      title: t("onboarding2.paid.cancel.title"),
+      detail: t("onboarding2.paid.cancel.detail"),
     },
   ];
 }

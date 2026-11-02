@@ -208,7 +208,7 @@ describe("AmbientPrompts", () => {
 });
 
 describe("AmbientPrompts — Vietnamese", () => {
-  it("reads the example label in Vietnamese while the role's questions still show", () => {
+  it("reads the example label and the role's questions in Vietnamese", () => {
     render(
       <LocaleProvider locale="vi">
         <AmbientPrompts
@@ -222,7 +222,11 @@ describe("AmbientPrompts — Vietnamese", () => {
 
     expect(screen.getAllByText("Ví dụ")).toHaveLength(2);
     expect(screen.queryByText("For example")).toBeNull();
-    fireEvent.click(screen.getByText(OPERATIONS.questions[0].text));
+    expect(screen.getByText("Tuần của bạn")).toBeDefined();
+    const question =
+      "Việc gì lặp lại mỗi tuần và chúng chiếm bao nhiêu thời gian?";
+    expect(screen.getByText(question)).toBeDefined();
+    fireEvent.click(screen.getByText(question));
     expect(onTogglePause).toHaveBeenCalledTimes(1);
   });
 });

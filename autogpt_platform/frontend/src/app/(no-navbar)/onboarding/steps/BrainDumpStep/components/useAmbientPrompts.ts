@@ -1,7 +1,7 @@
 import { useT } from "@/lib/i18n";
 import { useReducedMotion } from "framer-motion";
 import { useEffect, useState } from "react";
-import { BRAIN_DUMP_PROMPT_SETS, promptSetNameForRole } from "../prompts";
+import { getBrainDumpPromptSet, promptSetNameForRole } from "../prompts";
 
 const SWAP_MS = 3_500;
 const REDUCED_MOTION_SWAP_MS = 7_000;
@@ -45,7 +45,7 @@ export function useAmbientPrompts({ role, slots, isRotating }: Args) {
     return () => clearInterval(timer);
   }, [promptSet, reduceMotion, isRotating]);
 
-  const { questions, examples } = BRAIN_DUMP_PROMPT_SETS[promptSet];
+  const { questions, examples } = getBrainDumpPromptSet(promptSet, t);
   const dealt = dealCards(slots, swaps, {
     question: questions.length,
     example: examples.length,

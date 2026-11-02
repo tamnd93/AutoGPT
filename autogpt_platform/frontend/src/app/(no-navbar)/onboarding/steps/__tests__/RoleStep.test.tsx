@@ -4,6 +4,7 @@ import {
   fireEvent,
   cleanup,
 } from "@/tests/integrations/test-utils";
+import { LocaleProvider } from "@/lib/i18n";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { useOnboardingWizardStore } from "../../store";
@@ -122,5 +123,36 @@ describe("RoleStep", () => {
     expect(useOnboardingWizardStore.getState().role).toBe("Marketing");
     vi.advanceTimersByTime(1000);
     expect(useOnboardingWizardStore.getState().currentStep).toBe(1);
+  });
+
+  test("reads the question and the role cards in Vietnamese", () => {
+    render(
+      <LocaleProvider locale="vi">
+        <RoleStep />
+      </LocaleProvider>,
+    );
+
+    expect(
+      screen.getByRole("heading", { name: "Điều gì mô tả bạn rõ nhất?" }),
+    ).toBeDefined();
+    expect(screen.getByText("Kỹ thuật")).toBeDefined();
+    expect(screen.getByText("Nhân sự")).toBeDefined();
+    expect(screen.getByRole("button", { name: "Tiếp" })).toBeDefined();
+  });
+
+  test("keeps the stored role id when the card label is Vietnamese", () => {
+    render(
+      <LocaleProvider locale="vi">
+        <RoleStep />
+      </LocaleProvider>,
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: /kỹ thuật/i }));
+    expect(useOnboardingWizardStore.getState().role).toBe("Engineering");
+
+    fireEvent.click(screen.getByRole("button", { name: /^khác$/i }));
+    expect(
+      screen.getByPlaceholderText("Mô tả vai trò của bạn..."),
+    ).toBeDefined();
   });
 });

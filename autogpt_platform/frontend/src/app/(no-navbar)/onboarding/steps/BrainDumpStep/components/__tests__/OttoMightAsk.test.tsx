@@ -95,11 +95,15 @@ describe("OttoMightAsk — Vietnamese", () => {
     );
 
     expect(screen.getByText("Otto có thể sẽ hỏi")).toBeDefined();
+    expect(
+      screen.getByText("Bạn ở trong CRM, hộp thư và lịch nào cả ngày?"),
+    ).toBeDefined();
     await userEvent.click(screen.getByRole("button", { name: "Câu hỏi khác" }));
 
-    expect(await screen.findByText(QUESTIONS[5].text)).toBeDefined();
+    const nextQuestion = "Email đầu tiên của bạn thường viết thế nào?";
+    expect(await screen.findByText(nextQuestion)).toBeDefined();
     expect(screen.getByTestId("otto-might-ask-announcer").textContent).toBe(
-      `Otto có thể sẽ hỏi: ${QUESTIONS[5].text}`,
+      `Otto có thể sẽ hỏi: ${nextQuestion}`,
     );
   });
 });

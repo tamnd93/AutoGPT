@@ -1,13 +1,16 @@
 import Image from "next/image";
 import { AutopilotAvatar } from "@/components/molecules/AutopilotAvatar/AutopilotAvatar";
+import { useT } from "@/lib/i18n";
 import { TEAM, TEAM_PARENTS, teamBranch } from "./teamSceneHelpers";
 
 export function TeamScene() {
+  const t = useT();
+
   return (
     <div
       role="group"
       className="flex h-full items-center justify-center"
-      aria-label="Otto and your team of AI Experts"
+      aria-label={t("onboarding2.intro.teamAria")}
     >
       <svg viewBox="0 0 600 420" className="h-auto w-full max-w-[600px]">
         {TEAM_PARENTS.map((member) => (
@@ -35,6 +38,8 @@ interface Props {
 }
 
 function TeamNode({ member }: Props) {
+  const t = useT();
+
   return (
     <g>
       <foreignObject
@@ -48,7 +53,7 @@ function TeamNode({ member }: Props) {
         ) : (
           <Image
             src={`/experts/transparent/${member.asset}.webp`}
-            alt={`${member.name}, AI Expert`}
+            alt={t("onboarding2.intro.expertAlt", { name: member.name })}
             width={member.size}
             height={member.size}
             sizes={`${member.size}px`}

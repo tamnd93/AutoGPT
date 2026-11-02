@@ -7,6 +7,7 @@ import { AutopilotAvatar } from "@/components/molecules/AutopilotAvatar/Autopilo
 import { MicrosoftCopilotProviderBox } from "@/components/contextual/IntegrationsPanel/components/AIConnectionsSection/MicrosoftCopilotProviderBox";
 import { UpcomingProviderBoxes } from "@/components/contextual/IntegrationsPanel/components/AIConnectionsSection/UpcomingProviderBoxes";
 import { ProviderBox } from "@/components/contextual/IntegrationsPanel/components/AIConnectionsSection/ProviderBox";
+import { useT } from "@/lib/i18n";
 import { useConnectStep } from "./useConnectStep";
 
 /**
@@ -17,6 +18,7 @@ import { useConnectStep } from "./useConnectStep";
  * skippable so a user with keys is not blocked by a wizard.
  */
 export function ConnectStep() {
+  const t = useT();
   const {
     connect,
     finishConnection,
@@ -32,16 +34,16 @@ export function ConnectStep() {
         <div className="flex flex-col items-center gap-4 text-center">
           <AutopilotAvatar size={120} transparent />
           <Text variant="h4" as="h1">
-            Already paying for an AI subscription?
+            {t("onboarding2.connect.title")}
           </Text>
           <Text variant="large" as="p" tone="muted" className="max-w-md">
-            Connect it for AutoGPT chats. No API keys, no billing setup.
+            {t("onboarding2.connect.body")}
           </Text>
         </div>
 
         <div
           className="grid w-full grid-cols-2 gap-3 sm:grid-cols-4"
-          aria-label="Subscriptions"
+          aria-label={t("onboarding2.connect.subscriptionsAria")}
         >
           <ProviderBox
             name="ChatGPT"
@@ -59,13 +61,12 @@ export function ConnectStep() {
 
         {isMicrosoftLinked && (
           <Text variant="small" as="p" tone="muted" className="text-center">
-            Your Microsoft 365 Copilot is connected. It can answer chats but
-            does not run AutoGPT tools.
+            {t("onboarding2.connect.microsoft")}
           </Text>
         )}
 
         <Button size="small" onClick={skip} className="h-10 w-56">
-          Next
+          {t("onboarding2.connect.next")}
         </Button>
       </div>
     </FadeIn>

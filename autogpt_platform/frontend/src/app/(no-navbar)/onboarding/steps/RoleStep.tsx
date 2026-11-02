@@ -6,6 +6,7 @@ import { Text } from "@/components/atoms/Text/Text";
 import { AutopilotAvatar } from "@/components/molecules/AutopilotAvatar/AutopilotAvatar";
 
 import { FadeIn } from "@/components/atoms/FadeIn/FadeIn";
+import { useT } from "@/lib/i18n";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { SelectableCard } from "../components/SelectableCard";
 import { OTHER_ROLE_MAX_LENGTH } from "../helpers";
@@ -27,47 +28,48 @@ const ICON_SIZE = 20;
 const ROLES = [
   {
     id: "Founder/CEO",
-    label: "Founder / CEO",
+    labelKey: "onboarding2.role.founderCeo",
     icon: <Icon icon={Target01Icon} size={ICON_SIZE} />,
   },
   {
     id: "Operations",
-    label: "Operations",
+    labelKey: "onboarding2.role.operations",
     icon: <Icon icon={Settings02Icon} size={ICON_SIZE} />,
   },
   {
     id: "Sales/BD",
-    label: "Sales / BD",
+    labelKey: "onboarding2.role.salesBd",
     icon: <Icon icon={ChartLineData01Icon} size={ICON_SIZE} />,
   },
   {
     id: "Marketing",
-    label: "Marketing",
+    labelKey: "onboarding2.role.marketing",
     icon: <Icon icon={Megaphone01Icon} size={ICON_SIZE} />,
   },
   {
     id: "Product/PM",
-    label: "Product / PM",
+    labelKey: "onboarding2.role.productPm",
     icon: <Icon icon={CubeIcon} size={ICON_SIZE} />,
   },
   {
     id: "Engineering",
-    label: "Engineering",
+    labelKey: "onboarding2.role.engineering",
     icon: <Icon icon={CodeIcon} size={ICON_SIZE} />,
   },
   {
     id: "HR/People",
-    label: "HR / People",
+    labelKey: "onboarding2.role.hrPeople",
     icon: <Icon icon={UserGroupIcon} size={ICON_SIZE} />,
   },
   {
     id: "Other",
-    label: "Other",
+    labelKey: "onboarding2.role.other",
     icon: <Icon icon={Flag01Icon} size={ICON_SIZE} />,
   },
 ] as const;
 
 export function RoleStep() {
+  const t = useT();
   const role = useOnboardingWizardStore((s) => s.role);
   const otherRole = useOnboardingWizardStore((s) => s.otherRole);
   const setRole = useOnboardingWizardStore((s) => s.setRole);
@@ -87,7 +89,7 @@ export function RoleStep() {
       <div className="flex w-full flex-col items-center gap-8 px-4">
         <div className="mx-auto flex w-full max-w-lg flex-col items-center gap-4 px-4 text-center">
           <AutopilotAvatar size={120} transparent />
-          <Text variant="h4">What best describes you?</Text>
+          <Text variant="h4">{t("onboarding2.role.title")}</Text>
         </div>
 
         <div className="flex w-full max-w-[100vw] flex-nowrap gap-4 overflow-x-auto px-8 scrollbar-none md:grid md:grid-cols-4 md:overflow-hidden md:px-0">
@@ -95,7 +97,7 @@ export function RoleStep() {
             <SelectableCard
               key={r.id}
               icon={r.icon}
-              label={r.label}
+              label={t(r.labelKey)}
               selected={role === r.id}
               onClick={() => setRole(r.id)}
               className="h-28 w-[11.5rem]"
@@ -119,9 +121,9 @@ export function RoleStep() {
               <div className="w-full px-8 py-1 md:px-0">
                 <Input
                   id="other-role"
-                  label="Other role"
+                  label={t("onboarding2.role.otherLabel")}
                   hideLabel
-                  placeholder="Describe your role..."
+                  placeholder={t("onboarding2.role.otherPlaceholder")}
                   value={otherRole}
                   onChange={(e) => setOtherRole(e.target.value)}
                   maxLength={OTHER_ROLE_MAX_LENGTH}
@@ -139,7 +141,7 @@ export function RoleStep() {
           disabled={!canContinue}
           className="h-10 w-56"
         >
-          Next
+          {t("onboarding2.role.next")}
         </Button>
       </div>
     </FadeIn>

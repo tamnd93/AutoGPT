@@ -11,6 +11,7 @@ import { nav2En } from "./nav-2.en";
 import { nav3En } from "./nav-3.en";
 import { navEn } from "./nav.en";
 import { onboarding1En } from "./onboarding-1.en";
+import { onboarding2En } from "./onboarding-2.en";
 
 export const en = {
   ...integrationsEn,
@@ -26,6 +27,7 @@ export const en = {
   ...chatInput3En,
   ...chatTools1En,
   ...onboarding1En,
+  ...onboarding2En,
   "common.planSuffix": "{plan} plan",
 } as const;
 

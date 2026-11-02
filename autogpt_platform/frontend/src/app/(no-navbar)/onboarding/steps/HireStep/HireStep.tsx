@@ -4,6 +4,7 @@ import { FadeIn } from "@/components/atoms/FadeIn/FadeIn";
 import { Skeleton } from "@/components/atoms/Skeleton/Skeleton";
 import { Text } from "@/components/atoms/Text/Text";
 import { AutopilotAvatar } from "@/components/molecules/AutopilotAvatar/AutopilotAvatar";
+import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { useRef } from "react";
 import { HireStepActions } from "./components/HireStepActions";
@@ -27,8 +28,9 @@ const EDGE_FADE_CLASS =
 // problems it heard off the user's plate. One click hires the whole team, or
 // one card at a time; the voice pick waits for the expert's own page.
 export function HireStep() {
+  const t = useT();
   const step = useHireStep();
-  const note = raiseNote(step.raiseRole);
+  const note = raiseNote(step.raiseRole, t);
   const diagnosis = hireDiagnosis(step.team, step.isPending);
   const isBusy = step.isCardHiring || step.isHiringAll;
   const gridRef = useRef<HTMLDivElement>(null);
@@ -40,7 +42,7 @@ export function HireStep() {
         <div className="mx-auto flex w-full max-w-lg flex-col items-center gap-4 px-4 text-center">
           <AutopilotAvatar size={120} transparent />
           <Text variant="h4" as="h1">
-            {hireTitle(step.team, step.isPending)}
+            {hireTitle(step.team, step.isPending, t)}
           </Text>
           {diagnosis ? (
             <Text

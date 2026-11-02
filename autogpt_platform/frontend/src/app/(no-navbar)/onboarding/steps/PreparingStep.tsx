@@ -3,6 +3,7 @@
 import { Text } from "@/components/atoms/Text/Text";
 import { AutopilotAvatar } from "@/components/molecules/AutopilotAvatar/AutopilotAvatar";
 import { TypingText } from "@/components/molecules/TypingText/TypingText";
+import { useT } from "@/lib/i18n";
 import {
   ChecklistMark,
   type ChecklistState,
@@ -14,6 +15,7 @@ interface Props {
 }
 
 export function PreparingStep({ onComplete }: Props) {
+  const t = useT();
   const { started, progress, completedItems, checklist } = usePreparingStep({
     onComplete,
   });
@@ -24,7 +26,7 @@ export function PreparingStep({ onComplete }: Props) {
         <AutopilotAvatar size={120} transparent />
         <Text variant="h4" className="text-center">
           <TypingText
-            text="Preparing your workspace..."
+            text={t("onboarding2.preparing.title")}
             active={started}
             delay={400}
             speed={60}
