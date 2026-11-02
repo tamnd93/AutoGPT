@@ -4,7 +4,7 @@ import { Link } from "@/components/atoms/Link/Link";
 import { Text } from "@/components/atoms/Text/Text";
 import { ShowMoreText } from "@/components/molecules/ShowMoreText/ShowMoreText";
 import { humanizeCronExpression } from "@/lib/cron-expression-utils";
-import { useT } from "@/lib/i18n";
+import { useLocale, useT } from "@/lib/i18n";
 
 interface ModalHeaderProps {
   agent: LibraryAgent;
@@ -12,6 +12,7 @@ interface ModalHeaderProps {
 
 export function ModalHeader({ agent }: ModalHeaderProps) {
   const t = useT();
+  const locale = useLocale();
   const creator = agent.marketplace_listing?.creator;
 
   return (
@@ -54,6 +55,7 @@ export function ModalHeader({ agent }: ModalHeaderProps) {
               {t("library1.header.tipBody", {
                 schedule: humanizeCronExpression(
                   agent.recommended_schedule_cron,
+                  locale,
                 ).toLowerCase(),
               })}
             </Text>

@@ -22,7 +22,7 @@ export async function uploadFiles(
   for (const file of files) {
     let fileId: string;
     try {
-      fileId = (await uploadFileDirect(file)).file_id;
+      fileId = (await uploadFileDirect(file, undefined, locale)).file_id;
     } catch (error) {
       outcome.failed.push({
         name: file.name,

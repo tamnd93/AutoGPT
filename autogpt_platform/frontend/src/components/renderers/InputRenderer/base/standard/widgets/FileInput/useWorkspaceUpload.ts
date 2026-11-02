@@ -1,11 +1,12 @@
 import { useDeleteWorkspaceFile } from "@/app/api/__generated__/endpoints/workspace/workspace";
 import { useToast } from "@/components/molecules/Toast/use-toast";
 import { uploadFileDirect } from "@/lib/direct-upload";
-import { useT } from "@/lib/i18n";
+import { useLocale, useT } from "@/lib/i18n";
 import { parseWorkspaceFileID, buildWorkspaceURI } from "@/lib/workspace-uri";
 
 export function useWorkspaceUpload() {
   const t = useT();
+  const locale = useLocale();
   const { toast } = useToast();
 
   const { mutate: deleteMutation } = useDeleteWorkspaceFile({
@@ -21,7 +22,7 @@ export function useWorkspaceUpload() {
   });
 
   async function handleUploadFile(file: File) {
-    const d = await uploadFileDirect(file);
+    const d = await uploadFileDirect(file, undefined, locale);
     return {
       file_name: d.name,
       size: d.size_bytes,

@@ -14,7 +14,7 @@ import {
   prepareMCPAuthCredential,
   validateMCPAuthCredential,
 } from "@/lib/mcp-auth";
-import { useT } from "@/lib/i18n";
+import { useLocale, useT } from "@/lib/i18n";
 import { isKey } from "@/lib/keyboard";
 import { CheckmarkCircle02Icon } from "@hugeicons/core-free-icons";
 import { useId, useState } from "react";
@@ -33,6 +33,7 @@ function hostOf(serverUrl: string): string | null {
  *  MCPSetupCard drives via the request callbacks. */
 export function McpConnectorRow({ request }: { request: McpConnectorRequest }) {
   const t = useT();
+  const locale = useLocale();
   const hintId = useId();
   const errorId = useId();
   const [token, setToken] = useState("");
@@ -51,7 +52,7 @@ export function McpConnectorRow({ request }: { request: McpConnectorRequest }) {
     .toLowerCase();
 
   function submitCredential() {
-    const message = validateMCPAuthCredential(token, authScheme);
+    const message = validateMCPAuthCredential(token, authScheme, locale);
     setValidationError(message);
     if (message) return;
 

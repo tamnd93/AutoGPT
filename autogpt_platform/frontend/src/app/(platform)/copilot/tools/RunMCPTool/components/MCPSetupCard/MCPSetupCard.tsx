@@ -349,6 +349,7 @@ export function MCPSetupCard({ output, retryInstruction }: Props) {
     const invalid = validateMCPAuthCredential(
       token,
       detectMCPAuthScheme(token) ?? manualAuthScheme,
+      locale,
     );
     if (invalid) {
       setForceDisconnected(true);

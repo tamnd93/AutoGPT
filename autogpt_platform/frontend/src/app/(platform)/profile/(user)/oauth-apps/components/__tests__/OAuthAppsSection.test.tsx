@@ -76,7 +76,7 @@ describe("OAuthAppsSection - logo upload", () => {
     fireEvent.change(logoInput(), { target: { files: [file] } });
 
     await waitFor(() => {
-      expect(uploadSpy).toHaveBeenCalledWith("app-1", file);
+      expect(uploadSpy).toHaveBeenCalledWith("app-1", file, "en");
       expect(toastSpy).toHaveBeenCalledWith(
         expect.objectContaining({ title: "Success" }),
       );

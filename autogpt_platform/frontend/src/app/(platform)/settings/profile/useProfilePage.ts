@@ -165,13 +165,18 @@ export function useProfilePage() {
 
   async function uploadAvatar(file: File): Promise<string | null> {
     if (
-      isFileTooLarge({ file, maxSizeMB: SUBMISSION_MEDIA_MAX_SIZE_MB, toast })
+      isFileTooLarge({
+        file,
+        maxSizeMB: SUBMISSION_MEDIA_MAX_SIZE_MB,
+        locale,
+        toast,
+      })
     )
       return null;
 
     setIsUploadingAvatar(true);
     try {
-      const url = (await uploadSubmissionMediaDirect(file)).trim();
+      const url = (await uploadSubmissionMediaDirect(file, "submission", locale)).trim();
       if (!url) return null;
       patchField("avatar_url", url);
       return url;

@@ -1,3 +1,6 @@
+import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/locale";
+import { getMessage } from "@/lib/i18n/translate";
+
 export type MCPAuthScheme = "bearer" | "basic";
 
 const AUTHORIZATION_HEADER_PREFIX = /^authorization\s*:\s*/i;
@@ -35,6 +38,7 @@ export function detectMCPAuthScheme(value: string): MCPAuthScheme | null {
 export function validateMCPAuthCredential(
   value: string,
   scheme: MCPAuthScheme,
+  locale: Locale = DEFAULT_LOCALE,
 ): string | null {
   if (scheme !== "basic") return null;
 
@@ -44,10 +48,10 @@ export function validateMCPAuthCredential(
     .trim();
   const credential = matchSchemePrefix(candidate)?.credential ?? candidate;
   if (credential.includes(":")) {
-    return "This looks like an unencoded user:password. Basic authentication sends the Base64 of that pair — encode it first, or paste the complete Authorization header.";
+    return getMessage(locale, "errors3.mcpAuth.unencodedPassword");
   }
   if (/\s/.test(credential)) {
-    return "A Basic credential is the Base64 of user:password and cannot contain spaces.";
+    return getMessage(locale, "errors3.mcpAuth.spaces");
   }
   return null;
 }

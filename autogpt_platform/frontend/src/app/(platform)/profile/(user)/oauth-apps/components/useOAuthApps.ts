@@ -72,12 +72,19 @@ export const useOAuthApps = () => {
   };
 
   const handleUploadLogo = async (appId: string, file: File) => {
-    if (isFileTooLarge({ file, maxSizeMB: OAUTH_LOGO_MAX_SIZE_MB, toast }))
+    if (
+      isFileTooLarge({
+        file,
+        maxSizeMB: OAUTH_LOGO_MAX_SIZE_MB,
+        locale,
+        toast,
+      })
+    )
       return;
 
     try {
       setUploadingAppId(appId);
-      await uploadOAuthAppLogoDirect(appId, file);
+      await uploadOAuthAppLogoDirect(appId, file, locale);
       toast({
         title: getMessage(locale, "profile5.oauth.successTitle"),
         description: getMessage(locale, "profile5.oauth.logoUploaded"),

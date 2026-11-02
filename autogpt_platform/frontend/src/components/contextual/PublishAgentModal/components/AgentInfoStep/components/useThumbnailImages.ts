@@ -3,7 +3,7 @@ import { useState, useRef, useEffect } from "react";
 import { postV2GenerateSubmissionImage } from "@/app/api/__generated__/endpoints/store/store";
 import { resolveResponse } from "@/app/api/helpers";
 import { useToast } from "@/components/molecules/Toast/use-toast";
-import { useT } from "@/lib/i18n";
+import { useLocale, useT } from "@/lib/i18n";
 import {
   isFileTooLarge,
   SUBMISSION_MEDIA_MAX_SIZE_MB,
@@ -34,6 +34,7 @@ export function useThumbnailImages({
   const thumbnailsContainerRef = useRef<HTMLDivElement | null>(null);
   const { toast } = useToast();
   const t = useT();
+  const locale = useLocale();
 
   const initialImagesKey = JSON.stringify(initialImages);
 
@@ -108,13 +109,22 @@ export function useThumbnailImages({
 
   async function uploadImage(file: File) {
     if (
-      isFileTooLarge({ file, maxSizeMB: SUBMISSION_MEDIA_MAX_SIZE_MB, toast })
+      isFileTooLarge({
+        file,
+        maxSizeMB: SUBMISSION_MEDIA_MAX_SIZE_MB,
+        locale,
+        toast,
+      })
     )
       return;
 
     setIsUploading(true);
     try {
-      const imageUrl = await uploadSubmissionMediaDirect(file);
+      const imageUrl = await uploadSubmissionMediaDirect(
+        file,
+        "submission",
+        locale,
+      );
 
       setImagesWithValidation([...images, imageUrl]);
       if (!selectedImage) {

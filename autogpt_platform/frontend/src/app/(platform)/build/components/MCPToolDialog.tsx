@@ -51,7 +51,7 @@ import { isKey } from "@/lib/keyboard";
 import { mcpServerIdentity, normalizeMcpUrl } from "@/lib/mcp-url";
 import { ArrowDown01Icon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
-import { useT } from "@/lib/i18n";
+import { useLocale, useT } from "@/lib/i18n";
 
 export type MCPToolDialogResult = {
   serverUrl: string;
@@ -77,6 +77,7 @@ export function MCPToolDialog({
   onConfirm,
 }: MCPToolDialogProps) {
   const t = useT();
+  const locale = useLocale();
   const allProviders = useContext(CredentialsProvidersContext);
 
   const [step, setStep] = useState<DialogStep>("url");
@@ -204,7 +205,11 @@ export function MCPToolDialog({
     const credential = manualToken.trim();
     if (!url || !credential) return;
 
-    const invalid = validateMCPAuthCredential(credential, manualAuthScheme);
+    const invalid = validateMCPAuthCredential(
+      credential,
+      manualAuthScheme,
+      locale,
+    );
     if (invalid) {
       setError(invalid);
       return;
@@ -264,6 +269,7 @@ export function MCPToolDialog({
     manualToken,
     serverUrl,
     t,
+    locale,
   ]);
 
   const handleDiscoverTools = useCallback(() => {

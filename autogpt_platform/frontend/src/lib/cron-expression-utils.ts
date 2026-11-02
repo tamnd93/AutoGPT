@@ -1,3 +1,6 @@
+import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/locale";
+import { getMessage } from "@/lib/i18n/translate";
+
 export type CronFrequency =
   | "every minute"
   | "hourly"
@@ -79,7 +82,10 @@ export function makeCronExpression(params: CronExpressionParams): string {
   return "";
 }
 
-export function humanizeCronExpression(cronExpression: string): string {
+export function humanizeCronExpression(
+  cronExpression: string,
+  locale: Locale = DEFAULT_LOCALE,
+): string {
   const parts = cronExpression.trim().split(/\s+/);
   if (parts.length !== 5) {
     throw new Error("Invalid cron expression format.");
@@ -89,7 +95,7 @@ export function humanizeCronExpression(cronExpression: string): string {
 
   // Handle every minute
   if (cronExpression === "* * * * *") {
-    return "Every minute";
+    return getMessage(locale, "errors3.cron.everyMinute");
   }
 
   // Handle minute intervals (e.g., */5 * * * *)
@@ -101,7 +107,7 @@ export function humanizeCronExpression(cronExpression: string): string {
     dayOfWeek === "*"
   ) {
     const interval = minute.substring(2);
-    return `Every ${interval} minutes`;
+    return getMessage(locale, "errors3.cron.everyMinutes", { interval });
   }
 
   // Handle hour intervals (e.g., 30 * * * *)
@@ -112,7 +118,7 @@ export function humanizeCronExpression(cronExpression: string): string {
     month === "*" &&
     dayOfWeek === "*"
   ) {
-    return `Every hour at minute ${minute}`;
+    return getMessage(locale, "errors3.cron.everyHourAt", { minute });
   }
 
   // Handle every N hours (e.g., 0 */2 * * *)
@@ -124,7 +130,7 @@ export function humanizeCronExpression(cronExpression: string): string {
     dayOfWeek === "*"
   ) {
     const interval = hour.substring(2);
-    return `Every ${interval} hours`;
+    return getMessage(locale, "errors3.cron.everyHours", { interval });
   }
 
   // Handle daily (e.g., 30 14 * * *)
@@ -135,7 +141,9 @@ export function humanizeCronExpression(cronExpression: string): string {
     !minute.includes("/") &&
     !hour.includes("/")
   ) {
-    return `Every day at ${formatTime(hour, minute)}`;
+    return getMessage(locale, "errors3.cron.everyDayAt", {
+      time: formatTime(hour, minute),
+    });
   }
 
   // Handle weekly (e.g., 30 14 * * 1,3,5)
@@ -146,8 +154,11 @@ export function humanizeCronExpression(cronExpression: string): string {
     !minute.includes("/") &&
     !hour.includes("/")
   ) {
-    const days = getDayNames(dayOfWeek);
-    return `Every ${days} at ${formatTime(hour, minute)}`;
+    const days = getDayNames(dayOfWeek, locale);
+    return getMessage(locale, "errors3.cron.everyDaysAt", {
+      days,
+      time: formatTime(hour, minute),
+    });
   }
 
   // Handle custom minute intervals with other fields as * (e.g., every N minutes)
@@ -159,7 +170,7 @@ export function humanizeCronExpression(cronExpression: string): string {
     dayOfWeek === "*"
   ) {
     const interval = minute.split("/")[1];
-    return `Every ${interval} minutes`;
+    return getMessage(locale, "errors3.cron.everyMinutes", { interval });
   }
 
   // Handle custom hour intervals with other fields as * (e.g., every N hours)
@@ -171,7 +182,7 @@ export function humanizeCronExpression(cronExpression: string): string {
     dayOfWeek === "*"
   ) {
     const interval = hour.split("/")[1];
-    return `Every ${interval} hours`;
+    return getMessage(locale, "errors3.cron.everyHours", { interval });
   }
 
   // Handle specific days with custom intervals (e.g., every N days)
@@ -184,7 +195,10 @@ export function humanizeCronExpression(cronExpression: string): string {
     !hour.includes("/")
   ) {
     const interval = dayOfMonth.substring(2);
-    return `Every ${interval} days at ${formatTime(hour, minute)}`;
+    return getMessage(locale, "errors3.cron.everyNDaysAt", {
+      interval,
+      time: formatTime(hour, minute),
+    });
   }
 
   // Handle monthly (e.g., 30 14 1,15 * *)
@@ -199,7 +213,10 @@ export function humanizeCronExpression(cronExpression: string): string {
   ) {
     const days = dayOfMonth.split(",").map(Number);
     const dayList = days.join(", ");
-    return `On day ${dayList} of every month at ${formatTime(hour, minute)}`;
+    return getMessage(locale, "errors3.cron.monthlyAt", {
+      days: dayList,
+      time: formatTime(hour, minute),
+    });
   }
 
   // Handle yearly (e.g., 30 14 1 1,6,12 *)
@@ -212,18 +229,26 @@ export function humanizeCronExpression(cronExpression: string): string {
     !minute.includes("/") &&
     !hour.includes("/")
   ) {
-    const months = getMonthNames(month);
-    return `Every year on the 1st day of ${months} at ${formatTime(hour, minute)}`;
+    const months = getMonthNames(month, locale);
+    return getMessage(locale, "errors3.cron.yearlyAt", {
+      months,
+      time: formatTime(hour, minute),
+    });
   }
 
-  return `Cron Expression: ${cronExpression}`;
+  return getMessage(locale, "errors3.cron.rawExpression", {
+    expression: cronExpression,
+  });
 }
 
-export function safeHumanizeCronExpression(cronExpression: string): string {
+export function safeHumanizeCronExpression(
+  cronExpression: string,
+  locale: Locale = DEFAULT_LOCALE,
+): string {
   try {
-    return humanizeCronExpression(cronExpression);
+    return humanizeCronExpression(cronExpression, locale);
   } catch {
-    return "Scheduled";
+    return getMessage(locale, "errors3.cron.scheduled");
   }
 }
 
@@ -258,44 +283,38 @@ function expandCronFieldList(field: string): number[] {
   return values;
 }
 
-function getDayNames(dayOfWeek: string): string {
+function intlLocale(locale: Locale): string {
+  return locale === "vi" ? "vi-VN" : "en-US";
+}
+
+function getDayNames(dayOfWeek: string, locale: Locale): string {
   const days = expandCronFieldList(dayOfWeek);
+  const formatter = new Intl.DateTimeFormat(intlLocale(locale), {
+    weekday: "long",
+  });
+  // 2024-01-07 is a Sunday, so cron day 0 maps onto it directly.
   const dayNames = days
     .map((d) => {
-      const names = [
-        "Sunday",
-        "Monday",
-        "Tuesday",
-        "Wednesday",
-        "Thursday",
-        "Friday",
-        "Saturday",
-      ];
-      return names[d] || `Unknown(${d})`;
+      if (!Number.isInteger(d) || d < 0 || d > 6) {
+        return getMessage(locale, "errors3.cron.unknownDay", { value: d });
+      }
+      return formatter.format(new Date(2024, 0, 7 + d));
     })
     .join(", ");
   return dayNames;
 }
 
-function getMonthNames(month: string): string {
+function getMonthNames(month: string, locale: Locale): string {
   const months = expandCronFieldList(month);
+  const formatter = new Intl.DateTimeFormat(intlLocale(locale), {
+    month: "long",
+  });
   const monthNames = months
     .map((m) => {
-      const names = [
-        "January",
-        "February",
-        "March",
-        "April",
-        "May",
-        "June",
-        "July",
-        "August",
-        "September",
-        "October",
-        "November",
-        "December",
-      ];
-      return names[m - 1] || `Unknown(${m})`;
+      if (!Number.isInteger(m) || m < 1 || m > 12) {
+        return getMessage(locale, "errors3.cron.unknownMonth", { value: m });
+      }
+      return formatter.format(new Date(2024, m - 1, 15));
     })
     .join(", ");
   return monthNames;

@@ -7,13 +7,14 @@ import {
   type MCPAuthScheme,
 } from "@/lib/mcp-auth";
 import { normalizeMcpUrl } from "@/lib/mcp-url";
-import { useT } from "@/lib/i18n";
+import { useLocale, useT } from "@/lib/i18n";
 
 export function useMCPManualAuth(
   serverURL: string,
   allowedSchemes: MCPAuthScheme[],
 ) {
   const t = useT();
+  const locale = useLocale();
   const [token, setToken] = useState("");
   const { data: credentials } = useGetV1ListCredentials({
     query: {
@@ -55,7 +56,7 @@ export function useMCPManualAuth(
         ? t("connectServices1.mcp.basicUnsupported")
         : t("connectServices1.mcp.bearerUnsupported");
     }
-    return validateMCPAuthCredential(token.trim(), scheme);
+    return validateMCPAuthCredential(token.trim(), scheme, locale);
   }
 
   function reset() {

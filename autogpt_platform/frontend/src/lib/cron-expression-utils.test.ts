@@ -42,3 +42,31 @@ describe("safeHumanizeCronExpression", () => {
     expect(safeHumanizeCronExpression("not-a-cron")).toBe("Scheduled");
   });
 });
+
+describe("humanizeCronExpression locale", () => {
+  it("keeps the english sentences by default", () => {
+    expect(humanizeCronExpression("0 9 * * 1,3,5")).toBe(
+      "Every Monday, Wednesday, Friday at 09:00",
+    );
+    expect(humanizeCronExpression("* * * * *")).toBe("Every minute");
+  });
+
+  it("renders the vietnamese sentences and weekday names", () => {
+    expect(humanizeCronExpression("0 9 * * 1,3,5", "vi")).toBe(
+      "Mỗi Thứ Hai, Thứ Tư, Thứ Sáu lúc 09:00",
+    );
+    expect(humanizeCronExpression("30 14 * * *", "vi")).toBe(
+      "Mỗi ngày lúc 14:30",
+    );
+    expect(humanizeCronExpression("0 12 1 1,6,12 *", "vi")).toBe(
+      "Hằng năm vào ngày 1 tháng Tháng 1, Tháng 6, Tháng 12 lúc 12:00",
+    );
+  });
+
+  it("renders the vietnamese fallbacks", () => {
+    expect(safeHumanizeCronExpression("not-a-cron", "vi")).toBe("Theo lịch");
+    expect(humanizeCronExpression("1 2 3 4 5", "vi")).toBe(
+      "Biểu thức cron: 1 2 3 4 5",
+    );
+  });
+});

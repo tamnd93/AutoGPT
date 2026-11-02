@@ -85,7 +85,7 @@ export function SelectedScheduleView({
                 run={undefined}
                 scheduleRecurrence={
                   schedule
-                    ? `${humanizeCronExpression(schedule.cron || "")} · ${getTimezoneDisplayName(schedule.timezone || userTimezone || "UTC", locale)}`
+                    ? `${humanizeCronExpression(schedule.cron || "", locale)} · ${getTimezoneDisplayName(schedule.timezone || userTimezone || "UTC", locale)}`
                     : undefined
                 }
               />
@@ -125,7 +125,7 @@ export function SelectedScheduleView({
                         {t("library2.scheduleView.recurrence")}
                       </Text>
                       <Text variant="body" className="flex items-center gap-3">
-                        {humanizeCronExpression(schedule.cron)}{" "}
+                        {humanizeCronExpression(schedule.cron, locale)}{" "}
                         <span className="text-foreground-tertiary">•</span>{" "}
                         <span className="text-foreground-tertiary">
                           {getTimezoneDisplayName(

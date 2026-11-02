@@ -181,7 +181,7 @@ async function uploadFiles(
   const results = await Promise.allSettled(
     files.map(async (file) => {
       try {
-        const data = await uploadFileDirect(file, sessionId);
+        const data = await uploadFileDirect(file, sessionId, locale);
         if (!data.file_id) throw new Error("No file_id returned");
         return {
           file_id: data.file_id,

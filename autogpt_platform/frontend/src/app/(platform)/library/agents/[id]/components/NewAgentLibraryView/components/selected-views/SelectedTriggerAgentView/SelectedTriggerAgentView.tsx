@@ -121,7 +121,7 @@ export function SelectedTriggerAgentView({
                       {t("library2.scheduleView.recurrence")}
                     </Text>
                     <Text variant="body" className="flex items-center gap-3">
-                      {humanizeCronExpression(schedule.cron)}{" "}
+                      {humanizeCronExpression(schedule.cron, locale)}{" "}
                       <span className="text-foreground-tertiary">&middot;</span>{" "}
                       <span className="text-foreground-tertiary">
                         {getTimezoneDisplayName(

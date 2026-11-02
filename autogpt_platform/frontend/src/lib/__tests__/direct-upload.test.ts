@@ -69,6 +69,16 @@ describe("getFileSizeError", () => {
     expect(message).toContain("too large");
     expect(message).toContain(`${OAUTH_LOGO_MAX_SIZE_MB}MB`);
   });
+
+  it("keeps the english size message by default and renders vietnamese for vi", () => {
+    const file = makeFile(OAUTH_LOGO_MAX_SIZE_MB * 1024 * 1024 + 1);
+    expect(getFileSizeError(file, OAUTH_LOGO_MAX_SIZE_MB, "en")).toBe(
+      getFileSizeError(file, OAUTH_LOGO_MAX_SIZE_MB),
+    );
+    const vietnamese = getFileSizeError(file, OAUTH_LOGO_MAX_SIZE_MB, "vi");
+    expect(vietnamese).toContain("Tệp quá lớn");
+    expect(vietnamese).toContain(`${OAUTH_LOGO_MAX_SIZE_MB}MB`);
+  });
 });
 
 describe("uploadSubmissionMediaDirect", () => {

@@ -92,3 +92,23 @@ describe("MCP manual authentication helpers", () => {
     expect(validateMCPAuthCredential("orgid api-key", "bearer")).toBeNull();
   });
 });
+
+describe("validateMCPAuthCredential locale", () => {
+  it("keeps the english messages by default", () => {
+    expect(validateMCPAuthCredential("user:pass", "basic")).toContain(
+      "unencoded user:password",
+    );
+    expect(validateMCPAuthCredential("Basic auth key", "basic")).toContain(
+      "cannot contain spaces",
+    );
+  });
+
+  it("renders the vietnamese messages for the vi locale", () => {
+    expect(validateMCPAuthCredential("user:pass", "basic", "vi")).toContain(
+      "chưa mã hoá",
+    );
+    expect(
+      validateMCPAuthCredential("Basic auth key", "basic", "vi"),
+    ).toContain("không được chứa dấu cách");
+  });
+});

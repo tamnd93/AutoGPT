@@ -33,7 +33,7 @@ import {
   Store01Icon,
 } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
-import { useT } from "@/lib/i18n";
+import { useLocale, useT } from "@/lib/i18n";
 
 const DESCRIPTION_MAX = 1000;
 const INSTRUCTIONS_MAX = 2000;
@@ -47,6 +47,7 @@ export function AgentInfoStep({
   isMarketplaceUpdate,
 }: Props) {
   const t = useT();
+  const locale = useLocale();
   const {
     form,
     agentId,
@@ -493,7 +494,7 @@ export function AgentInfoStep({
                           className="truncate"
                         >
                           {field.value
-                            ? humanizeCronExpression(field.value)
+                            ? humanizeCronExpression(field.value, locale)
                             : t("marketplace3.publish.setSchedule")}
                         </Text>
                       </button>

@@ -36,6 +36,7 @@ import { credentials1En } from "./credentials-1.en";
 import { credentials2En } from "./credentials-2.en";
 import { errors1En } from "./errors-1.en";
 import { errors2En } from "./errors-2.en";
+import { errors3En } from "./errors-3.en";
 import { formatEn } from "./format.en";
 import { home1En } from "./home-1.en";
 import { home2En } from "./home-2.en";
@@ -129,6 +130,7 @@ export const en = {
   ...credentials2En,
   ...errors1En,
   ...errors2En,
+  ...errors3En,
   ...formatEn,
   ...home1En,
   ...home2En,
