@@ -4,6 +4,8 @@ import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
+import { useT } from "@/lib/i18n";
+
 import { useCreateAPIKey } from "../hooks/useCreateAPIKey";
 import { createAPIKeySchema, type CreateAPIKeyFormValues } from "./schema";
 
@@ -14,12 +16,13 @@ interface Args {
 }
 
 export function useCreateAPIKeyForm({ onClose }: Args) {
+  const t = useT();
   const [view, setView] = useState<View>("form");
   const [plainTextKey, setPlainTextKey] = useState("");
   const { createKey, isPending } = useCreateAPIKey();
 
   const form = useForm<CreateAPIKeyFormValues>({
-    resolver: zodResolver(createAPIKeySchema),
+    resolver: zodResolver(createAPIKeySchema(t)),
     defaultValues: { name: "", description: "", permissions: [] },
     mode: "onChange",
   });

@@ -2,10 +2,12 @@
 
 import type { ReactNode } from "react";
 import { format } from "date-fns";
+import { vi as dateFnsVi } from "date-fns/locale";
 
 import type { APIKeyInfo } from "@/app/api/__generated__/models/aPIKeyInfo";
 import { Text } from "@/components/atoms/Text/Text";
 import { Dialog } from "@/components/molecules/Dialog/Dialog";
+import { useLocale, useT } from "@/lib/i18n";
 import { SCOPE_API_VERSION } from "@/lib/api-key-scopes";
 
 import { maskAPIKey } from "../APIKeyList/helpers";
@@ -18,6 +20,10 @@ interface Props {
 }
 
 export function APIKeyInfoDialog({ open, apiKey, onOpenChange }: Props) {
+  const t = useT();
+  const locale = useLocale();
+  const dateLocale = locale === "vi" ? dateFnsVi : undefined;
+
   return (
     <Dialog
       title={apiKey.name}
@@ -26,24 +32,24 @@ export function APIKeyInfoDialog({ open, apiKey, onOpenChange }: Props) {
     >
       <Dialog.Content>
         <div className="flex flex-col gap-4 px-1">
-          <Section label="Key">
+          <Section label={t("settingsRest1.info.key")}>
             <code className="font-mono text-sm text-foreground-emphasis">
               {maskAPIKey(apiKey.head, apiKey.tail)}
             </code>
           </Section>
 
           {apiKey.description && (
-            <Section label="Description">
+            <Section label={t("settingsRest1.info.description")}>
               <Text variant="body" className="text-foreground-body">
                 {apiKey.description}
               </Text>
             </Section>
           )}
 
-          <Section label="Scopes">
+          <Section label={t("settingsRest1.info.scopes")}>
             {apiKey.scopes.length === 0 ? (
               <Text variant="body" className="text-foreground-tertiary">
-                No scopes
+                {t("settingsRest1.info.noScopes")}
               </Text>
             ) : (
               <ul className="flex flex-wrap gap-1.5">
@@ -56,7 +62,7 @@ export function APIKeyInfoDialog({ open, apiKey, onOpenChange }: Props) {
                     {SCOPE_API_VERSION[scope] === "v1" && (
                       <span className="text-foreground-secondary">
                         {" "}
-                        · v1 only
+                        {t("settingsRest1.info.v1Only")}
                       </span>
                     )}
                   </li>
@@ -65,17 +71,21 @@ export function APIKeyInfoDialog({ open, apiKey, onOpenChange }: Props) {
             )}
           </Section>
 
-          <Section label="Created">
+          <Section label={t("settingsRest1.info.created")}>
             <Text variant="body" className="text-foreground-body">
-              {format(new Date(apiKey.created_at), "PPP p")}
+              {format(new Date(apiKey.created_at), "PPP p", {
+                locale: dateLocale,
+              })}
             </Text>
           </Section>
 
-          <Section label="Last used">
+          <Section label={t("settingsRest1.info.lastUsed")}>
             <Text variant="body" className="text-foreground-body">
               {apiKey.last_used_at
-                ? format(new Date(apiKey.last_used_at), "PPP p")
-                : "Never used"}
+                ? format(new Date(apiKey.last_used_at), "PPP p", {
+                    locale: dateLocale,
+                  })
+                : t("settingsRest1.info.neverUsed")}
             </Text>
           </Section>
         </div>

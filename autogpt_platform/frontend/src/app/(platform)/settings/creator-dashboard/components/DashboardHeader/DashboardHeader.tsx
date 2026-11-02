@@ -5,6 +5,7 @@ import { Button } from "@/components/atoms/Button/Button";
 import { Text } from "@/components/atoms/Text/Text";
 import { PublishAgentModal } from "@/components/contextual/PublishAgentModal/PublishAgentModal";
 import type { PublishState } from "@/components/contextual/PublishAgentModal/usePublishAgentModal";
+import { useT } from "@/lib/i18n";
 import type { StoreSubmission } from "@/app/api/__generated__/models/storeSubmission";
 
 import { EASE_OUT } from "../../helpers";
@@ -24,6 +25,7 @@ export function DashboardHeader({
   onOpenSubmit,
   onRequestEdit,
 }: Props) {
+  const t = useT();
   const reduceMotion = useReducedMotion();
 
   return (
@@ -35,14 +37,13 @@ export function DashboardHeader({
     >
       <div className="flex min-w-0 flex-col">
         <Text variant="h4" as="h1" className="leading-7 text-textBlack">
-          Creator dashboard
+          {t("settingsRest1.creator.title")}
         </Text>
         <Text
           variant="body"
           className="mt-3 max-w-[640px] text-foreground-body"
         >
-          Track your store submissions, see how they perform, and ship updates
-          for the workflows you publish.
+          {t("settingsRest1.creator.body")}
         </Text>
       </div>
 
@@ -57,7 +58,7 @@ export function DashboardHeader({
             onClick={onOpenSubmit}
             leftIcon={<Icon icon={PlusSignIcon} size={18} />}
           >
-            Submit workflow
+            {t("settingsRest1.creator.submit")}
           </Button>
         }
       />

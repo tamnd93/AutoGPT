@@ -2,11 +2,13 @@
 
 import { ErrorCard } from "@/components/molecules/ErrorCard/ErrorCard";
 import { Text } from "@/components/atoms/Text/Text";
+import { useT } from "@/lib/i18n";
 
 import { BotCard } from "../BotCard/BotCard";
 import { useBotsList } from "./useBotsList";
 
 export function BotsList() {
+  const t = useT();
   const { platforms, isLoading, isError, error, refetch, isEmpty } =
     useBotsList();
 
@@ -22,7 +24,7 @@ export function BotsList() {
     return (
       <div className="flex w-full flex-col gap-3 px-4">
         <ErrorCard
-          context="bots"
+          context={t("settingsRest1.bots.errorContext")}
           responseError={
             error instanceof Error ? { message: error.message } : undefined
           }
@@ -36,10 +38,10 @@ export function BotsList() {
     return (
       <div className="flex flex-col items-center justify-center gap-2 px-6 py-10 text-center">
         <Text variant="large-medium" as="span" className="text-textBlack">
-          No bots enabled
+          {t("settingsRest1.bots.emptyTitle")}
         </Text>
         <Text variant="body" className="max-w-[360px] text-foreground-tertiary">
-          No chat-bot platforms are available on this deployment right now.
+          {t("settingsRest1.bots.emptyBody")}
         </Text>
       </div>
     );

@@ -1,21 +1,22 @@
 "use client";
 
 import { Text } from "@/components/atoms/Text/Text";
+import { useT } from "@/lib/i18n";
 
 export function BotsHeader() {
+  const t = useT();
+
   return (
     <div className="flex flex-col items-start gap-4 pb-6 pl-4 sm:flex-row sm:items-start sm:justify-between">
       <div className="flex min-w-0 flex-col">
         <Text variant="h4" as="h1" className="leading-7 text-foreground-strong">
-          Bots
+          {t("settingsRest1.bots.title")}
         </Text>
         <Text
           variant="body"
           className="mt-4 max-w-[600px] text-foreground-secondary"
         >
-          Connect AutoGPT bots to your chat platforms. Add a bot to one of your
-          servers, link a DM channel so the bot can talk to you directly, or
-          unlink an existing connection.
+          {t("settingsRest1.bots.body")}
         </Text>
       </div>
     </div>

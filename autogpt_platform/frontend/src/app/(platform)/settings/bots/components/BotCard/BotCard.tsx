@@ -5,6 +5,7 @@ import { Badge } from "@/components/atoms/Badge/Badge";
 import { Button } from "@/components/atoms/Button/Button";
 import { Card } from "@/components/atoms/Card/Card";
 import { Text } from "@/components/atoms/Text/Text";
+import { useT } from "@/lib/i18n";
 import type { BotPlatformInfo } from "@/app/api/__generated__/models/botPlatformInfo";
 
 import { BotCardDmTile } from "./BotCardDmTile";
@@ -19,13 +20,14 @@ type Props = {
 };
 
 export function BotCard({ platform }: Props) {
+  const t = useT();
   const { isPending, unlinkServerLink, unlinkDmLink } = useBotCard();
   const serverLinks = platform.server_links ?? [];
   const pendingInstall = platform.pending_install ?? null;
   // Optional in the generated client (it has a server-side default).
   const serverNoun = platform.server_noun ?? "server";
   const dmUrl = platform.dm_url ?? null;
-  const addBotLabel = getAddBotLabel(platform, serverNoun);
+  const addBotLabel = getAddBotLabel(platform, serverNoun, t);
 
   return (
     <Card className="flex flex-col gap-5 p-5">
@@ -33,7 +35,9 @@ export function BotCard({ platform }: Props) {
         <div className="flex items-center gap-3">
           <Image
             src={`/integrations/${platform.icon}`}
-            alt={`${platform.display_name} icon`}
+            alt={t("settingsRest1.card.iconAlt", {
+              name: platform.display_name,
+            })}
             width={32}
             height={32}
             className="rounded-md"
@@ -43,7 +47,9 @@ export function BotCard({ platform }: Props) {
           </Text>
           {pendingInstall ? (
             <Badge variant="info" size="small">
-              Pending — finish in {platform.display_name}
+              {t("settingsRest1.card.pending", {
+                platform: platform.display_name,
+              })}
             </Badge>
           ) : null}
         </div>
@@ -58,7 +64,9 @@ export function BotCard({ platform }: Props) {
               size="small"
               rightIcon={<Icon icon={ArrowUpRight01Icon} size={16} />}
             >
-              Open AutoGPT in {platform.display_name}
+              {t("settingsRest1.card.openIn", {
+                platform: platform.display_name,
+              })}
             </Button>
           ) : null}
           {dmUrl ? (
@@ -71,7 +79,9 @@ export function BotCard({ platform }: Props) {
               size="small"
               rightIcon={<Icon icon={ArrowUpRight01Icon} size={16} />}
             >
-              Message bot on {platform.display_name}
+              {t("settingsRest1.card.messageBot", {
+                platform: platform.display_name,
+              })}
             </Button>
           ) : null}
           {/* Kept alongside the pending action, not replaced by it: adding the
@@ -99,7 +109,7 @@ export function BotCard({ platform }: Props) {
           as="span"
           className="uppercase tracking-wide text-foreground-tertiary"
         >
-          Direct messages
+          {t("settingsRest1.card.directMessages")}
         </Text>
         <BotCardDmTile
           platformName={platform.display_name}
@@ -117,7 +127,7 @@ export function BotCard({ platform }: Props) {
           as="span"
           className="uppercase tracking-wide text-foreground-tertiary"
         >
-          Linked {serverNoun}s
+          {t("settingsRest1.card.linkedServers", { noun: serverNoun })}
         </Text>
         <BotCardServerList
           platformName={platform.display_name}

@@ -4,6 +4,7 @@ import { motion, useReducedMotion } from "framer-motion";
 import type { Variants } from "framer-motion";
 
 import { Skeleton } from "@/components/atoms/Skeleton/Skeleton";
+import { useT } from "@/lib/i18n";
 
 const PLACEHOLDER_ROWS = Array.from({ length: 6 }, (_, i) => i);
 
@@ -24,12 +25,13 @@ const SKELETON_ITEM_VARIANTS: Variants = {
 };
 
 export function APIKeyListSkeleton() {
+  const t = useT();
   const reduceMotion = useReducedMotion();
 
   return (
     <motion.div
       role="status"
-      aria-label="Loading API keys"
+      aria-label={t("settingsRest1.skeleton.loading")}
       className="flex w-full flex-col divide-y divide-border-base overflow-hidden rounded-2xl border border-border-base bg-surface"
       initial={reduceMotion ? false : "hidden"}
       animate={reduceMotion ? undefined : "show"}

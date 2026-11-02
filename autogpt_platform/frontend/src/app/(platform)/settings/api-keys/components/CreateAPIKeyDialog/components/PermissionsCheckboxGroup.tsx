@@ -1,6 +1,7 @@
 "use client";
 import type { APIKeyPermission } from "@/app/api/__generated__/models/aPIKeyPermission";
 import { Text } from "@/components/atoms/Text/Text";
+import { useT } from "@/lib/i18n";
 
 import { PERMISSION_GROUPS } from "../schema";
 import { CheckmarkSquare02Icon, SquareIcon } from "@hugeicons/core-free-icons";
@@ -12,6 +13,8 @@ interface Props {
 }
 
 export function PermissionsCheckboxGroup({ value, onChange }: Props) {
+  const t = useT();
+
   function toggle(permission: APIKeyPermission) {
     if (value.includes(permission)) {
       onChange(value.filter((p) => p !== permission));
@@ -28,7 +31,7 @@ export function PermissionsCheckboxGroup({ value, onChange }: Props) {
         as="span"
         className="text-textBlack"
       >
-        Permissions
+        {t("settingsRest1.permissions.title")}
       </Text>
       <div
         role="group"

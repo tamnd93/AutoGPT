@@ -1,3 +1,4 @@
+import { LocaleProvider } from "@/lib/i18n";
 import { describe, expect, test } from "vitest";
 
 import {
@@ -371,6 +372,25 @@ describe("SettingsBotsPage", () => {
     expect(
       screen.queryByRole("link", { name: /message bot on telegram/i }),
     ).toBeNull();
+  });
+
+  test("reads its header and card actions in Vietnamese", async () => {
+    server.use(getListBotPlatformsMockHandler([discordPlatform()]));
+
+    render(
+      <LocaleProvider locale="vi">
+        <SettingsBotsPage />
+      </LocaleProvider>,
+    );
+
+    expect(await screen.findByRole("heading", { name: "Bot" })).toBeDefined();
+    expect(
+      screen.getByText(/Kết nối bot AutoGPT với các nền tảng chat của bạn/),
+    ).toBeDefined();
+    expect(
+      await screen.findByRole("link", { name: /Thêm bot vào Discord/ }),
+    ).toBeDefined();
+    expect(screen.getByText("Tin nhắn trực tiếp")).toBeDefined();
   });
 
   test("only Telegram gets the message-the-bot button", async () => {

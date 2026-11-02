@@ -5,10 +5,12 @@ import { useQueryClient } from "@tanstack/react-query";
 
 import { deleteV1RevokeApiKey } from "@/app/api/__generated__/endpoints/api-keys/api-keys";
 import { toast } from "@/components/molecules/Toast/use-toast";
+import { useT } from "@/lib/i18n";
 
 import { API_KEYS_QUERY_KEY } from "./useAPIKeysList";
 
 export function useRevokeAPIKey() {
+  const t = useT();
   const queryClient = useQueryClient();
   const [isPending, setIsPending] = useState(false);
 
@@ -26,14 +28,19 @@ export function useRevokeAPIKey() {
         toast({
           title:
             keyIds.length === 1
-              ? "API key revoked"
-              : `${keyIds.length} API keys revoked`,
+              ? t("settingsRest1.hooks.revokedOne")
+              : t("settingsRest1.hooks.revokedMany", {
+                  count: keyIds.length,
+                }),
           variant: "success",
         });
       } else {
         toast({
-          title: "Some API keys could not be revoked",
-          description: `${failures.length} of ${keyIds.length} failed.`,
+          title: t("settingsRest1.hooks.someFailed"),
+          description: t("settingsRest1.hooks.failedCount", {
+            failed: failures.length,
+            total: keyIds.length,
+          }),
           variant: "destructive",
         });
       }

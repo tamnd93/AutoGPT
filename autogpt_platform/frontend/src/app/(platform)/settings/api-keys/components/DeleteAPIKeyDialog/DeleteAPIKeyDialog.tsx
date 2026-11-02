@@ -3,6 +3,7 @@
 import { Button } from "@/components/atoms/Button/Button";
 import { Text } from "@/components/atoms/Text/Text";
 import { Dialog } from "@/components/molecules/Dialog/Dialog";
+import { useT } from "@/lib/i18n";
 
 import { useRevokeAPIKey } from "../hooks/useRevokeAPIKey";
 
@@ -19,6 +20,7 @@ export function DeleteAPIKeyDialog({
   onOpenChange,
   onDeleted,
 }: Props) {
+  const t = useT();
   const { revoke, isPending } = useRevokeAPIKey();
   const isBatch = keyIds.length > 1;
 
@@ -31,7 +33,11 @@ export function DeleteAPIKeyDialog({
 
   return (
     <Dialog
-      title={isBatch ? `Revoke ${keyIds.length} API keys?` : "Revoke API key?"}
+      title={
+        isBatch
+          ? t("settingsRest1.delete.titleMany", { count: keyIds.length })
+          : t("settingsRest1.delete.titleOne")
+      }
       styling={{ maxWidth: "28rem" }}
       controlled={{
         isOpen: open,
@@ -44,8 +50,11 @@ export function DeleteAPIKeyDialog({
       <Dialog.Content>
         <div className="flex flex-col gap-4 px-1">
           <Text variant="body" className="text-foreground-body">
-            This action cannot be undone. Integrations using{" "}
-            {isBatch ? "these keys" : "this key"} will immediately lose access.
+            {t("settingsRest1.delete.bodyPrefix")}{" "}
+            {isBatch
+              ? t("settingsRest1.delete.theseKeys")
+              : t("settingsRest1.delete.thisKey")}{" "}
+            {t("settingsRest1.delete.bodySuffix")}
           </Text>
 
           <div className="flex justify-end gap-2 pt-2">
@@ -54,14 +63,16 @@ export function DeleteAPIKeyDialog({
               onClick={() => onOpenChange(false)}
               disabled={isPending}
             >
-              Cancel
+              {t("settingsRest1.delete.cancel")}
             </Button>
             <Button
               variant="destructive"
               loading={isPending}
               onClick={handleConfirm}
             >
-              {isBatch ? "Revoke keys" : "Revoke key"}
+              {isBatch
+                ? t("settingsRest1.delete.revokeMany")
+                : t("settingsRest1.delete.revokeOne")}
             </Button>
           </div>
         </div>

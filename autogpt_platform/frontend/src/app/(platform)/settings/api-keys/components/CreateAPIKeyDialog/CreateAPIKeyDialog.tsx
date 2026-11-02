@@ -1,6 +1,7 @@
 "use client";
 
 import { Dialog } from "@/components/molecules/Dialog/Dialog";
+import { useT } from "@/lib/i18n";
 
 import { CreateAPIKeyForm } from "./components/CreateAPIKeyForm";
 import { CreateAPIKeySuccess } from "./components/CreateAPIKeySuccess";
@@ -12,11 +13,14 @@ interface Props {
 }
 
 export function CreateAPIKeyDialog({ open, onOpenChange }: Props) {
+  const t = useT();
   const { form, view, plainTextKey, isPending, handleSubmit, handleClose } =
     useCreateAPIKeyForm({ onClose: () => onOpenChange(false) });
 
   const isSuccess = view === "success";
-  const title = isSuccess ? "Your new API key" : "Create API key";
+  const title = isSuccess
+    ? t("settingsRest1.create.titleSuccess")
+    : t("settingsRest1.create.title");
 
   return (
     <Dialog

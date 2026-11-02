@@ -1,5 +1,6 @@
 import { Button } from "@/components/atoms/Button/Button";
 import { Text } from "@/components/atoms/Text/Text";
+import { useT } from "@/lib/i18n";
 import { Delete02Icon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
 
@@ -18,19 +19,21 @@ export function APIKeySelectionBar({
   onDeselectAll,
   onDeleteSelected,
 }: Props) {
+  const t = useT();
+
   return (
     <div className="flex w-full items-center justify-between rounded-[4px] border border-border-base bg-surface-hover px-4 py-2">
       <div className="flex items-center gap-5">
         <Text variant="body" as="span" className="text-foreground-body">
-          {selectedCount} selected
+          {t("settingsRest1.selection.selected", { count: selectedCount })}
         </Text>
         {!allSelected && (
           <Button variant="ghost" size="small" onClick={onSelectAll}>
-            Select All
+            {t("settingsRest1.selection.selectAll")}
           </Button>
         )}
         <Button variant="ghost" size="small" onClick={onDeselectAll}>
-          Deselect
+          {t("settingsRest1.selection.deselect")}
         </Button>
       </div>
       <Button
@@ -39,7 +42,7 @@ export function APIKeySelectionBar({
         leftIcon={<Icon icon={Delete02Icon} size={16} />}
         onClick={onDeleteSelected}
       >
-        Delete selected
+        {t("settingsRest1.selection.deleteSelected")}
       </Button>
     </div>
   );

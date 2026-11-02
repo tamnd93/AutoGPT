@@ -3,6 +3,7 @@
 import { useState } from "react";
 import type { APIKeyInfo } from "@/app/api/__generated__/models/aPIKeyInfo";
 import { Text } from "@/components/atoms/Text/Text";
+import { useLocale, useT } from "@/lib/i18n";
 import {
   Tooltip,
   TooltipContent,
@@ -33,9 +34,11 @@ export function APIKeyRow({
   onToggleSelected,
   onDelete,
 }: Props) {
+  const t = useT();
+  const locale = useLocale();
   const [infoOpen, setInfoOpen] = useState(false);
   const maskedKey = maskAPIKey(apiKey.head, apiKey.tail);
-  const lastUsedLabel = formatLastUsed(apiKey.last_used_at);
+  const lastUsedLabel = formatLastUsed(apiKey.last_used_at, locale);
 
   return (
     <div
@@ -47,7 +50,7 @@ export function APIKeyRow({
           type="button"
           role="checkbox"
           aria-checked={selected}
-          aria-label={`Select ${apiKey.name}`}
+          aria-label={t("settingsRest1.row.select", { name: apiKey.name })}
           onClick={onToggleSelected}
           className={`shrink-0 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-action ${
             selected
@@ -71,14 +74,18 @@ export function APIKeyRow({
                 <TooltipTrigger asChild>
                   <button
                     type="button"
-                    aria-label={`View details for ${apiKey.name}`}
+                    aria-label={t("settingsRest1.row.viewDetails", {
+                      name: apiKey.name,
+                    })}
                     onClick={() => setInfoOpen(true)}
                     className="shrink-0 rounded text-foreground-tertiary transition-colors hover:text-foreground-body focus:outline-none focus-visible:ring-2 focus-visible:ring-action"
                   >
                     <Icon icon={InformationCircleIcon} size={16} />
                   </button>
                 </TooltipTrigger>
-                <TooltipContent side="top">View key details</TooltipContent>
+                <TooltipContent side="top">
+                  {t("settingsRest1.row.viewKeyDetails")}
+                </TooltipContent>
               </Tooltip>
             </TooltipProvider>
           </div>
@@ -99,7 +106,7 @@ export function APIKeyRow({
 
       <button
         type="button"
-        aria-label={`Delete ${apiKey.name}`}
+        aria-label={t("settingsRest1.row.delete", { name: apiKey.name })}
         onClick={onDelete}
         className="shrink-0 rounded text-foreground-tertiary transition-colors hover:text-foreground-body focus:outline-none focus-visible:ring-2 focus-visible:ring-action"
       >

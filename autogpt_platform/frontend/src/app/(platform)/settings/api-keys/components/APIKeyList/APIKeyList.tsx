@@ -4,6 +4,7 @@ import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import type { Variants } from "framer-motion";
 
 import { ErrorCard } from "@/components/molecules/ErrorCard/ErrorCard";
+import { useT } from "@/lib/i18n";
 
 import { APIKeyListEmpty } from "../APIKeyListEmpty/APIKeyListEmpty";
 import { APIKeyListSkeleton } from "../APIKeyListSkeleton/APIKeyListSkeleton";
@@ -29,6 +30,7 @@ const LIST_ITEM_VARIANTS: Variants = {
 };
 
 export function APIKeyList() {
+  const t = useT();
   const {
     keys,
     isLoading,
@@ -49,7 +51,7 @@ export function APIKeyList() {
     const message = error instanceof Error ? error.message : undefined;
     return (
       <ErrorCard
-        context="API keys"
+        context={t("settingsRest1.list.errorContext")}
         responseError={message ? { message } : undefined}
         onRetry={() => {
           refetch();

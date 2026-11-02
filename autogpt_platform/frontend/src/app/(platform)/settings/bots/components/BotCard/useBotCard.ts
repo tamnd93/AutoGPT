@@ -7,8 +7,10 @@ import {
   useDeletePlatformLinkingUnlinkAPlatformServer,
 } from "@/app/api/__generated__/endpoints/platform-linking/platform-linking";
 import { useToast } from "@/components/molecules/Toast/use-toast";
+import { useT } from "@/lib/i18n";
 
 export function useBotCard() {
+  const t = useT();
   const queryClient = useQueryClient();
   const { toast } = useToast();
   // Track every in-flight link ID independently. A single string would
@@ -40,8 +42,8 @@ export function useBotCard() {
 
   function showError(action: string) {
     toast({
-      title: `Couldn't ${action}`,
-      description: "Please try again in a moment.",
+      title: t("settingsRest1.botFail.title", { action }),
+      description: t("settingsRest1.botFail.retry"),
       variant: "destructive",
     });
   }
@@ -49,14 +51,14 @@ export function useBotCard() {
   const unlinkServer = useDeletePlatformLinkingUnlinkAPlatformServer({
     mutation: {
       onSuccess: () => invalidatePlatforms(),
-      onError: () => showError("unlink the server"),
+      onError: () => showError(t("settingsRest1.botFail.unlinkServer")),
     },
   });
 
   const unlinkDm = useDeletePlatformLinkingUnlinkADmUserLink({
     mutation: {
       onSuccess: () => invalidatePlatforms(),
-      onError: () => showError("unlink the DM"),
+      onError: () => showError(t("settingsRest1.botFail.unlinkDm")),
     },
   });
 

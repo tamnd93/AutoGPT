@@ -6,21 +6,23 @@ import { usePostV1CreateNewApiKey } from "@/app/api/__generated__/endpoints/api-
 import type { CreateAPIKeyRequest } from "@/app/api/__generated__/models/createAPIKeyRequest";
 import type { CreateAPIKeyResponse } from "@/app/api/__generated__/models/createAPIKeyResponse";
 import { toast } from "@/components/molecules/Toast/use-toast";
+import { useT } from "@/lib/i18n";
 
 import { API_KEYS_QUERY_KEY } from "./useAPIKeysList";
 
 export function useCreateAPIKey() {
+  const t = useT();
   const queryClient = useQueryClient();
 
   const mutation = usePostV1CreateNewApiKey({
     mutation: {
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: API_KEYS_QUERY_KEY });
-        toast({ title: "API key created", variant: "success" });
+        toast({ title: t("settingsRest1.hooks.created"), variant: "success" });
       },
       onError: (error) => {
         toast({
-          title: "Failed to create API key",
+          title: t("settingsRest1.hooks.createFailed"),
           description: error instanceof Error ? error.message : undefined,
           variant: "destructive",
         });

@@ -1,5 +1,6 @@
 import { Button } from "@/components/atoms/Button/Button";
 import { Text } from "@/components/atoms/Text/Text";
+import { useT } from "@/lib/i18n";
 import type { PlatformUserLinkInfo } from "@/app/api/__generated__/models/platformUserLinkInfo";
 import {
   Chatting01Icon,
@@ -25,16 +26,21 @@ export function BotCardDmTile({
   isPending,
   onUnlink,
 }: Props) {
+  const t = useT();
   const title = dmLink
-    ? (dmLink.platform_username ?? `User ${dmLink.platform_user_id}`)
+    ? (dmLink.platform_username ??
+      t("settingsRest1.dm.userFallback", { id: dmLink.platform_user_id }))
     : pendingServerName
-      ? `${capitalize(serverNoun)} “${pendingServerName}” connected — one step left`
-      : `DM the bot on ${platformName} to link`;
+      ? t("settingsRest1.dm.pendingTitle", {
+          noun: capitalize(serverNoun),
+          name: pendingServerName,
+        })
+      : t("settingsRest1.dm.linkPrompt", { platform: platformName });
   const subtitle = dmLink
-    ? "Your DM channel is linked to this account."
+    ? t("settingsRest1.dm.linkedSubtitle")
     : pendingServerName
-      ? `DM the bot in ${platformName} and tap Link Account to connect your DMs.`
-      : "Send the bot a direct message to start the link flow.";
+      ? t("settingsRest1.dm.pendingSubtitle", { platform: platformName })
+      : t("settingsRest1.dm.idleSubtitle");
 
   return (
     <div className="flex items-center justify-between gap-3 rounded-large border border-border-base px-4 py-3">
@@ -60,13 +66,15 @@ export function BotCardDmTile({
           leftIcon={<Icon icon={Delete02Icon} size={16} />}
           loading={isPending(dmLink.id)}
           onClick={() => onUnlink(dmLink.id)}
-          aria-label={`Unlink DM on ${platformName}`}
+          aria-label={t("settingsRest1.dm.unlinkAria", {
+            platform: platformName,
+          })}
         >
-          Unlink
+          {t("settingsRest1.dm.unlink")}
         </Button>
       ) : (
         <span className="inline-flex items-center gap-1 text-xs text-foreground-tertiary">
-          <Icon icon={Link01Icon} size={14} /> Not linked
+          <Icon icon={Link01Icon} size={14} /> {t("settingsRest1.dm.notLinked")}
         </span>
       )}
     </div>

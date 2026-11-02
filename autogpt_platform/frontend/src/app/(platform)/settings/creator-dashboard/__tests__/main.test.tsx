@@ -1,3 +1,4 @@
+import { LocaleProvider } from "@/lib/i18n";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 import {
@@ -204,6 +205,23 @@ describe("SettingsCreatorDashboardPage", () => {
     expect(screen.getAllByText("Pending Agent").length).toBeGreaterThan(0);
 
     expect(screen.getAllByText("1.5K").length).toBeGreaterThan(0);
+  });
+
+  test("reads its header and submit action in Vietnamese", async () => {
+    server.use(getGetV2ListMySubmissionsMockHandler(makeResponse([])));
+
+    render(
+      <LocaleProvider locale="vi">
+        <SettingsCreatorDashboardPage />
+      </LocaleProvider>,
+    );
+
+    expect(
+      await screen.findByRole("heading", {
+        name: "Bảng điều khiển người sáng tạo",
+      }),
+    ).toBeDefined();
+    expect(screen.getByRole("button", { name: "Gửi workflow" })).toBeDefined();
   });
 
   test("renders empty state when API returns no submissions", async () => {

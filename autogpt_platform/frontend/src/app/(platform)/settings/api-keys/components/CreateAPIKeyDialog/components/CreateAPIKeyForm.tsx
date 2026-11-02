@@ -11,6 +11,7 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/molecules/Form/Form";
+import { useT } from "@/lib/i18n";
 
 import type { CreateAPIKeyFormValues } from "../schema";
 import { PermissionsCheckboxGroup } from "./PermissionsCheckboxGroup";
@@ -22,6 +23,8 @@ interface Props {
 }
 
 export function CreateAPIKeyForm({ form, onSubmit, isPending }: Props) {
+  const t = useT();
+
   return (
     <Form form={form} onSubmit={onSubmit} className="flex flex-col gap-4 px-1">
       <FormField
@@ -33,8 +36,8 @@ export function CreateAPIKeyForm({ form, onSubmit, isPending }: Props) {
               <Input
                 {...field}
                 id={field.name}
-                label="Name"
-                placeholder="My integration key"
+                label={t("settingsRest1.form.name")}
+                placeholder={t("settingsRest1.form.namePlaceholder")}
                 wrapperClassName="!mb-0"
               />
             </FormControl>
@@ -52,8 +55,8 @@ export function CreateAPIKeyForm({ form, onSubmit, isPending }: Props) {
               <Input
                 {...field}
                 id={field.name}
-                label="Description (optional)"
-                placeholder="Describe what this key is used for"
+                label={t("settingsRest1.form.description")}
+                placeholder={t("settingsRest1.form.descriptionPlaceholder")}
                 wrapperClassName="!mb-0"
               />
             </FormControl>
@@ -85,7 +88,7 @@ export function CreateAPIKeyForm({ form, onSubmit, isPending }: Props) {
         disabled={!form.formState.isValid || isPending}
         loading={isPending}
       >
-        Create Key
+        {t("settingsRest1.form.submit")}
       </Button>
     </Form>
   );

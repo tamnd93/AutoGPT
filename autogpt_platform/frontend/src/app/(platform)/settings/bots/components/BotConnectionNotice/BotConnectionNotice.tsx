@@ -4,6 +4,7 @@ import Link from "next/link";
 
 import { useGetV2ListChatTransports } from "@/app/api/__generated__/endpoints/chat/chat";
 import { Text } from "@/components/atoms/Text/Text";
+import { useT } from "@/lib/i18n";
 
 /**
  * A conversation that arrives over a bot link has no picker in front of it, so
@@ -12,6 +13,7 @@ import { Text } from "@/components/atoms/Text/Text";
  * is looking at their bots.
  */
 export function BotConnectionNotice() {
+  const t = useT();
   const transportsQuery = useGetV2ListChatTransports();
   const transports =
     transportsQuery.data?.status === 200
@@ -24,17 +26,17 @@ export function BotConnectionNotice() {
   return (
     <div className="mb-6 ml-4 rounded-2xl border border-border-base bg-surface px-4 py-3">
       <Text variant="small" className="text-foreground-body">
-        Conversations that come in over a bot start on{" "}
+        {t("settingsRest1.notice.lead")}{" "}
         <span className="font-medium text-foreground-base">
           {current.label}
         </span>
-        , the connection you chose in{" "}
+        {t("settingsRest1.notice.bridge")}{" "}
         <Link
           href="/settings/integrations"
           // TODO(tokens): no exact role (text-[#7444E5])
           className="font-medium text-[#7444E5] underline underline-offset-2"
         >
-          AI subscriptions
+          {t("settingsRest1.notice.link")}
         </Link>
         .
       </Text>

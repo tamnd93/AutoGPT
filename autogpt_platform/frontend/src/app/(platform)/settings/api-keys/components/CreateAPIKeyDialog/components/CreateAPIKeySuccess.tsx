@@ -2,6 +2,7 @@
 import { Button } from "@/components/atoms/Button/Button";
 import { Text } from "@/components/atoms/Text/Text";
 import { toast } from "@/components/molecules/Toast/use-toast";
+import { useT } from "@/lib/i18n";
 import { Copy01Icon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
 
@@ -11,14 +12,16 @@ interface Props {
 }
 
 export function CreateAPIKeySuccess({ plainTextKey, onClose }: Props) {
+  const t = useT();
+
   async function handleCopy() {
     try {
       await navigator.clipboard.writeText(plainTextKey);
-      toast({ title: "Copied to clipboard", variant: "success" });
+      toast({ title: t("settingsRest1.success.copied"), variant: "success" });
     } catch {
       toast({
-        title: "Could not copy to clipboard",
-        description: "Please copy the key manually.",
+        title: t("settingsRest1.success.copyFailed"),
+        description: t("settingsRest1.success.copyManually"),
         variant: "destructive",
       });
     }
@@ -27,7 +30,7 @@ export function CreateAPIKeySuccess({ plainTextKey, onClose }: Props) {
   return (
     <div className="flex flex-col gap-4 px-1">
       <Text variant="body" className="text-foreground-body">
-        Copy your key now. For security, we won&apos;t show it again.
+        {t("settingsRest1.success.warning")}
       </Text>
 
       <div className="flex items-center gap-2 rounded-md border border-border-base bg-surface-muted p-3">
@@ -41,12 +44,12 @@ export function CreateAPIKeySuccess({ plainTextKey, onClose }: Props) {
           leftIcon={<Icon icon={Copy01Icon} size={16} />}
           onClick={handleCopy}
         >
-          Copy
+          {t("settingsRest1.success.copy")}
         </Button>
       </div>
 
       <Button variant="primary" size="large" onClick={onClose}>
-        Close
+        {t("settingsRest1.success.close")}
       </Button>
     </div>
   );

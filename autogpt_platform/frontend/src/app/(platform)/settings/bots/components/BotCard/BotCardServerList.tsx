@@ -5,6 +5,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/atoms/Tooltip/BaseTooltip";
+import { useT } from "@/lib/i18n";
 import type { PlatformLinkInfo } from "@/app/api/__generated__/models/platformLinkInfo";
 import {
   AlertCircleIcon,
@@ -30,13 +31,15 @@ export function BotCardServerList({
   isPending,
   onUnlink,
 }: Props) {
+  const t = useT();
+
   if (serverLinks.length === 0) {
     return (
       <div className="rounded-large border border-dashed border-border-base px-4 py-3">
         <Text variant="small" as="span" className="text-foreground-tertiary">
-          No {serverNoun}s linked yet. Use &quot;{addBotLabel}&quot; to invite
-          the bot — already added it? Run <code>/setup</code> there to finish
-          connecting.
+          {t("settingsRest1.server.emptyLead", { noun: serverNoun })} &quot;
+          {addBotLabel}&quot; {t("settingsRest1.server.emptyMid")}{" "}
+          <code>/setup</code> {t("settingsRest1.server.emptyTail")}
         </Text>
       </div>
     );
@@ -73,6 +76,7 @@ function BotCardServerRow({
   isPending,
   onUnlink,
 }: RowProps) {
+  const t = useT();
   const botMissing = !link.server_name;
   const displayLabel = link.server_name ?? link.platform_server_id;
 
@@ -99,12 +103,15 @@ function BotCardServerRow({
                   // TODO(tokens): no exact role (text-amber-600 #D97706)
                   className="inline-flex items-center gap-1 text-xs text-amber-600"
                 >
-                  <Icon icon={AlertCircleIcon} size={14} /> Name unavailable
+                  <Icon icon={AlertCircleIcon} size={14} />{" "}
+                  {t("settingsRest1.server.nameUnavailable")}
                 </span>
               </TooltipTrigger>
               <TooltipContent>
-                {platformName} didn&apos;t give us a name for this {serverNoun}.
-                It stays linked and usable; unlink to remove this row.
+                {t("settingsRest1.server.nameTooltip", {
+                  platform: platformName,
+                  noun: serverNoun,
+                })}
               </TooltipContent>
             </Tooltip>
           ) : (
@@ -113,7 +120,7 @@ function BotCardServerRow({
               as="span"
               className="text-foreground-tertiary"
             >
-              Linked by you
+              {t("settingsRest1.server.linkedByYou")}
             </Text>
           )}
         </div>
@@ -124,9 +131,11 @@ function BotCardServerRow({
         leftIcon={<Icon icon={Delete02Icon} size={16} />}
         loading={isPending}
         onClick={onUnlink}
-        aria-label={`Unlink ${displayLabel}`}
+        aria-label={t("settingsRest1.server.unlinkAria", {
+          label: displayLabel,
+        })}
       >
-        Unlink
+        {t("settingsRest1.server.unlink")}
       </Button>
     </li>
   );

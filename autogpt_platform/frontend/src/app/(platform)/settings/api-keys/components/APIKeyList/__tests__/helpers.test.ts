@@ -27,4 +27,12 @@ describe("formatLastUsed", () => {
     expect(result.startsWith("Used ")).toBe(true);
     expect(result.includes("ago")).toBe(true);
   });
+
+  test("reads the last-used phrase in Vietnamese", () => {
+    expect(formatLastUsed(null, "vi")).toBe("Chưa dùng lần nào");
+    const twoHoursAgo = new Date(Date.now() - 2 * 60 * 60 * 1000);
+    const result = formatLastUsed(twoHoursAgo, "vi");
+    expect(result.startsWith("Đã dùng ")).toBe(true);
+    expect(result.includes("trước")).toBe(true);
+  });
 });

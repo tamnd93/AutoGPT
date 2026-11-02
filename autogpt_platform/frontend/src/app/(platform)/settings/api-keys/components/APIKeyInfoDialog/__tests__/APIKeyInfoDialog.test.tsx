@@ -1,3 +1,4 @@
+import { LocaleProvider } from "@/lib/i18n";
 import { describe, expect, test, vi } from "vitest";
 
 import { render, screen, within } from "@/tests/integrations/test-utils";
@@ -95,6 +96,46 @@ describe("APIKeyInfoDialog", () => {
     );
 
     expect(screen.queryByText(/^description$/i)).toBeNull();
+  });
+
+  test("reads its sections and empty last-used state in Vietnamese", () => {
+    render(
+      <LocaleProvider locale="vi">
+        <APIKeyInfoDialog
+          apiKey={buildApiKey({ last_used_at: null })}
+          open
+          onOpenChange={vi.fn()}
+        />
+      </LocaleProvider>,
+    );
+
+    const dialog = screen.getByRole("dialog");
+    expect(within(dialog).getByText("Khoá")).toBeDefined();
+    expect(within(dialog).getByText("Mô tả")).toBeDefined();
+    expect(within(dialog).getByText("Phạm vi quyền")).toBeDefined();
+    expect(within(dialog).getByText("Ngày tạo")).toBeDefined();
+    expect(within(dialog).getByText("Dùng lần cuối")).toBeDefined();
+    expect(within(dialog).getByText("Chưa dùng lần nào")).toBeDefined();
+  });
+
+  test("reads scopes and the v1-only marker in Vietnamese", () => {
+    render(
+      <LocaleProvider locale="vi">
+        <APIKeyInfoDialog
+          apiKey={buildApiKey({
+            scopes: [APIKeyPermission.EXECUTE_GRAPH],
+          })}
+          open
+          onOpenChange={vi.fn()}
+        />
+      </LocaleProvider>,
+    );
+
+    expect(
+      within(screen.getByRole("dialog"))
+        .getAllByRole("listitem")
+        .map((item) => item.textContent),
+    ).toEqual(["Execute Graph · chỉ v1"]);
   });
 
   test("does not render dialog contents when open is false", () => {
