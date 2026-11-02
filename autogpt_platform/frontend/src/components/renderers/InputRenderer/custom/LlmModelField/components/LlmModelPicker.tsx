@@ -22,6 +22,7 @@ import { LlmMenuItem } from "./LlmMenuItem";
 import { LlmPriceTier } from "./LlmPriceTier";
 import { ArrowDown01Icon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 
 type MenuView = "creator" | "model" | "provider";
 
@@ -42,6 +43,7 @@ export function LlmModelPicker({
   onSelect,
   disabled,
 }: Props) {
+  const t = useT();
   const [open, setOpen] = useState(false);
   const [view, setView] = useState<MenuView>("creator");
   const [activeCreator, setActiveCreator] = useState<string | null>(null);
@@ -128,10 +130,10 @@ export function LlmModelPicker({
     ? undefined
     : (selectedModel ?? recommendedModel ?? models[0]);
   const triggerTitle = isUnavailableSelection
-    ? `${selectedName} (unavailable)`
+    ? t("shared7.llm.unavailable", { name: selectedName ?? "" })
     : triggerModel
       ? getModelDisplayName(triggerModel)
-      : "Select model";
+      : t("shared7.llm.selectModel");
   const triggerCreator = triggerModel?.creator ?? "";
 
   return (
@@ -167,7 +169,7 @@ export function LlmModelPicker({
               <>
                 <LlmMenuItem
                   title={getModelDisplayName(recommendedModel)}
-                  subtitle="Recommended"
+                  subtitle={t("shared7.llm.recommended")}
                   icon={<LlmIcon value={recommendedModel.creator} />}
                   onClick={() => handleSelectModel(recommendedModel.name)}
                 />

@@ -27,6 +27,7 @@ import {
   toCsv,
   type OutputType,
 } from "./helpers";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   open: boolean;
@@ -49,6 +50,7 @@ export function WorkOutputSheet({
   executionId,
   runLink,
 }: Props) {
+  const t = useT();
   const shouldFetch = open && outputType !== "unknown";
   const detailsQuery = useGetV1GetExecutionDetails(graphId, executionId, {
     query: {
@@ -75,7 +77,7 @@ export function WorkOutputSheet({
         <SheetHeader className="text-left">
           <SheetTitle className="truncate">{title}</SheetTitle>
           <SheetDescription className="sr-only">
-            This run&apos;s output.
+            {t("shared7.sheet.description")}
           </SheetDescription>
         </SheetHeader>
         <WorkOutputBody
@@ -189,6 +191,7 @@ function OutputTable({
   rows: Record<string, unknown>[];
   runLink?: string | null;
 }) {
+  const t = useT();
   const visibleRows = rows.slice(0, MAX_PREVIEW_ROWS);
   const allColumns = tableColumns(visibleRows);
   const columns = allColumns.slice(0, MAX_PREVIEW_COLUMNS);
@@ -208,7 +211,7 @@ function OutputTable({
             downloadCsv(`${title || "run"}.csv`, toCsv(visibleRows, columns))
           }
         >
-          Export CSV
+          {t("shared7.sheet.exportCsv")}
         </Button>
       </div>
       <OutputTablePreview rows={visibleRows} columns={columns} />
@@ -299,11 +302,16 @@ function OutputTableTruncationNotice({
   columnCount,
   runLink,
 }: OutputTableTruncationNoticeProps) {
+  const t = useT();
+
   return (
     <Text variant="small" tone="muted">
-      Showing the first {visibleRowCount} of {rowCount} rows and{" "}
-      {visibleColumnCount} of {columnCount} columns. The CSV export matches this
-      preview
+      {t("shared7.sheet.truncatedBody", {
+        rows: visibleRowCount,
+        totalRows: rowCount,
+        columns: visibleColumnCount,
+        totalColumns: columnCount,
+      })}
       {runLink ? (
         <>
           {" — "}
@@ -312,9 +320,9 @@ function OutputTableTruncationNotice({
             data-slot="work-output-sheet-truncation-link"
             className="underline"
           >
-            open the full run
+            {t("shared7.sheet.truncatedLink")}
           </Link>{" "}
-          for everything
+          {t("shared7.sheet.truncatedSuffix")}
         </>
       ) : null}
       .
@@ -323,20 +331,21 @@ function OutputTableTruncationNotice({
 }
 
 function RunLinkFallback({ runLink }: { runLink?: string | null }) {
+  const t = useT();
   if (!runLink) {
     return (
       <Text variant="body" tone="muted">
-        This run has no preview available.
+        {t("shared7.sheet.noPreview")}
       </Text>
     );
   }
   return (
     <div data-slot="work-output-sheet-fallback" className="space-y-3">
       <Text variant="body" tone="muted">
-        Open the full run to inspect its output.
+        {t("shared7.sheet.openFullRun")}
       </Text>
       <Button as="NextLink" href={runLink} variant="primary" size="small">
-        Open run details
+        {t("shared7.sheet.openRunDetails")}
       </Button>
     </div>
   );

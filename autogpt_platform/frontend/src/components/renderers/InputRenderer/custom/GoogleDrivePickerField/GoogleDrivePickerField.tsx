@@ -4,8 +4,10 @@ import { GoogleDrivePickerConfig } from "@/lib/autogpt-server-api";
 import { FieldProps, getTemplate, getUiOptions, titleId } from "@rjsf/utils";
 import { cleanUpHandleId, getHandleId, updateUiOption } from "../../helpers";
 import { useEdgeStore } from "@/app/(platform)/build/stores/edgeStore";
+import { useT } from "@/lib/i18n";
 
 export const GoogleDrivePickerField = (props: FieldProps) => {
+  const t = useT();
   const { schema, uiSchema, onChange, fieldPathId, formData, registry } = props;
   const uiOptions = getUiOptions(uiSchema);
   const config: GoogleDrivePickerConfig = schema.google_drive_picker_config;
@@ -32,7 +34,7 @@ export const GoogleDrivePickerField = (props: FieldProps) => {
             // TODO(tokens): no exact role for border-gray-200 #e5e7eb, text-gray-500 #6b7280; #e5e7eb is sidebar-border, the sidebar only
             className="rounded-3xl border border-gray-200 p-2 pl-4 text-xs text-gray-500 hover:cursor-not-allowed"
           >
-            Select files when you run the workflow
+            {t("shared7.drive.inputOnly")}
           </div>
         )}
       </div>

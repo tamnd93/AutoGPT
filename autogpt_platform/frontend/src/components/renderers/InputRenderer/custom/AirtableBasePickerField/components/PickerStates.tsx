@@ -3,12 +3,15 @@ import { Link } from "@/components/atoms/Link/Link";
 import { Skeleton } from "@/components/atoms/Skeleton/Skeleton";
 import { Text } from "@/components/atoms/Text/Text";
 import { AIRTABLE_HOME_URL } from "../helpers";
+import { useT } from "@/lib/i18n";
 
 export function LoadingBases() {
+  const t = useT();
+
   return (
     <div
       role="status"
-      aria-label="Loading your Airtable bases"
+      aria-label={t("shared7.airtable.loadingAria")}
       className="flex flex-col gap-2"
     >
       {[0, 1, 2].map((row) => (
@@ -25,6 +28,8 @@ interface ErrorProps {
 }
 
 export function BasesError({ message, onRetry, retrying }: ErrorProps) {
+  const t = useT();
+
   return (
     <div
       role="alert"
@@ -40,7 +45,7 @@ export function BasesError({ message, onRetry, retrying }: ErrorProps) {
         loading={retrying}
         onClick={onRetry}
       >
-        Try again
+        {t("shared7.airtable.tryAgain")}
       </Button>
     </div>
   );
@@ -52,11 +57,12 @@ interface RefreshProps {
 }
 
 export function NoBasesYet({ onRefresh, refreshing }: RefreshProps) {
+  const t = useT();
+
   return (
     <div className="flex flex-col items-start gap-2 rounded-2xl bg-zinc-50 p-3">
       <Text variant="small" className="text-zinc-700">
-        Your Airtable has no bases yet. Create an empty one in Airtable, then
-        come back and refresh this list.
+        {t("shared7.airtable.noBases")}
       </Text>
       <NewBaseActions onRefresh={onRefresh} refreshing={refreshing} />
     </div>
@@ -64,11 +70,13 @@ export function NoBasesYet({ onRefresh, refreshing }: RefreshProps) {
 }
 
 export function NewBaseActions({ onRefresh, refreshing }: RefreshProps) {
+  const t = useT();
+
   return (
     <div className="flex flex-wrap items-center gap-2">
       <Link href={AIRTABLE_HOME_URL} isExternal variant="secondary">
-        Open Airtable
-        <span className="sr-only"> (opens in a new tab)</span>
+        {t("shared7.airtable.openAirtable")}
+        <span className="sr-only">{t("shared7.airtable.opensNewTab")}</span>
       </Link>
       <Button
         type="button"
@@ -77,7 +85,7 @@ export function NewBaseActions({ onRefresh, refreshing }: RefreshProps) {
         loading={refreshing}
         onClick={onRefresh}
       >
-        Refresh list
+        {t("shared7.airtable.refreshList")}
       </Button>
     </div>
   );

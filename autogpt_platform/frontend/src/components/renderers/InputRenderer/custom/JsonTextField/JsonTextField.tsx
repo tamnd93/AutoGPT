@@ -19,9 +19,12 @@ import { getHandleId, updateUiOption, cleanUpHandleId } from "../../helpers";
 import { useJsonTextField } from "./useJsonTextField";
 import { getPlaceholder } from "./helpers";
 import { ArrowExpandIcon } from "@hugeicons/core-free-icons";
+import { useLocale, useT } from "@/lib/i18n";
 import { Icon } from "@/components/atoms/Icon/Icon";
 
 export const JsonTextField = (props: FieldProps) => {
+  const t = useT();
+  const locale = useLocale();
   const {
     formData,
     onChange,
@@ -66,8 +69,8 @@ export const JsonTextField = (props: FieldProps) => {
     path: fieldPathId?.path,
   });
 
-  const placeholder = getPlaceholder(schema);
-  const title = schema.title || name || "JSON Value";
+  const placeholder = getPlaceholder(schema, locale);
+  const title = schema.title || name || t("shared7.json.defaultTitle");
   const domId = getFieldDomId(fieldId, registry.formContext);
   const fieldAccessibility = useFieldAccessibilityContext(fieldId);
   const labelId = getFieldDomId(titleId(fieldId), registry.formContext);
@@ -117,12 +120,12 @@ export const JsonTextField = (props: FieldProps) => {
               onClick={handleModalOpen}
               type="button"
               className="p-1"
-              aria-label="Expand JSON input"
+              aria-label={t("shared7.json.expandAria")}
             >
               <Icon icon={ArrowExpandIcon} className="size-4" />
             </Button>
           </TooltipTrigger>
-          <TooltipContent>Expand input</TooltipContent>
+          <TooltipContent>{t("shared7.json.expandTooltip")}</TooltipContent>
         </Tooltip>
       </div>
       {schema.description && (
@@ -146,8 +149,8 @@ export const JsonTextField = (props: FieldProps) => {
         isOpen={isModalOpen}
         onClose={handleModalClose}
         onSave={handleModalSave}
-        title={`Edit ${title}`}
-        description={schema.description || "Enter valid JSON"}
+        title={t("shared7.json.editTitle", { title })}
+        description={schema.description || t("shared7.json.descriptionFallback")}
         defaultValue={textValue}
         placeholder={placeholder}
         inputType="json"

@@ -1,5 +1,6 @@
 import { fireEvent, render, screen } from "@/tests/integrations/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { LocaleProvider } from "@/lib/i18n";
 import { WorkOutputSheet } from "../WorkOutputSheet";
 
 const { detailsResult } = vi.hoisted(() => ({
@@ -52,6 +53,20 @@ describe("WorkOutputSheet", () => {
     expect(warn).not.toHaveBeenCalledWith(
       expect.stringContaining("Missing `Description`"),
     );
+  });
+
+  it("reads the output chrome in Vietnamese when the app is set to Vietnamese", () => {
+    setOutputs({ result: [[{ metric: "signups", value: 12 }]] });
+    render(
+      <LocaleProvider locale="vi">
+        <WorkOutputSheet {...baseProps} outputType="table" />
+      </LocaleProvider>,
+    );
+
+    expect(screen.getByRole("button", { name: "Xuất CSV" })).toBeDefined();
+    expect(
+      screen.getByRole("dialog", { description: "Đầu ra của lượt chạy này." }),
+    ).toBeDefined();
   });
 
   it("renders a table with a CSV export for table output", () => {

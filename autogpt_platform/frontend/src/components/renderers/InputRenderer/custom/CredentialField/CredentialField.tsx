@@ -9,6 +9,7 @@ import {
 import { Text } from "@/components/atoms/Text/Text";
 import { FieldProps, getUiOptions } from "@rjsf/utils";
 import { useMemo } from "react";
+import { useT } from "@/lib/i18n";
 import { useShallow } from "zustand/react/shallow";
 import { CredentialFieldTitle } from "./components/CredentialFieldTitle";
 import { useCredentialAvailability } from "./useCredentialAvailability";
@@ -20,6 +21,7 @@ import {
 } from "./helpers";
 
 export const CredentialsField = (props: FieldProps) => {
+  const t = useT();
   const { formData, onChange, schema, registry, fieldPathId, required } = props;
 
   const formContext = registry.formContext;
@@ -155,8 +157,7 @@ export const CredentialsField = (props: FieldProps) => {
       />
       {unsupportedSelection && (
         <Text variant="small" role="alert">
-          This selection is no longer supported. Choose another model or
-          transport.
+          {t("shared7.credential.unsupported")}
         </Text>
       )}
       {availability === "unavailable" && (
@@ -166,7 +167,7 @@ export const CredentialsField = (props: FieldProps) => {
           className="text-foreground-tertiary"
           aria-live="polite"
         >
-          Not available on your account.
+          {t("shared7.credential.unavailable")}
         </Text>
       )}
       <CredentialsInput
@@ -198,7 +199,7 @@ export const CredentialsField = (props: FieldProps) => {
               // TODO(tokens): no exact role for text-gray-500 #6b7280
               className="cursor-pointer text-xs text-gray-500"
             >
-              Optional - skip block if not configured
+              {t("shared7.credential.optionalToggle")}
             </label>
           </div>
         )}

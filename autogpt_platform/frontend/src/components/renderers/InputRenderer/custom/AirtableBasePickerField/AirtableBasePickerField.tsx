@@ -17,6 +17,7 @@ import {
   pickerHint,
 } from "./helpers";
 import { useAirtableBasePickerField } from "./useAirtableBasePickerField";
+import { useLocale, useT } from "@/lib/i18n";
 
 export function AirtableBasePickerField(props: FieldProps) {
   const credentialsID = pickerCredentialsID(props.schema);
@@ -31,6 +32,8 @@ function BasePicker({
   fieldPathId,
   credentialsID,
 }: FieldProps & { credentialsID: string }) {
+  const t = useT();
+  const locale = useLocale();
   const picker = useAirtableBasePickerField(credentialsID);
   const value = typeof formData === "string" ? formData : "";
   const labelID = `${fieldPathId.$id}-label`;
@@ -77,27 +80,27 @@ function BasePicker({
     <div className="flex flex-col gap-3">
       <div className="flex flex-col gap-1">
         <Text variant="body-medium" id={labelID} className="text-zinc-900">
-          Choose an Airtable base
+          {t("shared7.airtable.chooseLabel")}
         </Text>
         <Text variant="small" id={`${labelID}-hint`} className="text-zinc-600">
-          {pickerHint(needed)}
+          {pickerHint(needed, locale)}
         </Text>
       </div>
       {body()}
       {noneUsable && (
         <Text variant="small" className="text-zinc-600">
-          {noUsableBaseText(needed)}
+          {noUsableBaseText(needed, locale)}
         </Text>
       )}
       {ready && picker.truncated && (
         <Text variant="small" className="text-zinc-500">
-          Showing the first {picker.bases.length} of your bases.
+          {t("shared7.airtable.truncated", { count: picker.bases.length })}
         </Text>
       )}
       {ready && (
         <div className="flex flex-wrap items-center gap-x-2">
           <Text variant="small" className="text-zinc-500">
-            Want a new, empty one?
+            {t("shared7.airtable.wantNew")}
           </Text>
           <NewBaseActions
             onRefresh={picker.refresh}

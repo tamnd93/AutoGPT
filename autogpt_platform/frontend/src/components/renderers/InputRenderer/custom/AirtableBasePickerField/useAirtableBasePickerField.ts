@@ -1,9 +1,11 @@
 import { useGetV1ListAirtableBases } from "@/app/api/__generated__/endpoints/integrations/integrations";
 import { okData } from "@/app/api/helpers";
 import { useState } from "react";
+import { useLocale } from "@/lib/i18n";
 import { loadErrorText, matchesSearch } from "./helpers";
 
 export function useAirtableBasePickerField(credentialsID: string) {
+  const locale = useLocale();
   const [search, setSearch] = useState("");
   const [open, setOpen] = useState(false);
   const query = useGetV1ListAirtableBases(credentialsID, {
@@ -23,7 +25,7 @@ export function useAirtableBasePickerField(credentialsID: string) {
     truncated: query.data?.truncated ?? false,
     isLoading: query.isLoading,
     isRefreshing: query.isFetching && !query.isLoading,
-    error: query.isError ? loadErrorText(query.error) : null,
+    error: query.isError ? loadErrorText(query.error, locale) : null,
     search,
     setSearch,
     open,

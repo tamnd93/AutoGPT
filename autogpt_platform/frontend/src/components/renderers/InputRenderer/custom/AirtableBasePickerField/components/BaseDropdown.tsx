@@ -13,6 +13,7 @@ import { isKey } from "@/lib/keyboard";
 import { cn } from "@/lib/utils";
 import { Tick02Icon, UnfoldMoreIcon } from "@hugeicons/core-free-icons";
 import { useRef } from "react";
+import { useLocale, useT } from "@/lib/i18n";
 import {
   allows,
   type BaseAccess,
@@ -51,6 +52,8 @@ export function BaseDropdown({
   onSearchChange,
   onChange,
 }: Props) {
+  const t = useT();
+  const locale = useLocale();
   const refs = useRef<(HTMLButtonElement | null)[]>([]);
   const listID = `${id}-list`;
   const canPick = (base: AirtableBase) => allows(base.access, needed);
@@ -111,7 +114,7 @@ export function BaseDropdown({
           )}
         >
           <span className="min-w-0 flex-1 truncate">
-            {chosen ? chosen.name : "Choose a base"}
+            {chosen ? chosen.name : t("shared7.airtable.chooseBase")}
           </span>
           <Icon
             icon={UnfoldMoreIcon}
@@ -128,10 +131,10 @@ export function BaseDropdown({
         {bases.length >= SEARCH_THRESHOLD && (
           <Input
             id={`${id}-search`}
-            label="Search your bases"
+            label={t("shared7.airtable.searchLabel")}
             hideLabel
             size="small"
-            placeholder="Search your bases"
+            placeholder={t("shared7.airtable.searchPlaceholder")}
             wrapperClassName="mb-0"
             value={search}
             onChange={(event) => onSearchChange(event.target.value)}
@@ -172,7 +175,7 @@ export function BaseDropdown({
                 <span className="min-w-0 flex-1 break-words">{base.name}</span>
                 {locked && (
                   <span className="shrink-0 text-xs text-zinc-500">
-                    {lockedReason(base.access, needed)}
+                    {lockedReason(base.access, needed, locale)}
                   </span>
                 )}
                 {isSelected && (
@@ -183,7 +186,9 @@ export function BaseDropdown({
           })}
           {shown.length === 0 && (
             <Text variant="small" className="px-3 py-2 text-zinc-500">
-              No base matches “{search.trim()}”.
+              {t("shared7.airtable.noMatch", {
+                search: search.trim(),
+              })}
             </Text>
           )}
         </div>

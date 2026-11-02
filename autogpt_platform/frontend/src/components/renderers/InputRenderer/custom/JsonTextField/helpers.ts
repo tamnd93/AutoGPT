@@ -1,4 +1,6 @@
 import { RJSFSchema } from "@rjsf/utils";
+import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/locale";
+import { getMessage } from "@/lib/i18n/translate";
 
 /**
  * Converts form data to a JSON string for display
@@ -39,14 +41,17 @@ export function parseJsonValue(value: string): unknown | undefined {
  * @param schema - The JSON schema
  * @returns Placeholder string
  */
-export function getPlaceholder(schema: RJSFSchema): string {
+export function getPlaceholder(
+  schema: RJSFSchema,
+  locale: Locale = DEFAULT_LOCALE,
+): string {
   if (schema.type === "array") {
     return '["item1", "item2"] or [{"key": "value"}]';
   }
   if (schema.type === "object") {
     return '{"key": "value"}';
   }
-  return "Enter JSON value...";
+  return getMessage(locale, "shared7.json.placeholderFallback");
 }
 
 /**
