@@ -117,8 +117,8 @@ export const useRunGraph = () => {
           } else {
             toast({
               title:
-                (error.detail as string) ?? "An unexpected error occurred.",
-              description: "An unexpected error occurred.",
+                (error.detail as string) ?? t("errors4.build.unexpectedError"),
+              description: t("errors4.build.unexpectedError"),
               variant: "destructive",
             });
           }
@@ -132,8 +132,9 @@ export const useRunGraph = () => {
         onSuccess: () => {},
         onError: (error: any) => {
           toast({
-            title: (error.detail as string) ?? "An unexpected error occurred.",
-            description: "An unexpected error occurred.",
+            title:
+              (error.detail as string) ?? t("errors4.build.unexpectedError"),
+            description: t("errors4.build.unexpectedError"),
             variant: "destructive",
           });
         },

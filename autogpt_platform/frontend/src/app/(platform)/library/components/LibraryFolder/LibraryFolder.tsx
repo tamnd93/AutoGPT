@@ -1,6 +1,7 @@
 "use client";
 
 import { Text } from "@/components/atoms/Text/Text";
+import { useT } from "@/lib/i18n";
 import { Button } from "@/components/atoms/Button/Button";
 import { FolderIcon, FolderColor } from "./FolderIcon";
 import { useState } from "react";
@@ -35,6 +36,7 @@ export function LibraryFolder({
   onClick,
   worstStatus,
 }: Props) {
+  const t = useT();
   const [isHovered, setIsHovered] = useState(false);
   const [isDragOver, setIsDragOver] = useState(false);
 
@@ -115,7 +117,7 @@ export function LibraryFolder({
         <Button
           variant="icon"
           size="icon"
-          aria-label="Edit folder"
+          aria-label={t("errors4.library.editFolder")}
           onClick={(e) => {
             e.stopPropagation();
             onEdit?.();
@@ -128,7 +130,7 @@ export function LibraryFolder({
         <Button
           variant="icon"
           size="icon"
-          aria-label="Delete folder"
+          aria-label={t("errors4.library.deleteFolder")}
           onClick={(e) => {
             e.stopPropagation();
             onDelete?.();

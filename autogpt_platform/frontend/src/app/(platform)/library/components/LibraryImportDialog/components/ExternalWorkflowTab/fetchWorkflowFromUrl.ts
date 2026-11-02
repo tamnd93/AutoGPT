@@ -6,6 +6,9 @@
  *   - https://n8n.io/workflows/1234-some-slug
  *   - https://api.n8n.io/api/templates/workflows/1234
  */
+import type { Locale } from "@/lib/i18n";
+import { getMessage } from "@/lib/i18n/translate";
+
 const N8N_TEMPLATE_ID_RE = /n8n\.io\/(?:api\/templates\/)?workflows\/(\d+)/i;
 
 /** Hardcoded n8n templates API base — the only URL we ever fetch. */
@@ -31,16 +34,13 @@ export type FetchWorkflowResult =
  */
 export async function fetchWorkflowFromUrl(
   url: string,
+  locale?: Locale,
 ): Promise<FetchWorkflowResult> {
   const match = url.match(N8N_TEMPLATE_ID_RE);
   if (!match) {
     return {
       ok: false,
-      error:
-        "Invalid or unsupported URL. " +
-        "URL import is supported for n8n.io workflow templates " +
-        "(e.g. https://n8n.io/workflows/1234). " +
-        "For other platforms, use file upload.",
+      error: getMessage(locale ?? "en", "errors4.import.invalidUrl"),
     };
   }
 
@@ -52,7 +52,10 @@ export async function fetchWorkflowFromUrl(
   } catch (err) {
     return {
       ok: false,
-      error: err instanceof Error ? err.message : "Failed to fetch workflow.",
+      error:
+        err instanceof Error
+          ? err.message
+          : getMessage(locale ?? "en", "errors4.import.fetchFailed"),
     };
   }
 }

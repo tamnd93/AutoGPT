@@ -19,7 +19,7 @@ export function PackageFiles({ before, after }: Props) {
       data-slot="skill-learning-sheet-package-files"
       className="flex min-w-0 flex-col gap-2"
     >
-      <Text variant="small-medium">Package file changes</Text>
+      <Text variant="small-medium">{t("errors4.package.changes")}</Text>
       {changes.map((change) => (
         <details
           key={change.path}
@@ -34,14 +34,24 @@ export function PackageFiles({ before, after }: Props) {
               {change.path}
             </span>
             {" · "}
-            {!change.after ? t("skills1.package.removed") : change.before ? t("skills1.package.updated") : t("skills1.package.added")}
+            {!change.after
+              ? t("skills1.package.removed")
+              : change.before
+                ? t("skills1.package.updated")
+                : t("skills1.package.added")}
           </summary>
           <div
             data-slot="skill-learning-sheet-package-files-item-previews"
             className="mt-3 flex min-w-0 flex-col gap-3"
           >
-            <FilePreview file={change.before} label={t("skills1.package.previous")} />
-            <FilePreview file={change.after} label={t("skills1.package.newFile")} />
+            <FilePreview
+              file={change.before}
+              label={t("skills1.package.previous")}
+            />
+            <FilePreview
+              file={change.after}
+              label={t("skills1.package.newFile")}
+            />
           </div>
         </details>
       ))}

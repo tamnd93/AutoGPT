@@ -4,6 +4,7 @@ import { expect, test, vi } from "vitest";
 import { getPostV2ProcessReviewActionMockHandler200 } from "@/app/api/__generated__/endpoints/executions/executions.msw";
 import type { PendingHumanReviewModel } from "@/app/api/__generated__/models/pendingHumanReviewModel";
 import type { ReviewRequest } from "@/app/api/__generated__/models/reviewRequest";
+import { LocaleProvider } from "@/lib/i18n";
 import { server } from "@/mocks/mock-server";
 import { render, screen, waitFor } from "@/tests/integrations/test-utils";
 import { PendingReviewsList } from "../PendingReviewsList";
@@ -45,6 +46,36 @@ function captureReviewAction() {
   );
   return captured;
 }
+
+test("reads its empty state and JSON editor in Vietnamese", async () => {
+  const { unmount } = render(
+    <LocaleProvider locale="vi">
+      <PendingReviewsList reviews={[]} />
+    </LocaleProvider>,
+  );
+
+  expect(screen.getByText("Chưa có mục chờ duyệt")).toBeDefined();
+  expect(screen.getByText(/các bước cần con người duyệt/)).toBeDefined();
+  unmount();
+
+  render(
+    <LocaleProvider locale="vi">
+      <PendingReviewsList
+        reviews={[
+          makeReview({
+            payload: [
+              "a@x.com",
+              "b@x.com",
+            ] as unknown as PendingHumanReviewModel["payload"],
+          }),
+        ]}
+      />
+    </LocaleProvider>,
+  );
+
+  expect(await screen.findByPlaceholderText("Sửa dữ liệu JSON")).toBeDefined();
+  expect(screen.getByText("Cần bạn xem xét")).toBeDefined();
+});
 
 test("a decision covers only the group it was made in", async () => {
   const captured = captureReviewAction();

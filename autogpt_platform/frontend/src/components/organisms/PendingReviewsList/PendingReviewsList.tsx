@@ -14,6 +14,7 @@ import {
 } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { AttentionCard } from "@/components/organisms/AttentionCard/AttentionCard";
+import { useT } from "@/lib/i18n";
 
 interface PendingReviewsListProps {
   reviews: PendingHumanReviewModel[];
@@ -27,8 +28,9 @@ export const COPILOT_GATE_NODE_PREFIX = "copilot-node-gate-";
 export function PendingReviewsList({
   reviews,
   onReviewComplete,
-  emptyMessage = "No pending reviews",
+  emptyMessage,
 }: PendingReviewsListProps) {
+  const t = useT();
   const [reviewDataMap, setReviewDataMap] = useState<Record<string, string>>(
     () => {
       const initialData: Record<string, string> = {};
@@ -116,8 +118,8 @@ export function PendingReviewsList({
 
     if (groupReviews.length === 0) {
       toast({
-        title: "No reviews to process",
-        description: "No reviews found to process.",
+        title: t("errors4.pendingReviews.noReviewsTitle"),
+        description: t("errors4.pendingReviews.noReviewsBody"),
         variant: "destructive",
       });
       return;
@@ -143,8 +145,14 @@ export function PendingReviewsList({
             // draft only has to block an approval.
             if (approved) {
               toast({
-                title: "Invalid JSON",
-                description: `Please fix the JSON format in review for node ${review.node_exec_id}: ${error instanceof Error ? error.message : "Invalid syntax"}`,
+                title: t("errors4.pendingReviews.invalidJsonTitle"),
+                description: t("errors4.pendingReviews.invalidJsonBody", {
+                  node: review.node_exec_id,
+                  error:
+                    error instanceof Error
+                      ? error.message
+                      : t("errors4.pendingReviews.invalidSyntax"),
+                }),
                 variant: "destructive",
               });
               setPendingAction(null);
@@ -170,8 +178,8 @@ export function PendingReviewsList({
 
       if (res.status !== 200) {
         toast({
-          title: "Failed to process reviews",
-          description: "Unexpected response from server",
+          title: t("errors4.pendingReviews.failedTitle"),
+          description: t("errors4.pendingReviews.unexpectedResponse"),
           variant: "destructive",
         });
         return;
@@ -181,22 +189,31 @@ export function PendingReviewsList({
 
       if (result.failed_count > 0) {
         toast({
-          title: "Reviews partially processed",
-          description: `${result.approved_count + result.rejected_count} succeeded, ${result.failed_count} failed. ${result.error || "Some reviews could not be processed."}`,
+          title: t("errors4.pendingReviews.partialTitle"),
+          description: t("errors4.pendingReviews.partialBody", {
+            succeeded: result.approved_count + result.rejected_count,
+            failed: result.failed_count,
+            error: result.error || t("errors4.pendingReviews.partialFallback"),
+          }),
           variant: "destructive",
         });
       } else {
         toast({
-          title: "Reviews processed successfully",
-          description: `${result.approved_count} approved, ${result.rejected_count} rejected`,
+          title: t("errors4.pendingReviews.successTitle"),
+          description: t("errors4.pendingReviews.successBody", {
+            approved: result.approved_count,
+            rejected: result.rejected_count,
+          }),
           variant: "default",
         });
       }
     } catch (error) {
       toast({
-        title: "Failed to process reviews",
+        title: t("errors4.pendingReviews.failedTitle"),
         description:
-          error instanceof Error ? error.message : "An error occurred",
+          error instanceof Error
+            ? error.message
+            : t("errors4.pendingReviews.errorOccurred"),
         variant: "destructive",
       });
     } finally {
@@ -216,11 +233,10 @@ export function PendingReviewsList({
           className="mb-4 text-muted-foreground"
         />
         <Text variant="h4" className="text-muted-foreground">
-          {emptyMessage}
+          {emptyMessage ?? t("errors4.pendingReviews.empty")}
         </Text>
         <Text variant="body" className="mt-2 max-w-md text-muted-foreground">
-          When workflows have human-in-the-loop blocks, they will appear here
-          for your review and approval.
+          {t("errors4.pendingReviews.emptyHint")}
         </Text>
       </div>
     );
@@ -241,13 +257,13 @@ export function PendingReviewsList({
             variant="large-semibold"
             className="overflow-hidden text-ellipsis text-textBlack"
           >
-            Your review is needed
+            {t("errors4.pendingReviews.neededTitle")}
           </Text>
         </AttentionCard.Row>
         <Text variant="large" className="text-textGrey">
           {reviews.every((review) => isGateReview(review.node_id))
-            ? "Otto is waiting for your approval before the action below."
-            : "This workflow is paused until you approve the step below. Check what it will do, and edit it if needed."}
+            ? t("errors4.pendingReviews.waitingGate")
+            : t("errors4.pendingReviews.waitingWorkflow")}
         </Text>
       </div>
 
@@ -260,7 +276,9 @@ export function PendingReviewsList({
 
           const firstReview = nodeReviews[0];
           const reviewTitle =
-            firstReview?.action ?? firstReview?.instructions ?? "Review";
+            firstReview?.action ??
+            firstReview?.instructions ??
+            t("errors4.pendingReviews.reviewFallback");
           const workflowName = firstReview?.agent_name;
 
           const getShortenedNodeId = (id: string) => {

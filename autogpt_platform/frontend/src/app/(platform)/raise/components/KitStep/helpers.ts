@@ -16,9 +16,9 @@ export const MAX_BUDGET_CREDITS = 1_000_000;
 export const MAX_SEARCH_RESULTS = 3;
 
 export const BUDGET_PRESETS = [
-  { credits: 500, label: "$5 / week" },
-  { credits: 1000, label: "$10 / week" },
-  { credits: 0, label: "No weekly limit" },
+  { credits: 500, labelKey: "errors4.budget.five" },
+  { credits: 1000, labelKey: "errors4.budget.ten" },
+  { credits: 0, labelKey: "errors4.budget.noLimit" },
 ] as const;
 
 export interface SearchHit {

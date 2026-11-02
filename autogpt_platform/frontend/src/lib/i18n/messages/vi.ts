@@ -38,6 +38,7 @@ import { credentials2Vi } from "./credentials-2.vi";
 import { errors1Vi } from "./errors-1.vi";
 import { errors2Vi } from "./errors-2.vi";
 import { errors3Vi } from "./errors-3.vi";
+import { Errors4Vi } from "./errors-4.vi";
 import { Errors5Vi } from "./errors-5.vi";
 import { formatVi } from "./format.vi";
 import { home1Vi } from "./home-1.vi";
@@ -133,6 +134,7 @@ export const vi: Partial<Record<MessageKey, string>> = {
   ...errors1Vi,
   ...errors2Vi,
   ...errors3Vi,
+  ...Errors4Vi,
   ...Errors5Vi,
   ...formatVi,
   ...home1Vi,

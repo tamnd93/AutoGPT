@@ -3,6 +3,7 @@ import {
   getPutV1UpdateGraphVersionMutationOptions,
 } from "@/app/api/__generated__/endpoints/graphs/graphs";
 import { Text } from "@/components/atoms/Text/Text";
+import { useT } from "@/lib/i18n";
 import { useIsMutating } from "@tanstack/react-query";
 
 export const GraphLoadingBox = ({
@@ -10,6 +11,7 @@ export const GraphLoadingBox = ({
 }: {
   flowContentLoading: boolean;
 }) => {
+  const t = useT();
   const isCreating = useIsMutating({
     mutationKey: getPostV1CreateNewGraphMutationOptions().mutationKey,
   });
@@ -34,18 +36,18 @@ export const GraphLoadingBox = ({
           <div className="absolute inset-0 animate-spin rounded-full border-4 border-separator border-t-zinc-400 dark:border-gray-700 dark:border-t-blue-400"></div>
         </div>
         <div className="flex flex-col items-center gap-2">
-          {isSaving && <Text variant="h4">Saving Workflow</Text>}
-          {flowContentLoading && <Text variant="h4">Loading Flow</Text>}
-
           {isSaving && (
-            <Text variant="small">
-              Please wait while we save your workflow...
-            </Text>
+            <Text variant="h4">{t("errors4.build.savingWorkflow")}</Text>
           )}
           {flowContentLoading && (
-            <Text variant="small">
-              Please wait while we load your workflow...
-            </Text>
+            <Text variant="h4">{t("errors4.build.loadingFlow")}</Text>
+          )}
+
+          {isSaving && (
+            <Text variant="small">{t("errors4.build.savingHint")}</Text>
+          )}
+          {flowContentLoading && (
+            <Text variant="small">{t("errors4.build.loadingHint")}</Text>
           )}
         </div>
       </div>

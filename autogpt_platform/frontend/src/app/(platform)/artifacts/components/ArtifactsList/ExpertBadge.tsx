@@ -3,6 +3,7 @@
 import { useExpertMap } from "@/app/(platform)/copilot/useExpertMap";
 import { Badge } from "@/components/atoms/Badge/Badge";
 import { ExpertAvatar } from "@/components/molecules/ExpertAvatar/ExpertAvatar";
+import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
 interface Props {
@@ -11,6 +12,7 @@ interface Props {
 }
 
 export function ExpertBadge({ expertId, className }: Props) {
+  const t = useT();
   const { expertsById } = useExpertMap();
   const expert = expertId ? expertsById.get(expertId) : undefined;
   if (!expert) return null;
@@ -18,7 +20,7 @@ export function ExpertBadge({ expertId, className }: Props) {
   return (
     <span
       className={cn("inline-flex items-center", className)}
-      title={`From ${expert.name}`}
+      title={t("errors4.expert.from", { expert: expert.name })}
       data-testid="artifacts-expert-badge"
     >
       <Badge variant="info" size="small" className="pl-1">

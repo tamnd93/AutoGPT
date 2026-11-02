@@ -44,7 +44,7 @@ export function KitBudget({
                   : "border-border bg-background hover:border-accent hover:bg-accent/5",
               )}
             >
-              {preset.label}
+              {t(preset.labelKey)}
             </button>
           );
         })}

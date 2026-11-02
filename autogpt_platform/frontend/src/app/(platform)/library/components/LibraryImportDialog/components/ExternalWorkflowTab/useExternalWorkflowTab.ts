@@ -3,7 +3,7 @@ import { uploadFileDirect } from "@/lib/direct-upload";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { fetchWorkflowFromUrl } from "./fetchWorkflowFromUrl";
-import { useT } from "@/lib/i18n";
+import { useLocale, useT } from "@/lib/i18n";
 
 function decodeBase64Json(dataUrl: string, message: string): string {
   const match = dataUrl.match(/^data:[^;]+;base64,(.+)$/);
@@ -43,6 +43,7 @@ function storeAndRedirect(
 
 export function useExternalWorkflowTab() {
   const t = useT();
+  const locale = useLocale();
   const { toast } = useToast();
   const router = useRouter();
   const [fileValue, setFileValue] = useState("");
@@ -78,7 +79,7 @@ export function useExternalWorkflowTab() {
 
   async function resolveJson(mode: "url" | "file"): Promise<string | null> {
     if (mode === "url") {
-      const result = await fetchWorkflowFromUrl(urlValue);
+      const result = await fetchWorkflowFromUrl(urlValue, locale);
       if (!result.ok) {
         toast({
           title: t("library5.external.couldNotFetch"),

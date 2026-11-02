@@ -10,6 +10,8 @@ import {
   getFailedStepCount,
   isCompletedWithErrors,
 } from "@/lib/run-health";
+import { useLocale } from "@/lib/i18n";
+import { getMessage } from "@/lib/i18n/translate";
 import { useMemo } from "react";
 import type { SitrepItemData, SitrepPriority } from "../../types";
 import {
@@ -27,6 +29,7 @@ export function useSitrepItems(
   maxItems: number,
   scheduledWithinMs?: number,
 ): SitrepItemData[] {
+  const locale = useLocale();
   const { data: executions } = useGetV1ListAllExecutions({
     query: { select: okData },
   });
@@ -40,7 +43,7 @@ export function useSitrepItems(
     const coveredAgentIds = new Set<string>();
 
     for (const [agent, execs] of agentExecutions) {
-      const item = buildSitrepFromExecutions(agent, execs);
+      const item = buildSitrepFromExecutions(agent, execs, locale);
       if (item) {
         items.push(item);
         coveredAgentIds.add(agent.id);
@@ -49,7 +52,11 @@ export function useSitrepItems(
 
     for (const agent of agents) {
       if (coveredAgentIds.has(agent.id)) continue;
-      const configItem = buildSitrepFromConfig(agent, scheduledWithinMs);
+      const configItem = buildSitrepFromConfig(
+        agent,
+        scheduledWithinMs,
+        locale,
+      );
       if (configItem) items.push(configItem);
     }
 
@@ -66,7 +73,7 @@ export function useSitrepItems(
     items.sort((a, b) => order[a.priority] - order[b.priority]);
 
     return items.slice(0, maxItems);
-  }, [agents, executions, maxItems, scheduledWithinMs]);
+  }, [agents, executions, maxItems, scheduledWithinMs, locale]);
 }
 
 function groupByAgent(
@@ -92,6 +99,7 @@ function groupByAgent(
 function buildSitrepFromExecutions(
   agent: LibraryAgent,
   executions: GraphExecutionMeta[],
+  locale: ReturnType<typeof useLocale>,
 ): SitrepItemData | null {
   const active = executions.find((e) => isActive(e.status));
   if (active) {
@@ -118,14 +126,17 @@ function buildSitrepFromExecutions(
     const errorMsg =
       lastFailed.stats?.error ??
       lastFailed.stats?.activity_status ??
-      "Execution failed";
+      getMessage(locale, "errors4.sitrep.executionFailed");
     return {
       id: `${agent.id}-${lastFailed.id}`,
       agentID: agent.id,
       agentName: agent.name,
       executionID: lastFailed.id,
       priority: "error",
-      message: typeof errorMsg === "string" ? errorMsg : "Execution failed",
+      message:
+        typeof errorMsg === "string"
+          ? errorMsg
+          : getMessage(locale, "errors4.sitrep.executionFailed"),
       status: "error",
     };
   }
@@ -147,7 +158,9 @@ function buildSitrepFromExecutions(
         priority: "warning",
         message: summary
           ? `${failedSteps} — ${summary}`
-          : `Completed with errors: ${failedSteps}`,
+          : getMessage(locale, "errors4.sitrep.completedWithErrors", {
+              failedSteps,
+            }),
         status: "idle",
       };
     }
@@ -157,7 +170,8 @@ function buildSitrepFromExecutions(
       agentName: agent.name,
       executionID: lastCompleted.id,
       priority: "success",
-      message: summary ?? "Completed successfully",
+      message:
+        summary ?? getMessage(locale, "errors4.sitrep.completedSuccessfully"),
       status: "idle",
     };
   }
@@ -167,7 +181,8 @@ function buildSitrepFromExecutions(
 
 function buildSitrepFromConfig(
   agent: LibraryAgent,
-  scheduledWithinMs?: number,
+  scheduledWithinMs: number | undefined,
+  locale: ReturnType<typeof useLocale>,
 ): SitrepItemData | null {
   if (agent.has_external_trigger) {
     return {
@@ -175,7 +190,7 @@ function buildSitrepFromConfig(
       agentID: agent.id,
       agentName: agent.name,
       priority: "listening",
-      message: "Waiting for trigger event",
+      message: getMessage(locale, "errors4.sitrep.waitingForTrigger"),
       status: "listening",
     };
   }

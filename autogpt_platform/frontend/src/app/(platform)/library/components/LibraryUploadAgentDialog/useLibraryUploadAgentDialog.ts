@@ -8,12 +8,14 @@ import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { uploadAgentFormSchema } from "./LibraryUploadAgentDialog";
-import { useT } from "@/lib/i18n";
+import { useLocale, useT } from "@/lib/i18n";
+import { getMessage } from "@/lib/i18n/translate";
 
 export function useLibraryUploadAgentDialog(options?: {
   onSuccess?: () => void;
 }) {
   const t = useT();
+  const locale = useLocale();
   const [isOpen, setIsOpen] = useState(false);
   const { toast } = useToast();
   const [agentObject, setAgentObject] = useState<Graph | null>(null);
@@ -107,9 +109,8 @@ export function useLibraryUploadAgentDialog(options?: {
       console.error("Error loading agent file:", error);
 
       toast({
-        title: "Invalid Workflow File",
-        description:
-          "Please upload a valid agent.json file that has been previously exported from the AutoGPT platform. The file must contain the required fields: name, description, nodes, and links.",
+        title: getMessage(locale, "errors4.library.invalidFileTitle"),
+        description: getMessage(locale, "errors4.library.invalidFileBody"),
         duration: 5000,
         variant: "destructive",
       });
@@ -117,7 +118,7 @@ export function useLibraryUploadAgentDialog(options?: {
       form.resetField("agentFile");
       setAgentObject(null);
     }
-  }, [agentFileValue, form, toast]);
+  }, [agentFileValue, form, toast, locale]);
 
   async function onSubmit(values: z.infer<typeof uploadAgentFormSchema>) {
     if (!agentObject) {

@@ -16,7 +16,7 @@ import {
 } from "../helpers";
 import { STAGGER_CAP, STAGGER_STEP_S } from "../ArtifactsTable/row-layout";
 import { CardPreview } from "./CardPreview";
-import { useLocale } from "@/lib/i18n";
+import { useLocale, useT } from "@/lib/i18n";
 
 interface Props {
   file: WorkspaceFileItem;
@@ -49,6 +49,7 @@ const REDUCED_CARD_VARIANTS: Variants = {
 
 export function ArtifactCard({ file, onOpen, index = 0 }: Props) {
   const locale = useLocale();
+  const t = useT();
   const typeIcon = getFileTypeIcon(file.mime_type, file.name);
   const reduceMotion = useReducedMotion();
   const { handleDragStart, handleDragEnd } = useFileDrag([file.id], file.name);
@@ -72,7 +73,7 @@ export function ArtifactCard({ file, onOpen, index = 0 }: Props) {
       <button
         type="button"
         onClick={() => onOpen(file)}
-        aria-label={`Open ${file.name}`}
+        aria-label={t("errors4.files.open", { name: file.name })}
         className="absolute inset-0 z-0 cursor-pointer"
         data-testid="artifacts-card-open"
       />

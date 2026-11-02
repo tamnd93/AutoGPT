@@ -18,7 +18,7 @@ import { useFileDrag } from "../../WorkspaceFolders/useFileDrag";
 import { ExpertBadge } from "../ExpertBadge";
 import { FileActionsMenu } from "../FileActionsMenu";
 import { formatDayLabel, formatFileSize, formatFullDate } from "../helpers";
-import { useLocale } from "@/lib/i18n";
+import { useLocale, useT } from "@/lib/i18n";
 import { FilePreviewCard } from "./FilePreviewCard";
 import { FileThumbnail } from "./FileThumbnail";
 import {
@@ -56,6 +56,7 @@ export function FileRow({
   onToggleSelect,
 }: Props) {
   const locale = useLocale();
+  const t = useT();
   const reduceMotion = useReducedMotion();
   const dragIds = isSelected ? selectedIds : [file.id];
   const dragLabel = dragIds.length > 1 ? `${dragIds.length} files` : file.name;
@@ -87,7 +88,7 @@ export function FileRow({
       <div className="flex min-w-0 items-center gap-1 justify-self-start">
         <button
           type="button"
-          aria-label={`Select ${file.name}`}
+          aria-label={t("errors4.files.select", { name: file.name })}
           aria-pressed={isSelected}
           // TODO(tokens): no fitting role for focus-visible:ring-zinc-400 #ADADB3; #ADADB3 is foreground-subtle, a text colour
           className="group/select relative my-2.5 mr-3 shrink-0 rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-zinc-400"
@@ -131,7 +132,7 @@ export function FileRow({
             {/* aria-label keeps Radix from mirroring the whole card into its
               visually-hidden tooltip copy (which would fetch previews twice). */}
             <TooltipContent
-              aria-label={`Preview of ${file.name}`}
+              aria-label={t("errors4.files.preview", { name: file.name })}
               side="right"
               align="center"
               sideOffset={16}
@@ -144,7 +145,7 @@ export function FileRow({
         </Tooltip>
         <button
           type="button"
-          aria-label={`Rename ${file.name}`}
+          aria-label={t("errors4.files.rename", { name: file.name })}
           className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-foreground-subtle opacity-0 transition-opacity hover:bg-surface-hover hover:text-foreground-strong focus-visible:opacity-100 group-hover:opacity-100"
           onClick={(e) => {
             e.stopPropagation();

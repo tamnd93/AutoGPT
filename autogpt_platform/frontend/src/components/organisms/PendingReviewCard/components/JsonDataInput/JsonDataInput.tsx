@@ -1,5 +1,6 @@
 import { Input } from "@/components/atoms/Input/Input";
 import { isJsonTextFor } from "@/lib/json-text";
+import { useT } from "@/lib/i18n";
 import { useId, useState } from "react";
 
 interface Props {
@@ -28,6 +29,7 @@ export function JsonDataInput({
   onChange,
   onInvalidDraft,
 }: Props) {
+  const t = useT();
   const id = useId();
   const [text, setText] = useState(() => initialText ?? toJsonText(value));
   const [shownValue, setShownValue] = useState(value);
@@ -49,14 +51,14 @@ export function JsonDataInput({
   return (
     <Input
       id={id}
-      label="Value"
+      label={t("errors4.json.label")}
       hideLabel
       size="small"
       type="textarea"
       rows={6}
       value={text}
       onChange={(e) => handleChange(e.target.value)}
-      placeholder="Edit JSON data"
+      placeholder={t("errors4.json.placeholder")}
       className="font-mono text-sm"
     />
   );

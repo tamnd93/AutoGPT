@@ -1,6 +1,7 @@
 "use client";
 
 import { Text } from "@/components/atoms/Text/Text";
+import { useT } from "@/lib/i18n";
 import type { LibraryAgent } from "@/app/api/__generated__/models/libraryAgent";
 import { useState } from "react";
 import type { FleetSummary, AgentStatusFilter } from "../../types";
@@ -13,6 +14,7 @@ interface Props {
 }
 
 export function AgentBriefingPanel({ summary, agents }: Props) {
+  const t = useT();
   const [userTab, setUserTab] = useState<AgentStatusFilter | null>(null);
   const activeTab: AgentStatusFilter =
     userTab ?? (summary.running > 0 ? "running" : "all");
@@ -22,7 +24,7 @@ export function AgentBriefingPanel({ summary, agents }: Props) {
       // TODO(tokens): no exact role for from-indigo-50/30 (#EEF2FF), to-purple-50/25 (#F1EBFE)
       className={`min-h-[14.75rem] rounded-large bg-gradient-to-br from-indigo-50/30 via-white/90 to-purple-50/25 px-5 pb-5 pt-[1.125rem] shadow-sm backdrop-blur-md`}
     >
-      <Text variant="h5">Workflow Briefing</Text>
+      <Text variant="h5">{t("errors4.library.briefingTitle")}</Text>
       <div className="mt-4 space-y-5">
         <StatsGrid
           summary={summary}

@@ -8,6 +8,7 @@ import {
 } from "@/components/atoms/Tooltip/BaseTooltip";
 import { Button } from "@/components/atoms/Button/Button";
 import { Text } from "@/components/atoms/Text/Text";
+import { useT } from "@/lib/i18n";
 import { Dialog } from "@/components/molecules/Dialog/Dialog";
 import { MapAwarePre } from "@/components/contextual/MapEmbed/MapAwarePre";
 import { cn } from "@/lib/utils";
@@ -348,9 +349,11 @@ function ExternalLinkModal({
   onClose,
   onConfirm,
 }: LinkSafetyModalProps) {
+  const t = useT();
+
   return (
     <Dialog
-      title="Open external link"
+      title={t("errors4.message.openExternalTitle")}
       styling={{ maxWidth: "30rem", minWidth: "auto" }}
       controlled={{
         isOpen,
@@ -360,9 +363,7 @@ function ExternalLinkModal({
       }}
     >
       <Dialog.Content>
-        <Text variant="body">
-          You&apos;re about to visit an external website:
-        </Text>
+        <Text variant="body">{t("errors4.message.externalBody")}</Text>
         {/* TODO(tokens): no exact role for bg-neutral-100 #F5F5F5 */}
         <Text
           variant="small-mono"
@@ -372,10 +373,10 @@ function ExternalLinkModal({
         </Text>
         <Dialog.Footer>
           <Button variant="secondary" onClick={onClose}>
-            Cancel
+            {t("errors4.common.cancel")}
           </Button>
           <Button variant="primary" onClick={onConfirm}>
-            Open link
+            {t("errors4.message.openLink")}
           </Button>
         </Dialog.Footer>
       </Dialog.Content>

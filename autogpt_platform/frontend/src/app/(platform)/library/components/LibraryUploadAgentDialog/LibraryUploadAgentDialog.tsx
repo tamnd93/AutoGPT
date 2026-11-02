@@ -48,7 +48,7 @@ export default function LibraryUploadAgentDialog() {
           size="small"
         >
           <Icon icon={Upload03Icon} width={18} height={18} />
-          <span className="">Upload workflow</span>
+          <span className="">{t("errors4.library.uploadWorkflow")}</span>
         </Button>
       </Dialog.Trigger>
       <Dialog.Content>

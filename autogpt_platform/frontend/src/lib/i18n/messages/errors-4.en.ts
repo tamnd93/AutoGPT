@@ -1,0 +1,66 @@
+export const Errors4En = {
+  "errors4.pendingReviews.empty": "No pending reviews",
+  "errors4.pendingReviews.noReviewsTitle": "No reviews to process",
+  "errors4.pendingReviews.noReviewsBody": "No reviews found to process.",
+  "errors4.pendingReviews.failedTitle": "Failed to process reviews",
+  "errors4.pendingReviews.unexpectedResponse":
+    "Unexpected response from server",
+  "errors4.pendingReviews.partialTitle": "Reviews partially processed",
+  "errors4.pendingReviews.partialBody":
+    "{succeeded} succeeded, {failed} failed. {error}",
+  "errors4.pendingReviews.partialFallback":
+    "Some reviews could not be processed.",
+  "errors4.pendingReviews.successTitle": "Reviews processed successfully",
+  "errors4.pendingReviews.successBody":
+    "{approved} approved, {rejected} rejected",
+  "errors4.pendingReviews.invalidJsonTitle": "Invalid JSON",
+  "errors4.pendingReviews.invalidJsonBody":
+    "Please fix the JSON format in review for node {node}: {error}",
+  "errors4.pendingReviews.invalidSyntax": "Invalid syntax",
+  "errors4.pendingReviews.errorOccurred": "An error occurred",
+  "errors4.pendingReviews.emptyHint":
+    "When workflows have human-in-the-loop blocks, they will appear here for your review and approval.",
+  "errors4.pendingReviews.neededTitle": "Your review is needed",
+  "errors4.pendingReviews.waitingGate":
+    "Otto is waiting for your approval before the action below.",
+  "errors4.pendingReviews.waitingWorkflow":
+    "This workflow is paused until you approve the step below. Check what it will do, and edit it if needed.",
+  "errors4.pendingReviews.reviewFallback": "Review",
+  "errors4.json.label": "Value",
+  "errors4.json.placeholder": "Edit JSON data",
+  "errors4.package.changes": "Package file changes",
+  "errors4.message.openExternalTitle": "Open external link",
+  "errors4.message.externalBody": "You're about to visit an external website:",
+  "errors4.message.openLink": "Open link",
+  "errors4.common.cancel": "Cancel",
+  "errors4.files.select": "Select {name}",
+  "errors4.files.preview": "Preview of {name}",
+  "errors4.files.rename": "Rename {name}",
+  "errors4.files.open": "Open {name}",
+  "errors4.expert.from": "From {expert}",
+  "errors4.library.editFolder": "Edit folder",
+  "errors4.library.deleteFolder": "Delete folder",
+  "errors4.library.noFavorites": "No favorite workflows yet",
+  "errors4.library.uploadWorkflow": "Upload workflow",
+  "errors4.library.invalidFileTitle": "Invalid Workflow File",
+  "errors4.library.invalidFileBody":
+    "Please upload a valid agent.json file that has been previously exported from the AutoGPT platform. The file must contain the required fields: name, description, nodes, and links.",
+  "errors4.library.fileRequired": "Workflow file is required",
+  "errors4.library.nameRequired": "Workflow name is required",
+  "errors4.library.briefingTitle": "Workflow Briefing",
+  "errors4.sitrep.waitingForTrigger": "Waiting for trigger event",
+  "errors4.sitrep.executionFailed": "Execution failed",
+  "errors4.sitrep.completedWithErrors": "Completed with errors: {failedSteps}",
+  "errors4.sitrep.completedSuccessfully": "Completed successfully",
+  "errors4.import.invalidUrl":
+    "Invalid or unsupported URL. URL import is supported for n8n.io workflow templates (e.g. https://n8n.io/workflows/1234). For other platforms, use file upload.",
+  "errors4.import.fetchFailed": "Failed to fetch workflow.",
+  "errors4.build.savingWorkflow": "Saving Workflow",
+  "errors4.build.loadingFlow": "Loading Flow",
+  "errors4.build.savingHint": "Please wait while we save your workflow...",
+  "errors4.build.loadingHint": "Please wait while we load your workflow...",
+  "errors4.build.unexpectedError": "An unexpected error occurred.",
+  "errors4.budget.five": "$5 / week",
+  "errors4.budget.ten": "$10 / week",
+  "errors4.budget.noLimit": "No weekly limit",
+} as const;
