@@ -2,6 +2,8 @@ import { useCompleteBrainDumpGreeting } from "@/app/api/__generated__/endpoints/
 import { toast } from "@/components/molecules/Toast/use-toast";
 import { useStableCallback } from "@/hooks/useStableCallback";
 import { useAuth } from "@/lib/auth/hooks/useAuth";
+import { useLocale } from "@/lib/i18n";
+import { getMessage } from "@/lib/i18n/translate";
 import { isValidUUID } from "@/lib/utils";
 import { trackBrainDump } from "@/services/onboarding/brain-dump-analytics";
 import {
@@ -299,6 +301,7 @@ function useCopilotPageChat(
     providerLimit,
     dismissProviderLimit,
   } = stream;
+  const locale = useLocale();
   const kickoffAttemptToken = getLatestKickoffAttemptToken(currentMessages);
 
   const { pagedMessages, pagedTurnStats, hasMore, isLoadingMore, loadMore } =
@@ -368,11 +371,10 @@ function useCopilotPageChat(
     if (leftBehind.length === 0) return;
     setInitialPrompt(leftBehind.join("\n\n"));
     toast({
-      title: "Follow-up not sent",
-      description:
-        "You left the chat before it could go out. It's back in the composer.",
+      title: getMessage(locale, "chatStates4.followUp.notSentTitle"),
+      description: getMessage(locale, "chatStates4.followUp.notSentBody"),
     });
-  }, [sessionId, setInitialPrompt]);
+  }, [locale, sessionId, setInitialPrompt]);
 
   // Combine paginated messages with current page messages, merging consecutive
   // assistant UIMessages at the page boundary so reasoning + response parts
@@ -481,9 +483,11 @@ function useCopilotPageChat(
     while (sessionId && isInflightRef.current) {
       if (hasAttachments) {
         toast({
-          title: "Please wait to attach files",
-          description:
-            "File attachments can't be queued until the current response finishes.",
+          title: getMessage(locale, "chatStates4.followUp.attachWaitTitle"),
+          description: getMessage(
+            locale,
+            "chatStates4.followUp.attachWaitBody",
+          ),
           variant: "destructive",
         });
         return;
@@ -529,7 +533,7 @@ function useCopilotPageChat(
       // the composer's enqueue path is waiting on this, and holding it for
       // the entire turn would lock Enter and the queue button again.
       void sendNewMessage(message, files, workspaceFiles, metadata).catch(
-        (err: unknown) => recoverFailedDeferredSend(trimmed, [], err),
+        (err: unknown) => recoverFailedDeferredSend(trimmed, [], err, locale),
       );
       return;
     }

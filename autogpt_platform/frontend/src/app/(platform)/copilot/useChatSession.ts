@@ -10,6 +10,7 @@ import type { CreateSessionRequest } from "@/app/api/__generated__/models/create
 import { SESSION_LIST_QUERY_KEY } from "./useSessionList";
 import { type CopilotLlmAuthSelection, useCopilotUIStore } from "./store";
 import { toast } from "@/components/molecules/Toast/use-toast";
+import { useT } from "@/lib/i18n";
 import { ApiError } from "@/lib/autogpt-server-api/helpers";
 import { trackFunnel } from "@/services/experts/experts-analytics";
 import { Flag, useGetFlag } from "@/services/feature-flags/use-get-flag";
@@ -126,6 +127,7 @@ export function useChatSession({
   expertId = null,
   adoptLatestExpertThread = true,
 }: UseChatSessionOptions = {}) {
+  const t = useT();
   const [sessionId, setSessionId] = useQueryState("sessionId", parseAsString);
   const queryClient = useQueryClient();
   const copilotLlmAuth = useCopilotUIStore((state) => state.copilotLlmAuth);
@@ -355,8 +357,8 @@ export function useChatSession({
     if (transports === undefined) {
       toast({
         variant: "destructive",
-        title: "Could not check AI connections",
-        description: "Refresh the page and try again.",
+        title: t("chatStates4.connections.checkFailedTitle"),
+        description: t("chatStates4.connections.checkFailedBody"),
       });
       throw new ReportedSendError("Could not load AI connections");
     }
@@ -365,18 +367,16 @@ export function useChatSession({
       // stays put; the toast only marks that this send went nowhere.
       toast({
         variant: "destructive",
-        title: "No AI connection is set up",
-        description:
-          "Your message is back in the composer. See the notice above it for how to connect a model.",
+        title: t("chatStates4.connections.noneTitle"),
+        description: t("chatStates4.connections.noneBody"),
       });
       throw new ReportedSendError("No AI connection is set up");
     }
     if (!resolvedLLMAuth) {
       toast({
         variant: "destructive",
-        title: "Choose an AI connection",
-        description:
-          "Select the connection your expert should use before starting a new task.",
+        title: t("chatStates4.connections.chooseTitle"),
+        description: t("chatStates4.connections.chooseBody"),
       });
       throw new ReportedSendError("AI connection selection required");
     }
@@ -386,9 +386,8 @@ export function useChatSession({
       resolvedLLMAuth.authProvider === "platform"
     ) {
       toast({
-        title: "AI connections changed",
-        description:
-          "The next task will use the available connection when it starts.",
+        title: t("chatStates4.connections.changedTitle"),
+        description: t("chatStates4.connections.changedBody"),
       });
     }
 

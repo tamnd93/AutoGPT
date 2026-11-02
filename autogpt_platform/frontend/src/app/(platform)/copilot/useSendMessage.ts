@@ -1,4 +1,7 @@
 import { useEffect, useInsertionEffect, useRef } from "react";
+import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/locale";
+import { useLocale } from "@/lib/i18n";
+import { getMessage } from "@/lib/i18n/translate";
 import { pendingUploadKey, useCopilotStreamStore } from "./copilotStreamStore";
 import { toastSendFailure } from "./helpers/sendFailureToast";
 import type { ExpertKickoffMetadata } from "./expertKickoff";
@@ -45,6 +48,7 @@ export function useSendMessage({
   createSession,
   isUserStoppingRef,
 }: Args) {
+  const locale = useLocale();
   // Synchronous concurrency guard for the "no session yet" path: rapid
   // double-press / double-Enter would otherwise overwrite `pendingFirstSend`
   // (losing the first message) AND fire two parallel `createSession`
@@ -84,9 +88,9 @@ export function useSendMessage({
         metadata: send.metadata,
       })
       .catch((error: unknown) => {
-        recoverFailedDeferredSend(send.text, parts, error);
+        recoverFailedDeferredSend(send.text, parts, error, locale);
       });
-  }, [sessionId]);
+  }, [locale, sessionId]);
 
   async function onSend(
     message: string,
@@ -198,15 +202,16 @@ export function recoverFailedDeferredSend(
   text: string,
   parts: StoredAttachmentPart[],
   error: unknown,
+  locale: Locale = DEFAULT_LOCALE,
 ) {
   if (text) useCopilotUIStore.getState().setInitialPrompt(text);
   if (parts.length > 0)
     useCopilotStreamStore.getState().setPendingFileParts(parts);
   toastSendFailure({
-    title: "Couldn't send message",
+    title: getMessage(locale, "chatStates4.send.failedTitle"),
     error,
     recovery: text
-      ? "your message is back in the composer"
-      : "your files were not sent",
+      ? getMessage(locale, "chatStates4.send.recoveryComposer")
+      : getMessage(locale, "chatStates4.send.recoveryFiles"),
   });
 }

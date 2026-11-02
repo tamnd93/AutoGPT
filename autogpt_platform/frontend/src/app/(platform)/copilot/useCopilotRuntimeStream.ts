@@ -1,4 +1,5 @@
 import { useReadEveryRender } from "@/hooks/useReadEveryRender";
+import { useLocale } from "@/lib/i18n";
 import { getGetV2GetCopilotUsageQueryKey } from "@/app/api/__generated__/endpoints/chat/chat";
 import { useQueryClient } from "@tanstack/react-query";
 import type { UIMessage } from "ai";
@@ -39,6 +40,7 @@ import {
 } from "./stream/renderTail";
 import {
   getTurnRuntime,
+  noticeText,
   type RuntimePhase,
   type RuntimeSnapshot,
   type SendInput,
@@ -47,12 +49,6 @@ import {
 } from "./stream/turnRuntime";
 import type { PersistedRow } from "./stream/turnLog";
 import { useCopilotStop } from "./useCopilotStop";
-
-const NOTICE_TEXT = {
-  "catching-up": "Catching up…",
-  reconnecting: "Reconnecting…",
-  offline: "Offline — waiting for the network…",
-} as const;
 
 const EMPTY_SNAPSHOT: RuntimeSnapshot = {
   segments: [],
@@ -92,6 +88,7 @@ export function useCopilotRuntimeStream({
   refetchSession,
   copilotModel,
 }: Args) {
+  const locale = useLocale();
   const queryClient = useQueryClient();
   const setInitialPrompt = useCopilotUIStore((s) => s.setInitialPrompt);
   const [rateLimitMessage, setRateLimitMessage] = useState<string | null>(null);
@@ -108,8 +105,8 @@ export function useCopilotRuntimeStream({
   // Kept as a memo: getting a runtime bumps it in the registry and can
   // dispose an idle one, so it runs once per session.
   const runtime = useMemo(
-    () => (sessionId ? getTurnRuntime(sessionId) : null),
-    [sessionId],
+    () => (sessionId ? getTurnRuntime(sessionId, { locale }) : null),
+    [sessionId, locale],
   );
   const snapshot = useSyncExternalStore(
     runtime?.subscribe ?? subscribeNothing,
@@ -307,7 +304,7 @@ export function useCopilotRuntimeStream({
     isReconnecting: false,
     isFinishProbing: false,
     isRestoringActiveSession: notice !== null,
-    restoreStatusMessage: notice ? NOTICE_TEXT[notice] : null,
+    restoreStatusMessage: noticeText(notice, locale),
     isSyncing: false,
     isUserStoppingRef,
     isUserStopping: snapshot.stopped,

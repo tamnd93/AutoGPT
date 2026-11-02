@@ -3,6 +3,7 @@ import { toast } from "@/components/molecules/Toast/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
 import { parseAsString, useQueryStates } from "nuqs";
 import { useCopilotUIStore } from "./store";
+import { useT } from "@/lib/i18n";
 import {
   SESSION_DELETE_MUTATION_KEY,
   SESSION_LIST_QUERY_KEY,
@@ -22,6 +23,7 @@ import {
  * `DeleteChatDialog` without duplicating the mutation wiring.
  */
 export function useSessionDeletion() {
+  const t = useT();
   const queryClient = useQueryClient();
   const [{ sessionId }, setChatParams] = useQueryStates({
     sessionId: parseAsString,
@@ -49,9 +51,11 @@ export function useSessionDeletion() {
         },
         onError: (error) => {
           toast({
-            title: "Failed to delete chat",
+            title: t("chatStates4.delete.failedTitle"),
             description:
-              error instanceof Error ? error.message : "An error occurred",
+              error instanceof Error
+                ? error.message
+                : t("chatStates4.delete.failedBody"),
             variant: "destructive",
           });
         },

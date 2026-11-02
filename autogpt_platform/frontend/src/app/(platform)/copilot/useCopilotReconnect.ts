@@ -1,5 +1,6 @@
 import { toast } from "@/components/molecules/Toast/use-toast";
 import { useMountEffect } from "@/hooks/useMountEffect";
+import { useT } from "@/lib/i18n";
 import { useEffect, useRef, useState } from "react";
 
 const RECONNECT_BASE_DELAY_MS = 1_000;
@@ -55,6 +56,7 @@ export function useCopilotReconnect({
   resumeStreamRef,
   hasResumedRef,
 }: UseCopilotReconnectArgs) {
+  const t = useT();
   const [isReconnectScheduled, setIsReconnectScheduled] = useState(false);
   const [reconnectExhausted, setReconnectExhausted] = useState(false);
 
@@ -76,8 +78,8 @@ export function useCopilotReconnect({
       reconnectTimeoutTimerRef.current = undefined;
       setReconnectExhausted(true);
       toast({
-        title: "Connection lost",
-        description: "Unable to reconnect. Please refresh the page.",
+        title: t("chatStates4.reconnect.lostTitle"),
+        description: t("chatStates4.reconnect.exhaustedBody"),
         variant: "destructive",
       });
       return;
@@ -98,9 +100,8 @@ export function useCopilotReconnect({
         setIsReconnectScheduled(false);
         setReconnectExhausted(true);
         toast({
-          title: "Connection timed out",
-          description:
-            "Your expert may still be working. Refresh to check for updates.",
+          title: t("chatStates4.reconnect.timeoutTitle"),
+          description: t("chatStates4.reconnect.timeoutBody"),
           variant: "destructive",
         });
       }, RECONNECT_MAX_DURATION_MS);
@@ -112,7 +113,10 @@ export function useCopilotReconnect({
 
     if (!hasShownDisconnectToastRef.current) {
       hasShownDisconnectToastRef.current = true;
-      toast({ title: "Connection lost", description: "Reconnecting..." });
+      toast({
+        title: t("chatStates4.reconnect.lostTitle"),
+        description: t("chatStates4.reconnect.reconnecting"),
+      });
     }
 
     const delay = RECONNECT_BASE_DELAY_MS * 2 ** (nextAttempt - 1);

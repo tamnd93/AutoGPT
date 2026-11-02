@@ -4,6 +4,7 @@ import {
 } from "@/app/api/__generated__/endpoints/chat/chat";
 import { toast } from "@/components/molecules/Toast/use-toast";
 import { useMountEffect } from "@/hooks/useMountEffect";
+import { useT } from "@/lib/i18n";
 import { useChat } from "@ai-sdk/react";
 import { useQueryClient } from "@tanstack/react-query";
 import type { UIMessage } from "ai";
@@ -124,6 +125,7 @@ export function useCopilotStream({
   refetchSession,
   copilotModel,
 }: UseCopilotStreamArgs) {
+  const t = useT();
   const queryClient = useQueryClient();
   const setInitialPrompt = useCopilotUIStore((s) => s.setInitialPrompt);
   const [rateLimitMessage, setRateLimitMessage] = useState<string | null>(null);
@@ -577,8 +579,8 @@ export function useCopilotStream({
       // the user may have clicked send against a still-enabled input. Tell
       // them their message wasn't dropped silently.
       toast({
-        title: "Reconnecting",
-        description: "Wait for the connection to resume before sending.",
+        title: t("chatStates4.reconnect.sendBlockedTitle"),
+        description: t("chatStates4.reconnect.sendBlockedBody"),
       });
       return;
     }

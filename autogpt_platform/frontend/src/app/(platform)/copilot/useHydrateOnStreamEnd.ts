@@ -1,4 +1,5 @@
 import { toast } from "@/components/molecules/Toast/use-toast";
+import { useT } from "@/lib/i18n";
 import type { UIMessage } from "ai";
 import { useEffect, useRef } from "react";
 
@@ -271,6 +272,7 @@ export function useHydrateOnStreamEnd({
   isFinishProbing,
   setMessages,
 }: Args) {
+  const t = useT();
   const prevStatusRef = useRef(status);
   const needsForceHydrateRef = useRef(false);
   const staleRefAtStreamEnd = useRef<typeof hydratedMessages | null>(null);
@@ -324,9 +326,8 @@ export function useHydrateOnStreamEnd({
     ) {
       sessionsWithInterruptedToastShown.add(sessionId);
       toast({
-        title: "Previous response was interrupted",
-        description:
-          "The chat disconnected before the last response finished. Resend to try again.",
+        title: t("chatStates4.hydrate.interruptedTitle"),
+        description: t("chatStates4.hydrate.interruptedBody"),
       });
     }
 

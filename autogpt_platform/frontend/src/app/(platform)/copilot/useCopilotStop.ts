@@ -1,5 +1,6 @@
 import { postV2CancelSessionTask } from "@/app/api/__generated__/endpoints/chat/chat";
 import { toast } from "@/components/molecules/Toast/use-toast";
+import { useT } from "@/lib/i18n";
 import type { UIMessage } from "ai";
 import { resolveInProgressTools } from "./helpers";
 
@@ -40,6 +41,8 @@ export function useCopilotStop({
   isUserStoppingRef,
   setIsUserStopping,
 }: UseCopilotStopArgs) {
+  const t = useT();
+
   async function stop() {
     isUserStoppingRef.current = true;
     setIsUserStopping(true);
@@ -54,15 +57,14 @@ export function useCopilotStop({
         res.data.reason === "cancel_published_not_confirmed"
       ) {
         toast({
-          title: "Stop may take a moment",
-          description:
-            "The cancel was sent but not yet confirmed. The task should stop shortly.",
+          title: t("chatStates4.stop.pendingTitle"),
+          description: t("chatStates4.stop.pendingBody"),
         });
       }
     } catch {
       toast({
-        title: "Could not stop the task",
-        description: "The task may still be running in the background.",
+        title: t("chatStates4.stop.failedTitle"),
+        description: t("chatStates4.stop.failedBody"),
         variant: "destructive",
       });
     }

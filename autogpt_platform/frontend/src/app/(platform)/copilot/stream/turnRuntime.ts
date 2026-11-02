@@ -1,5 +1,7 @@
 import { getV2GetSession } from "@/app/api/__generated__/endpoints/chat/chat";
 import { toast } from "@/components/molecules/Toast/use-toast";
+import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/locale";
+import { getMessage } from "@/lib/i18n/translate";
 import { environment } from "@/services/environment";
 import * as Sentry from "@sentry/nextjs";
 import type { FileUIPart, UIMessage } from "ai";
@@ -85,6 +87,14 @@ export const ANOMALY_TOAST = {
   description: "We keep trying; your expert may still be working.",
 };
 
+/** The one alarming toast, in the reader's locale. */
+export function anomalyToast(locale: Locale = DEFAULT_LOCALE) {
+  return {
+    title: getMessage(locale, "chatStates4.anomaly.title"),
+    description: getMessage(locale, "chatStates4.anomaly.body"),
+  };
+}
+
 export type RuntimePhase =
   | "idle"
   | "connecting"
@@ -95,6 +105,20 @@ export type RuntimePhase =
 
 /** A passive, inline state; never a toast. */
 export type RuntimeNotice = "catching-up" | "reconnecting" | "offline" | null;
+
+const NOTICE_KEYS = {
+  "catching-up": "chatStates4.notice.catchingUp",
+  reconnecting: "chatStates4.notice.reconnecting",
+  offline: "chatStates4.notice.offline",
+} as const;
+
+/** The inline notice's words, in the reader's locale. */
+export function noticeText(
+  notice: RuntimeNotice,
+  locale: Locale = DEFAULT_LOCALE,
+): string | null {
+  return notice ? getMessage(locale, NOTICE_KEYS[notice]) : null;
+}
 
 export interface RuntimeSnapshot {
   /** The tail this runtime owns, in order; history before it is the DB view's. */
@@ -124,6 +148,8 @@ export interface RuntimeDeps {
   fetchSession: () => Promise<SessionView | null>;
   toast: (options: { title: string; description: string }) => void;
   report: (kind: string, extra: Record<string, unknown>) => void;
+  /** Locale for the toast and error copy this runtime shows. */
+  locale?: Locale;
 }
 
 export interface RuntimeHandlers {
@@ -619,7 +645,15 @@ export class TurnRuntime {
       else if (end.status === 410 || end.status === 204)
         void this.expire(seg.key);
       else if (end.status === 401 || end.status === 403) this.denied(seg, end);
-      else if (end.status === 404) this.giveUp(new ChatUnavailableError());
+      else if (end.status === 404)
+        this.giveUp(
+          new ChatUnavailableError(
+            getMessage(
+              this.deps.locale ?? DEFAULT_LOCALE,
+              "chatStates4.turn.chatUnavailable",
+            ),
+          ),
+        );
       else this.retry(conn);
       return;
     }
@@ -671,7 +705,7 @@ export class TurnRuntime {
     if (this.failures >= INDICATOR_AFTER_FAILURES) this.notice = "reconnecting";
     if (this.failures >= BACKOFF_MS.length && !this.anomalyShown) {
       this.anomalyShown = true;
-      this.deps.toast(ANOMALY_TOAST);
+      this.deps.toast(anomalyToast(this.deps.locale));
     }
     const delay = BACKOFF_MS[this.failures - 1] ?? ANOMALY_RETRY_MS;
     this.clearRetry();
@@ -685,10 +719,16 @@ export class TurnRuntime {
 
   private refusedSend(end: Extract<ConnectionEnd, { kind: "refused" }>) {
     if (isMessageTooLong(end.body)) {
-      this.error = new MessageTooLongError(refusalText(end), end.status);
+      this.error = new MessageTooLongError(
+        refusalText(end, this.deps.locale),
+        end.status,
+      );
     } else {
       this.reportIfUnexpected(end);
-      this.error = new SendRefusedError(refusalText(end), end.status);
+      this.error = new SendRefusedError(
+        refusalText(end, this.deps.locale),
+        end.status,
+      );
     }
     this.emitNow();
     this.handlers.onError?.(this.error, null);
@@ -784,7 +824,13 @@ export class TurnRuntime {
       this.error =
         end.kind === "failed" && end.error instanceof Error
           ? end.error
-          : new Error(lost.syntheticError ?? "The connection closed early.");
+          : new Error(
+              lost.syntheticError ??
+                getMessage(
+                  this.deps.locale ?? DEFAULT_LOCALE,
+                  "chatStates4.turn.closedEarly",
+                ),
+            );
     }
     this.emitNow();
   }
@@ -1493,10 +1539,13 @@ function str(value: unknown): string {
 
 // JSON stays as sent, since the error handler reads its detail; a proxy's
 // HTML page or an empty body is replaced by words.
-function refusalText({ status, body }: { status: number; body: unknown }) {
+function refusalText(
+  { status, body }: { status: number; body: unknown },
+  locale: Locale = DEFAULT_LOCALE,
+) {
   if (body !== null && typeof body !== "string") return JSON.stringify(body);
   if (body && !body.trimStart().startsWith("<")) return body;
-  return `Couldn't reach the server (HTTP ${status}).`;
+  return getMessage(locale, "chatStates4.turn.unreachable", { status });
 }
 
 /**
@@ -1559,8 +1608,8 @@ export class MessageTooLongError extends SendRefusedError {
 
 /** The session the chat follows is gone. */
 export class ChatUnavailableError extends Error {
-  constructor() {
-    super("This chat is no longer available.");
+  constructor(message = "This chat is no longer available.") {
+    super(message);
     this.name = "ChatUnavailableError";
   }
 }
