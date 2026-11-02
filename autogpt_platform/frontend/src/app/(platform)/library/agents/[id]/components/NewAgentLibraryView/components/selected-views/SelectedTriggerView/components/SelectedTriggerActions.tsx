@@ -13,6 +13,7 @@ import { Text } from "@/components/atoms/Text/Text";
 import { Dialog } from "@/components/molecules/Dialog/Dialog";
 import { useToast } from "@/components/molecules/Toast/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
+import { useT } from "@/lib/i18n";
 import { useState } from "react";
 import { AgentActionsDropdown } from "../../AgentActionsDropdown";
 import { Delete02Icon, FloppyDiskIcon } from "@hugeicons/core-free-icons";
@@ -36,6 +37,7 @@ export function SelectedTriggerActions({
   onSwitchToRunsTab,
 }: Props) {
   const { toast } = useToast();
+  const t = useT();
   const queryClient = useQueryClient();
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
@@ -43,7 +45,7 @@ export function SelectedTriggerActions({
     mutation: {
       onSuccess: async () => {
         toast({
-          title: "Trigger deleted",
+          title: t("library3.triggerActions.deleted"),
         });
         const queryKey = getGetV2ListPresetsQueryKey({
           graph_id: agent.graph_id,
@@ -70,8 +72,8 @@ export function SelectedTriggerActions({
       },
       onError: (error: any) => {
         toast({
-          title: "Failed to delete trigger",
-          description: error.message || "An unexpected error occurred.",
+          title: t("library3.triggerActions.deleteFailed"),
+          description: error.message || t("library2.common.unexpectedError"),
           variant: "destructive",
         });
       },
@@ -88,7 +90,7 @@ export function SelectedTriggerActions({
         <Button
           variant="icon"
           size="icon"
-          aria-label="Save changes"
+          aria-label={t("library3.common.saveChanges")}
           onClick={onSaveChanges}
           disabled={isSaving || deleteMutation.isPending}
         >
@@ -105,7 +107,7 @@ export function SelectedTriggerActions({
         <Button
           variant="icon"
           size="icon"
-          aria-label="Delete trigger"
+          aria-label={t("library3.triggerActions.delete")}
           onClick={() => setShowDeleteDialog(true)}
           disabled={isSaving || deleteMutation.isPending}
         >
@@ -124,27 +126,24 @@ export function SelectedTriggerActions({
           set: setShowDeleteDialog,
         }}
         styling={{ maxWidth: "32rem" }}
-        title="Delete trigger"
+        title={t("library3.triggerActions.delete")}
       >
         <Dialog.Content>
-          <Text variant="large">
-            Are you sure you want to delete this trigger? This action cannot be
-            undone.
-          </Text>
+          <Text variant="large">{t("library3.triggerActions.deleteBody")}</Text>
           <Dialog.Footer>
             <Button
               variant="secondary"
               onClick={() => setShowDeleteDialog(false)}
               disabled={deleteMutation.isPending}
             >
-              Cancel
+              {t("library2.common.cancel")}
             </Button>
             <Button
               variant="destructive"
               onClick={handleDelete}
               loading={deleteMutation.isPending}
             >
-              Delete
+              {t("library3.common.delete")}
             </Button>
           </Dialog.Footer>
         </Dialog.Content>

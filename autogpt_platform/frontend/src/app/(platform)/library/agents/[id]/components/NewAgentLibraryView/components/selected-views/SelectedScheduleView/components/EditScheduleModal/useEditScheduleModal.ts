@@ -4,6 +4,7 @@ import { getGetV1ListGraphExecutionsQueryKey } from "@/app/api/__generated__/end
 import { usePatchV1UpdateExecutionSchedule } from "@/app/api/__generated__/endpoints/schedules/schedules";
 import type { GraphExecutionJobInfo } from "@/app/api/__generated__/models/graphExecutionJobInfo";
 import { useToast } from "@/components/molecules/Toast/use-toast";
+import { useLocale, useT } from "@/lib/i18n";
 import { safeHumanizeCronExpression } from "@/lib/cron-expression-utils";
 import { invalidateAllScheduleQueries } from "@/services/schedules/invalidate-schedules";
 import { useQueryClient } from "@tanstack/react-query";
@@ -29,6 +30,8 @@ export function useEditScheduleModal(
 ) {
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const t = useT();
+  const locale = useLocale();
   const [isOpen, setIsOpen] = useState(false);
   const [form, setForm] = useState(() => formFromSchedule(schedule));
   const [errors, setErrors] = useState<FormErrors>({});
@@ -58,11 +61,11 @@ export function useEditScheduleModal(
         },
         onError: (error) => {
           toast({
-            title: "Failed to update schedule",
+            title: t("library3.editSchedule.updateFailed"),
             description:
               error instanceof Error
                 ? error.message
-                : "An unexpected error occurred.",
+                : t("library2.common.unexpectedError"),
             variant: "destructive",
           });
         },
@@ -70,16 +73,19 @@ export function useEditScheduleModal(
     });
 
   function handleSave() {
-    const errorsNow: FormErrors = validateSchedule({
-      scheduleName: form.name,
-      time: form.canEditTiming ? form.time : undefined,
-    });
+    const errorsNow: FormErrors = validateSchedule(
+      {
+        scheduleName: form.name,
+        time: form.canEditTiming ? form.time : undefined,
+      },
+      locale,
+    );
     if (
       form.canEditTiming &&
       form.repeat === "weekly" &&
       form.selectedDays.length === 0
     ) {
-      errorsNow.days = "Pick at least one day";
+      errorsNow.days = t("library3.editSchedule.pickOneDay");
     }
     setErrors(errorsNow);
     if (Object.keys(errorsNow).length > 0) return;
@@ -105,8 +111,14 @@ export function useEditScheduleModal(
     time: form.time,
     setTime: (time: string) => update({ time }),
     errors,
-    repeatOptions: REPEAT_OPTIONS,
-    dayItems: DAY_ITEMS,
+    repeatOptions: REPEAT_OPTIONS.map((option) => ({
+      value: option.value,
+      label: t(option.labelKey),
+    })),
+    dayItems: DAY_ITEMS.map((item) => ({
+      value: item.value,
+      label: t(item.labelKey),
+    })),
     handleSave,
     isPending,
   };

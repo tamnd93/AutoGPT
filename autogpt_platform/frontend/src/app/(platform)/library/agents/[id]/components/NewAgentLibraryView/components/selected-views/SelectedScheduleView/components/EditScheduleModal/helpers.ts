@@ -1,19 +1,19 @@
 import type { GraphExecutionJobInfo } from "@/app/api/__generated__/models/graphExecutionJobInfo";
 
 export const REPEAT_OPTIONS = [
-  { value: "daily", label: "Daily" },
-  { value: "weekly", label: "Weekly" },
-];
+  { value: "daily", labelKey: "library3.editSchedule.repeatDaily" },
+  { value: "weekly", labelKey: "library3.editSchedule.repeatWeekly" },
+] as const;
 
 export const DAY_ITEMS = [
-  { value: "0", label: "Su" },
-  { value: "1", label: "Mo" },
-  { value: "2", label: "Tu" },
-  { value: "3", label: "We" },
-  { value: "4", label: "Th" },
-  { value: "5", label: "Fr" },
-  { value: "6", label: "Sa" },
-];
+  { value: "0", labelKey: "library3.editSchedule.daySun" },
+  { value: "1", labelKey: "library3.editSchedule.dayMon" },
+  { value: "2", labelKey: "library3.editSchedule.dayTue" },
+  { value: "3", labelKey: "library3.editSchedule.dayWed" },
+  { value: "4", labelKey: "library3.editSchedule.dayThu" },
+  { value: "5", labelKey: "library3.editSchedule.dayFri" },
+  { value: "6", labelKey: "library3.editSchedule.daySat" },
+] as const;
 
 export interface EditScheduleForm {
   name: string;

@@ -8,7 +8,7 @@ import { Text } from "@/components/atoms/Text/Text";
 import { ErrorCard } from "@/components/molecules/ErrorCard/ErrorCard";
 import { humanizeCronExpression } from "@/lib/cron-expression-utils";
 import { useUserTimezone } from "@/lib/hooks/useUserTimezone";
-import { useLocale } from "@/lib/i18n";
+import { useLocale, useT } from "@/lib/i18n";
 import { formatInTimezone, getTimezoneDisplayName } from "@/lib/timezone-utils";
 import { LoadingSelectedContent } from "../LoadingSelectedContent";
 import { RunDetailCard } from "../RunDetailCard/RunDetailCard";
@@ -46,6 +46,7 @@ export function SelectedTriggerAgentView({
   });
 
   const locale = useLocale();
+  const t = useT();
   const rawUserTimezone = useUserTimezone();
   const displayTimezone =
     rawUserTimezone && rawUserTimezone !== "not-set"
@@ -60,7 +61,7 @@ export function SelectedTriggerAgentView({
         ? queryError.message
         : queryError != null
           ? String(queryError)
-          : "Failed to load trigger data";
+          : t("library3.triggerAgent.loadFailed");
     return <ErrorCard responseError={{ message }} context="trigger workflow" />;
   }
 
@@ -71,9 +72,9 @@ export function SelectedTriggerAgentView({
   if (!triggerAgent) {
     return (
       <SelectedViewLayout agent={agent} banner={banner}>
-        <RunDetailCard title="Trigger not found">
+        <RunDetailCard title={t("library2.triggerNotFound.title")}>
           <Text variant="body" className="!text-foreground-tertiary">
-            This trigger workflow no longer exists.
+            {t("library3.triggerAgent.notFoundBody")}
           </Text>
         </RunDetailCard>
       </SelectedViewLayout>
@@ -91,19 +92,17 @@ export function SelectedTriggerAgentView({
                   <Text variant="body">{triggerAgent.description}</Text>
                 ) : (
                   <Text variant="body" className="!text-foreground-tertiary">
-                    No description.
+                    {t("library3.common.noDescription")}
                   </Text>
                 )}
                 <Text variant="small" className="!text-foreground-tertiary">
-                  Trigger workflows run on a schedule and execute this workflow
-                  when their conditions are met. Edit them in the builder to
-                  change what they do.
+                  {t("library3.triggerAgent.descriptionNote")}
                 </Text>
               </div>
             </RunDetailCard>
 
             {schedule && (
-              <RunDetailCard title="Schedule">
+              <RunDetailCard title={t("library2.scheduleView.schedule")}>
                 <div className="flex flex-col gap-6">
                   {schedule.graph_version !== triggerAgent.graph_version && (
                     <Text
@@ -111,14 +110,16 @@ export function SelectedTriggerAgentView({
                       // TODO(tokens): no exact role for !text-amber-800 (#92400E)
                       className="rounded-md bg-warning-surface px-3 py-2 !text-amber-800"
                     >
-                      This schedule is running version {schedule.graph_version}{" "}
-                      of the trigger workflow, but the latest version is{" "}
-                      {triggerAgent.graph_version}. Ask your expert to recreate
-                      the schedule to pick up your latest edits.
+                      {t("library3.triggerAgent.versionWarn", {
+                        current: schedule.graph_version,
+                        latest: triggerAgent.graph_version,
+                      })}
                     </Text>
                   )}
                   <div className="flex flex-col gap-1.5">
-                    <Text variant="large-medium">Recurrence</Text>
+                    <Text variant="large-medium">
+                      {t("library2.scheduleView.recurrence")}
+                    </Text>
                     <Text variant="body" className="flex items-center gap-3">
                       {humanizeCronExpression(schedule.cron)}{" "}
                       <span className="text-foreground-tertiary">&middot;</span>{" "}
@@ -131,7 +132,9 @@ export function SelectedTriggerAgentView({
                     </Text>
                   </div>
                   <div className="flex flex-col gap-1.5">
-                    <Text variant="large-medium">Next run</Text>
+                    <Text variant="large-medium">
+                      {t("library2.scheduleView.nextRun")}
+                    </Text>
                     <Text variant="body" className="flex items-center gap-3">
                       {formatInTimezone(
                         schedule.next_run_time,
@@ -160,9 +163,9 @@ export function SelectedTriggerAgentView({
             )}
 
             {!schedule && !isSchedulesLoading && (
-              <RunDetailCard title="Schedule">
+              <RunDetailCard title={t("library2.scheduleView.schedule")}>
                 <Text variant="body" className="!text-foreground-tertiary">
-                  No schedule configured for this trigger workflow.
+                  {t("library3.triggerAgent.noSchedule")}
                 </Text>
               </RunDetailCard>
             )}

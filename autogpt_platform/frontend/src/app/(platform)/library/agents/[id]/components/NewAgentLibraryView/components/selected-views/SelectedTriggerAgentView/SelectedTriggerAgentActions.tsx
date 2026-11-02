@@ -11,6 +11,7 @@ import {
   PencilIcon,
 } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   parentAgent: LibraryAgent;
@@ -28,15 +29,20 @@ export function SelectedTriggerAgentActions({
     triggerAgent,
     onDeleted,
   });
+  const t = useT();
 
   return (
     <>
       <div className="my-4 flex flex-col items-center gap-3">
         <Link
           href={`/library/agents/${triggerAgent.id}`}
-          aria-label="View in library"
+          aria-label={t("library3.triggerAgent.viewInLibrary")}
         >
-          <Button variant="icon" size="icon" aria-label="View in library">
+          <Button
+            variant="icon"
+            size="icon"
+            aria-label={t("library3.triggerAgent.viewInLibrary")}
+          >
             <Icon
               icon={LinkSquare01Icon}
               size={18}
@@ -46,9 +52,13 @@ export function SelectedTriggerAgentActions({
         </Link>
         <Link
           href={`/build?flowID=${triggerAgent.graph_id}`}
-          aria-label="Open in builder"
+          aria-label={t("library3.common.openInBuilder")}
         >
-          <Button variant="icon" size="icon" aria-label="Open in builder">
+          <Button
+            variant="icon"
+            size="icon"
+            aria-label={t("library3.common.openInBuilder")}
+          >
             <Icon
               icon={PencilIcon}
               size={18}
@@ -59,7 +69,7 @@ export function SelectedTriggerAgentActions({
         <Button
           variant="icon"
           size="icon"
-          aria-label="Remove trigger"
+          aria-label={t("library3.triggerAgent.remove")}
           onClick={openDialog}
           disabled={isDeleting}
         >

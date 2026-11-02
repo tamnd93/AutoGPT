@@ -13,6 +13,7 @@ import {
   TabsLineTrigger,
 } from "@/components/molecules/TabsLine/TabsLine";
 import { useStableCallback } from "@/hooks/useStableCallback";
+import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import {
   activeItemParamFor,
@@ -55,6 +56,7 @@ export function SidebarRunsList({
   onTabChange,
   onCountsChange,
 }: Props) {
+  const t = useT();
   // Stable, so the memoised run rows and the auto-select effects in
   // useSidebarRunsList do not re-run on every parent render.
   const selectRun = useStableCallback(onSelectRun);
@@ -133,20 +135,21 @@ export function SidebarRunsList({
             className={cn(AGENT_LIBRARY_SECTION_PADDING_X, "min-w-max")}
           >
             <TabsLineTrigger value="runs">
-              Tasks <span className="ml-3 inline-block">{runsCount}</span>
+              {t("library3.sidebar.tasksTab")}{" "}
+              <span className="ml-3 inline-block">{runsCount}</span>
             </TabsLineTrigger>
             <TabsLineTrigger value="scheduled">
-              Scheduled{" "}
+              {t("library3.sidebar.scheduledTab")}{" "}
               <span className="ml-3 inline-block">{schedulesCount}</span>
             </TabsLineTrigger>
             {triggersCount > 0 && (
               <TabsLineTrigger value="triggers">
-                Triggers{" "}
+                {t("library3.sidebar.triggersTab")}{" "}
                 <span className="ml-3 inline-block">{triggersCount}</span>
               </TabsLineTrigger>
             )}
             <TabsLineTrigger value="templates">
-              Templates{" "}
+              {t("library3.sidebar.templatesTab")}{" "}
               <span className="ml-3 inline-block">{templatesCount}</span>
             </TabsLineTrigger>
           </TabsLineList>
@@ -203,7 +206,7 @@ export function SidebarRunsList({
             ) : (
               <div className="flex min-h-[50vh] flex-col items-center justify-center">
                 <Text variant="large" className="text-foreground-body">
-                  No scheduled workflows
+                  {t("library3.sidebar.noScheduled")}
                 </Text>
               </div>
             )}
@@ -224,7 +227,7 @@ export function SidebarRunsList({
                     variant="body-medium"
                     className="px-1 !text-foreground-tertiary"
                   >
-                    Webhook Triggers
+                    {t("library3.sidebar.webhookTriggers")}
                   </Text>
                   <div className="flex flex-nowrap items-center justify-start gap-4 lg:flex-col lg:gap-3">
                     {triggers.map((trigger) => (
@@ -251,7 +254,7 @@ export function SidebarRunsList({
                     variant="body-medium"
                     className="px-1 !text-foreground-tertiary"
                   >
-                    Trigger Workflows
+                    {t("library3.sidebar.triggerWorkflows")}
                   </Text>
                   <div className="flex flex-nowrap items-center justify-start gap-4 lg:flex-col lg:gap-3">
                     {triggerAgents.map((triggerAgent) => (
@@ -281,11 +284,10 @@ export function SidebarRunsList({
               {triggers.length === 0 && triggerAgents.length === 0 && (
                 <div className="flex min-h-[50vh] flex-col items-center justify-center gap-2 px-6 text-center">
                   <Text variant="large" className="text-foreground-body">
-                    No triggers set up
+                    {t("library3.sidebar.noTriggers")}
                   </Text>
                   <Text variant="body" className="!text-foreground-tertiary">
-                    Ask an expert to set up a trigger for this workflow (e.g.
-                    &ldquo;run this when a new email arrives&rdquo;).
+                    {t("library3.sidebar.noTriggersHint")}
                   </Text>
                 </div>
               )}
@@ -314,7 +316,7 @@ export function SidebarRunsList({
             ) : (
               <div className="flex min-h-[50vh] flex-col items-center justify-center">
                 <Text variant="large" className="text-foreground-body">
-                  No templates saved
+                  {t("library3.sidebar.noTemplates")}
                 </Text>
               </div>
             )}

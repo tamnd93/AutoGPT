@@ -10,6 +10,7 @@ import {
   waitFor,
 } from "@/tests/integrations/test-utils";
 import { afterEach, describe, expect, test, vi } from "vitest";
+import { LocaleProvider } from "@/lib/i18n";
 import { ScheduleActionsDropdown } from "./ScheduleActionsDropdown";
 
 const toastMock = vi.fn();
@@ -45,6 +46,21 @@ afterEach(() => {
 });
 
 describe("ScheduleActionsDropdown", () => {
+  test("reads the schedule actions in Vietnamese", () => {
+    render(
+      <LocaleProvider locale="vi">
+        <ScheduleActionsDropdown
+          agent={agent}
+          schedule={schedule}
+          onRunCreated={vi.fn()}
+          onScheduleDeleted={vi.fn()}
+        />
+      </LocaleProvider>,
+    );
+
+    expect(screen.getByLabelText("Hành động khác")).toBeDefined();
+  });
+
   test("Run now hands the new run on", async () => {
     server.use(
       getPostV1ExecuteGraphAgentMockHandler({

@@ -12,6 +12,7 @@ import { EditScheduleModal } from "../EditScheduleModal/EditScheduleModal";
 import { useSelectedScheduleActions } from "./useSelectedScheduleActions";
 import { Delete02Icon, EyeIcon, PlayIcon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 
 type Props = {
   agent: LibraryAgent;
@@ -43,6 +44,7 @@ export function SelectedScheduleActions({
     onDeleted,
     onSelectRun,
   });
+  const t = useT();
 
   return (
     <>
@@ -50,7 +52,7 @@ export function SelectedScheduleActions({
         <Button
           variant="icon"
           size="icon"
-          aria-label="Run now"
+          aria-label={t("library3.scheduleActions.runNow")}
           onClick={handleRunNow}
           disabled={isRunning || !schedule}
         >
@@ -67,7 +69,7 @@ export function SelectedScheduleActions({
             as="NextLink"
             href={openInBuilderHref}
             target="_blank"
-            aria-label="View scheduled task details"
+            aria-label={t("library3.scheduleActions.viewDetails")}
           >
             <Icon icon={EyeIcon} size={18} className="text-foreground-body" />
           </Button>
@@ -82,7 +84,7 @@ export function SelectedScheduleActions({
         <Button
           variant="icon"
           size="icon"
-          aria-label="Delete schedule"
+          aria-label={t("library3.scheduleActions.delete")}
           onClick={() => setShowDeleteDialog(true)}
           disabled={isDeleting}
         >
@@ -101,12 +103,11 @@ export function SelectedScheduleActions({
           set: setShowDeleteDialog,
         }}
         styling={{ maxWidth: "32rem" }}
-        title="Delete schedule"
+        title={t("library2.actionsDropdown.deleteScheduleTitle")}
       >
         <Dialog.Content>
           <Text variant="large">
-            Are you sure you want to delete this schedule? This action cannot be
-            undone.
+            {t("library2.actionsDropdown.deleteScheduleBody")}
           </Text>
           <Dialog.Footer>
             <Button
@@ -114,14 +115,14 @@ export function SelectedScheduleActions({
               onClick={() => setShowDeleteDialog(false)}
               disabled={isDeleting}
             >
-              Cancel
+              {t("library2.common.cancel")}
             </Button>
             <Button
               variant="destructive"
               onClick={handleDelete}
               loading={isDeleting}
             >
-              Delete Schedule
+              {t("library2.actionsDropdown.deleteScheduleConfirm")}
             </Button>
           </Dialog.Footer>
         </Dialog.Content>

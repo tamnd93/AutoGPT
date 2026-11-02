@@ -3,6 +3,7 @@
 import type { GraphExecutionMeta } from "@/app/api/__generated__/models/graphExecutionMeta";
 import type { LibraryAgent } from "@/app/api/__generated__/models/libraryAgent";
 import { Input } from "@/components/atoms/Input/Input";
+import { useT } from "@/lib/i18n";
 import { ErrorCard } from "@/components/molecules/ErrorCard/ErrorCard";
 import { CredentialsInput } from "../../../../../../../../../../components/contextual/CredentialsInput/CredentialsInput";
 import {
@@ -57,6 +58,7 @@ export function SelectedTemplateView({
     onRunCreated,
   });
 
+  const t = useT();
   const agentInputFields = getAgentInputFields(agent);
   const agentCredentialsFields = getAgentCredentialsFields(agent);
   const inputFields = Object.entries(agentInputFields);
@@ -70,7 +72,7 @@ export function SelectedTemplateView({
             ? {
                 message: String(
                   (error as unknown as { message?: string })?.message ||
-                    "Failed to load template",
+                    t("library3.templateView.loadFailed"),
                 ),
               }
             : undefined
@@ -96,7 +98,9 @@ export function SelectedTemplateView({
     return null;
   }
 
-  const templateOrTrigger = agent.trigger_setup_info ? "Trigger" : "Template";
+  const templateOrTrigger = agent.trigger_setup_info
+    ? t("library3.templateView.trigger")
+    : t("library3.templateView.template");
   const hasWebhook = !!template.webhook_id && template.webhook;
 
   return (
@@ -113,30 +117,39 @@ export function SelectedTemplateView({
               />
             )}
 
-            <RunDetailCard title={`${templateOrTrigger} Details`}>
+            <RunDetailCard
+              title={t("library3.templateView.details", {
+                kind: templateOrTrigger,
+              })}
+            >
               <div className="flex flex-col gap-2">
                 <Input
                   id="template-name"
-                  label="Name"
+                  label={t("library3.common.name")}
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  placeholder={`Enter ${templateOrTrigger.toLowerCase()} name`}
+                  placeholder={t("library3.templateView.namePlaceholder", {
+                    kind: templateOrTrigger.toLowerCase(),
+                  })}
                 />
 
                 <Input
                   id="template-description"
-                  label="Description"
+                  label={t("library3.common.description")}
                   type="textarea"
                   rows={3}
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  placeholder={`Enter ${templateOrTrigger.toLowerCase()} description`}
+                  placeholder={t(
+                    "library3.templateView.descriptionPlaceholder",
+                    { kind: templateOrTrigger.toLowerCase() },
+                  )}
                 />
               </div>
             </RunDetailCard>
 
             {inputFields.length > 0 && (
-              <RunDetailCard title="Your Input">
+              <RunDetailCard title={t("library3.common.yourInput")}>
                 <div className="flex flex-col gap-4">
                   {inputFields.map(([key, inputSubSchema]) => (
                     <RunAgentInputs
@@ -152,7 +165,7 @@ export function SelectedTemplateView({
             )}
 
             {credentialFields.length > 0 && (
-              <RunDetailCard title="Task Credentials">
+              <RunDetailCard title={t("library3.common.taskCredentials")}>
                 <div className="flex flex-col gap-6">
                   {credentialFields.map(([key, inputSubSchema]) => (
                     <CredentialsInput

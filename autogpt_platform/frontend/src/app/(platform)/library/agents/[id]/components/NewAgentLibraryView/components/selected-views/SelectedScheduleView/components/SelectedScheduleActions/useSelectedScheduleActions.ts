@@ -9,6 +9,7 @@ import type { GraphExecutionJobInfo } from "@/app/api/__generated__/models/graph
 import type { LibraryAgent } from "@/app/api/__generated__/models/libraryAgent";
 import { okData } from "@/app/api/helpers";
 import { useToast } from "@/components/molecules/Toast/use-toast";
+import { useT } from "@/lib/i18n";
 import { invalidateAllScheduleQueries } from "@/services/schedules/invalidate-schedules";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
@@ -29,13 +30,14 @@ export function useSelectedScheduleActions({
   onSelectRun,
 }: UseSelectedScheduleActionsProps) {
   const { toast } = useToast();
+  const t = useT();
   const queryClient = useQueryClient();
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   const deleteMutation = useDeleteV1DeleteExecutionSchedule({
     mutation: {
       onSuccess: () => {
-        toast({ title: "Schedule deleted" });
+        toast({ title: t("library2.schedule.deleted") });
         setShowDeleteDialog(false);
 
         onDeleted?.();
@@ -44,11 +46,11 @@ export function useSelectedScheduleActions({
       },
       onError: (error: unknown) =>
         toast({
-          title: "Failed to delete schedule",
+          title: t("library2.schedule.deleteFailed"),
           description:
             error instanceof Error
               ? error.message
-              : "An unexpected error occurred.",
+              : t("library2.common.unexpectedError"),
           variant: "destructive",
         }),
     },
@@ -65,15 +67,15 @@ export function useSelectedScheduleActions({
   async function handleRunNow() {
     if (!schedule) {
       toast({
-        title: "Schedule not loaded",
-        description: "Please wait for the schedule to load.",
+        title: t("library3.scheduleActions.notLoaded"),
+        description: t("library3.scheduleActions.waitForLoad"),
         variant: "destructive",
       });
       return;
     }
 
     try {
-      toast({ title: "Run started" });
+      toast({ title: t("library2.runActions.toast.started") });
 
       const res = await executeAgent({
         graphId: schedule.graph_id,
@@ -96,11 +98,11 @@ export function useSelectedScheduleActions({
       }
     } catch (error: unknown) {
       toast({
-        title: "Failed to start run",
+        title: t("library2.runActions.toast.startFailed"),
         description:
           error instanceof Error
             ? error.message
-            : "An unexpected error occurred.",
+            : t("library2.common.unexpectedError"),
         variant: "destructive",
       });
     }

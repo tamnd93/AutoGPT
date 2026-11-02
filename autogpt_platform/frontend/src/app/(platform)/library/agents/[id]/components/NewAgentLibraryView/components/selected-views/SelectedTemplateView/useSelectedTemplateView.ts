@@ -12,6 +12,7 @@ import type { GraphExecutionMeta } from "@/app/api/__generated__/models/graphExe
 import type { LibraryAgentPresetUpdatable } from "@/app/api/__generated__/models/libraryAgentPresetUpdatable";
 import { okData } from "@/app/api/helpers";
 import { useToast } from "@/components/molecules/Toast/use-toast";
+import { useT } from "@/lib/i18n";
 import type { CredentialsMetaInput } from "@/lib/autogpt-server-api/types";
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
@@ -28,6 +29,7 @@ export function useSelectedTemplateView({
   onRunCreated,
 }: Args) {
   const { toast } = useToast();
+  const t = useT();
   const queryClient = useQueryClient();
 
   const query = useGetV2GetASpecificPreset(templateId, {
@@ -58,7 +60,7 @@ export function useSelectedTemplateView({
       onSuccess: (response) => {
         if (response.status === 200) {
           toast({
-            title: "Template updated",
+            title: t("library3.templateView.updated"),
           });
           queryClient.invalidateQueries({
             queryKey: getGetV2GetASpecificPresetQueryKey(templateId),
@@ -70,8 +72,8 @@ export function useSelectedTemplateView({
       },
       onError: (error: any) => {
         toast({
-          title: "Failed to update template",
-          description: error.message || "An unexpected error occurred.",
+          title: t("library3.templateView.updateFailed"),
+          description: error.message || t("library2.common.unexpectedError"),
           variant: "destructive",
         });
       },
@@ -85,7 +87,7 @@ export function useSelectedTemplateView({
           const execution = okData(response);
           if (execution) {
             toast({
-              title: "Task started",
+              title: t("library3.templateView.started"),
             });
             queryClient.invalidateQueries({
               queryKey: getGetV1ListGraphExecutionsQueryKey(graphId),
@@ -96,8 +98,8 @@ export function useSelectedTemplateView({
       },
       onError: (error: any) => {
         toast({
-          title: "Failed to start task",
-          description: error.message || "An unexpected error occurred.",
+          title: t("library3.templateView.startFailed"),
+          description: error.message || t("library2.common.unexpectedError"),
           variant: "destructive",
         });
       },
@@ -164,7 +166,7 @@ export function useSelectedTemplateView({
 
   const httpError =
     query.isSuccess && !query.data
-      ? { status: 404, statusText: "Not found" }
+      ? { status: 404, statusText: t("library3.common.notFound") }
       : undefined;
 
   useEffect(() => {

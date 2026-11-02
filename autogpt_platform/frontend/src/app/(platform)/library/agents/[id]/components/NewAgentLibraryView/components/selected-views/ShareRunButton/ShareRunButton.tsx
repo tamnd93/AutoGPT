@@ -13,6 +13,7 @@ import {
   Tick02Icon,
 } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   graphId: string;
@@ -41,17 +42,18 @@ export function ShareRunButton({
     isShared: initialIsShared,
     shareToken: initialShareToken,
   });
+  const t = useT();
 
   return (
     <Dialog
-      title="Share Workflow Run"
+      title={t("library3.share.title")}
       styling={{ maxWidth: "36rem", minWidth: "auto" }}
     >
       <Dialog.Trigger>
         <Button
           variant="icon"
           size="icon"
-          aria-label="Share results"
+          aria-label={t("library3.share.aria")}
           className={isShared ? "relative" : ""}
         >
           <Icon icon={Share08Icon} size={18} className="text-foreground-body" />
@@ -62,8 +64,8 @@ export function ShareRunButton({
         <div className="flex flex-col gap-4">
           <Text variant="large">
             {isShared
-              ? "Your workflow run is currently shared. Anyone with the link can view the output."
-              : "Generate a public link to share this workflow run output with others."}
+              ? t("library3.share.sharedBody")
+              : t("library3.share.generateBody")}
           </Text>
 
           {!isShared ? (
@@ -71,12 +73,7 @@ export function ShareRunButton({
               <div className="!mb-4">
                 <Alert>
                   <Icon icon={Alert01Icon} className="h-4 w-4" />
-                  <Text variant="body">
-                    When you enable sharing, the output of this workflow run
-                    will be publicly accessible to anyone with the link. The
-                    page will include a noindex directive to discourage search
-                    engine crawling, but this cannot be guaranteed.
-                  </Text>
+                  <Text variant="body">{t("library3.share.warning")}</Text>
                 </Alert>
               </div>
               <Button
@@ -84,7 +81,7 @@ export function ShareRunButton({
                 loading={loading}
                 className="mt-6 w-full"
               >
-                Enable Sharing
+                {t("library3.share.enable")}
               </Button>
             </>
           ) : (
@@ -94,7 +91,7 @@ export function ShareRunButton({
                   type="text"
                   value={shareUrl}
                   readOnly
-                  label="Share URL"
+                  label={t("library3.share.url")}
                   id="share-url"
                   size="small"
                   className="!m-0"
@@ -116,9 +113,7 @@ export function ShareRunButton({
               <Alert>
                 <Icon icon={Alert01Icon} className="h-4 w-4" />
                 <AlertDescription>
-                  This link is publicly accessible. Only share it with people
-                  you trust. The shared page includes noindex directives to
-                  discourage search engines.
+                  {t("library3.share.publicNote")}
                 </AlertDescription>
               </Alert>
               <Button
@@ -127,7 +122,7 @@ export function ShareRunButton({
                 variant="destructive"
                 className="mt-6 w-full"
               >
-                Stop Sharing
+                {t("library3.share.stop")}
               </Button>
             </>
           )}

@@ -9,6 +9,7 @@ import {
 import type { LibraryAgentPresetUpdatable } from "@/app/api/__generated__/models/libraryAgentPresetUpdatable";
 import { okData } from "@/app/api/helpers";
 import { useToast } from "@/components/molecules/Toast/use-toast";
+import { useT } from "@/lib/i18n";
 import type { CredentialsMetaInput } from "@/lib/autogpt-server-api/types";
 import { retryUnlessClientError } from "../../../helpers";
 import { useQueryClient } from "@tanstack/react-query";
@@ -21,6 +22,7 @@ type Args = {
 
 export function useSelectedTriggerView({ triggerId, graphId }: Args) {
   const { toast } = useToast();
+  const t = useT();
   const queryClient = useQueryClient();
 
   const query = useGetV2GetASpecificPreset(triggerId, {
@@ -52,7 +54,7 @@ export function useSelectedTriggerView({ triggerId, graphId }: Args) {
       onSuccess: (response) => {
         if (response.status === 200) {
           toast({
-            title: "Trigger updated",
+            title: t("library3.triggerView.updated"),
           });
           queryClient.invalidateQueries({
             queryKey: getGetV2GetASpecificPresetQueryKey(triggerId),
@@ -64,8 +66,8 @@ export function useSelectedTriggerView({ triggerId, graphId }: Args) {
       },
       onError: (error: any) => {
         toast({
-          title: "Failed to update trigger",
-          description: error.message || "An unexpected error occurred.",
+          title: t("library3.triggerView.updateFailed"),
+          description: error.message || t("library2.common.unexpectedError"),
           variant: "destructive",
         });
       },
@@ -112,7 +114,7 @@ export function useSelectedTriggerView({ triggerId, graphId }: Args) {
 
   const httpError =
     query.isSuccess && !query.data
-      ? { status: 404, statusText: "Not found" }
+      ? { status: 404, statusText: t("library3.common.notFound") }
       : undefined;
 
   useEffect(() => {

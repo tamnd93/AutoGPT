@@ -24,6 +24,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { MoreVerticalIcon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   agent: LibraryAgent;
@@ -38,6 +39,7 @@ export function ScheduleActionsDropdown({
   onDeleted,
   onRunCreated,
 }: Props) {
+  const t = useT();
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
@@ -52,7 +54,7 @@ export function ScheduleActionsDropdown({
     try {
       await deleteSchedule({ scheduleId: schedule.id });
 
-      toast({ title: "Schedule deleted" });
+      toast({ title: t("library2.schedule.deleted") });
       setShowDeleteDialog(false);
 
       onDeleted?.();
@@ -60,11 +62,11 @@ export function ScheduleActionsDropdown({
       invalidateAllScheduleQueries(queryClient, agent.graph_id);
     } catch (error: unknown) {
       toast({
-        title: "Failed to delete schedule",
+        title: t("library2.schedule.deleteFailed"),
         description:
           error instanceof Error
             ? error.message
-            : "An unexpected error occurred.",
+            : t("library2.common.unexpectedError"),
         variant: "destructive",
       });
     }
@@ -74,7 +76,7 @@ export function ScheduleActionsDropdown({
     e.stopPropagation();
 
     try {
-      toast({ title: "Run started" });
+      toast({ title: t("library2.runActions.toast.started") });
 
       const res = await executeAgent({
         graphId: schedule.graph_id,
@@ -97,11 +99,11 @@ export function ScheduleActionsDropdown({
       }
     } catch (error: unknown) {
       toast({
-        title: "Failed to start run",
+        title: t("library2.runActions.toast.startFailed"),
         description:
           error instanceof Error
             ? error.message
-            : "An unexpected error occurred.",
+            : t("library2.common.unexpectedError"),
         variant: "destructive",
       });
     }
@@ -115,7 +117,7 @@ export function ScheduleActionsDropdown({
             // TODO(tokens): no exact role for hover:bg-gray-100 (#F3F4F6)
             className="ml-auto shrink-0 rounded p-1 hover:bg-gray-100"
             onClick={(e) => e.stopPropagation()}
-            aria-label="More actions"
+            aria-label={t("library3.actions.more")}
           >
             <Icon
               // TODO(tokens): no exact role for text-gray-400 (#9CA3AF)
@@ -130,7 +132,9 @@ export function ScheduleActionsDropdown({
             disabled={isRunning}
             className="flex items-center gap-2"
           >
-            {isRunning ? "Running..." : "Run now"}
+            {isRunning
+              ? t("library3.scheduleActions.running")
+              : t("library3.scheduleActions.runNow")}
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem
@@ -140,7 +144,7 @@ export function ScheduleActionsDropdown({
             }}
             className="flex items-center gap-2"
           >
-            Delete schedule
+            {t("library3.scheduleActions.delete")}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
@@ -151,13 +155,12 @@ export function ScheduleActionsDropdown({
           set: setShowDeleteDialog,
         }}
         styling={{ maxWidth: "32rem" }}
-        title="Delete schedule"
+        title={t("library2.actionsDropdown.deleteScheduleTitle")}
       >
         <Dialog.Content>
           <div>
             <Text variant="large">
-              Are you sure you want to delete this schedule? This action cannot
-              be undone.
+              {t("library2.actionsDropdown.deleteScheduleBody")}
             </Text>
             <Dialog.Footer>
               <Button
@@ -165,14 +168,14 @@ export function ScheduleActionsDropdown({
                 disabled={isDeleting}
                 onClick={() => setShowDeleteDialog(false)}
               >
-                Cancel
+                {t("library2.common.cancel")}
               </Button>
               <Button
                 variant="destructive"
                 onClick={handleDelete}
                 loading={isDeleting}
               >
-                Delete Schedule
+                {t("library2.actionsDropdown.deleteScheduleConfirm")}
               </Button>
             </Dialog.Footer>
           </div>

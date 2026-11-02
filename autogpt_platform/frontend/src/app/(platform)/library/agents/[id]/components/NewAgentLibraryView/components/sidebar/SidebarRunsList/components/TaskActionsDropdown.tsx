@@ -26,6 +26,7 @@ import { useState } from "react";
 import { CreateTemplateModal } from "../../../selected-views/SelectedRunView/components/CreateTemplateModal/CreateTemplateModal";
 import { MoreVerticalIcon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   agent: LibraryAgent;
@@ -34,6 +35,7 @@ interface Props {
 }
 
 export function TaskActionsDropdown({ agent, run, onDeleted }: Props) {
+  const t = useT();
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
@@ -49,7 +51,7 @@ export function TaskActionsDropdown({ agent, run, onDeleted }: Props) {
     try {
       await deleteRun({ graphExecId: run.id });
 
-      toast({ title: "Task deleted" });
+      toast({ title: t("library2.actionsDropdown.taskDeleted") });
 
       await queryClient.refetchQueries({
         queryKey: getGetV1ListGraphExecutionsQueryKey(agent.graph_id),
@@ -59,11 +61,11 @@ export function TaskActionsDropdown({ agent, run, onDeleted }: Props) {
       onDeleted?.();
     } catch (error: unknown) {
       toast({
-        title: "Failed to delete task",
+        title: t("library2.actionsDropdown.taskDeleteFailed"),
         description:
           error instanceof Error
             ? error.message
-            : "An unexpected error occurred.",
+            : t("library2.common.unexpectedError"),
         variant: "destructive",
       });
     }
@@ -81,7 +83,7 @@ export function TaskActionsDropdown({ agent, run, onDeleted }: Props) {
 
       if (res.status === 200) {
         toast({
-          title: "Template created",
+          title: t("library2.runActions.toast.templateCreated"),
         });
 
         queryClient.invalidateQueries({
@@ -94,11 +96,11 @@ export function TaskActionsDropdown({ agent, run, onDeleted }: Props) {
       }
     } catch (error: unknown) {
       toast({
-        title: "Failed to create template",
+        title: t("library2.runActions.toast.templateFailed"),
         description:
           error instanceof Error
             ? error.message
-            : "An unexpected error occurred.",
+            : t("library2.common.unexpectedError"),
         variant: "destructive",
       });
     }
@@ -112,7 +114,7 @@ export function TaskActionsDropdown({ agent, run, onDeleted }: Props) {
             // TODO(tokens): no exact role for hover:bg-gray-100 (#F3F4F6)
             className="ml-auto shrink-0 rounded p-1 hover:bg-gray-100"
             onClick={(e) => e.stopPropagation()}
-            aria-label="More actions"
+            aria-label={t("library3.actions.more")}
           >
             <Icon
               // TODO(tokens): no exact role for text-gray-400 (#9CA3AF)
@@ -129,7 +131,7 @@ export function TaskActionsDropdown({ agent, run, onDeleted }: Props) {
             }}
             className="flex items-center gap-2"
           >
-            Save as template
+            {t("library3.taskActions.saveAsTemplate")}
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem
@@ -139,7 +141,7 @@ export function TaskActionsDropdown({ agent, run, onDeleted }: Props) {
             }}
             className="flex items-center gap-2"
           >
-            Delete task
+            {t("library3.taskActions.delete")}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
@@ -150,13 +152,12 @@ export function TaskActionsDropdown({ agent, run, onDeleted }: Props) {
           set: setShowDeleteDialog,
         }}
         styling={{ maxWidth: "32rem" }}
-        title="Delete task"
+        title={t("library2.actionsDropdown.deleteTaskTitle")}
       >
         <Dialog.Content>
           <div>
             <Text variant="large">
-              Are you sure you want to delete this task? This action cannot be
-              undone.
+              {t("library2.actionsDropdown.deleteTaskBody")}
             </Text>
             <Dialog.Footer>
               <Button
@@ -164,14 +165,14 @@ export function TaskActionsDropdown({ agent, run, onDeleted }: Props) {
                 disabled={isDeletingRun}
                 onClick={() => setShowDeleteDialog(false)}
               >
-                Cancel
+                {t("library2.common.cancel")}
               </Button>
               <Button
                 variant="destructive"
                 onClick={handleDeleteRun}
                 loading={isDeletingRun}
               >
-                Delete Task
+                {t("library2.actionsDropdown.deleteTaskConfirm")}
               </Button>
             </Dialog.Footer>
           </div>

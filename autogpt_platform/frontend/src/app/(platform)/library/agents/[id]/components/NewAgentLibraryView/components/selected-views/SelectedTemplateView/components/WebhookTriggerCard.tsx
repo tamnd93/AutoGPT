@@ -7,6 +7,7 @@ import { Text } from "@/components/atoms/Text/Text";
 import { RunDetailCard } from "../../RunDetailCard/RunDetailCard";
 import { Copy01Icon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   template: LibraryAgentPreset;
@@ -21,6 +22,7 @@ function getTriggerStatus(
 }
 
 export function WebhookTriggerCard({ template, triggerSetupInfo }: Props) {
+  const t = useT();
   const status = getTriggerStatus(template);
   const webhook = template.webhook;
 
@@ -31,10 +33,12 @@ export function WebhookTriggerCard({ template, triggerSetupInfo }: Props) {
   }
 
   return (
-    <RunDetailCard title="Trigger Status">
+    <RunDetailCard title={t("library2.webhook.title")}>
       <div className="flex flex-col gap-4">
         <div className="flex items-center gap-2">
-          <Text variant="large-medium">Status</Text>
+          <Text variant="large-medium">
+            {t("library2.webhook.statusLabel")}
+          </Text>
           <span
             className={`rounded-full px-2 py-0.5 text-xs font-medium ${
               status === "active"
@@ -48,10 +52,10 @@ export function WebhookTriggerCard({ template, triggerSetupInfo }: Props) {
             }`}
           >
             {status === "active"
-              ? "Active"
+              ? t("library2.webhook.active")
               : status === "inactive"
-                ? "Inactive"
-                : "Broken"}
+                ? t("library2.webhook.inactive")
+                : t("library2.webhook.broken")}
           </span>
         </div>
 
@@ -61,17 +65,15 @@ export function WebhookTriggerCard({ template, triggerSetupInfo }: Props) {
             variant="body"
             className="text-red-600"
           >
-            This trigger is not attached to a webhook. Use &quot;Set up
-            trigger&quot; to fix this.
+            {t("library2.webhook.notAttached")}
           </Text>
         ) : !triggerSetupInfo.credentials_input_name && webhook ? (
           <div className="flex flex-col gap-2">
-            <Text variant="body">
-              This trigger is ready to be used. Use the Webhook URL below to set
-              up the trigger connection with the service of your choosing.
-            </Text>
+            <Text variant="body">{t("library2.webhook.ready")}</Text>
             <div className="flex flex-col gap-1">
-              <Text variant="body-medium">Webhook URL:</Text>
+              <Text variant="body-medium">
+                {t("library2.webhook.urlLabel")}
+              </Text>
               <div
                 // TODO(tokens): no exact role for bg-gray-50 (#F9FAFB)
                 className="flex gap-2 rounded-md bg-gray-50 p-2"
@@ -84,7 +86,7 @@ export function WebhookTriggerCard({ template, triggerSetupInfo }: Props) {
                   size="icon"
                   className="size-7 flex-none p-1"
                   onClick={handleCopyWebhookUrl}
-                  title="Copy webhook URL"
+                  title={t("library2.webhook.copyUrl")}
                 >
                   <Icon icon={Copy01Icon} className="size-4" />
                 </Button>
@@ -93,10 +95,9 @@ export function WebhookTriggerCard({ template, triggerSetupInfo }: Props) {
           </div>
         ) : (
           <Text variant="body" className="text-muted-foreground">
-            This workflow trigger is{" "}
             {template.is_active
-              ? "ready. When a trigger is received, it will run with the provided settings."
-              : "disabled. It will not respond to triggers until you enable it."}
+              ? t("library2.webhook.workflowTriggerReady")
+              : t("library2.webhook.workflowTriggerDisabled")}
           </Text>
         )}
       </div>

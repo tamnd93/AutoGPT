@@ -13,6 +13,7 @@ import { Text } from "@/components/atoms/Text/Text";
 import { Dialog } from "@/components/molecules/Dialog/Dialog";
 import { useToast } from "@/components/molecules/Toast/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
+import { useT } from "@/lib/i18n";
 import { useState } from "react";
 import { AgentActionsDropdown } from "../../AgentActionsDropdown";
 import {
@@ -44,6 +45,7 @@ export function SelectedTemplateActions({
   onSwitchToRunsTab,
 }: Props) {
   const { toast } = useToast();
+  const t = useT();
   const queryClient = useQueryClient();
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
@@ -51,7 +53,7 @@ export function SelectedTemplateActions({
     mutation: {
       onSuccess: async () => {
         toast({
-          title: "Template deleted",
+          title: t("library3.templateActions.deleted"),
         });
         const queryKey = getGetV2ListPresetsQueryKey({
           graph_id: agent.graph_id,
@@ -78,8 +80,8 @@ export function SelectedTemplateActions({
       },
       onError: (error: any) => {
         toast({
-          title: "Failed to delete template",
-          description: error.message || "An unexpected error occurred.",
+          title: t("library3.templateActions.deleteFailed"),
+          description: error.message || t("library2.common.unexpectedError"),
           variant: "destructive",
         });
       },
@@ -96,7 +98,7 @@ export function SelectedTemplateActions({
         <Button
           variant="icon"
           size="icon"
-          aria-label="Save changes"
+          aria-label={t("library3.common.saveChanges")}
           onClick={onSaveChanges}
           disabled={isSaving || isStarting || deleteMutation.isPending}
         >
@@ -114,7 +116,7 @@ export function SelectedTemplateActions({
           <Button
             variant="icon"
             size="icon"
-            aria-label="Start task from template"
+            aria-label={t("library3.templateActions.start")}
             onClick={onStartTask}
             disabled={isSaving || isStarting || deleteMutation.isPending}
           >
@@ -132,7 +134,7 @@ export function SelectedTemplateActions({
         <Button
           variant="icon"
           size="icon"
-          aria-label="Delete template"
+          aria-label={t("library3.templateActions.delete")}
           onClick={() => setShowDeleteDialog(true)}
           disabled={isSaving || isStarting || deleteMutation.isPending}
         >
@@ -151,12 +153,11 @@ export function SelectedTemplateActions({
           set: setShowDeleteDialog,
         }}
         styling={{ maxWidth: "32rem" }}
-        title="Delete template"
+        title={t("library3.templateActions.delete")}
       >
         <Dialog.Content>
           <Text variant="large">
-            Are you sure you want to delete this template? This action cannot be
-            undone.
+            {t("library3.templateActions.deleteBody")}
           </Text>
           <Dialog.Footer>
             <Button
@@ -164,14 +165,14 @@ export function SelectedTemplateActions({
               onClick={() => setShowDeleteDialog(false)}
               disabled={deleteMutation.isPending}
             >
-              Cancel
+              {t("library2.common.cancel")}
             </Button>
             <Button
               variant="destructive"
               onClick={handleDelete}
               loading={deleteMutation.isPending}
             >
-              Delete
+              {t("library3.common.delete")}
             </Button>
           </Dialog.Footer>
         </Dialog.Content>

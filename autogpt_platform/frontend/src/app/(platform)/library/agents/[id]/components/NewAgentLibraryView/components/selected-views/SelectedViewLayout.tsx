@@ -1,5 +1,6 @@
 import { LibraryAgent } from "@/app/api/__generated__/models/libraryAgent";
 import { Breadcrumbs } from "@/components/molecules/Breadcrumbs/Breadcrumbs";
+import { useT } from "@/lib/i18n";
 import { AGENT_LIBRARY_SECTION_PADDING_X } from "../../helpers";
 import { AgentSettingsModal } from "../modals/AgentSettingsModal/AgentSettingsModal";
 import { SectionWrap } from "../other/SectionWrap";
@@ -12,6 +13,8 @@ interface Props {
 }
 
 export function SelectedViewLayout(props: Props) {
+  const t = useT();
+
   return (
     <SectionWrap className="relative mb-3 flex min-h-0 flex-1 flex-col">
       <div
@@ -21,7 +24,7 @@ export function SelectedViewLayout(props: Props) {
         <div className="relative flex w-full items-center justify-between">
           <Breadcrumbs
             items={[
-              { name: "My Library", link: "/library" },
+              { name: t("library1.view.myLibrary"), link: "/library" },
               {
                 name: props.agent.name,
                 link: `/library/agents/${props.agent.id}`,

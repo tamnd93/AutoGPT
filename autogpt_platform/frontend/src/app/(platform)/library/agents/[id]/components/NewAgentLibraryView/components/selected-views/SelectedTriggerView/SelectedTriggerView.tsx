@@ -2,6 +2,7 @@
 
 import type { LibraryAgent } from "@/app/api/__generated__/models/libraryAgent";
 import { Input } from "@/components/atoms/Input/Input";
+import { useT } from "@/lib/i18n";
 import { CredentialsInput } from "@/components/contextual/CredentialsInput/CredentialsInput";
 import { ErrorCard } from "@/components/molecules/ErrorCard/ErrorCard";
 import { getErrorStatus } from "../../../helpers";
@@ -34,6 +35,7 @@ export function SelectedTriggerView({
   onSwitchToRunsTab,
   banner,
 }: Props) {
+  const t = useT();
   const {
     trigger,
     isLoading,
@@ -76,7 +78,7 @@ export function SelectedTriggerView({
             ? {
                 message: String(
                   (error as unknown as { message?: string })?.message ||
-                    "Failed to load trigger",
+                    t("library3.triggerView.loadFailed"),
                 ),
               }
             : undefined
@@ -111,24 +113,24 @@ export function SelectedTriggerView({
           <div className="flex flex-col gap-4">
             <RunDetailHeader agent={agent} run={undefined} />
 
-            <RunDetailCard title="Trigger Details">
+            <RunDetailCard title={t("library3.triggerView.details")}>
               <div className="flex flex-col gap-2">
                 <Input
                   id="trigger-name"
-                  label="Name"
+                  label={t("library3.common.name")}
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  placeholder="Enter trigger name"
+                  placeholder={t("library3.triggerView.namePlaceholder")}
                 />
 
                 <Input
                   id="trigger-description"
-                  label="Description"
+                  label={t("library3.common.description")}
                   type="textarea"
                   rows={3}
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  placeholder="Enter trigger description"
+                  placeholder={t("library3.triggerView.descriptionPlaceholder")}
                 />
               </div>
             </RunDetailCard>
@@ -141,7 +143,7 @@ export function SelectedTriggerView({
             )}
 
             {inputFields.length > 0 && (
-              <RunDetailCard title="Your Input">
+              <RunDetailCard title={t("library3.common.yourInput")}>
                 <div className="flex flex-col gap-4">
                   {inputFields.map(([key, inputSubSchema]) => (
                     <RunAgentInputs
@@ -157,7 +159,7 @@ export function SelectedTriggerView({
             )}
 
             {credentialFields.length > 0 && (
-              <RunDetailCard title="Task Credentials">
+              <RunDetailCard title={t("library3.common.taskCredentials")}>
                 <div className="flex flex-col gap-6">
                   {credentialFields.map(([key, inputSubSchema]) => (
                     <CredentialsInput

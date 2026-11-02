@@ -4,6 +4,7 @@ import {
   useDeleteV1DisableExecutionSharing,
 } from "@/app/api/__generated__/endpoints/default/default";
 import { useToast } from "@/components/molecules/Toast/use-toast";
+import { useT } from "@/lib/i18n";
 import { executionShareUrl } from "@/lib/share/routes";
 
 interface UseShareRunButtonProps {
@@ -23,6 +24,7 @@ export function useShareRunButton({
   const [shareToken, setShareToken] = useState(initialShareToken || null);
   const [copied, setCopied] = useState(false);
   const { toast } = useToast();
+  const t = useT();
 
   // Sync state when props change (e.g., after re-fetching run data)
   useEffect(() => {
@@ -51,21 +53,20 @@ export function useShareRunButton({
         setShareToken(response.data.share_token);
         setIsShared(true);
         toast({
-          title: "Sharing enabled",
-          description:
-            "Your workflow run is now publicly accessible via the share link.",
+          title: t("library3.share.enabledTitle"),
+          description: t("library3.share.enabledBody"),
         });
       } else {
         toast({
-          title: "Error",
-          description: "Failed to enable sharing. Please try again.",
+          title: t("library3.common.error"),
+          description: t("library3.share.enableFailed"),
           variant: "destructive",
         });
       }
     } catch {
       toast({
-        title: "Error",
-        description: "Failed to enable sharing. Please try again.",
+        title: t("library3.common.error"),
+        description: t("library3.share.enableFailed"),
         variant: "destructive",
       });
     }
@@ -81,13 +82,13 @@ export function useShareRunButton({
       setIsShared(false);
       setShareToken(null);
       toast({
-        title: "Sharing disabled",
-        description: "The share link is no longer accessible.",
+        title: t("library3.share.disabledTitle"),
+        description: t("library3.share.disabledBody"),
       });
     } catch {
       toast({
-        title: "Error",
-        description: "Failed to disable sharing. Please try again.",
+        title: t("library3.common.error"),
+        description: t("library3.share.disableFailed"),
         variant: "destructive",
       });
     }
@@ -99,13 +100,13 @@ export function useShareRunButton({
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
       toast({
-        title: "Copied!",
-        description: "Share link copied to clipboard.",
+        title: t("library3.share.copiedTitle"),
+        description: t("library3.share.copiedBody"),
       });
     } catch {
       toast({
-        title: "Error",
-        description: "Failed to copy link. Please try again.",
+        title: t("library3.common.error"),
+        description: t("library3.share.copyFailed"),
         variant: "destructive",
       });
     }
