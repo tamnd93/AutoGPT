@@ -16,6 +16,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { useCopilotStreamStore } from "../../../copilotStreamStore";
 import { useCopilotUIStore } from "../../../store";
 import { WorkspaceFileCards } from "../WorkspaceFileCards";
+import { LocaleProvider } from "@/lib/i18n";
 
 // Skip real download wiring — fetch/blob plumbing isn't under test.
 const downloadArtifactMock = vi.fn(() => Promise.resolve());
@@ -324,6 +325,25 @@ describe("WorkspaceFileCards", () => {
     await waitFor(() =>
       expect(toastSpy).toHaveBeenCalledWith(
         expect.objectContaining({ title: "Download all failed" }),
+      ),
+    );
+  });
+
+  it("toasts download-all failure in vietnamese", async () => {
+    downloadFilesAsZipMock.mockImplementation(() =>
+      Promise.reject(new Error("zip error")),
+    );
+    render(
+      <LocaleProvider locale="vi">
+        <WorkspaceFileCards sessionId={SESSION} />
+      </LocaleProvider>,
+    );
+
+    fireEvent.click(await screen.findByLabelText("Tải tất cả"));
+
+    await waitFor(() =>
+      expect(toastSpy).toHaveBeenCalledWith(
+        expect.objectContaining({ title: "Tải tất cả thất bại" }),
       ),
     );
   });

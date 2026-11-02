@@ -17,8 +17,11 @@ import {
   useSessionFiles,
   type SessionFile,
 } from "../ContextPanel/components/FilesTab/useSessionFiles";
+import { useLocale, useT } from "@/lib/i18n";
 
 export function useWorkspaceFileCards(sessionId: string | null) {
+  const locale = useLocale();
+  const t = useT();
   const queryClient = useQueryClient();
   const openArtifact = useCopilotUIStore((s) => s.openArtifact);
   // Session-scoped on purpose: the card is this chat's drawer — only files
@@ -37,10 +40,16 @@ export function useWorkspaceFileCards(sessionId: string | null) {
           queryClient.invalidateQueries({
             queryKey: getListWorkspaceFilesQueryKey(),
           });
-          toast({ title: "File deleted", variant: "success" });
+          toast({
+            title: t("chatFiles2.workspaceFileCards.fileDeleted"),
+            variant: "success",
+          });
         },
         onError: () =>
-          toast({ title: "Failed to delete file", variant: "destructive" }),
+          toast({
+            title: t("chatFiles2.workspaceFileCards.deleteFailed"),
+            variant: "destructive",
+          }),
       },
     });
 
@@ -52,7 +61,10 @@ export function useWorkspaceFileCards(sessionId: string | null) {
 
   function handleDownload(file: SessionFile) {
     downloadArtifact(fileItemToArtifactRef(file.item)).catch(() =>
-      toast({ title: "Download failed", variant: "destructive" }),
+      toast({
+        title: t("chatFiles2.workspaceFileCards.downloadFailed"),
+        variant: "destructive",
+      }),
     );
   }
 
@@ -72,9 +84,14 @@ export function useWorkspaceFileCards(sessionId: string | null) {
     try {
       await downloadFilesAsZip(
         files.map((f) => ({ id: f.item.id, name: f.item.name })),
+        {},
+        locale,
       );
     } catch {
-      toast({ title: "Download all failed", variant: "destructive" });
+      toast({
+        title: t("chatFiles2.workspaceFileCards.downloadAllFailed"),
+        variant: "destructive",
+      });
     }
     setIsZipping(false);
   }
