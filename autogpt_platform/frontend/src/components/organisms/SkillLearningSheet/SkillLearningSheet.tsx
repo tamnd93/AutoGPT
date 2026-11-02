@@ -18,6 +18,7 @@ import { HistoryView } from "./components/HistoryView";
 import { SourcesView } from "./components/SourcesView";
 import { SummaryView } from "./components/SummaryView";
 import { useSkillLearningSheet } from "./useSkillLearningSheet";
+import { useT, type MessageKey } from "@/lib/i18n";
 import {
   SheetView,
   SkillReviewState,
@@ -41,11 +42,11 @@ interface Props {
   onClose: () => void;
 }
 
-const VIEWS: { value: SheetView; label: string }[] = [
-  { value: "summary", label: "Summary" },
-  { value: "changes", label: "Changes" },
-  { value: "sources", label: "Sources" },
-  { value: "history", label: "History" },
+const VIEWS: { value: SheetView; labelKey: MessageKey }[] = [
+  { value: "summary", labelKey: "skills1.sheet.tabSummary" },
+  { value: "changes", labelKey: "skills1.sheet.tabChanges" },
+  { value: "sources", labelKey: "skills1.sheet.tabSources" },
+  { value: "history", labelKey: "skills1.sheet.tabHistory" },
 ];
 
 export function SkillLearningSheet({
@@ -55,6 +56,7 @@ export function SkillLearningSheet({
   onChanged,
   onClose,
 }: Props) {
+  const t = useT();
   const review = useSkillReviewState(
     scope.expertId,
     skillName,
@@ -74,7 +76,7 @@ export function SkillLearningSheet({
       }
       title={skillName ?? ""}
       panelId="skill-learning"
-      closeLabel="Close skill learning panel"
+      closeLabel={t("skills1.sheet.closeLabel")}
       onClose={onClose}
     >
       {skillName ? (
@@ -112,6 +114,7 @@ function SheetBody({
   rememberScroll,
   onChanged,
 }: BodyProps) {
+  const t = useT();
   const sheet = useSkillLearningSheet({
     expertId,
     skillName,
@@ -136,8 +139,8 @@ function SheetBody({
     return (
       <div data-slot="skill-learning-sheet-error" className="p-5">
         <ErrorCard
-          context="this skill's learning history"
-          hint="We could not load learning details for this skill."
+          context={t("skills1.sheet.errorContext")}
+          hint={t("skills1.sheet.errorHint")}
           onRetry={() => sheet.refetch()}
         />
       </div>
@@ -178,7 +181,7 @@ function SheetBody({
             <TabsLineList className="overflow-x-auto">
               {VIEWS.map((item) => (
                 <TabsLineTrigger key={item.value} value={item.value}>
-                  {item.label}
+                  {t(item.label)}
                 </TabsLineTrigger>
               ))}
             </TabsLineList>

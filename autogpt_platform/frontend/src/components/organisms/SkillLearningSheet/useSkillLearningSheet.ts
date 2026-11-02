@@ -15,6 +15,7 @@ import { OutcomeReportRequestOutcome } from "@/app/api/__generated__/models/outc
 import { SkillPolicyRequest } from "@/app/api/__generated__/models/skillPolicyRequest";
 import { okData } from "@/app/api/helpers";
 import { useToast } from "@/components/molecules/Toast/use-toast";
+import { useT } from "@/lib/i18n";
 import { ApiError } from "@/lib/autogpt-server-api/helpers";
 import { useQueryClient } from "@tanstack/react-query";
 import { SkillVersionSummary } from "@/app/api/__generated__/models/skillVersionSummary";
@@ -50,6 +51,7 @@ export function useSkillLearningSheet({
   onChanged,
 }: Args) {
   const queryClient = useQueryClient();
+  const t = useT();
   const { toast } = useToast();
   const { view, selectedVersionId, editor } = state;
 
@@ -95,7 +97,8 @@ export function useSkillLearningSheet({
     } else {
       toast({
         title: result.status_label,
-        description: result.reason || "Your draft was kept; adjust and retry.",
+        description:
+          result.reason || t("skills1.sheet.draftKept"),
         variant: "destructive",
       });
     }
@@ -115,58 +118,58 @@ export function useSkillLearningSheet({
   const policy = useUpdateSkillLearningPolicy({
     mutation: {
       onSuccess: refresh,
-      onError: fail("Could not update the skill"),
+      onError: fail(t("skills1.sheet.updateFailed")),
     },
   });
   const restore = useRestoreLearnedSkillVersion({
     mutation: {
       onSuccess: (res) => {
         const data = okData(res);
-        if (data) report(data, "Version restored for future use");
+        if (data) report(data, t("skills1.sheet.versionRestored"));
       },
-      onError: fail("Could not restore that version"),
+      onError: fail(t("skills1.sheet.restoreFailed")),
     },
   });
   const decide = useDecideSkillLearningProposal({
     mutation: {
       onSuccess: (res, variables) => {
         const data = okData(res);
-        if (data && report(data, "Decision recorded")) {
+        if (data && report(data, t("skills1.sheet.decisionRecorded"))) {
           update((previous) => ({
             decisions: { ...previous.decisions, [variables.versionId]: "" },
           }));
         }
       },
-      onError: fail("Could not record the decision"),
+      onError: fail(t("skills1.sheet.decisionFailed")),
     },
   });
   const outcome = useReportSkillOutcome({
     mutation: {
       onSuccess: () => {
-        toast({ title: "Outcome recorded as evidence for a later review" });
+        toast({ title: t("skills1.sheet.outcomeRecorded") });
         refresh();
       },
-      onError: fail("Could not record the outcome"),
+      onError: fail(t("skills1.sheet.outcomeFailed")),
     },
   });
   const edit = useEditLearnedSkill({
     mutation: {
       onSuccess: (res) => {
         const data = okData(res);
-        if (data && report(data, "Edit applied")) {
+        if (data && report(data, t("skills1.sheet.editApplied"))) {
           update({ editor: null, selectedVersionId: null });
         }
       },
-      onError: fail("Edit blocked"),
+      onError: fail(t("skills1.sheet.editBlocked")),
     },
   });
   const exclude = useExcludeSkillLearningSource({
     mutation: {
       onSuccess: () => {
-        toast({ title: "Source excluded from learning" });
+        toast({ title: t("skills1.sheet.sourceExcluded") });
         refresh();
       },
-      onError: fail("Could not exclude that source"),
+      onError: fail(t("skills1.sheet.excludeFailed")),
     },
   });
 

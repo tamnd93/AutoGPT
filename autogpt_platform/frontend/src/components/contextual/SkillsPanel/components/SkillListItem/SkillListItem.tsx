@@ -101,7 +101,7 @@ export function SkillListItem({ skill, isNew = false }: Props) {
           size="icon"
           onClick={openView}
           data-testid="skill-view-button"
-          aria-label="View skill"
+          aria-label={t("skills1.item.viewAria")}
         >
           <Icon icon={EyeIcon} className="h-4 w-4" />
         </Button>
@@ -111,7 +111,7 @@ export function SkillListItem({ skill, isNew = false }: Props) {
           onClick={handleDownload}
           loading={isDownloading}
           data-testid="skill-download-button"
-          aria-label="Download skill"
+          aria-label={t("skills1.item.downloadAria")}
         >
           <Icon icon={Download04Icon} className="h-4 w-4" />
         </Button>
@@ -121,7 +121,7 @@ export function SkillListItem({ skill, isNew = false }: Props) {
           size="icon"
           onClick={openDelete}
           data-testid="skill-delete-button"
-          aria-label="Delete skill"
+          aria-label={t("skills1.item.deleteAria")}
         >
           <Icon icon={Delete02Icon} className="h-4 w-4" />
         </Button>
