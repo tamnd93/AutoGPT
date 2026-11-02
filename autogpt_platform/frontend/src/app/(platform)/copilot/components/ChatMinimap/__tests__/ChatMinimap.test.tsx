@@ -7,6 +7,7 @@ import {
   tickScale,
   toMinimapEntries,
 } from "../helpers";
+import { LocaleProvider } from "@/lib/i18n";
 import { ChatMinimap } from "../ChatMinimap";
 
 // The rail calls useReducedMotion once per render.
@@ -44,6 +45,18 @@ describe("ChatMinimap", () => {
     expect(screen.getAllByRole("button")).toHaveLength(3);
     expect(screen.getByLabelText("Jump to: Plan my week")).toBeDefined();
     expect(screen.queryByLabelText("Jump to: Here is the plan")).toBeNull();
+  });
+
+  it("reads the jump label in Vietnamese", () => {
+    render(
+      <LocaleProvider locale="vi">
+        <ChatMinimap messages={MESSAGES} />
+      </LocaleProvider>,
+    );
+
+    expect(
+      screen.getByLabelText("Chuyển tới: Plan my week"),
+    ).toBeDefined();
   });
 
   it("renders nothing until enough of the messages are yours", () => {
