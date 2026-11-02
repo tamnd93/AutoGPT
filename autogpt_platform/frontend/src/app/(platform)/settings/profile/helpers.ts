@@ -1,9 +1,18 @@
 import type { ProfileDetails } from "@/app/api/__generated__/models/profileDetails";
+import type { MessageKey } from "@/lib/i18n/messages/en";
+import { getMessage } from "@/lib/i18n/translate";
 
 export const MAX_LINKS = 5;
 export const INITIAL_LINK_SLOTS = 3;
 export const MAX_BIO_LENGTH = 280;
 export const HANDLE_REGEX = /^[a-zA-Z0-9_-]{2,30}$/;
+
+export type Translate = (
+  key: MessageKey,
+  values?: Record<string, string | number>,
+) => string;
+
+const english: Translate = (key, values) => getMessage("en", key, values);
 
 export type LinkRow = {
   id: string;
@@ -67,7 +76,10 @@ export function isFormDirty(
   return a.some((value, idx) => value !== b[idx]);
 }
 
-export function validateForm(state: ProfileFormState): {
+export function validateForm(
+  state: ProfileFormState,
+  t: Translate = english,
+): {
   valid: boolean;
   errors: Partial<Record<"name" | "username" | "description", string>>;
 } {
@@ -75,19 +87,21 @@ export function validateForm(state: ProfileFormState): {
     {};
 
   if (!state.name.trim()) {
-    errors.name = "Display name is required";
+    errors.name = t("account2.validation.nameRequired");
   } else if (state.name.length > 50) {
-    errors.name = "Display name must be under 50 characters";
+    errors.name = t("account2.validation.nameTooLong");
   }
 
   if (!state.username.trim()) {
-    errors.username = "Handle is required";
+    errors.username = t("account2.validation.handleRequired");
   } else if (!HANDLE_REGEX.test(state.username)) {
-    errors.username = "Use 2–30 letters, numbers, underscores or dashes";
+    errors.username = t("account2.validation.handleInvalid");
   }
 
   if (state.description.length > MAX_BIO_LENGTH) {
-    errors.description = `Bio must be under ${MAX_BIO_LENGTH} characters`;
+    errors.description = t("account2.validation.bioTooLong", {
+      max: MAX_BIO_LENGTH,
+    });
   }
 
   return { valid: Object.keys(errors).length === 0, errors };

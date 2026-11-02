@@ -18,6 +18,8 @@ import {
 } from "@/lib/direct-upload";
 import { ApiError, isLogoutInProgress } from "@/lib/autogpt-server-api/helpers";
 import { useAuth } from "@/lib/auth/hooks/useAuth";
+import { useLocale, useT } from "@/lib/i18n";
+import { getMessage } from "@/lib/i18n/translate";
 
 import {
   isFormDirty,
@@ -37,6 +39,8 @@ const EMPTY_FORM: ProfileFormState = {
 };
 
 export function useProfilePage() {
+  const t = useT();
+  const locale = useLocale();
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const logoutInProgress = isLogoutInProgress();
@@ -112,7 +116,11 @@ export function useProfilePage() {
     [profileQuery.data],
   );
 
-  const validation = useMemo(() => validateForm(formState), [formState]);
+  const validation = useMemo(
+    () =>
+      validateForm(formState, (key, values) => getMessage(locale, key, values)),
+    [formState, locale],
+  );
   const dirty = useMemo(
     () => isFormDirty(pristineState, formState),
     [pristineState, formState],
@@ -168,10 +176,9 @@ export function useProfilePage() {
       patchField("avatar_url", url);
       return url;
     } catch (err) {
-      if (toastIfPlanRequired(err, "Uploading a photo needs an active plan"))
-        return null;
+      if (toastIfPlanRequired(err, t("account2.use.planRequired"))) return null;
       toast({
-        title: "Failed to upload photo",
+        title: t("account2.use.uploadFailed"),
         description: err instanceof Error ? err.message : undefined,
         variant: "destructive",
       });
@@ -187,11 +194,11 @@ export function useProfilePage() {
         void queryClient.invalidateQueries({
           queryKey: getGetV2GetUserProfileQueryKey(),
         });
-        toast({ title: "Profile saved", variant: "success" });
+        toast({ title: t("account2.use.saved"), variant: "success" });
       },
       onError: (err) => {
         toast({
-          title: "Failed to save profile",
+          title: t("account2.use.saveFailed"),
           description: err instanceof Error ? err.message : undefined,
           variant: "destructive",
         });

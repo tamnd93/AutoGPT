@@ -1,3 +1,4 @@
+import { getMessage } from "@/lib/i18n/translate";
 import { describe, expect, test } from "vitest";
 
 import {
@@ -144,6 +145,33 @@ describe("helpers / validateForm", () => {
       makeState({ description: "x".repeat(MAX_BIO_LENGTH) }),
     );
     expect(result.errors.description).toBeUndefined();
+  });
+});
+
+describe("helpers / validateForm in Vietnamese", () => {
+  const tVi = (key: string, values?: Record<string, string | number>) =>
+    getMessage("vi", key, values);
+
+  test("reads every validation message in Vietnamese", () => {
+    expect(validateForm(makeState({ name: "   " }), tVi).errors.name).toBe(
+      "Cần nhập tên hiển thị",
+    );
+    expect(
+      validateForm(makeState({ name: "x".repeat(51) }), tVi).errors.name,
+    ).toBe("Tên hiển thị phải dưới 50 ký tự");
+    expect(validateForm(makeState({ username: "" }), tVi).errors.username).toBe(
+      "Cần nhập tên người dùng",
+    );
+    expect(
+      validateForm(makeState({ username: "no spaces here" }), tVi).errors
+        .username,
+    ).toBe("Dùng 2–30 chữ cái, số, dấu gạch dưới hoặc gạch ngang");
+    expect(
+      validateForm(
+        makeState({ description: "x".repeat(MAX_BIO_LENGTH + 1) }),
+        tVi,
+      ).errors.description,
+    ).toBe("Phần giới thiệu phải dưới 280 ký tự");
   });
 });
 

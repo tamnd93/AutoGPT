@@ -10,6 +10,7 @@ import {
 import { Input } from "@/components/atoms/Input/Input";
 import { Text } from "@/components/atoms/Text/Text";
 
+import { useT } from "@/lib/i18n";
 import { type ProfileFormState, validateForm } from "../../helpers";
 import {
   Camera01Icon,
@@ -46,6 +47,7 @@ export function ProfileHeader({
   isUploading,
   onUpload,
 }: Props) {
+  const t = useT();
   const fileRef = useRef<HTMLInputElement>(null);
   const [isHovered, setIsHovered] = useState(false);
   const reduceMotion = useReducedMotion();
@@ -76,14 +78,14 @@ export function ProfileHeader({
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
         disabled={isUploading}
-        aria-label="Change profile photo"
+        aria-label={t("account2.header.changePhotoAria")}
         // TODO(tokens): no exact role (focus-visible:ring-purple-400 #925CF7)
         className="group relative h-[112px] w-[112px] shrink-0 cursor-pointer rounded-full outline-none transition-transform duration-150 ease-out focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:ring-offset-2 active:scale-[0.97] disabled:cursor-wait"
       >
         <Avatar className="h-[112px] w-[112px] shadow-[0_8px_28px_-12px_rgba(15,15,20,0.18)] ring-2 ring-white">
           <AvatarImage
             src={avatarUrl}
-            alt={name || "Profile"}
+            alt={name || t("account2.header.avatarAlt")}
             width={224}
             height={224}
           />
@@ -148,13 +150,13 @@ export function ProfileHeader({
             as="span"
             className="px-4 text-foreground-base"
           >
-            Display name
+            {t("account2.header.displayName")}
           </Text>
           <Input
             id="profile-name"
-            label="Display name"
+            label={t("account2.header.displayName")}
             hideLabel
-            placeholder="Jane Doe"
+            placeholder={t("account2.header.namePlaceholder")}
             value={name}
             error={errors.name}
             onChange={(e) => onChange("name", e.target.value)}
@@ -171,7 +173,7 @@ export function ProfileHeader({
               as="span"
               className="text-foreground-base"
             >
-              Handle
+              {t("account2.header.handle")}
             </Text>
             <Text variant="small" as="span" className="!text-foreground-subtle">
               agpt.co/@your-handle
@@ -179,9 +181,9 @@ export function ProfileHeader({
           </div>
           <Input
             id="profile-username"
-            label="Handle"
+            label={t("account2.header.handle")}
             hideLabel
-            placeholder="jane_doe"
+            placeholder={t("account2.header.handlePlaceholder")}
             value={username}
             error={errors.username}
             onChange={(e) => onChange("username", e.target.value)}

@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/atoms/Button/Button";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   dirty: boolean;
@@ -11,6 +12,8 @@ interface Props {
 }
 
 export function SaveBar({ dirty, saving, canSave, onDiscard, onSave }: Props) {
+  const t = useT();
+
   return (
     <div className="flex items-center justify-start gap-2">
       <Button
@@ -19,7 +22,7 @@ export function SaveBar({ dirty, saving, canSave, onDiscard, onSave }: Props) {
         onClick={onDiscard}
         disabled={!dirty || saving}
       >
-        Discard
+        {t("account2.saveBar.discard")}
       </Button>
       <Button
         variant="primary"
@@ -28,7 +31,7 @@ export function SaveBar({ dirty, saving, canSave, onDiscard, onSave }: Props) {
         loading={saving}
         disabled={!canSave || saving}
       >
-        Save changes
+        {t("account2.saveBar.save")}
       </Button>
     </div>
   );

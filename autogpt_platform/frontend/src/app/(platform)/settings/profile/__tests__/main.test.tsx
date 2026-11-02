@@ -1,3 +1,4 @@
+import { LocaleProvider } from "@/lib/i18n";
 import { http, HttpResponse } from "msw";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -94,6 +95,29 @@ describe("SettingsProfilePage - data loading", () => {
       await screen.findByRole("heading", { name: /^profile$/i, level: 1 }),
     ).toBeDefined();
     expect(screen.getByText(/manage how you appear/i)).toBeDefined();
+  });
+
+  test("reads the page chrome in Vietnamese", async () => {
+    server.use(getGetV2GetUserProfileMockHandler200(makeProfile()));
+
+    render(
+      <LocaleProvider locale="vi">
+        <SettingsProfilePage />
+      </LocaleProvider>,
+    );
+
+    expect(
+      await screen.findByRole("heading", { name: "Hồ sơ", level: 1 }),
+    ).toBeDefined();
+    expect(
+      screen.getByText(
+        "Quản lý cách bạn xuất hiện trên Marketplace — ảnh, handle, giới thiệu và liên kết.",
+      ),
+    ).toBeDefined();
+    expect(screen.getByLabelText(/tên hiển thị/i)).toBeDefined();
+    expect(screen.getByLabelText(/tên người dùng/i)).toBeDefined();
+    expect(screen.getByRole("button", { name: "Lưu thay đổi" })).toBeDefined();
+    expect(screen.getByRole("button", { name: "Bỏ thay đổi" })).toBeDefined();
   });
 
   test("hydrates the form fields from the loaded profile", async () => {

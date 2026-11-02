@@ -1,5 +1,6 @@
 import type { MessageKey } from "./en";
 import { account1Vi } from "./account-1.vi";
+import { account2Vi } from "./account-2.vi";
 import { auth1Vi } from "./auth-1.vi";
 import { auth2Vi } from "./auth-2.vi";
 import { chatInput1Vi } from "./chat-input-1.vi";
@@ -27,6 +28,7 @@ import { onboarding3Vi } from "./onboarding-3.vi";
 
 export const vi: Partial<Record<MessageKey, string>> = {
   ...account1Vi,
+  ...account2Vi,
   ...auth1Vi,
   ...auth2Vi,
   ...chatInput1Vi,

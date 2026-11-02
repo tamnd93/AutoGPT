@@ -2,6 +2,7 @@
 
 import { Text } from "@/components/atoms/Text/Text";
 import { ErrorCard } from "@/components/molecules/ErrorCard/ErrorCard";
+import { useT } from "@/lib/i18n";
 
 import { LinksSection } from "./components/LinksSection/LinksSection";
 import { ProfileForm } from "./components/ProfileForm/ProfileForm";
@@ -11,6 +12,7 @@ import { SaveBar } from "./components/SaveBar/SaveBar";
 import { useProfilePage } from "./useProfilePage";
 
 export default function SettingsProfilePage() {
+  const t = useT();
   const {
     user,
     isLoading,
@@ -34,7 +36,7 @@ export default function SettingsProfilePage() {
   if (isError) {
     return (
       <ErrorCard
-        context="profile"
+        context={t("account2.profile.errorContext")}
         responseError={error ? { detail: error.detail } : undefined}
         onRetry={() => {
           void refetch();
@@ -51,14 +53,13 @@ export default function SettingsProfilePage() {
     <div className="flex w-full flex-col gap-6">
       <div className="flex flex-col pb-2">
         <Text variant="h4" as="h1" className="leading-7 text-textBlack">
-          Profile
+          {t("account2.profile.title")}
         </Text>
         <Text
           variant="body"
           className="mt-4 max-w-[600px] text-foreground-body"
         >
-          Manage how you appear on the marketplace — your photo, handle, bio,
-          and links.
+          {t("account2.profile.body")}
         </Text>
       </div>
 
