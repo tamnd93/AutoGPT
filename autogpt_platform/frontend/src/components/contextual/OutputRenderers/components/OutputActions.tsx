@@ -11,6 +11,7 @@ import {
   Tick02Icon,
 } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 
 interface OutputActionsProps {
   items: Array<{
@@ -26,6 +27,7 @@ export function OutputActions({
   items,
   isPrimary = false,
 }: OutputActionsProps) {
+  const t = useT();
   const [copied, setCopied] = useState(false);
 
   const handleCopyAll = async () => {
@@ -75,7 +77,7 @@ export function OutputActions({
         variant={isPrimary ? "primary" : "ghost"}
         size={isPrimary ? "small" : "icon"}
         onClick={handleCopyAll}
-        aria-label="Copy all text outputs"
+        aria-label={t("shared1.outputActions.copyAllAria")}
         className={cn(isPrimary ? "min-w-0" : "")}
       >
         {copied ? (
@@ -90,14 +92,14 @@ export function OutputActions({
             )}
           />
         )}
-        {isPrimary && <span>Copy All</span>}
+        {isPrimary && <span>{t("shared1.outputActions.copyAll")}</span>}
       </Button>
 
       <Button
         variant={isPrimary ? "primary" : "ghost"}
         size={isPrimary ? "small" : "icon"}
         onClick={handleDownloadAll}
-        aria-label="Download outputs"
+        aria-label={t("shared1.outputActions.downloadAria")}
         className={cn(isPrimary ? "min-w-0" : "")}
       >
         <Icon
@@ -108,7 +110,7 @@ export function OutputActions({
             isPrimary ? "text-action-foreground" : "text-neutral-500",
           )}
         />
-        {isPrimary && <span>Download All</span>}
+        {isPrimary && <span>{t("shared1.outputActions.downloadAll")}</span>}
       </Button>
     </div>
   );
