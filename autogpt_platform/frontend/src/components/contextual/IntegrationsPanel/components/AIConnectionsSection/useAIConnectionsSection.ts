@@ -12,12 +12,14 @@ import { useGetV1ListCredentials } from "@/app/api/__generated__/endpoints/integ
 import type { AIConnectionOffer } from "@/app/api/__generated__/models/aIConnectionOffer";
 import type { CredentialsMetaResponse } from "@/app/api/__generated__/models/credentialsMetaResponse";
 import { toast } from "@/components/molecules/Toast/use-toast";
+import { useT } from "@/lib/i18n";
 
 import { useOAuthConnect } from "../ConnectServiceDialog/components/DetailView/useOAuthConnect";
 
 import { isProviderLinked, routeOf, visibleOffers } from "./helpers";
 
 export function useAIConnectionsSection() {
+  const t = useT();
   const queryClient = useQueryClient();
 
   // The offers endpoint rather than transports: transports answers "what may
@@ -79,9 +81,8 @@ export function useAIConnectionsSection() {
         onError: () => {
           toast({
             variant: "destructive",
-            title: "Could not save that connection",
-            description:
-              "Your default is unchanged. Check the connection is still linked, then try again.",
+            title: t("aiConnections1.toast.saveFailed"),
+            description: t("aiConnections1.toast.saveFailedHint"),
           });
         },
       },

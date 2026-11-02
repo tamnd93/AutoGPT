@@ -1,6 +1,9 @@
 import type { AIConnectionOffer } from "@/app/api/__generated__/models/aIConnectionOffer";
 import type { SetDefaultTransportRequest } from "@/app/api/__generated__/models/setDefaultTransportRequest";
 import type { SetDefaultTransportRequestAuthProvider } from "@/app/api/__generated__/models/setDefaultTransportRequestAuthProvider";
+import type { Locale } from "@/lib/i18n";
+import type { MessageKey } from "@/lib/i18n/messages/en";
+import { getMessage } from "@/lib/i18n/translate";
 
 export function isProviderLinked(
   offers: AIConnectionOffer[] | undefined,
@@ -12,27 +15,33 @@ export function isProviderLinked(
   );
 }
 
-const MICROSOFT_SCOPE_LABELS: Record<string, string> = {
-  "User.Read": "Basic account profile",
-  "Sites.Read.All": "SharePoint and OneDrive files",
-  "Mail.Read": "Outlook mail",
-  "People.Read.All": "People in your organization",
-  "OnlineMeetingTranscript.Read.All": "Teams meeting transcripts",
-  "Chat.Read": "Teams chats",
-  "ChannelMessage.Read.All": "Teams channel messages",
-  "ExternalItem.Read.All": "External Microsoft Search items",
-  offline_access: "Stay connected",
-  openid: "Sign-in identity",
-  profile: "Basic account profile",
-  email: "Email address",
+// A scope the map does not know keeps the server's own name.
+const MICROSOFT_SCOPE_KEYS: Record<string, MessageKey> = {
+  "User.Read": "aiConnections1.microsoft.scope.basicProfile",
+  "Sites.Read.All": "aiConnections1.microsoft.scope.sharePoint",
+  "Mail.Read": "aiConnections1.microsoft.scope.mail",
+  "People.Read.All": "aiConnections1.microsoft.scope.people",
+  "OnlineMeetingTranscript.Read.All":
+    "aiConnections1.microsoft.scope.meetingTranscripts",
+  "Chat.Read": "aiConnections1.microsoft.scope.teamsChats",
+  "ChannelMessage.Read.All": "aiConnections1.microsoft.scope.channelMessages",
+  "ExternalItem.Read.All": "aiConnections1.microsoft.scope.externalSearch",
+  offline_access: "aiConnections1.microsoft.scope.stayConnected",
+  openid: "aiConnections1.microsoft.scope.signInIdentity",
+  profile: "aiConnections1.microsoft.scope.basicProfile",
+  email: "aiConnections1.microsoft.scope.email",
 };
 
 export function microsoftAccessLabels(
   scopes: string[] | null | undefined,
+  locale?: Locale,
 ): string[] {
   return Array.from(
     new Set(
-      (scopes ?? []).map((scope) => MICROSOFT_SCOPE_LABELS[scope] ?? scope),
+      (scopes ?? []).map((scope) => {
+        const key = MICROSOFT_SCOPE_KEYS[scope];
+        return key ? getMessage(locale ?? "en", key) : scope;
+      }),
     ),
   );
 }

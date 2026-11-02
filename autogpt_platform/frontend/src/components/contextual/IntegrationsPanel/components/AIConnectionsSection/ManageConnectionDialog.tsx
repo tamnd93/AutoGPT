@@ -7,7 +7,7 @@ import type { CredentialsMetaResponse } from "@/app/api/__generated__/models/cre
 import { Button } from "@/components/atoms/Button/Button";
 import { Text } from "@/components/atoms/Text/Text";
 import { Dialog } from "@/components/molecules/Dialog/Dialog";
-import { useT } from "@/lib/i18n";
+import { useLocale, useT } from "@/lib/i18n";
 
 import { useOAuthConnect } from "../ConnectServiceDialog/components/DetailView/useOAuthConnect";
 import { DeleteConfirmDialog } from "../DeleteConfirmDialog/DeleteConfirmDialog";
@@ -179,7 +179,9 @@ function ChatGPTConnectionDialog({
                       // TODO(tokens): no exact role for bg-[#F1EBFF], text-[#4A25AD]
                       className="rounded-[10px] bg-[#F1EBFF] px-2 py-[2px] text-body-sm font-medium leading-5 text-[#4A25AD]"
                     >
-                      {snapshot.plan_type} plan
+                      {t("common.planSuffix", {
+                        plan: snapshot.plan_type,
+                      })}
                     </span>
                   </span>
                 )
@@ -306,8 +308,9 @@ function Microsoft365CopilotConnectionDialog({
 }: MicrosoftProps) {
   const [forceMessage, setForceMessage] = useState<string | null>(null);
   const { remove, isPending: isDisconnecting } = useDeleteIntegration();
+  const locale = useLocale();
   const credentialId = connection.credential_id;
-  const accessLabels = microsoftAccessLabels(credential?.scopes);
+  const accessLabels = microsoftAccessLabels(credential?.scopes, locale);
   const displayName =
     credential?.title && credential.title !== "Microsoft 365 Copilot"
       ? credential.title

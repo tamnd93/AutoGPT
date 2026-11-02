@@ -726,6 +726,87 @@ describe("AIConnectionsSection in Vietnamese", () => {
     ).toBeDefined();
   });
 
+  it("opens the Microsoft connect dialog in Vietnamese", async () => {
+    mockTransports([platform(true)]);
+
+    render(
+      <LocaleProvider locale="vi">
+        <AIConnectionsSection />
+      </LocaleProvider>,
+    );
+    await userEvent.click(
+      await screen.findByRole("button", { name: "Microsoft 365 Copilot" }),
+    );
+
+    const dialog = await screen.findByRole("dialog");
+    expect(
+      within(dialog).getByRole("heading", {
+        name: "Kết nối Microsoft 365 Copilot",
+      }),
+    ).toBeDefined();
+    expect(
+      within(dialog).getByText(/Cần bản Microsoft Copilot trả phí/),
+    ).toBeDefined();
+  });
+
+  it("reads the Microsoft account and its granted access in Vietnamese", async () => {
+    mockTransports(
+      [platform(false), microsoft(true)],
+      [
+        {
+          id: "cred-msft",
+          provider: "microsoft_365_copilot",
+          username: "nick@example.com",
+          title: "Nick Example",
+          scopes: ["User.Read", "Mail.Read", "Chat.Read", "Custom.Scope"],
+        },
+      ],
+    );
+
+    render(
+      <LocaleProvider locale="vi">
+        <AIConnectionsSection />
+      </LocaleProvider>,
+    );
+    await userEvent.click(
+      await screen.findByRole("button", { name: "Quản lý" }),
+    );
+
+    expect(await screen.findByText("Nick Example")).toBeDefined();
+    expect(screen.getByText("Quyền đã cấp")).toBeDefined();
+    expect(screen.getByText("Hồ sơ tài khoản cơ bản")).toBeDefined();
+    expect(screen.getByText("Thư Outlook")).toBeDefined();
+    expect(screen.getByText("Chat Teams")).toBeDefined();
+    // A scope the map does not know keeps the server's own name.
+    expect(screen.getByText("Custom.Scope")).toBeDefined();
+  });
+
+  it("writes the ChatGPT plan badge in Vietnamese", async () => {
+    mockTransports(
+      [platform(false), chatgpt(true)],
+      [{ id: "cred-1", username: "stored@example.com" }],
+    );
+    server.use(
+      getGetV1CodexAccountMockHandler200({
+        connected: true,
+        requires_openai_auth: false,
+        email: "nick@example.com",
+        plan_type: "Plus",
+      }),
+    );
+
+    render(
+      <LocaleProvider locale="vi">
+        <AIConnectionsSection />
+      </LocaleProvider>,
+    );
+    await userEvent.click(
+      await screen.findByRole("button", { name: "Quản lý" }),
+    );
+
+    expect(await screen.findByText("gói Plus")).toBeDefined();
+  });
+
   it("keeps today's English when no locale is set", async () => {
     mockTransports([platform(true)]);
 

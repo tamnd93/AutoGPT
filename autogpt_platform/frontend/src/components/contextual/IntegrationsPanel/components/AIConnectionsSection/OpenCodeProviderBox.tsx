@@ -44,15 +44,20 @@ export function OpenCodeProviderBox({ isLinked, onSuccess }: Props) {
         api_key: key,
       });
       await invalidateConnectionQueries(queryClient);
-      toast({ title: "OpenCode connected", variant: "success" });
+      toast({
+        title: t("aiConnections1.opencode.connected"),
+        variant: "success",
+      });
       setApiKey("");
       setIsOpen(false);
       onSuccess();
     } catch (error) {
       toast({
-        title: "Couldn't save the OpenCode key",
+        title: t("aiConnections1.opencode.saveFailed"),
         description:
-          error instanceof Error ? error.message : "Unexpected error",
+          error instanceof Error
+            ? error.message
+            : t("aiConnections1.opencode.unexpectedError"),
         variant: "destructive",
       });
     } finally {
