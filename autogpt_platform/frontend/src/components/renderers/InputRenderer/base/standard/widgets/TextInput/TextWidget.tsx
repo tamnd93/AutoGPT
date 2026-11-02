@@ -19,8 +19,10 @@ import { BlockUIType } from "@/lib/autogpt-server-api/types";
 import { InputExpanderModal } from "./TextInputExpanderModal";
 import { ArrowExpandIcon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 
 export default function TextWidget(props: WidgetProps) {
+  const t = useT();
   const { schema, placeholder, registry } = props;
   const { size, uiType } = registry.formContext;
   const accessibility = useFieldAccessibility(
@@ -43,17 +45,17 @@ export default function TextWidget(props: WidgetProps) {
   const inputConfig: Partial<Record<InputType, InputConfig>> = {
     [InputType.TEXT_AREA]: {
       htmlType: "textarea",
-      placeholder: "Enter text...",
+      placeholder: t("shared5.text.placeholderText"),
       handleChange: (v: string) => (v === "" ? undefined : v),
     },
     [InputType.PASSWORD]: {
       htmlType: "password",
-      placeholder: "Enter secret text...",
+      placeholder: t("shared5.text.placeholderSecret"),
       handleChange: (v: string) => (v === "" ? undefined : v),
     },
     [InputType.NUMBER]: {
       htmlType: "number",
-      placeholder: "Enter number value...",
+      placeholder: t("shared5.text.placeholderNumber"),
       handleChange: (v: string) => {
         if (v === "") return undefined;
         const n = Number(v);
@@ -62,7 +64,7 @@ export default function TextWidget(props: WidgetProps) {
     },
     [InputType.INTEGER]: {
       htmlType: "number",
-      placeholder: "Enter integer value...",
+      placeholder: t("shared5.text.placeholderInteger"),
       handleChange: (v: string) => {
         if (v === "") return undefined;
         const n = Number(v);
@@ -73,7 +75,7 @@ export default function TextWidget(props: WidgetProps) {
 
   const defaultConfig: InputConfig = {
     htmlType: "text",
-    placeholder: "Enter string value...",
+    placeholder: t("shared5.text.placeholderString"),
     handleChange: (v: string) => (v === "" ? undefined : v),
   };
 
@@ -116,13 +118,13 @@ export default function TextWidget(props: WidgetProps) {
         {...accessibility}
         hideLabel={true}
         type={"textarea"}
-        label={schema.title || props.label || "Note"}
+        label={schema.title || props.label || t("shared5.text.noteLabel")}
         size="small"
         wrapperClassName="mb-0"
         value={displayValue}
         className="!h-[230px] resize-none rounded-none border-none bg-transparent p-0 placeholder:text-black/60 focus:ring-0"
         onChange={handleChange}
-        placeholder={"Write your note here..."}
+        placeholder={t("shared5.text.placeholderNote")}
         required={props.required}
         disabled={props.disabled}
       />
@@ -155,12 +157,12 @@ export default function TextWidget(props: WidgetProps) {
                 onClick={handleModalOpen}
                 type="button"
                 className="p-1"
-                aria-label="Expand input"
+                aria-label={t("shared5.text.expandAria")}
               >
                 <Icon icon={ArrowExpandIcon} className="size-4" />
               </Button>
             </TooltipTrigger>
-            <TooltipContent>Expand input</TooltipContent>
+            <TooltipContent>{t("shared5.text.expandAria")}</TooltipContent>
           </Tooltip>
         )}
       </div>
@@ -169,7 +171,7 @@ export default function TextWidget(props: WidgetProps) {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onSave={handleModalSave}
-        title={schema.title || "Edit value"}
+        title={schema.title || t("shared5.expander.editValue")}
         description={schema.description || ""}
         defaultValue={displayValue}
         placeholder={placeholder || config.placeholder}

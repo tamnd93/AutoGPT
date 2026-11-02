@@ -1,4 +1,5 @@
 import { useFieldAccessibility } from "../../../../field-accessibility";
+import { useT } from "@/lib/i18n";
 import {
   enumOptionsIndexForValue,
   enumOptionsValueForIndex,
@@ -53,6 +54,7 @@ export function SelectWidget(props: WidgetProps) {
     label,
     placeholder,
   } = props;
+  const t = useT();
   const rawEnumOptions: EnumOptionsType[] = options.enumOptions || [];
   const fieldSchema = getFieldSchema(props);
   const enumNames = getEnumNames(fieldSchema);
@@ -142,7 +144,7 @@ export function SelectWidget(props: WidgetProps) {
           <MultiSelectorTrigger>
             <MultiSelectorInput
               aria-describedby={accessibility["aria-describedby"]}
-              placeholder="Select options..."
+              placeholder={t("shared5.select.multiPlaceholder")}
             />
           </MultiSelectorTrigger>
           <MultiSelectorContent>
@@ -166,7 +168,9 @@ export function SelectWidget(props: WidgetProps) {
     return (
       <Select
         label={resolvedLabel}
-        placeholder={placeholder || schemaPlaceholder || "Select an option"}
+        placeholder={
+          placeholder || schemaPlaceholder || t("shared5.select.placeholder")
+        }
         {...accessibility}
         hideLabel={true}
         disabled={disabled || readonly}

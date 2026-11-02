@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 import { Input } from "@/components/atoms/Input/Input";
 import { Copy01Icon, Tick02Icon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 
 interface InputExpanderModalProps {
   isOpen: boolean;
@@ -31,6 +32,7 @@ export const InputExpanderModal: FC<InputExpanderModalProps> = ({
   placeholder,
   inputType = "text",
 }) => {
+  const t = useT();
   const inputId = useId();
   const [tempValue, setTempValue] = useState(defaultValue);
   const [isCopied, setIsCopied] = useState(false);
@@ -52,7 +54,7 @@ export const InputExpanderModal: FC<InputExpanderModalProps> = ({
     navigator.clipboard.writeText(tempValue).then(() => {
       setIsCopied(true);
       toast({
-        title: "Copied to clipboard!",
+        title: t("shared5.expander.copiedTitle"),
         duration: 2000,
       });
       setTimeout(() => setIsCopied(false), 2000);
@@ -61,7 +63,7 @@ export const InputExpanderModal: FC<InputExpanderModalProps> = ({
 
   return (
     <Dialog
-      title={title || "Edit Text"}
+      title={title || t("shared5.expander.editText")}
       controlled={{
         isOpen,
         set: async (open) => {
@@ -76,7 +78,7 @@ export const InputExpanderModal: FC<InputExpanderModalProps> = ({
           <Text variant="body">{description}</Text>
           <Input
             type="textarea"
-            label={title || "Edit value"}
+            label={title || t("shared5.expander.editValue")}
             hideLabel
             id={inputId}
             value={tempValue}
@@ -85,7 +87,7 @@ export const InputExpanderModal: FC<InputExpanderModalProps> = ({
               inputType === "json" && "font-mono text-sm",
             )}
             onChange={(e) => setTempValue(e.target.value)}
-            placeholder={placeholder || "Enter text..."}
+            placeholder={placeholder || t("shared5.expander.enterText")}
             autoFocus
           />
 
@@ -95,7 +97,9 @@ export const InputExpanderModal: FC<InputExpanderModalProps> = ({
               size="small"
               onClick={copyValue}
               aria-label={
-                isCopied ? "Copied to clipboard" : "Copy to clipboard"
+                isCopied
+                  ? t("shared5.expander.copiedAria")
+                  : t("shared5.expander.copyAria")
               }
               className={cn(
                 // TODO(tokens): no exact role for hover:text-slate-900 #2A313A
@@ -115,10 +119,10 @@ export const InputExpanderModal: FC<InputExpanderModalProps> = ({
 
           <Dialog.Footer>
             <Button variant="secondary" size="small" onClick={onClose}>
-              Cancel
+              {t("shared5.expander.cancel")}
             </Button>
             <Button variant="primary" size="small" onClick={handleSave}>
-              Save
+              {t("shared5.expander.save")}
             </Button>
           </Dialog.Footer>
         </div>
