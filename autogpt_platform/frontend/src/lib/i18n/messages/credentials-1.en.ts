@@ -143,4 +143,59 @@ export const credentials1En = {
     "{title} was removed. Choose a connection to keep this workflow running.",
   "credentials1.removed.replaced":
     "{title} was removed — now using {replacement}.",
+  "credentials1.hostScoped.titleUpdate": "Update sensitive headers for {name}",
+  "credentials1.hostScoped.titleAdd": "Add sensitive headers for {name}",
+  "credentials1.hostScoped.manualEntry": "Manual Entry",
+  "credentials1.hostScoped.hostRequired": "Host is required",
+  "credentials1.hostScoped.hostNoProtocol":
+    "Enter only the host (e.g. api.example.com), not a full URL",
+  "credentials1.hostScoped.hostNoPath":
+    "Enter only the host (e.g. api.example.com), without a trailing path. You may specify a port (e.g. api.example.com:8080) if needed.",
+  "credentials1.hostScoped.hostPattern": "Host Pattern",
+  "credentials1.hostScoped.hostHintFixed":
+    "Auto-populated from the URL field. Headers will be applied to requests to this host.",
+  "credentials1.hostScoped.hostHintManual":
+    "Enter the host/domain to match against request URLs (e.g., api.example.com).",
+  "credentials1.hostScoped.hostPlaceholder":
+    "Enter host (e.g., api.example.com)",
+  "credentials1.hostScoped.headers": "Headers",
+  "credentials1.hostScoped.headersDesc":
+    "Add sensitive headers (like Authorization, X-API-Key) that should be automatically included in requests to the specified host.",
+  "credentials1.hostScoped.headerName": "Header Name",
+  "credentials1.hostScoped.headerNamePlaceholder":
+    "Header name (e.g., Authorization)",
+  "credentials1.hostScoped.headerValue": "Header Value",
+  "credentials1.hostScoped.headerValuePlaceholder":
+    "Header value (e.g., Bearer token123)",
+  "credentials1.hostScoped.remove": "Remove",
+  "credentials1.hostScoped.addAnotherHeader": "Add Another Header",
+  "credentials1.hostScoped.saveFailedTitle": "Failed to save credentials",
+  "credentials1.hostScoped.saveUpdate": "Update & use these credentials",
+  "credentials1.hostScoped.saveAdd": "Save & use these credentials",
+
+  "credentials1.input.popupBlockedTitle": "Popup blocked",
+  "credentials1.input.oauthErrorPrefix": "OAuth error: {message}",
+  "credentials1.input.scopeMismatch":
+    "Connection failed: the granted permissions don't match what's required. Please contact the application administrator.",
+  "credentials1.input.deleteFailedTitle": "Failed to delete credential",
+  "credentials1.input.somethingWrong": "Something went wrong",
+  "credentials1.input.forceDeleteDefault":
+    "This credential is in use. Force delete?",
+
+  "credentials1.drive.schemaTitle": "Google Drive",
+  "credentials1.drive.schemaDescription":
+    "Google OAuth needed to access Google Drive",
+  "credentials1.drive.insufficientPermissions": "Insufficient Permissions",
+  "credentials1.drive.authenticationError": "Authentication Error",
+  "credentials1.drive.accountRequired": "Google Account Required",
+  "credentials1.drive.loadingFailed": "Error loading Google Drive Picker",
+  "credentials1.drive.tryLater": "Please try again later",
+  "credentials1.drive.scopesShort":
+    "The saved Google OAuth credentials do not have the required permissions. Please sign in again with the correct permissions.",
+  "credentials1.drive.retrieveFailed":
+    "Failed to retrieve Google OAuth credentials. Please try signing in again.",
+  "credentials1.drive.connectFirst":
+    "Please connect your Google account in Settings before using this feature.",
+  "credentials1.drive.fetchFailed":
+    "Failed to fetch Google OAuth credentials",
 } as const;

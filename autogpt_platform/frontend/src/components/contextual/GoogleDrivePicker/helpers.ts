@@ -1,4 +1,6 @@
 import { BlockIOCredentialsSubSchema } from "@/lib/autogpt-server-api";
+import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/locale";
+import { getMessage } from "@/lib/i18n/translate";
 import { loadScript } from "@/services/scripts/scripts";
 
 export async function loadGoogleAPIPicker(): Promise<void> {
@@ -110,11 +112,14 @@ function validateWindow() {
   }
 }
 
-export function getCredentialsSchema(scopes: string[]) {
+export function getCredentialsSchema(
+  scopes: string[],
+  locale: Locale = DEFAULT_LOCALE,
+) {
   return {
     type: "object",
-    title: "Google Drive",
-    description: "Google OAuth needed to access Google Drive",
+    title: getMessage(locale, "credentials1.drive.schemaTitle"),
+    description: getMessage(locale, "credentials1.drive.schemaDescription"),
     properties: {},
     required: [],
     credentials_provider: ["google"],

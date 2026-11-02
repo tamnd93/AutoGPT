@@ -17,6 +17,8 @@ import {
   preOpenOAuthPopup,
 } from "@/lib/oauth-popup";
 import { trackCredentialConnectionFailure } from "@/services/credentials/connection-analytics";
+import { useLocale } from "@/lib/i18n";
+import { getMessage } from "@/lib/i18n/translate";
 import { useEffect, useRef, useState } from "react";
 import {
   countSupportedTypes,
@@ -49,6 +51,9 @@ export function useCredentialsInput({
   readOnly = false,
   isOptional = false,
 }: Params) {
+  const locale = useLocale();
+  const t = (key: string, values?: Record<string, string | number>) =>
+    getMessage(locale, key, values);
   const [isAPICredentialsModalOpen, setAPICredentialsModalOpen] =
     useState(false);
   const [
@@ -301,7 +306,7 @@ export function useCredentialsInput({
       if (popupBlocked && !fallbackBlocked) {
         setOAuthPopupBlocked(true);
         toast({
-          title: "Popup blocked",
+          title: t("credentials1.input.popupBlockedTitle"),
           description: OAUTH_ERROR_POPUP_BLOCKED,
         });
       }
@@ -329,10 +334,7 @@ export function useCredentialsInput({
               "credential_scope_shortfall_blocked_selection",
               { provider },
             );
-            setOAuthError(
-              "Connection failed: the granted permissions don't match what's required. " +
-                "Please contact the application administrator.",
-            );
+            setOAuthError(t("credentials1.input.scopeMismatch"));
             return;
           }
         }
@@ -358,7 +360,10 @@ export function useCredentialsInput({
       // A superseded flow must not surface its errors over the newer flow.
       if (flowId !== oauthFlowIdRef.current) return;
       if (
-        toastIfPlanRequired(error, "Connecting a service needs an active plan")
+        toastIfPlanRequired(
+          error,
+          t("credentials1.deviceAuth.planRequired"),
+        )
       )
         return;
       const message = error instanceof Error ? error.message : String(error);
@@ -378,7 +383,9 @@ export function useCredentialsInput({
             provider,
           });
         }
-        setOAuthError(`OAuth error: ${message}`);
+        setOAuthError(
+          t("credentials1.input.oauthErrorPrefix", { message }),
+        );
       }
     } finally {
       // A superseded flow must not tear down the newer flow's state —
@@ -487,6 +494,7 @@ export function useCredentialsInput({
         selectedCredential?.id,
         credentials.deleteCredentials,
         force,
+        locale,
       );
 
       if (state.shouldUnselectCurrent) {
@@ -496,9 +504,11 @@ export function useCredentialsInput({
       setCredentialToDelete(state.credentialToDelete);
     } catch (error) {
       const message =
-        error instanceof Error ? error.message : "Something went wrong";
+        error instanceof Error
+          ? error.message
+          : t("credentials1.input.somethingWrong");
       toast({
-        title: "Failed to delete credential",
+        title: t("credentials1.input.deleteFailedTitle"),
         description: message,
         variant: "destructive",
       });
@@ -544,6 +554,7 @@ export function useCredentialsInput({
       userCredentials.length > 0,
       provider,
       supportsDeviceCode,
+      locale,
     ),
     setAPICredentialsModalOpen,
     setUserPasswordCredentialsModalOpen,

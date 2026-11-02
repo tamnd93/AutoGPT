@@ -28,6 +28,7 @@ import {
   updateHeaderPairInList,
   type HeaderPair,
 } from "../../helpers";
+import { useT } from "@/lib/i18n";
 import { Delete02Icon, PlusSignIcon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
 
@@ -46,6 +47,7 @@ export function HostScopedCredentialsModal({
   onCredentialsCreate,
   siblingInputs,
 }: Props) {
+  const t = useT();
   const credentials = useCredentials(schema, siblingInputs);
   const allProviders = useContext(CredentialsProvidersContext);
 
@@ -56,14 +58,12 @@ export function HostScopedCredentialsModal({
   const formSchema = z.object({
     host: z
       .string()
-      .min(1, "Host is required")
+      .min(1, t("credentials1.hostScoped.hostRequired"))
       .refine((val) => !/^[a-zA-Z][a-zA-Z\d+\-.]*:\/\//.test(val), {
-        message: "Enter only the host (e.g. api.example.com), not a full URL",
+        message: t("credentials1.hostScoped.hostNoProtocol"),
       })
       .refine((val) => !val.includes("/"), {
-        message:
-          "Enter only the host (e.g. api.example.com), without a trailing path. " +
-          "You may specify a port (e.g. api.example.com:8080) if needed.",
+        message: t("credentials1.hostScoped.hostNoPath"),
       }),
     title: z.string().optional(),
     headers: z.record(z.string()).optional(),
@@ -73,7 +73,7 @@ export function HostScopedCredentialsModal({
     resolver: zodResolver(formSchema),
     defaultValues: {
       host: currentHost || "",
-      title: currentHost || "Manual Entry",
+      title: currentHost || t("credentials1.hostScoped.manualEntry"),
       headers: {},
     },
   });
@@ -90,7 +90,7 @@ export function HostScopedCredentialsModal({
     } else {
       // Reset to empty when no current host
       form.setValue("host", "");
-      form.setValue("title", "Manual Entry");
+      form.setValue("title", t("credentials1.hostScoped.manualEntry"));
     }
   }, [currentHost, form]);
 
@@ -166,9 +166,11 @@ export function HostScopedCredentialsModal({
       });
     } catch (error) {
       const message =
-        error instanceof Error ? error.message : "Something went wrong";
+        error instanceof Error
+          ? error.message
+          : t("credentials1.input.somethingWrong");
       toast({
-        title: "Failed to save credentials",
+        title: t("credentials1.hostScoped.saveFailedTitle"),
         description: message,
         variant: "destructive",
       });
@@ -179,8 +181,8 @@ export function HostScopedCredentialsModal({
     <Dialog
       title={
         hasExistingForHost
-          ? `Update sensitive headers for ${providerName}`
-          : `Add sensitive headers for ${providerName}`
+          ? t("credentials1.hostScoped.titleUpdate", { name: providerName })
+          : t("credentials1.hostScoped.titleAdd", { name: providerName })
       }
       controlled={{
         isOpen: open,
@@ -208,19 +210,19 @@ export function HostScopedCredentialsModal({
               render={({ field }) => (
                 <Input
                   id="host"
-                  label="Host Pattern"
+                  label={t("credentials1.hostScoped.hostPattern")}
                   type="text"
                   size="small"
                   readOnly={!!currentHost}
                   hint={
                     currentHost
-                      ? "Auto-populated from the URL field. Headers will be applied to requests to this host."
-                      : "Enter the host/domain to match against request URLs (e.g., api.example.com)."
+                      ? t("credentials1.hostScoped.hostHintFixed")
+                      : t("credentials1.hostScoped.hostHintManual")
                   }
                   placeholder={
                     currentHost
                       ? undefined
-                      : "Enter host (e.g., api.example.com)"
+                      : t("credentials1.hostScoped.hostPlaceholder")
                   }
                   {...field}
                 />
@@ -230,7 +232,7 @@ export function HostScopedCredentialsModal({
             <div className="space-y-2">
               <FormLabel className="peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                 <Text variant="body-medium-lh-none" as="span" tone="inherit">
-                  Headers
+                  {t("credentials1.hostScoped.headers")}
                 </Text>
               </FormLabel>
               <FormDescription
@@ -238,17 +240,17 @@ export function HostScopedCredentialsModal({
                 // dark:text-neutral-400: the legacy FormDescription's, moved verbatim (DS6, SECRT-3116)
                 className="max-w-md text-[0.8rem] leading-inherit dark:text-neutral-400"
               >
-                Add sensitive headers (like Authorization, X-API-Key) that
-                should be automatically included in requests to the specified
-                host.
+                {t("credentials1.hostScoped.headersDesc")}
               </FormDescription>
 
               {headerPairs.map((pair, index) => (
                 <div key={index} className="flex w-full items-center gap-4">
                   <Input
                     id={`header-${index}-key`}
-                    label="Header Name"
-                    placeholder="Header name (e.g., Authorization)"
+                    label={t("credentials1.hostScoped.headerName")}
+                    placeholder={t(
+                      "credentials1.hostScoped.headerNamePlaceholder",
+                    )}
                     size="small"
                     value={pair.key}
                     className="flex-1"
@@ -259,11 +261,13 @@ export function HostScopedCredentialsModal({
 
                   <Input
                     id={`header-${index}-value`}
-                    label="Header Value"
+                    label={t("credentials1.hostScoped.headerValue")}
                     size="small"
                     type="password"
                     className="flex-2"
-                    placeholder="Header value (e.g., Bearer token123)"
+                    placeholder={t(
+                      "credentials1.hostScoped.headerValuePlaceholder",
+                    )}
                     value={pair.value}
                     onChange={(e) =>
                       updateHeaderPair(index, "value", e.target.value)
@@ -276,7 +280,8 @@ export function HostScopedCredentialsModal({
                     onClick={() => removeHeaderPair(index)}
                     disabled={headerPairs.length === 1}
                   >
-                    <Icon icon={Delete02Icon} className="size-4" /> Remove
+                    <Icon icon={Delete02Icon} className="size-4" />{" "}
+                    {t("credentials1.hostScoped.remove")}
                   </Button>
                 </div>
               ))}
@@ -287,16 +292,16 @@ export function HostScopedCredentialsModal({
                 size="small"
                 onClick={addHeaderPair}
               >
-                <Icon icon={PlusSignIcon} className="size-4" /> Add Another
-                Header
+                <Icon icon={PlusSignIcon} className="size-4" />{" "}
+                {t("credentials1.hostScoped.addAnotherHeader")}
               </Button>
             </div>
 
             <div className="pt-8">
               <Button type="submit" className="w-full" size="small">
                 {hasExistingForHost
-                  ? "Update & use these credentials"
-                  : "Save & use these credentials"}
+                  ? t("credentials1.hostScoped.saveUpdate")
+                  : t("credentials1.hostScoped.saveAdd")}
               </Button>
             </div>
           </form>

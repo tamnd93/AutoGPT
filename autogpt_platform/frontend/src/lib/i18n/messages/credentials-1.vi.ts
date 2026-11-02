@@ -148,4 +148,64 @@ export const credentials1Vi: Partial<
   "credentials1.removed.gone":
     "{title} đã bị xoá. Chọn một kết nối để workflow này tiếp tục chạy.",
   "credentials1.removed.replaced": "{title} đã bị xoá — đang dùng {replacement}.",
+  "credentials1.hostScoped.titleUpdate":
+    "Cập nhật header nhạy cảm cho {name}",
+  "credentials1.hostScoped.titleAdd": "Thêm header nhạy cảm cho {name}",
+  "credentials1.hostScoped.manualEntry": "Nhập thủ công",
+  "credentials1.hostScoped.hostRequired": "Cần nhập host",
+  "credentials1.hostScoped.hostNoProtocol":
+    "Chỉ nhập host (ví dụ: api.example.com), không nhập URL đầy đủ",
+  "credentials1.hostScoped.hostNoPath":
+    "Chỉ nhập host (ví dụ: api.example.com), không kèm đường dẫn. Có thể ghi cổng (ví dụ: api.example.com:8080) nếu cần.",
+  "credentials1.hostScoped.hostPattern": "Mẫu host",
+  "credentials1.hostScoped.hostHintFixed":
+    "Tự điền từ trường URL. Header sẽ được áp dụng cho các yêu cầu tới host này.",
+  "credentials1.hostScoped.hostHintManual":
+    "Nhập host/tên miền cần khớp với URL yêu cầu (ví dụ: api.example.com).",
+  "credentials1.hostScoped.hostPlaceholder":
+    "Nhập host (ví dụ: api.example.com)",
+  "credentials1.hostScoped.headers": "Header",
+  "credentials1.hostScoped.headersDesc":
+    "Thêm các header nhạy cảm (như Authorization, X-API-Key) để tự động gửi kèm trong các yêu cầu tới host đã chỉ định.",
+  "credentials1.hostScoped.headerName": "Tên header",
+  "credentials1.hostScoped.headerNamePlaceholder":
+    "Tên header (ví dụ: Authorization)",
+  "credentials1.hostScoped.headerValue": "Giá trị header",
+  "credentials1.hostScoped.headerValuePlaceholder":
+    "Giá trị header (ví dụ: Bearer token123)",
+  "credentials1.hostScoped.remove": "Xoá",
+  "credentials1.hostScoped.addAnotherHeader": "Thêm header khác",
+  "credentials1.hostScoped.saveFailedTitle":
+    "Không lưu được thông tin kết nối",
+  "credentials1.hostScoped.saveUpdate":
+    "Cập nhật và dùng thông tin kết nối này",
+  "credentials1.hostScoped.saveAdd": "Lưu và dùng thông tin kết nối này",
+
+  "credentials1.input.popupBlockedTitle": "Cửa sổ bật lên bị chặn",
+  "credentials1.input.oauthErrorPrefix": "Lỗi OAuth: {message}",
+  "credentials1.input.scopeMismatch":
+    "Kết nối thất bại: quyền được cấp không khớp với yêu cầu. Vui lòng liên hệ quản trị viên ứng dụng.",
+  "credentials1.input.deleteFailedTitle":
+    "Không xoá được thông tin kết nối",
+  "credentials1.input.somethingWrong": "Đã xảy ra lỗi",
+  "credentials1.input.forceDeleteDefault":
+    "Thông tin kết nối này đang được dùng. Vẫn xoá cưỡng bức?",
+
+  "credentials1.drive.schemaTitle": "Google Drive",
+  "credentials1.drive.schemaDescription":
+    "Cần OAuth Google để truy cập Google Drive",
+  "credentials1.drive.insufficientPermissions": "Không đủ quyền",
+  "credentials1.drive.authenticationError": "Lỗi xác thực",
+  "credentials1.drive.accountRequired": "Cần tài khoản Google",
+  "credentials1.drive.loadingFailed":
+    "Không tải được Google Drive Picker",
+  "credentials1.drive.tryLater": "Vui lòng thử lại sau",
+  "credentials1.drive.scopesShort":
+    "Thông tin xác thực Google OAuth đã lưu không có quyền cần thiết. Vui lòng đăng nhập lại với đúng quyền.",
+  "credentials1.drive.retrieveFailed":
+    "Không lấy được thông tin xác thực Google OAuth. Vui lòng thử đăng nhập lại.",
+  "credentials1.drive.connectFirst":
+    "Vui lòng kết nối tài khoản Google trong Cài đặt trước khi dùng tính năng này.",
+  "credentials1.drive.fetchFailed":
+    "Không lấy được thông tin xác thực Google OAuth",
 };

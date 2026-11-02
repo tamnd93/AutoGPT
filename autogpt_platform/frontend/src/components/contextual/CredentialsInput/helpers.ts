@@ -280,6 +280,7 @@ export async function processCredentialDeletion(
   selectedCredentialId: string | undefined,
   deleteCredentials: (id: string, force: boolean) => Promise<DeleteResult>,
   force: boolean,
+  locale: Locale = DEFAULT_LOCALE,
 ): Promise<DeleteState> {
   const result = await deleteCredentials(credentialToDelete.id, force);
 
@@ -294,7 +295,8 @@ export async function processCredentialDeletion(
   if ("need_confirmation" in result && result.need_confirmation) {
     return {
       warningMessage:
-        result.message || "This credential is in use. Force delete?",
+        result.message ||
+        getMessage(locale, "credentials1.input.forceDeleteDefault"),
       credentialToDelete,
       shouldUnselectCurrent: false,
     };

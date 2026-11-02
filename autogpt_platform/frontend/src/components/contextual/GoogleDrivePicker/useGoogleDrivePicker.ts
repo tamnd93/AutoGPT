@@ -4,6 +4,8 @@ import {
 } from "@/app/api/__generated__/endpoints/integrations/integrations";
 import { useToast } from "@/components/molecules/Toast/use-toast";
 import useCredentials from "@/hooks/useCredentials";
+import { useLocale } from "@/lib/i18n";
+import { getMessage } from "@/lib/i18n/translate";
 import type { CredentialsMetaInput } from "@/lib/autogpt-server-api/types";
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -74,6 +76,9 @@ export type Props = {
 };
 
 export function useGoogleDrivePicker(options: Props) {
+  const locale = useLocale();
+  const t = (key: string, values?: Record<string, string | number>) =>
+    getMessage(locale, key, values);
   const {
     scopes = ["https://www.googleapis.com/auth/drive.file"],
     developerKey = process.env.NEXT_PUBLIC_GOOGLE_API_KEY,
@@ -100,7 +105,9 @@ export function useGoogleDrivePicker(options: Props) {
   const tokenClientRef = useRef<TokenClient | null>(null);
   const pickerReadyRef = useRef(false);
   const usedCredentialIdRef = useRef<string | undefined>(undefined);
-  const credentials = useCredentials(getCredentialsSchema(requestedScopes));
+  const credentials = useCredentials(
+    getCredentialsSchema(requestedScopes, locale),
+  );
   const queryClient = useQueryClient();
   const isReady = pickerReadyRef.current && !!tokenClientRef.current;
   const { toast } = useToast();
@@ -162,11 +169,9 @@ export function useGoogleDrivePicker(options: Props) {
 
           if (cred && cred.type === "oauth2") {
             if (!hasAllRequiredScopes(cred.scopes, requestedScopes)) {
-              const error = new Error(
-                "The saved Google OAuth credentials do not have the required permissions. Please sign in again with the correct permissions.",
-              );
+              const error = new Error(t("credentials1.drive.scopesShort"));
               toast({
-                title: "Insufficient Permissions",
+                title: t("credentials1.drive.insufficientPermissions"),
                 description: error.message,
                 variant: "destructive",
               });
@@ -185,19 +190,17 @@ export function useGoogleDrivePicker(options: Props) {
             return;
           }
 
-          const error = new Error(
-            "Failed to retrieve Google OAuth credentials. Please try signing in again.",
-          );
+          const error = new Error(t("credentials1.drive.retrieveFailed"));
           if (onError) onError(error);
           return;
         } catch (err) {
           const error =
             err instanceof Error
               ? err
-              : new Error("Failed to fetch Google OAuth credentials");
+              : new Error(t("credentials1.drive.fetchFailed"));
 
           toast({
-            title: "Authentication Error",
+            title: t("credentials1.drive.authenticationError"),
             description: error.message,
             variant: "destructive",
           });
@@ -210,11 +213,9 @@ export function useGoogleDrivePicker(options: Props) {
 
       // If platform credentials are required but none exist, show error
       if (options?.requirePlatformCredentials) {
-        const error = new Error(
-          "Please connect your Google account in Settings before using this feature.",
-        );
+        const error = new Error(t("credentials1.drive.connectFirst"));
         toast({
-          title: "Google Account Required",
+          title: t("credentials1.drive.accountRequired"),
           description: error.message,
           variant: "destructive",
         });
@@ -251,8 +252,8 @@ export function useGoogleDrivePicker(options: Props) {
       } catch (e) {
         console.error(e);
         toast({
-          title: "Error loading Google Drive Picker",
-          description: "Please try again later",
+          title: t("credentials1.drive.loadingFailed"),
+          description: t("credentials1.drive.tryLater"),
           variant: "destructive",
         });
       } finally {
