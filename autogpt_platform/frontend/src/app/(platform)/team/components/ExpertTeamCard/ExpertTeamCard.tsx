@@ -17,6 +17,7 @@ import {
   SparklesIcon,
 } from "@hugeicons/core-free-icons";
 import { creditsToUsdLabel } from "@/lib/credits";
+import { useLocale } from "@/lib/i18n";
 import { Flag, useGetFlag } from "@/services/feature-flags/use-get-flag";
 import Link from "next/link";
 import { MouseEvent } from "react";
@@ -53,6 +54,7 @@ export function ExpertTeamCard({
 }: Props) {
   const rosterStatus = getExpertRosterStatus(expert);
   const weeklySpend = getWeeklySpend(expert);
+  const locale = useLocale();
   const cover = getExpertCover(expert);
   // The area the expert works in, in the chip the marketplace already uses.
   const topic = expert.categories?.[0];
@@ -130,7 +132,7 @@ export function ExpertTeamCard({
                 className="tabular-nums"
               >
                 {weeklySpend
-                  ? `${creditsToUsdLabel(weeklySpend.spent)} / ${creditsToUsdLabel(weeklySpend.budget)}`
+                  ? `${creditsToUsdLabel(weeklySpend.spent, locale)} / ${creditsToUsdLabel(weeklySpend.budget, locale)}`
                   : "No budget"}
               </Text>
             </div>

@@ -2,6 +2,7 @@ import type { ScheduleCreationRequest } from "@/app/api/__generated__/models/sch
 import { usePostV1CreateExecutionSchedule } from "@/app/api/__generated__/endpoints/schedules/schedules";
 import { useToast } from "@/components/molecules/Toast/use-toast";
 import { useUserTimezone } from "@/lib/hooks/useUserTimezone";
+import { useLocale } from "@/lib/i18n";
 import { getTimezoneDisplayName } from "@/lib/timezone-utils";
 import { invalidateAllScheduleQueries } from "@/services/schedules/invalidate-schedules";
 import { useQueryClient } from "@tanstack/react-query";
@@ -34,7 +35,8 @@ export function useCronSchedulerDialog({
   });
 
   const userTimezone = useUserTimezone();
-  const timezoneDisplay = getTimezoneDisplayName(userTimezone || "UTC");
+  const locale = useLocale();
+  const timezoneDisplay = getTimezoneDisplayName(userTimezone || "UTC", locale);
 
   const { mutateAsync: createSchedule, isPending: isCreatingSchedule } =
     usePostV1CreateExecutionSchedule({

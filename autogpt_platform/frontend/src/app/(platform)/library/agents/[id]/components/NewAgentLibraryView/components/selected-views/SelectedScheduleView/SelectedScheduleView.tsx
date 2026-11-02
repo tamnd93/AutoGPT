@@ -7,6 +7,7 @@ import { ErrorCard } from "@/components/molecules/ErrorCard/ErrorCard";
 import { humanizeCronExpression } from "@/lib/cron-expression-utils";
 import { isLargeScreen, useBreakpoint } from "@/lib/hooks/useBreakpoint";
 import { useUserTimezone } from "@/lib/hooks/useUserTimezone";
+import { useLocale } from "@/lib/i18n";
 import { formatInTimezone, getTimezoneDisplayName } from "@/lib/timezone-utils";
 import { AgentInputsReadOnly } from "../../modals/AgentInputsReadOnly/AgentInputsReadOnly";
 import { LoadingSelectedContent } from "../LoadingSelectedContent";
@@ -37,6 +38,7 @@ export function SelectedScheduleView({
   );
 
   const userTimezone = useUserTimezone();
+  const locale = useLocale();
 
   const breakpoint = useBreakpoint();
   const isLgScreenUp = isLargeScreen(breakpoint);
@@ -82,7 +84,7 @@ export function SelectedScheduleView({
                 run={undefined}
                 scheduleRecurrence={
                   schedule
-                    ? `${humanizeCronExpression(schedule.cron || "")} · ${getTimezoneDisplayName(schedule.timezone || userTimezone || "UTC")}`
+                    ? `${humanizeCronExpression(schedule.cron || "")} · ${getTimezoneDisplayName(schedule.timezone || userTimezone || "UTC", locale)}`
                     : undefined
                 }
               />
@@ -123,6 +125,7 @@ export function SelectedScheduleView({
                         <span className="text-foreground-tertiary">
                           {getTimezoneDisplayName(
                             schedule.timezone || userTimezone || "UTC",
+                            locale,
                           )}
                         </span>
                       </Text>
@@ -141,11 +144,13 @@ export function SelectedScheduleView({
                             minute: "2-digit",
                             hour12: false,
                           },
+                          locale,
                         )}{" "}
                         <span className="text-foreground-tertiary">•</span>{" "}
                         <span className="text-foreground-tertiary">
                           {getTimezoneDisplayName(
                             schedule.timezone || userTimezone || "UTC",
+                            locale,
                           )}
                         </span>
                       </Text>

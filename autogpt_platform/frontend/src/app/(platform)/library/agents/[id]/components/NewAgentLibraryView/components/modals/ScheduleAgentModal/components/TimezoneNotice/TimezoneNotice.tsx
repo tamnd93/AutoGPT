@@ -1,10 +1,12 @@
 import { useUserTimezone } from "@/lib/hooks/useUserTimezone";
+import { useLocale } from "@/lib/i18n";
 import { getTimezoneDisplayName } from "@/lib/timezone-utils";
 import { InformationCircleIcon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
 
 export function TimezoneNotice() {
   const userTimezone = useUserTimezone();
+  const locale = useLocale();
 
   if (!userTimezone) {
     return null;
@@ -31,7 +33,7 @@ export function TimezoneNotice() {
     );
   }
 
-  const tzName = getTimezoneDisplayName(userTimezone || "UTC");
+  const tzName = getTimezoneDisplayName(userTimezone || "UTC", locale);
 
   return (
     <div className="mt-1 flex items-center gap-2 rounded-md bg-muted/50 p-3">

@@ -1,4 +1,5 @@
 import { AgentExecutionStatus } from "@/app/api/__generated__/models/agentExecutionStatus";
+import { LocaleProvider } from "@/lib/i18n";
 import { render, screen } from "@/tests/integrations/test-utils";
 import { describe, expect, it } from "vitest";
 
@@ -90,6 +91,16 @@ describe("ActivityItem", () => {
 
     expect(screen.getByText(line)).toBeDefined();
     expect(screen.getByText("Weather Agent")).toBeDefined();
+  });
+
+  it("renders the vietnamese time for the vi locale", () => {
+    render(
+      <LocaleProvider locale="vi">
+        <ActivityItem execution={makeExecution()} />
+      </LocaleProvider>,
+    );
+
+    expect(screen.getByText(/^Completed \d+ ngày trước$/)).toBeDefined();
   });
 
   it("renders a non-linked item when the execution has no library agent", () => {

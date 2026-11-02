@@ -2,6 +2,7 @@ import type { ExpertAvatarRequestCategory } from "@/app/api/__generated__/models
 import type { VoiceSample } from "@/app/api/__generated__/models/voiceSample";
 import { legacyCategoryForRole } from "./legacyCategory";
 import { creditsToUsdLabel } from "@/lib/credits";
+import type { Locale } from "@/lib/i18n/locale";
 import {
   buildVoicePreferences,
   type VoicePickResult,
@@ -286,10 +287,13 @@ export function raisedIdentity(name: string): string {
   return `I'm ${name}, an AI Expert created by you. I use your instructions to help with your work.`;
 }
 
-export function kitBudgetLabel(kit: RaiseKit | null): string | null {
+export function kitBudgetLabel(
+  kit: RaiseKit | null,
+  locale: Locale = "en",
+): string | null {
   if (!kit || kit.weeklyBudget === null) return null;
   if (kit.weeklyBudget === 0) return "No weekly limit";
-  return `${creditsToUsdLabel(kit.weeklyBudget)} / week`;
+  return `${creditsToUsdLabel(kit.weeklyBudget, locale)} / week`;
 }
 
 export function kitToolsLabel(kit: RaiseKit | null): string | null {

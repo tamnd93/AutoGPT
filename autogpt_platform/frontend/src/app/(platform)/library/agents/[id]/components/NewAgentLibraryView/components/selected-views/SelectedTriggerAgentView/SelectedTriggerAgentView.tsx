@@ -8,6 +8,7 @@ import { Text } from "@/components/atoms/Text/Text";
 import { ErrorCard } from "@/components/molecules/ErrorCard/ErrorCard";
 import { humanizeCronExpression } from "@/lib/cron-expression-utils";
 import { useUserTimezone } from "@/lib/hooks/useUserTimezone";
+import { useLocale } from "@/lib/i18n";
 import { formatInTimezone, getTimezoneDisplayName } from "@/lib/timezone-utils";
 import { LoadingSelectedContent } from "../LoadingSelectedContent";
 import { RunDetailCard } from "../RunDetailCard/RunDetailCard";
@@ -44,6 +45,7 @@ export function SelectedTriggerAgentView({
     },
   });
 
+  const locale = useLocale();
   const rawUserTimezone = useUserTimezone();
   const displayTimezone =
     rawUserTimezone && rawUserTimezone !== "not-set"
@@ -123,6 +125,7 @@ export function SelectedTriggerAgentView({
                       <span className="text-foreground-tertiary">
                         {getTimezoneDisplayName(
                           displayTimezone || schedule.timezone || "UTC",
+                          locale,
                         )}
                       </span>
                     </Text>
@@ -141,11 +144,13 @@ export function SelectedTriggerAgentView({
                           minute: "2-digit",
                           hour12: false,
                         },
+                        locale,
                       )}{" "}
                       <span className="text-foreground-tertiary">&middot;</span>{" "}
                       <span className="text-foreground-tertiary">
                         {getTimezoneDisplayName(
                           displayTimezone || schedule.timezone || "UTC",
+                          locale,
                         )}
                       </span>
                     </Text>

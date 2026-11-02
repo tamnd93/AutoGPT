@@ -1,3 +1,4 @@
+import { LocaleProvider } from "@/lib/i18n";
 import { render, screen } from "@/tests/integrations/test-utils";
 import { describe, expect, test } from "vitest";
 import { SpendMeter } from "./SpendMeter";
@@ -21,6 +22,19 @@ describe("SpendMeter", () => {
     expect(meter.getAttribute("aria-valuenow")).toBe("5000");
     expect(meter.getAttribute("aria-valuetext")).toBe(
       "$80.25 of $50 spent this week (over budget)",
+    );
+  });
+
+  test("renders the vietnamese dollar figures for the vi locale", () => {
+    render(
+      <LocaleProvider locale="vi">
+        <SpendMeter spent={8025} budget={5000} />
+      </LocaleProvider>,
+    );
+
+    const meter = screen.getByRole("progressbar", { name: "Weekly spend" });
+    expect(meter.getAttribute("aria-valuetext")).toBe(
+      "$80,25 of $50 spent this week (over budget)",
     );
   });
 });

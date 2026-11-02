@@ -4,6 +4,7 @@ import { AgentExecutionStatus } from "@/app/api/__generated__/models/agentExecut
 import { LoadingSpinner } from "@/components/atoms/LoadingSpinner/LoadingSpinner";
 import { Text } from "@/components/atoms/Text/Text";
 import { isCompletedWithErrors } from "@/lib/run-health";
+import { useLocale } from "@/lib/i18n";
 import { formatTimeAgo } from "@/lib/utils/time";
 import Link, { useLinkStatus } from "next/link";
 import type { AgentExecutionWithInfo } from "../helpers";
@@ -48,6 +49,8 @@ interface Props {
 }
 
 export function ActivityItem({ execution }: Props) {
+  const locale = useLocale();
+
   function getStatusIcon() {
     switch (execution.status) {
       case AgentExecutionStatus.QUEUED:
@@ -101,7 +104,7 @@ export function ActivityItem({ execution }: Props) {
 
     if (isActiveStatus) {
       const timeAgo = execution.started_at
-        ? formatTimeAgo(execution.started_at.toString())
+        ? formatTimeAgo(execution.started_at.toString(), locale)
         : "recently";
       const statusText =
         execution.status === AgentExecutionStatus.QUEUED ? "queued" : "running";
@@ -112,9 +115,9 @@ export function ActivityItem({ execution }: Props) {
 
     // Handle all other statuses with time display
     const timeAgo = execution.ended_at
-      ? formatTimeAgo(execution.ended_at.toString())
+      ? formatTimeAgo(execution.ended_at.toString(), locale)
       : execution.started_at
-        ? formatTimeAgo(execution.started_at.toString())
+        ? formatTimeAgo(execution.started_at.toString(), locale)
         : "recently";
 
     let statusText = "ended";

@@ -14,6 +14,7 @@ import { SkillPackageFileList } from "@/components/contextual/SkillPackage/Skill
 import { ErrorCard } from "@/components/molecules/ErrorCard/ErrorCard";
 import { IntegrationLogo } from "@/components/molecules/IntegrationLogo/IntegrationLogo";
 import { cn } from "@/lib/utils";
+import { useLocale } from "@/lib/i18n";
 import { formatTimeAgo } from "@/lib/utils/time";
 import { ArrowLeft02Icon, BookOpen01Icon } from "@hugeicons/core-free-icons";
 import Link from "next/link";
@@ -59,6 +60,7 @@ export function SkillPage({ slug }: Props) {
     setIsConnectOpen,
     handleConnected,
   } = useSkillPage(slug);
+  const locale = useLocale();
 
   // A bookmarked URL reaches this page without passing the marketplace shelf,
   // so the shelf being hidden is not what keeps the feature dark.
@@ -159,7 +161,9 @@ export function SkillPage({ slug }: Props) {
           {skill.updated_at ? (
             <>
               <span aria-hidden>·</span>
-              <span>Updated {formatTimeAgo(String(skill.updated_at))}</span>
+              <span>
+                Updated {formatTimeAgo(String(skill.updated_at), locale)}
+              </span>
             </>
           ) : null}
           {skill.source_repo ? (

@@ -1,5 +1,6 @@
 import { Progress } from "@/components/atoms/Progress/Progress";
 import { creditsToUsdLabel } from "@/lib/credits";
+import { useLocale } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import type { CSSProperties } from "react";
 
@@ -13,10 +14,11 @@ interface Props {
 }
 
 export function SpendMeter({ spent, budget, muted, color }: Props) {
+  const locale = useLocale();
   const ratio = budget > 0 ? Math.min(Math.max(spent / budget, 0), 1) : 0;
   const isOverBudget = spent > budget;
   const clampedSpent = Math.min(Math.max(spent, 0), Math.max(budget, 0));
-  const valueText = `${creditsToUsdLabel(spent)} of ${creditsToUsdLabel(budget)} spent this week${
+  const valueText = `${creditsToUsdLabel(spent, locale)} of ${creditsToUsdLabel(budget, locale)} spent this week${
     isOverBudget ? " (over budget)" : ""
   }`;
 

@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/atoms/Button/Button";
 import { cn } from "@/lib/utils";
+import { useLocale } from "@/lib/i18n";
 import { formatTimeAgo } from "@/lib/utils/time";
 import {
   Tooltip,
@@ -65,6 +66,7 @@ export function DraftRecoveryPopup({
     onDiscard,
   } = useDraftRecoveryPopup(isInitialLoadComplete);
 
+  const locale = useLocale();
   const diffSummary = formatDiffSummary(diff);
 
   return (
@@ -123,7 +125,7 @@ export function DraftRecoveryPopup({
               >
                 {diffSummary ||
                   `${nodeCount} block${nodeCount !== 1 ? "s" : ""}, ${edgeCount} connection${edgeCount !== 1 ? "s" : ""}`}{" "}
-                • {formatTimeAgo(new Date(savedAt).toISOString())}
+                • {formatTimeAgo(new Date(savedAt).toISOString(), locale)}
               </Text>
             </div>
 

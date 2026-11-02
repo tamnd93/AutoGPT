@@ -1,10 +1,22 @@
+import type { Locale } from "./i18n/locale";
+
 // The backend meters spend in credits, but the UI only ever talks dollars:
 // every credit amount crossing into a view goes through these helpers, and
 // every dollar amount typed by a user comes back out as credits.
 export const CREDITS_PER_USD = 100;
 
-export function creditsToUsdLabel(credits: number): string {
+export function creditsToUsdLabel(
+  credits: number,
+  locale: Locale = "en",
+): string {
   const dollars = credits / CREDITS_PER_USD;
+  if (locale === "vi") {
+    const fractionDigits = Number.isInteger(dollars) ? 0 : 2;
+    return `$${dollars.toLocaleString("vi-VN", {
+      minimumFractionDigits: fractionDigits,
+      maximumFractionDigits: fractionDigits,
+    })}`;
+  }
   return Number.isInteger(dollars)
     ? `$${dollars.toLocaleString()}`
     : `$${dollars.toFixed(2)}`;

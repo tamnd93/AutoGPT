@@ -1,6 +1,7 @@
 import { Expert } from "@/app/api/__generated__/models/expert";
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { creditsToUsdLabel } from "@/lib/credits";
+import { useLocale } from "@/lib/i18n";
 import { CheckmarkCircle02Icon, Coins01Icon } from "@hugeicons/core-free-icons";
 import type { ReactNode } from "react";
 
@@ -14,6 +15,7 @@ interface Props {
  *  wide screens, straight under the hero on phones. It carries the price
  *  terms so the decision and its cost sit together. */
 export function ExpertHireCard({ expert, firstName, actions }: Props) {
+  const locale = useLocale();
   const weeklyBudget = expert.weekly_budget ?? null;
   const workflowCount = expert.workflows.length;
 
@@ -46,7 +48,7 @@ export function ExpertHireCard({ expert, firstName, actions }: Props) {
         <p className="mt-1.5 text-sm leading-6 text-foreground-secondary">
           {`Hiring ${firstName} costs nothing extra. Their work draws on your existing balance`}
           {weeklyBudget
-            ? `, capped at ${creditsToUsdLabel(weeklyBudget)} a week — a limit you can change once they are on your team.`
+            ? `, capped at ${creditsToUsdLabel(weeklyBudget, locale)} a week — a limit you can change once they are on your team.`
             : "."}
         </p>
       </div>

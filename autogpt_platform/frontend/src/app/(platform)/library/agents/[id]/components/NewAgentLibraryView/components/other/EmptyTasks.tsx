@@ -15,6 +15,7 @@ import { Dialog } from "@/components/molecules/Dialog/Dialog";
 import { ShowMoreText } from "@/components/molecules/ShowMoreText/ShowMoreText";
 import { useToast } from "@/components/molecules/Toast/use-toast";
 import { exportAsJSONFile } from "@/lib/utils";
+import { useLocale } from "@/lib/i18n";
 import { formatDate } from "@/lib/utils/time";
 import { useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
@@ -40,6 +41,7 @@ export function EmptyTasks({
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const router = useRouter();
+  const locale = useLocale();
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [isDeletingAgent, setIsDeletingAgent] = useState(false);
 
@@ -97,8 +99,8 @@ export function EmptyTasks({
     }
   }
   const isPublished = Boolean(agent.marketplace_listing);
-  const createdAt = formatDate(agent.created_at);
-  const updatedAt = formatDate(agent.updated_at);
+  const createdAt = formatDate(agent.created_at, locale);
+  const updatedAt = formatDate(agent.updated_at, locale);
   const isUpdated = updatedAt !== createdAt;
 
   return (

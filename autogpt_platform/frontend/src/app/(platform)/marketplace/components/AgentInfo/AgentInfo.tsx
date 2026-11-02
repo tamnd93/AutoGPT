@@ -13,6 +13,7 @@ import { Badge } from "@/components/atoms/Badge/Badge";
 import { Button } from "@/components/atoms/Button/Button";
 import { Text } from "@/components/atoms/Text/Text";
 import { Dialog } from "@/components/molecules/Dialog/Dialog";
+import { useLocale } from "@/lib/i18n";
 import { formatTimeAgo } from "@/lib/utils/time";
 import type { User } from "@/lib/auth/types";
 import Link from "next/link";
@@ -60,6 +61,7 @@ export const AgentInfo = ({
     handleLibraryAction,
     isAddingAgentToLibrary,
   } = useAgentInfo({ storeListingVersionId });
+  const locale = useLocale();
 
   // Get store agent data for version history
   const params: GetV2GetSpecificAgentParams = { include_changelog: true };
@@ -366,7 +368,7 @@ export const AgentInfo = ({
                 variant="body"
                 className="text-neutral-600"
               >
-                Last updated {formatTimeAgo(lastUpdated)}
+                Last updated {formatTimeAgo(lastUpdated, locale)}
               </Text>
             </div>
           </div>

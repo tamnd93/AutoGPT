@@ -7,6 +7,7 @@ import { CronScheduler } from "@/components/contextual/CronScheduler/cron-schedu
 import { Dialog } from "@/components/molecules/Dialog/Dialog";
 import { getTimezoneDisplayName } from "@/lib/timezone-utils";
 import { useUserTimezone } from "@/lib/hooks/useUserTimezone";
+import { useLocale } from "@/lib/i18n";
 import { InfoIcon } from "lucide-react";
 
 // Base type for cron expression only
@@ -52,7 +53,8 @@ export function CronSchedulerDialog(props: CronSchedulerDialogProps) {
 
   // Get user's timezone
   const userTimezone = useUserTimezone();
-  const timezoneDisplay = getTimezoneDisplayName(userTimezone || "UTC");
+  const locale = useLocale();
+  const timezoneDisplay = getTimezoneDisplayName(userTimezone || "UTC", locale);
 
   // Reset state when dialog opens
   useEffect(() => {
