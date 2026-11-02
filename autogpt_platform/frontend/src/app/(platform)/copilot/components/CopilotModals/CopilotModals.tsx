@@ -10,6 +10,7 @@ import { grantToExpert } from "@/services/experts/grant-to-expert";
 import { useQueryClient } from "@tanstack/react-query";
 import { useCopilotUIStore } from "../../store";
 import { useCopilotModal } from "../../useCopilotModal";
+import { useT } from "@/lib/i18n";
 
 export function CopilotModals() {
   const { modal, closeModal } = useCopilotModal();
@@ -17,6 +18,7 @@ export function CopilotModals() {
   const expert = useCopilotUIStore((s) => s.contextPanelExpert);
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const t = useT();
 
   function handleGuidedPrompt(prompt: string) {
     closeModal();
@@ -32,8 +34,10 @@ export function CopilotModals() {
     const ok = await grantToExpert(queryClient, expert.id, credential.id);
     if (!ok) {
       toast({
-        title: `Connected, but could not give ${expert.name} access`,
-        description: "Grant it from the Integrations tab.",
+        title: t("chatStates2.copilotModals.grantFailedTitle", {
+          name: expert.name,
+        }),
+        description: t("chatStates2.copilotModals.grantFailedDescription"),
         variant: "destructive",
       });
     }
@@ -44,7 +48,7 @@ export function CopilotModals() {
       <Dialog
         controlled={{ isOpen: modal === "skills", set: handleOpenChange }}
         styling={{ maxWidth: "44rem" }}
-        title="Skills"
+        title={t("chatStates2.copilotModals.skills")}
       >
         <Dialog.Content>
           <SkillsPanel
@@ -57,7 +61,7 @@ export function CopilotModals() {
       <Dialog
         controlled={{ isOpen: modal === "scheduled", set: handleOpenChange }}
         styling={{ maxWidth: "44rem" }}
-        title="Scheduled"
+        title={t("chatStates2.copilotModals.scheduled")}
       >
         <Dialog.Content>
           <SchedulesPanel
@@ -70,7 +74,7 @@ export function CopilotModals() {
       <Dialog
         controlled={{ isOpen: modal === "integrations", set: handleOpenChange }}
         styling={{ maxWidth: "56rem" }}
-        title="Integrations"
+        title={t("chatStates2.copilotModals.integrations")}
       >
         <Dialog.Content>
           <IntegrationsPanel

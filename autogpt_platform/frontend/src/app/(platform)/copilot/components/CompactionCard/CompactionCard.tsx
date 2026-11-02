@@ -11,6 +11,7 @@ import {
 } from "./helpers";
 import { useCompactionProgress } from "./useCompactionProgress";
 import { usePrefersReducedMotion } from "./usePrefersReducedMotion";
+import { useLocale } from "@/lib/i18n";
 
 export const SHOW_TIME_AFTER_SECONDS = 20;
 
@@ -21,12 +22,13 @@ interface Props {
 }
 
 export function CompactionCard({ phase, stats, isSettled }: Props) {
+  const locale = useLocale();
   if (isSettled) {
     return (
       <div className="flex items-center gap-2 py-2 text-xs text-muted-foreground">
         <Icon icon={ReloadIcon} size={14} />
         <span className="min-w-0 truncate">
-          {compactionLabel(phase, stats)}
+          {compactionLabel(phase, stats, locale)}
         </span>
       </div>
     );
@@ -44,12 +46,13 @@ interface LiveProps {
 }
 
 function LiveCompaction({ phase, stats }: LiveProps) {
+  const locale = useLocale();
   const { progress, elapsedSeconds } = useCompactionProgress(
     phase,
     stats.tokensBefore,
   );
   const prefersReducedMotion = usePrefersReducedMotion();
-  const label = compactionLabel(phase, stats);
+  const label = compactionLabel(phase, stats, locale);
   const percent = Math.round(progress * 100);
   // Reduced motion gets the progress, not the crawl: the fill jumps a step at
   // a time instead of easing for minutes. `aria-valuenow` keeps the exact

@@ -154,6 +154,17 @@ describe("barPercent", () => {
   });
 });
 
+describe("compactionLabel (vi)", () => {
+  it("speaks vietnamese for the phases and the dropped reset", () => {
+    expect(compactionLabel("summarizing", {}, "vi")).toBe(
+      "Đang cô đọng cuộc trò chuyện…",
+    );
+    expect(compactionLabel(null, { dropped: true }, "vi")).toBe(
+      "Đã bắt đầu ngữ cảnh mới — các tin nhắn trước đã bị bỏ",
+    );
+  });
+});
+
 describe("compactionLabel", () => {
   it("narrates each live phase", () => {
     expect(compactionLabel("summarizing", {})).toBe(

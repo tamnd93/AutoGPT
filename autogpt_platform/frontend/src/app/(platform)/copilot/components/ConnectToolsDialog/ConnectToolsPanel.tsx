@@ -12,6 +12,7 @@ import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { useEffect } from "react";
 import { useConnectToolsPanel } from "./useConnectToolsPanel";
 import { isKey } from "@/lib/keyboard";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   onBack: () => void;
@@ -41,9 +42,10 @@ const STEP_TRANSITION = { duration: 0.15, ease: [0, 0, 0.2, 1] as const };
 export function ConnectToolsPanel({
   onBack,
   onNext,
-  backLabel = "Back",
-  nextLabel = "Next",
+  backLabel,
+  nextLabel,
 }: Props) {
+  const t = useT();
   const {
     query,
     setQuery,
@@ -155,8 +157,8 @@ export function ConnectToolsPanel({
                       type="text"
                       value={query}
                       onChange={(e) => setQuery(e.target.value)}
-                      placeholder="Search services..."
-                      aria-label="Search services"
+                      placeholder={t("chatStates2.connectTools.searchPlaceholder")}
+                      aria-label={t("chatStates2.connectTools.searchAria")}
                       className="h-9 w-full rounded-md border border-border-base bg-surface pl-9 pr-3 text-sm leading-5.5 text-foreground-strong transition-colors placeholder:text-foreground-subtle focus:border-action-hover focus:outline-none"
                     />
                   </div>
@@ -170,7 +172,9 @@ export function ConnectToolsPanel({
                           className="text-foreground-subtle"
                         />
                         <Text variant="body" tone="secondary">
-                          {`No services match "${query.trim()}"`}
+                          {t("chatStates2.connectTools.noMatch", {
+                            query: query.trim(),
+                          })}
                         </Text>
                       </div>
                     ) : (
@@ -190,8 +194,8 @@ export function ConnectToolsPanel({
                     <div className="flex flex-col gap-2">
                       <Text variant="eyebrow" as="span">
                         {isPersonalized
-                          ? "Recommended from our conversation"
-                          : "Popular places to start"}
+                          ? t("chatStates2.connectTools.recommended")
+                          : t("chatStates2.connectTools.popular")}
                       </Text>
                       <ul className="grid grid-cols-2 gap-2">
                         {recommendedProviders.map((provider) => (
@@ -212,7 +216,7 @@ export function ConnectToolsPanel({
                       tone="secondary"
                       className="text-center"
                     >
-                      Search to find a service to connect.
+                      {t("chatStates2.connectTools.searchHint")}
                     </Text>
                   )}
                 </div>
@@ -226,7 +230,7 @@ export function ConnectToolsPanel({
         {selectedProvider ? (
           <>
             <Button variant="outline" size="xs" onClick={handleBackToList}>
-              Back
+              {t("chatStates2.connectTools.back")}
             </Button>
             {showContinue && (
               <Button
@@ -236,17 +240,19 @@ export function ConnectToolsPanel({
                 loading={isConnecting}
                 onClick={handleContinue}
               >
-                {isConnecting ? "Connecting…" : "Continue"}
+                {isConnecting
+                  ? t("chatStates2.connectTools.connecting")
+                  : t("chatStates2.connectTools.continue")}
               </Button>
             )}
           </>
         ) : (
           <>
             <Button variant="outline" size="xs" onClick={onBack}>
-              {backLabel}
+              {backLabel ?? t("chatStates2.connectTools.back")}
             </Button>
             <Button variant="primary" size="xs" onClick={onNext}>
-              {nextLabel}
+              {nextLabel ?? t("chatStates2.connectTools.next")}
             </Button>
           </>
         )}

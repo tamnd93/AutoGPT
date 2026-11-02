@@ -3,6 +3,7 @@
 import { cn } from "@/lib/utils";
 import { useEffect, useInsertionEffect, useRef, useState } from "react";
 import { PANEL_RESERVED_WIDTH } from "../store";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   /** CSS selector for the panel element this handle resizes (e.g. "[data-artifact-panel]"). */
@@ -52,6 +53,7 @@ export function PanelResizeHandle({
   const [isDragging, setIsDragging] = useState(false);
   const startXRef = useRef(0);
   const startWidthRef = useRef(0);
+  const t = useT();
   const containerWidthRef = useRef(0);
   const onWidthChangeRef = useRef(onWidthChange);
   const minWidthRef = useRef(minWidth);
@@ -156,7 +158,7 @@ export function PanelResizeHandle({
     <div
       role="separator"
       aria-orientation="vertical"
-      aria-label="Resize panel"
+      aria-label={t("chatStates2.panelResize.resize")}
       className="group absolute left-0 top-0 z-10 flex h-full w-3 -translate-x-1/2 cursor-col-resize items-stretch justify-center"
       onPointerDown={handlePointerDown}
       onPointerUp={handlePointerUp}

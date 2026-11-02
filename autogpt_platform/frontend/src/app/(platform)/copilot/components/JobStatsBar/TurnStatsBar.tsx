@@ -1,4 +1,5 @@
 import type { UIDataTypes, UIMessage, UITools } from "ai";
+import { useT } from "@/lib/i18n";
 import { useState } from "react";
 import type { TurnStats } from "../../helpers/convertChatSessionToUiMessages";
 import { formatElapsed } from "./formatElapsed";
@@ -45,8 +46,11 @@ function TimeLabel({
   displaySeconds: number;
   localDate: string | null;
 }) {
+  const t = useT();
   const [hovered, setHovered] = useState(false);
-  const labelText = `Thought for ${formatElapsed(displaySeconds)}`;
+  const labelText = t("chatStates2.turnStats.thoughtFor", {
+    time: formatElapsed(displaySeconds),
+  });
 
   if (!localDate) {
     return (

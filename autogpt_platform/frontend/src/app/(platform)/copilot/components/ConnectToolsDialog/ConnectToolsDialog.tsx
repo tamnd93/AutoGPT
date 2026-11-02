@@ -6,6 +6,7 @@ import { isKeyIgnoringComposition } from "@/lib/keyboard";
 import { useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { ConnectToolsPanel } from "./ConnectToolsPanel";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   isOpen: boolean;
@@ -16,6 +17,7 @@ interface Props {
 // first-run walkthrough. Escape belongs to the panel: it steps back out of a
 // provider before it closes anything, so a half-typed key is never lost.
 export function ConnectToolsDialog({ isOpen, onClose }: Props) {
+  const t = useT();
   const dialogRef = useRef<HTMLDivElement>(null);
   const pressStartedOnBackdrop = useRef(false);
 
@@ -82,15 +84,15 @@ export function ConnectToolsDialog({ isOpen, onClose }: Props) {
         ref={dialogRef}
         role="dialog"
         aria-modal="true"
-        aria-label="Connect your tools"
+        aria-label={t("chatStates2.connectTools.dialogAria")}
         tabIndex={-1}
         className="w-full max-w-[30rem] overflow-hidden rounded-xl border border-border-base bg-surface shadow-lg outline-none"
       >
         <ConnectToolsPanel
           onBack={onClose}
           onNext={onClose}
-          backLabel="Not now"
-          nextLabel="Done"
+          backLabel={t("chatStates2.connectTools.backNotNow")}
+          nextLabel={t("chatStates2.connectTools.nextDone")}
         />
       </div>
     </div>,

@@ -1,5 +1,8 @@
 // The wire contract: the backend only ever emits these two phases. There is
 // no "done" — a finished compaction settles the row instead.
+import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/locale";
+import { getMessage } from "@/lib/i18n/translate";
+
 export type CompactionPhase = "summarizing" | "rebuilding";
 
 /**
@@ -141,10 +144,13 @@ export function formatTokens(n: number): string {
 export function compactionLabel(
   phase: CompactionPhase | null,
   stats: CompactionStats,
+  locale: Locale = DEFAULT_LOCALE,
 ): string {
-  if (phase === "summarizing") return "Condensing our conversation…";
-  if (phase === "rebuilding") return "Reloading context…";
-  if (stats.dropped) return DROPPED_LABEL;
+  const m = (key: Parameters<typeof getMessage>[1], values?: Record<string, string | number>) =>
+    getMessage(locale, key, values);
+  if (phase === "summarizing") return m("chatStates2.compaction.summarizing");
+  if (phase === "rebuilding") return m("chatStates2.compaction.rebuilding");
+  if (stats.dropped) return m("chatStates2.compaction.dropped");
 
   // A number only earns its place when both ends of the measurement exist
   // and the "after" actually shrank — an equal or inverted pair (e.g. 60
@@ -154,16 +160,21 @@ export function compactionLabel(
     stats.messagesAfter !== undefined &&
     stats.messagesAfter < stats.messagesBefore;
   const headline = condensedMessages
-    ? `Condensed ${stats.messagesBefore} messages`
-    : "Condensed the conversation";
+    ? m("chatStates2.compaction.condensedCount", {
+        count: stats.messagesBefore ?? 0,
+      })
+    : m("chatStates2.compaction.condensed");
   const tokens =
     stats.tokensBefore !== undefined &&
     stats.tokensAfter !== undefined &&
     stats.tokensAfter < stats.tokensBefore
-      ? `${formatTokens(stats.tokensBefore)} → ${formatTokens(stats.tokensAfter)} tokens`
+      ? m("chatStates2.compaction.tokens", {
+          before: formatTokens(stats.tokensBefore),
+          after: formatTokens(stats.tokensAfter),
+        })
       : null;
   if (tokens) return `${headline} · ${tokens}`;
   return condensedMessages
     ? headline
-    : "Condensed the conversation to keep going";
+    : m("chatStates2.compaction.condensedToKeepGoing");
 }

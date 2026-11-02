@@ -17,6 +17,7 @@ import {
 import { isPlainLeftClick } from "./helpers";
 import { BellRingIcon, Cancel01Icon } from "@hugeicons/core-free-icons";
 import { createIconComponent, Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 
 // Alert's `icon` prop takes a component (its defaults come from lucide).
 const BellRing = createIconComponent(BellRingIcon);
@@ -26,6 +27,7 @@ function hiddenOnServer() {
 }
 
 export function NotificationBanner() {
+  const t = useT();
   const isNotificationsEnabled = useCopilotUIStore(
     (state) => state.isNotificationsEnabled,
   );
@@ -79,8 +81,7 @@ export function NotificationBanner() {
     <Alert variant="warning" icon={BellRing} aria-live="polite">
       <div className="flex flex-wrap items-center gap-3">
         <AlertDescription className="min-w-[12rem] flex-1">
-          Notifications are off. Turn them on in Settings to know when your
-          experts finish working, even when you switch tabs.
+          {t("chatStates2.notificationBanner.body")}
         </AlertDescription>
         <Button
           as="NextLink"
@@ -89,14 +90,14 @@ export function NotificationBanner() {
           href="/settings/account"
           onClick={handleOpenSettings}
         >
-          Open settings
+          {t("chatStates2.notificationBanner.openSettings")}
         </Button>
         <Button
           variant="ghost"
           size="icon"
           onClick={handleDismiss}
-          aria-label="Dismiss"
-          title="Dismiss"
+          aria-label={t("chatStates2.notificationBanner.dismiss")}
+          title={t("chatStates2.notificationBanner.dismiss")}
           // TODO(tokens): no exact role for hover:border-[#FFE4BF], hover:bg-[#FFE4BF]
           className="hover:border-[#FFE4BF] hover:bg-[#FFE4BF]"
         >

@@ -12,6 +12,7 @@ import { parseCredentialMentions } from "./helpers";
 import { isKey } from "@/lib/keyboard";
 import { isTouchDevice } from "@/lib/platform";
 import { cn } from "@/lib/utils";
+import { useT } from "@/lib/i18n";
 import type { MentionInput } from "../ChatInput/useChatMentions";
 import { CredentialMentionBadge } from "./CredentialMentionBadge";
 import {
@@ -64,6 +65,7 @@ export function CredentialMentionEditor({
   placeholder,
   className,
 }: Props) {
+  const t = useT();
   const fallbackId = useId();
   const inputId = id ?? fallbackId;
   const rich = parseCredentialMentions(value).some(
@@ -153,7 +155,7 @@ export function CredentialMentionEditor({
     return (
       <PromptInputTextarea
         id={inputId}
-        aria-label="Chat message input"
+        aria-label={t("chatStates2.credentialMention.inputAria")}
         value={value}
         onChange={handleTextareaChange}
         onKeyDown={onKeyDown}
@@ -174,7 +176,7 @@ export function CredentialMentionEditor({
         ref={attachEditor}
         id={inputId}
         role="textbox"
-        aria-label="Chat message input"
+        aria-label={t("chatStates2.credentialMention.inputAria")}
         aria-multiline="true"
         aria-disabled={disabled}
         data-slot="input-group-control"
