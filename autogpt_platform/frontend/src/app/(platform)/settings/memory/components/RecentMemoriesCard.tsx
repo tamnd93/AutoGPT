@@ -4,7 +4,7 @@ import type { MemoryFact } from "@/app/api/__generated__/models/memoryFact";
 import { Button } from "@/components/atoms/Button/Button";
 import { Skeleton } from "@/components/atoms/Skeleton/Skeleton";
 import { Text } from "@/components/atoms/Text/Text";
-import { useT } from "@/lib/i18n";
+import { useLocale, useT } from "@/lib/i18n";
 import { formatWhen } from "../helpers";
 
 interface Props {
@@ -23,6 +23,7 @@ export function RecentMemoriesCard({
   onForgetTopic,
 }: Props) {
   const t = useT();
+  const locale = useLocale();
   return (
     <div className="flex flex-col rounded-[18px] border border-border-base bg-surface px-4 py-4 shadow-[0_1px_2px_rgba(15,15,20,0.04)]">
       <Text variant="body-medium" as="span" className="text-textBlack">
@@ -65,7 +66,7 @@ export function RecentMemoriesCard({
                 as="span"
                 className="hidden shrink-0 text-foreground-subtle sm:inline"
               >
-                {formatWhen(fact.created_at)}
+                {formatWhen(fact.created_at, locale)}
               </Text>
               <Button
                 variant="ghost"

@@ -63,14 +63,14 @@ export function MemoryChatPanel({
                 className="text-violet-600"
               />
               <span className="text-sm font-semibold text-foreground-emphasis">
-                {scopeName}&apos;s memory
+                {t("settingsRest2.memory.chat.header", { name: scopeName })}
               </span>
             </div>
             <Button
               variant="ghost"
               size="icon"
               onClick={onClose}
-              aria-label="Close memory chat"
+              aria-label={t("settingsRest2.memory.chat.closeAria")}
             >
               <Icon icon={Cancel01Icon} size={16} />
             </Button>
@@ -80,10 +80,10 @@ export function MemoryChatPanel({
             {startError ? (
               <div className="flex flex-1 flex-col items-center justify-center gap-3 px-4 py-6 text-center text-sm text-foreground-secondary">
                 <p className="font-medium text-foreground-emphasis">
-                  Could not start the memory chat
+                  {t("settingsRest2.memory.chat.startErrorTitle")}
                 </p>
                 <p className="text-foreground-tertiary">
-                  Something went wrong. Retry to try again.
+                  {t("settingsRest2.memory.chat.startErrorBody")}
                 </p>
                 <Button variant="secondary" size="small" onClick={onRetry}>
                   Retry
@@ -114,7 +114,7 @@ export function MemoryChatPanel({
                     isTurnStarting={status === "submitted"}
                     onStop={onStop}
                     onEnqueue={onSend}
-                    placeholder="Ask or update…"
+                    placeholder={t("settingsRest2.memory.chat.placeholder")}
                     hasSession={true}
                   />
                 </div>

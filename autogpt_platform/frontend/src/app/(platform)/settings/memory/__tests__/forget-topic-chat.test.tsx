@@ -1,3 +1,4 @@
+import { LocaleProvider } from "@/lib/i18n";
 import { render, screen, within } from "@/tests/integrations/test-utils";
 import userEvent from "@testing-library/user-event";
 import type { UIMessageChunk } from "ai";
@@ -147,5 +148,28 @@ describe("Forget a topic chat", () => {
     expect(
       within(panel).getByRole("button", { name: "Send answers" }),
     ).toBeDefined();
+  });
+
+  it("reads the memory page and the chat panel in Vietnamese", async () => {
+    render(
+      <LocaleProvider locale="vi">
+        <SettingsMemoryPage />
+      </LocaleProvider>,
+    );
+
+    expect(await screen.findByRole("heading", { name: "Ký ức" })).toBeDefined();
+    expect(
+      screen.getByText("Những gì AutoGPT nhớ về bạn — và ai là người nhớ."),
+    ).toBeDefined();
+    expect(screen.getByText("Phạm vi ký ức")).toBeDefined();
+
+    await userEvent
+      .setup()
+      .click(screen.getByRole("button", { name: "Quên một chủ đề…" }));
+
+    const panel = await screen.findByRole("complementary", {
+      name: "Bảng chat ký ức",
+    });
+    expect(within(panel).getByText("Ký ức của Otto")).toBeDefined();
   });
 });

@@ -9,11 +9,63 @@ import { DecisionRequestAction } from "@/app/api/__generated__/models/decisionRe
 import { SkillVersionSummary } from "@/app/api/__generated__/models/skillVersionSummary";
 import { okData } from "@/app/api/helpers";
 import { toast } from "@/components/molecules/Toast/use-toast";
+import type { Locale } from "@/lib/i18n/locale";
+import type { MessageKey } from "@/lib/i18n/messages/en";
+import { getMessage } from "@/lib/i18n/translate";
 import { Flag, useGetFlag } from "@/services/feature-flags/use-get-flag";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
+import { useT } from "@/lib/i18n";
 
 export const HISTORY_LIMIT = 30;
+
+const ORIGIN_FILTER_KEYS: { value: string; labelKey: MessageKey }[] = [
+  { value: "all", labelKey: "settingsRest3.filters.origin.all" },
+  {
+    value: "saved_overnight",
+    labelKey: "settingsRest3.filters.origin.savedOvernight",
+  },
+  {
+    value: "saved_during_work",
+    labelKey: "settingsRest3.filters.origin.savedDuringWork",
+  },
+  { value: "requested", labelKey: "settingsRest3.filters.origin.requested" },
+  { value: "edited", labelKey: "settingsRest3.filters.origin.edited" },
+  { value: "restored", labelKey: "settingsRest3.filters.origin.restored" },
+  { value: "imported", labelKey: "settingsRest3.filters.origin.imported" },
+];
+
+const STATE_FILTER_KEYS: { value: string; labelKey: MessageKey }[] = [
+  { value: "all", labelKey: "settingsRest3.filters.state.all" },
+  { value: "ready", labelKey: "settingsRest3.filters.state.ready" },
+  {
+    value: "needs_decision",
+    labelKey: "settingsRest3.filters.state.needsDecision",
+  },
+  {
+    value: "blocked_content",
+    labelKey: "settingsRest3.filters.state.blockedContent",
+  },
+  { value: "archived", labelKey: "settingsRest3.filters.state.archived" },
+  {
+    value: "invalidated",
+    labelKey: "settingsRest3.filters.state.invalidated",
+  },
+];
+
+export function originFilters(locale: Locale = "en") {
+  return ORIGIN_FILTER_KEYS.map(({ value, labelKey }) => ({
+    value,
+    label: getMessage(locale, labelKey),
+  }));
+}
+
+export function stateFilters(locale: Locale = "en") {
+  return STATE_FILTER_KEYS.map(({ value, labelKey }) => ({
+    value,
+    label: getMessage(locale, labelKey),
+  }));
+}
 
 export const ORIGIN_FILTERS = [
   { value: "all", label: "All origins" },
@@ -55,6 +107,7 @@ export function readOpenRecordFromUrl(): OpenLearningRecord | null {
 }
 
 export function useLearningHistory(scopeExpertID: string | null) {
+  const t = useT();
   const enabled = Boolean(useGetFlag(Flag.DREAM_SKILL_LEARNING_ENABLED));
   const queryClient = useQueryClient();
   const [origin, setOrigin] = useState("all");
@@ -82,7 +135,9 @@ export function useLearningHistory(scopeExpertID: string | null) {
         onSuccess: (res) => {
           const data = okData(res);
           toast({
-            title: data?.status_label ?? "Decision recorded",
+            title:
+              data?.status_label ??
+              t("settingsRest3.learning.decisionRecorded"),
             description: data?.reason || undefined,
           });
           queryClient.invalidateQueries({
@@ -94,7 +149,7 @@ export function useLearningHistory(scopeExpertID: string | null) {
         },
         onError: () =>
           toast({
-            title: "Could not record the decision",
+            title: t("settingsRest3.learning.decisionFailed"),
             variant: "destructive",
           }),
       },

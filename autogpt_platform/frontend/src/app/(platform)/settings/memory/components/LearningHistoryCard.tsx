@@ -5,9 +5,9 @@ import type { LearningHistoryItem } from "@/app/api/__generated__/models/learnin
 import { Select } from "@/components/atoms/Select/Select";
 import { Skeleton } from "@/components/atoms/Skeleton/Skeleton";
 import { Text } from "@/components/atoms/Text/Text";
-import { useT } from "@/lib/i18n";
+import { useLocale, useT } from "@/lib/i18n";
 import { formatWhen } from "../helpers";
-import { ORIGIN_FILTERS, STATE_FILTERS } from "../useLearningHistory";
+import { originFilters, stateFilters } from "../useLearningHistory";
 
 interface Props {
   items: LearningHistoryItem[];
@@ -31,6 +31,7 @@ export function LearningHistoryCard({
   onOpen,
 }: Props) {
   const t = useT();
+  const locale = useLocale();
 
   function expertName(expertId: string | null | undefined) {
     if (!expertId) return t("settingsRest2.memory.learning.otto");
@@ -58,7 +59,7 @@ export function LearningHistoryCard({
           size="small"
           value={origin}
           onValueChange={onOriginChange}
-          options={ORIGIN_FILTERS}
+          options={originFilters(locale)}
         />
         <Select
           id="learning-state"
@@ -67,7 +68,7 @@ export function LearningHistoryCard({
           size="small"
           value={state}
           onValueChange={onStateChange}
-          options={STATE_FILTERS}
+          options={stateFilters(locale)}
         />
       </div>
       <div className="mt-2 flex flex-col divide-y divide-separator">
@@ -111,7 +112,7 @@ export function LearningHistoryCard({
                   as="span"
                   className="shrink-0 text-foreground-subtle"
                 >
-                  {formatWhen(new Date(item.created_at).toISOString())}
+                  {formatWhen(item.created_at, locale)}
                 </Text>
               </div>
               <Text

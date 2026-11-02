@@ -15,6 +15,7 @@ import {
   useListMyMemoryFacts,
 } from "@/app/api/__generated__/endpoints/memory/memory";
 import { toast } from "@/components/molecules/Toast/use-toast";
+import { useT } from "@/lib/i18n";
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import {
@@ -25,6 +26,7 @@ import {
 } from "./helpers";
 
 export function useMemoryPage() {
+  const t = useT();
   // The Soul drawer's learned-notes panel links here with ?expert=<id>, so
   // the link opens on that expert. Read once — the dropdown owns it after.
   const [scopeExpertID, setScopeExpertID] = useState<string | null>(
@@ -94,13 +96,13 @@ export function useMemoryPage() {
 
   function onForgotten() {
     invalidateScopeQueries();
-    toast({ title: "Forgotten" });
+    toast({ title: t("settingsRest3.memory.forgotten") });
   }
 
   function onForgetError() {
     toast({
-      title: "Could not forget that memory",
-      description: "Please try again.",
+      title: t("settingsRest3.memory.forgetFailedTitle"),
+      description: t("settingsRest3.memory.tryAgain"),
       variant: "destructive",
     });
   }
@@ -136,13 +138,13 @@ export function useMemoryPage() {
 
   function onErased() {
     invalidateScopeQueries();
-    toast({ title: "Memory erased" });
+    toast({ title: t("settingsRest3.memory.erased") });
   }
 
   function onEraseError() {
     toast({
-      title: "Could not erase memory",
-      description: "Please try again.",
+      title: t("settingsRest3.memory.eraseFailedTitle"),
+      description: t("settingsRest3.memory.tryAgain"),
       variant: "destructive",
     });
   }
@@ -176,7 +178,7 @@ export function useMemoryPage() {
     scopeExpertID,
     selectScope,
     experts,
-    scopeName: getScopeName(scopeExpertID, experts),
+    scopeName: getScopeName(scopeExpertID, experts, t),
     facts,
     isLoadingFacts: factsQuery.isLoading,
     isFactsError: factsQuery.isError,

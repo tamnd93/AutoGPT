@@ -2,6 +2,8 @@
 
 import { Text } from "@/components/atoms/Text/Text";
 import { ErrorCard } from "@/components/molecules/ErrorCard/ErrorCard";
+import { useLocale, useT } from "@/lib/i18n";
+import { getMessage } from "@/lib/i18n/translate";
 import { useEffect } from "react";
 
 import { SkillLearningSheet } from "@/components/organisms/SkillLearningSheet/SkillLearningSheet";
@@ -19,9 +21,12 @@ import { useLearningHistory } from "./useLearningHistory";
 import { useMemoryPage } from "./useMemoryPage";
 
 export default function SettingsMemoryPage() {
+  const t = useT();
+  const locale = useLocale();
+
   useEffect(() => {
-    document.title = "Memory – AutoGPT Platform";
-  }, []);
+    document.title = getMessage(locale, "settingsRest3.page.title");
+  }, [locale]);
 
   const {
     scopeExpertID,
@@ -47,13 +52,13 @@ export default function SettingsMemoryPage() {
     <div className="flex flex-col gap-4">
       <header className="flex min-w-0 flex-col pb-2 pl-4">
         <Text variant="h4" as="h1" className="leading-7 text-textBlack">
-          Memory
+          {t("settingsRest3.page.header")}
         </Text>
         <Text
           variant="body"
           className="mt-4 max-w-[600px] text-foreground-body"
         >
-          {"What AutoGPT remembers about you — and who remembers it."}
+          {t("settingsRest3.page.body")}
         </Text>
       </header>
 
@@ -74,7 +79,7 @@ export default function SettingsMemoryPage() {
       {isFactsError ? (
         <ErrorCard
           responseError={factsError || undefined}
-          context="memory"
+          context={t("settingsRest3.page.errorContext")}
           onRetry={refetchFacts}
         />
       ) : (
