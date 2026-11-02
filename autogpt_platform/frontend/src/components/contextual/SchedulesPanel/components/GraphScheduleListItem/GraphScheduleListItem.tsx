@@ -4,6 +4,7 @@ import type { GraphExecutionJobInfo } from "@/app/api/__generated__/models/graph
 import { Button } from "@/components/atoms/Button/Button";
 import { Text } from "@/components/atoms/Text/Text";
 import { Dialog } from "@/components/molecules/Dialog/Dialog";
+import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import type { ReactNode } from "react";
@@ -40,6 +41,7 @@ export function GraphScheduleListItem({
   actionClassName,
   textSize = "body",
 }: Props) {
+  const t = useT();
   const {
     nextRunLabel,
     nextRunValue,
@@ -112,7 +114,7 @@ export function GraphScheduleListItem({
               data-testid="schedule-kind-badge"
             >
               <Text variant="small-tight" as="span" tone="success-strong">
-                Workflow run
+                {t("schedule1.scheduleKind")}
               </Text>
             </span>
           </div>
@@ -127,10 +129,10 @@ export function GraphScheduleListItem({
           onClick={openView}
           className={actionClassName}
           data-testid="schedule-view-button"
-          aria-label="View schedule"
+          aria-label={t("schedule1.graph.viewAria")}
         >
           <Icon icon={EyeIcon} className="mr-1 h-4 w-4" />
-          View
+          {t("schedule1.graph.view")}
         </Button>
         <Button
           variant="secondary"
@@ -138,17 +140,17 @@ export function GraphScheduleListItem({
           onClick={openDelete}
           className={actionClassName}
           data-testid="schedule-delete-button"
-          aria-label="Delete schedule"
+          aria-label={t("schedule1.graph.deleteAria")}
         >
           <Icon icon={Delete02Icon} className="mr-1 h-4 w-4" />
-          Delete
+          {t("schedule1.graph.delete")}
         </Button>
       </div>
 
       <Dialog
         controlled={{ isOpen: isViewOpen, set: closeView }}
         styling={{ maxWidth: "26rem" }}
-        title="Scheduled workflow run"
+        title={t("schedule1.graph.detailsTitle")}
       >
         <Dialog.Content>
           <div className="flex flex-col gap-5">
@@ -169,20 +171,26 @@ export function GraphScheduleListItem({
                   {agentLabel}
                 </Text>
                 <Text variant="small" className="!text-foreground-tertiary">
-                  Recurring workflow run
+                  {t("schedule1.graph.recurring")}
                 </Text>
               </div>
             </div>
             <dl className="divide-y divide-separator overflow-hidden rounded-xl border border-border-base/80 bg-surface-muted/60">
               <ScheduleMetaRow
-                label="Next run"
+                label={t("schedule1.graph.nextRun")}
                 value={nextRunValue}
                 title={nextRunTitle}
               />
-              <ScheduleMetaRow label="Repeats" value={recurrenceLabel} />
-              <ScheduleMetaRow label="Schedule name" value={schedule.name} />
               <ScheduleMetaRow
-                label="Workflow"
+                label={t("schedule1.graph.repeats")}
+                value={recurrenceLabel}
+              />
+              <ScheduleMetaRow
+                label={t("schedule1.graph.scheduleName")}
+                value={schedule.name}
+              />
+              <ScheduleMetaRow
+                label={t("schedule1.graph.workflow")}
                 value={`${schedule.graph_id} · v${schedule.graph_version}`}
                 mono
               />
@@ -194,22 +202,18 @@ export function GraphScheduleListItem({
       <Dialog
         controlled={{ isOpen: isDeleteOpen, set: closeDelete }}
         styling={{ maxWidth: "32rem" }}
-        title="Delete scheduled workflow run"
+        title={t("schedule1.graph.deleteTitle")}
       >
         <Dialog.Content>
           <div className="flex flex-col gap-4">
-            <Text variant="large">
-              Delete this scheduled workflow run? The workflow will stop running
-              on this schedule and you can recreate it from the builder if
-              needed.
-            </Text>
+            <Text variant="large">{t("schedule1.graph.deleteBody")}</Text>
             <Dialog.Footer>
               <Button
                 variant="secondary"
                 disabled={isDeleting}
                 onClick={() => closeDelete(false)}
               >
-                Keep it
+                {t("schedule1.graph.keep")}
               </Button>
               <Button
                 variant="destructive"
@@ -217,7 +221,7 @@ export function GraphScheduleListItem({
                 loading={isDeleting}
                 data-testid="schedule-confirm-delete"
               >
-                Yes, delete
+                {t("schedule1.graph.confirmDelete")}
               </Button>
             </Dialog.Footer>
           </div>

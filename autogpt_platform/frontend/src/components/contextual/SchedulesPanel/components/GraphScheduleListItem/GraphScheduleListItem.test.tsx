@@ -1,4 +1,5 @@
 import type { GraphExecutionJobInfo } from "@/app/api/__generated__/models/graphExecutionJobInfo";
+import { LocaleProvider } from "@/lib/i18n";
 import { render, screen } from "@/tests/integrations/test-utils";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
@@ -16,6 +17,22 @@ const schedule: GraphExecutionJobInfo = {
 };
 
 describe("GraphScheduleListItem", () => {
+  it("reads the row and its dialog in Vietnamese", async () => {
+    render(
+      <LocaleProvider locale="vi">
+        <GraphScheduleListItem schedule={schedule} />
+      </LocaleProvider>,
+    );
+
+    expect(screen.getByText("Tạm dừng")).toBeDefined();
+    expect(screen.getByText("Lượt chạy workflow")).toBeDefined();
+    await userEvent
+      .setup()
+      .click(screen.getByLabelText("Xem lịch chạy"));
+    expect(await screen.findByText("Lần chạy tiếp theo")).toBeDefined();
+    expect(screen.getByText("Tên lịch")).toBeDefined();
+  });
+
   it("shows a paused schedule with its name and actions", () => {
     render(<GraphScheduleListItem schedule={schedule} />);
     expect(screen.getByText("Expert schedule")).toBeDefined();

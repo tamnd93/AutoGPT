@@ -10,6 +10,7 @@ import { ApiError } from "@/lib/autogpt-server-api/helpers";
 import { invalidateAllScheduleQueries } from "@/services/schedules/invalidate-schedules";
 import * as Sentry from "@sentry/nextjs";
 import { useQueryClient } from "@tanstack/react-query";
+import { useT } from "@/lib/i18n";
 import { useState } from "react";
 
 interface Args {
@@ -17,6 +18,7 @@ interface Args {
 }
 
 export function usePausedChatListItem({ paused }: Args) {
+  const t = useT();
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
@@ -35,8 +37,10 @@ export function usePausedChatListItem({ paused }: Args) {
       onSuccess: () => {
         void refresh();
         toast({
-          title: "Resumed",
-          description: `“${paused.title}” runs again at its next scheduled time.`,
+          title: t("schedule1.paused.resumedTitle"),
+          description: t("schedule1.paused.resumedBody", {
+            title: paused.title,
+          }),
         });
       },
       onError: (error) => {
@@ -46,8 +50,8 @@ export function usePausedChatListItem({ paused }: Args) {
         Sentry.captureException(error);
         toast({
           variant: "destructive",
-          title: "Couldn't resume this scheduled chat",
-          description: "Please try again.",
+          title: t("schedule1.paused.resumeFailedTitle"),
+          description: t("schedule1.paused.retry"),
         });
       },
     },
@@ -56,7 +60,7 @@ export function usePausedChatListItem({ paused }: Args) {
   function handleDeleted() {
     setIsDeleteOpen(false);
     void refresh();
-    toast({ title: "Scheduled chat deleted" });
+    toast({ title: t("schedule1.paused.deleted") });
   }
 
   const { mutate: deleteSchedule, isPending: isDeleting } =
@@ -73,8 +77,8 @@ export function usePausedChatListItem({ paused }: Args) {
           Sentry.captureException(error);
           toast({
             variant: "destructive",
-            title: "Couldn't delete this scheduled chat",
-            description: "Please try again.",
+            title: t("schedule1.paused.deleteFailedTitle"),
+            description: t("schedule1.paused.retry"),
           });
         },
       },

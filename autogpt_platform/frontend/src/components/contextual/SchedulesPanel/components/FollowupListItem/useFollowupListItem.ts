@@ -5,6 +5,8 @@ import { safeHumanizeCronExpression } from "@/lib/cron-expression-utils";
 import { invalidateAllScheduleQueries } from "@/services/schedules/invalidate-schedules";
 import { useQueryClient } from "@tanstack/react-query";
 import { formatDistanceToNow } from "date-fns";
+import { vi as dateFnsVi } from "date-fns/locale";
+import { useLocale, useT } from "@/lib/i18n";
 import { useState } from "react";
 import { describeFollowup, formatNextRunTitle } from "./helpers";
 
@@ -13,6 +15,8 @@ interface Args {
 }
 
 export function useFollowupListItem({ followup }: Args) {
+  const t = useT();
+  const locale = useLocale();
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
@@ -28,8 +32,13 @@ export function useFollowupListItem({ followup }: Args) {
     : null;
   const nextRunLabel =
     nextRunDate && !Number.isNaN(nextRunDate.valueOf())
-      ? `Next ${formatDistanceToNow(nextRunDate, { addSuffix: true })}`
-      : "Pending";
+      ? t("schedule1.followup.nextRun", {
+          relative: formatDistanceToNow(nextRunDate, {
+            addSuffix: true,
+            locale: locale === "vi" ? dateFnsVi : undefined,
+          }),
+        })
+      : t("schedule1.followup.pending");
   const nextRunTitle = formatNextRunTitle(
     followup.next_run_time,
     followup.user_timezone ?? followup.timezone,
@@ -37,7 +46,7 @@ export function useFollowupListItem({ followup }: Args) {
 
   const recurrenceLabel = followup.cron
     ? safeHumanizeCronExpression(followup.cron)
-    : "Runs once";
+    : t("schedule1.followup.runsOnce");
 
   function openDelete() {
     setIsDeleteOpen(true);
@@ -58,16 +67,16 @@ export function useFollowupListItem({ followup }: Args) {
   async function handleDelete() {
     try {
       await deleteSchedule({ scheduleId: followup.id });
-      toast({ title: "Follow-up deleted" });
+      toast({ title: t("schedule1.followup.deleted") });
       setIsDeleteOpen(false);
       invalidateAllScheduleQueries(queryClient);
     } catch (error) {
       toast({
-        title: "Failed to delete follow-up",
+        title: t("schedule1.followup.deleteFailedTitle"),
         description:
           error instanceof Error
             ? error.message
-            : "An unexpected error occurred.",
+            : t("schedule1.followup.unexpectedError"),
         variant: "destructive",
       });
     }
@@ -87,6 +96,6 @@ export function useFollowupListItem({ followup }: Args) {
     isViewOpen,
     openView,
     closeView,
-    fullMessage: followup.message || "(no message)",
+    fullMessage: followup.message || t("schedule1.followup.noMessage"),
   };
 }

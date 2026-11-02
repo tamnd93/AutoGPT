@@ -5,6 +5,8 @@ import { safeHumanizeCronExpression } from "@/lib/cron-expression-utils";
 import { invalidateAllScheduleQueries } from "@/services/schedules/invalidate-schedules";
 import { useQueryClient } from "@tanstack/react-query";
 import { formatDistanceToNow } from "date-fns";
+import { vi as dateFnsVi } from "date-fns/locale";
+import { useLocale, useT } from "@/lib/i18n";
 import { useState } from "react";
 
 interface Args {
@@ -12,6 +14,8 @@ interface Args {
 }
 
 export function useGraphScheduleListItem({ schedule }: Args) {
+  const t = useT();
+  const locale = useLocale();
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
@@ -25,25 +29,30 @@ export function useGraphScheduleListItem({ schedule }: Args) {
     : null;
   const nextRunRelative =
     nextRunDate && !Number.isNaN(nextRunDate.valueOf())
-      ? formatDistanceToNow(nextRunDate, { addSuffix: true })
+      ? formatDistanceToNow(nextRunDate, {
+          addSuffix: true,
+          locale: locale === "vi" ? dateFnsVi : undefined,
+        })
       : null;
   // One source of truth: the row prefixes it, the View dialog shows it bare.
   const nextRunValue = nextRunRelative
     ? nextRunRelative
     : schedule.next_run_time
-      ? "Pending"
-      : "Paused";
+      ? t("schedule1.graph.pending")
+      : t("schedule1.graph.paused");
   const nextRunLabel = nextRunRelative
-    ? `Next ${nextRunRelative}`
+    ? t("schedule1.followup.nextRun", { relative: nextRunRelative })
     : nextRunValue;
   const nextRunTitle = nextRunDate ? nextRunDate.toString() : undefined;
 
   const recurrenceLabel = schedule.cron
     ? safeHumanizeCronExpression(schedule.cron)
-    : "Runs once";
+    : t("schedule1.followup.runsOnce");
 
   const agentLabel =
-    schedule.agent_name || schedule.name || "Scheduled workflow";
+    schedule.agent_name ||
+    schedule.name ||
+    t("schedule1.graph.scheduledWorkflow");
   const agentHref = `/build?flowID=${schedule.graph_id}&flowVersion=${schedule.graph_version}`;
 
   function openDelete() {
@@ -62,16 +71,16 @@ export function useGraphScheduleListItem({ schedule }: Args) {
   async function handleDelete() {
     try {
       await deleteSchedule({ scheduleId: schedule.id });
-      toast({ title: "Schedule deleted" });
+      toast({ title: t("schedule1.graph.deleted") });
       setIsDeleteOpen(false);
       invalidateAllScheduleQueries(queryClient, schedule.graph_id);
     } catch (error) {
       toast({
-        title: "Failed to delete schedule",
+        title: t("schedule1.graph.deleteFailedTitle"),
         description:
           error instanceof Error
             ? error.message
-            : "An unexpected error occurred.",
+            : t("schedule1.followup.unexpectedError"),
         variant: "destructive",
       });
     }

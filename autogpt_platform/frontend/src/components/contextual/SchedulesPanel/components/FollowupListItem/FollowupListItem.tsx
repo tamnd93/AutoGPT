@@ -4,6 +4,7 @@ import type { CopilotTurnJobInfo } from "@/app/api/__generated__/models/copilotT
 import { Button } from "@/components/atoms/Button/Button";
 import { Text } from "@/components/atoms/Text/Text";
 import { Dialog } from "@/components/molecules/Dialog/Dialog";
+import { useT } from "@/lib/i18n";
 import Link from "next/link";
 import { useFollowupListItem } from "./useFollowupListItem";
 import {
@@ -18,6 +19,7 @@ interface Props {
 }
 
 export function FollowupListItem({ followup }: Props) {
+  const t = useT();
   const {
     sessionHref,
     nextRunLabel,
@@ -35,7 +37,9 @@ export function FollowupListItem({ followup }: Props) {
     fullMessage,
   } = useFollowupListItem({ followup });
 
-  const kindBadgeLabel = followup.session_id ? "Same chat" : "New chat";
+  const kindBadgeLabel = followup.session_id
+    ? t("schedule1.followup.sameChat")
+    : t("schedule1.followup.newChat");
   const kindBadge = (
     <span
       className="rounded-full bg-surface-hover px-2 py-0.5 text-xs text-foreground-secondary"
@@ -113,27 +117,27 @@ export function FollowupListItem({ followup }: Props) {
           size="small"
           onClick={openView}
           data-testid="followup-view-button"
-          aria-label="View follow-up"
+          aria-label={t("schedule1.followup.viewAria")}
         >
           <Icon icon={EyeIcon} className="mr-1 h-4 w-4" />
-          View
+          {t("schedule1.followup.view")}
         </Button>
         <Button
           variant="secondary"
           size="small"
           onClick={openDelete}
           data-testid="followup-delete-button"
-          aria-label="Delete follow-up"
+          aria-label={t("schedule1.followup.deleteAria")}
         >
           <Icon icon={Delete02Icon} className="mr-1 h-4 w-4" />
-          Delete
+          {t("schedule1.followup.delete")}
         </Button>
       </div>
 
       <Dialog
         controlled={{ isOpen: isViewOpen, set: closeView }}
         styling={{ maxWidth: "40rem" }}
-        title="Follow-up details"
+        title={t("schedule1.followup.detailsTitle")}
       >
         <Dialog.Content>
           <div className="flex flex-col gap-3">
@@ -162,13 +166,12 @@ export function FollowupListItem({ followup }: Props) {
       <Dialog
         controlled={{ isOpen: isDeleteOpen, set: closeDelete }}
         styling={{ maxWidth: "32rem" }}
-        title="Delete follow-up"
+        title={t("schedule1.followup.deleteTitle")}
       >
         <Dialog.Content>
           <div className="flex flex-col gap-4">
             <Text variant="large">
-              Delete this scheduled follow-up? The message will not be sent. You
-              can recreate it from chat if needed.
+              {t("schedule1.followup.deleteBody")}
             </Text>
             <Dialog.Footer>
               <Button
@@ -176,7 +179,7 @@ export function FollowupListItem({ followup }: Props) {
                 disabled={isDeleting}
                 onClick={() => closeDelete(false)}
               >
-                Keep it
+                {t("schedule1.followup.keep")}
               </Button>
               <Button
                 variant="destructive"
@@ -184,7 +187,7 @@ export function FollowupListItem({ followup }: Props) {
                 loading={isDeleting}
                 data-testid="followup-confirm-delete"
               >
-                Yes, delete
+                {t("schedule1.followup.confirmDelete")}
               </Button>
             </Dialog.Footer>
           </div>

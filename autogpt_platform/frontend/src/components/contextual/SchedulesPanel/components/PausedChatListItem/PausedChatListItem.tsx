@@ -5,6 +5,7 @@ import { Button } from "@/components/atoms/Button/Button";
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { Text } from "@/components/atoms/Text/Text";
 import { Dialog } from "@/components/molecules/Dialog/Dialog";
+import { useT } from "@/lib/i18n";
 import { Delete02Icon, PauseIcon, PlayIcon } from "@hugeicons/core-free-icons";
 import Link from "next/link";
 import { usePausedChatListItem } from "./usePausedChatListItem";
@@ -14,6 +15,7 @@ interface Props {
 }
 
 export function PausedChatListItem({ paused }: Props) {
+  const t = useT();
   const {
     sessionHref,
     handleResume,
@@ -69,20 +71,24 @@ export function PausedChatListItem({ paused }: Props) {
           size="small"
           loading={isResuming}
           onClick={handleResume}
-          aria-label={`Resume ${paused.title}`}
+          aria-label={t("schedule1.paused.resumeAria", {
+            title: paused.title,
+          })}
         >
           <Icon icon={PlayIcon} className="mr-1 h-4 w-4" />
-          Resume
+          {t("schedule1.paused.resume")}
         </Button>
         {canDelete ? (
           <Button
             variant="secondary"
             size="small"
             onClick={() => setIsDeleteOpen(true)}
-            aria-label={`Delete ${paused.title}`}
+            aria-label={t("schedule1.paused.deleteAria", {
+              title: paused.title,
+            })}
           >
             <Icon icon={Delete02Icon} className="mr-1 h-4 w-4" />
-            Delete
+            {t("schedule1.paused.delete")}
           </Button>
         ) : null}
       </div>
@@ -90,13 +96,12 @@ export function PausedChatListItem({ paused }: Props) {
       <Dialog
         controlled={{ isOpen: isDeleteOpen, set: setIsDeleteOpen }}
         styling={{ maxWidth: "32rem" }}
-        title="Delete scheduled chat"
+        title={t("schedule1.paused.deleteTitle")}
       >
         <Dialog.Content>
           <div className="flex flex-col gap-4">
             <Text variant="large">
-              Delete “{paused.title}”? It won&apos;t run again. You can recreate
-              it from chat if needed.
+              {t("schedule1.paused.deleteBody", { title: paused.title })}
             </Text>
             <Dialog.Footer>
               <Button
@@ -104,14 +109,14 @@ export function PausedChatListItem({ paused }: Props) {
                 disabled={isDeleting}
                 onClick={() => setIsDeleteOpen(false)}
               >
-                Keep it
+                {t("schedule1.paused.keep")}
               </Button>
               <Button
                 variant="destructive"
                 onClick={handleDelete}
                 loading={isDeleting}
               >
-                Yes, delete
+                {t("schedule1.paused.confirmDelete")}
               </Button>
             </Dialog.Footer>
           </div>
