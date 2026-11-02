@@ -28,6 +28,8 @@ export function unlockAudio(): HTMLAudioElement {
 
 interface Args {
   synthesize: (text: string) => Promise<Blob>;
+  /** The failure the card shows when playback itself cannot start. */
+  errorMessage?: string;
   /** The queue ran dry. The caller decides whether the reply is over. */
   onIdle: () => void;
   /** Audio actually started — the moment the user hears anything. */
@@ -37,6 +39,7 @@ interface Args {
 
 export function createSpeechPlayer({
   synthesize,
+  errorMessage = "Audio playback failed",
   onIdle,
   onPlaybackStart,
   onError,
@@ -115,7 +118,7 @@ export function createSpeechPlayer({
         settle(resolve);
       }
       function onFailed() {
-        settle(() => reject(new Error("Audio playback failed")));
+        settle(() => reject(new Error(errorMessage)));
       }
       // Swapping `src` in stop() fires neither "ended" nor "error", so
       // without this the promise never settles, `draining` stays true, and

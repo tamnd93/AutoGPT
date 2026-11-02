@@ -2,6 +2,7 @@
 
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { Button } from "@/components/atoms/Button/Button";
+import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { StopIcon, VoiceIcon } from "@hugeicons/core-free-icons";
 
@@ -21,13 +22,18 @@ export function VoiceModeButton({
   onClick,
   className,
 }: Props) {
+  const t = useT();
   return (
     <Button
       type="button"
       variant="icon"
       size="icon"
       aria-label={
-        speaking ? "Stop" : isActive ? "Leave voice mode" : "Start voice mode"
+        speaking
+          ? t("voice1.button.stop")
+          : isActive
+            ? t("voice1.button.leave")
+            : t("voice1.button.start")
       }
       aria-pressed={isActive}
       disabled={disabled}

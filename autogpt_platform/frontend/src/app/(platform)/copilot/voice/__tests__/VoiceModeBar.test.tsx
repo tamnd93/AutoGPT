@@ -1,6 +1,7 @@
 import { act } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
+import { LocaleProvider } from "@/lib/i18n";
 import { fireEvent, render, screen } from "@/tests/integrations/test-utils";
 
 vi.mock("../speechLevel", () => ({ readSpeechLevel: vi.fn(() => null) }));
@@ -28,6 +29,25 @@ describe("VoiceModeBar", () => {
     const status = screen.getByRole("status");
     expect(status.textContent).toContain("Listening");
     expect(status.getAttribute("aria-live")).toBe("polite");
+  });
+
+  it("offers the vietnamese retry and recording actions", () => {
+    render(
+      <LocaleProvider locale="vi">
+        <VoiceModeBar
+          state="listening"
+          statusLabel="Đang nghe"
+          failure={{ message: "Chuyển giọng nói thành văn bản thất bại" }}
+          onRetry={vi.fn()}
+          onDownload={vi.fn()}
+        />
+      </LocaleProvider>,
+    );
+
+    expect(screen.getByRole("button", { name: "Thử lại" })).toBeDefined();
+    expect(
+      screen.getByRole("button", { name: "Tải bản ghi âm" }),
+    ).toBeDefined();
   });
 
   it("offers the retry and the recording when transcription fails", () => {

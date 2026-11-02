@@ -6,6 +6,9 @@
  * invariant the rest of the feature leans on.
  */
 
+import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/locale";
+import { getMessage } from "@/lib/i18n/translate";
+
 export type VoiceState =
   | "off"
   | "listening"
@@ -65,19 +68,21 @@ export function isMicOpen(state: VoiceState): boolean {
   return state === "listening" || state === "hearing";
 }
 
-export function describeVoiceState(state: VoiceState): string {
+export function describeVoiceState(
+  state: VoiceState,
+  locale: Locale = DEFAULT_LOCALE,
+): string {
   switch (state) {
     case "listening":
-      return "Listening";
     case "hearing":
-      return "Listening";
+      return getMessage(locale, "voice1.status.listening");
     case "transcribing":
-      return "Transcribing";
+      return getMessage(locale, "voice1.status.transcribing");
     case "thinking":
-      return "Thinking";
+      return getMessage(locale, "voice1.status.thinking");
     case "speaking":
-      return "Speaking";
+      return getMessage(locale, "voice1.status.speaking");
     case "off":
-      return "Voice mode off";
+      return getMessage(locale, "voice1.status.off");
   }
 }

@@ -1,3 +1,5 @@
+import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/locale";
+import { getMessage } from "@/lib/i18n/translate";
 import { environment } from "@/services/environment";
 
 import { getCopilotAuthHeaders } from "../helpers";
@@ -5,6 +7,7 @@ import { getCopilotAuthHeaders } from "../helpers";
 export async function synthesizeSpeech(
   text: string,
   sessionId: string | null,
+  locale: Locale = DEFAULT_LOCALE,
 ): Promise<Blob> {
   const response = await fetch(
     `${environment.getAGPTServerBaseUrl()}/api/chat/speech`,
@@ -19,20 +22,23 @@ export async function synthesizeSpeech(
   );
 
   if (!response.ok) {
-    throw new Error(speechFailure(response.status));
+    throw new Error(speechFailure(response.status, locale));
   }
 
   return response.blob();
 }
 
-export async function transcribeUtterance(audio: Blob): Promise<string> {
+export async function transcribeUtterance(
+  audio: Blob,
+  locale: Locale = DEFAULT_LOCALE,
+): Promise<string> {
   const body = new FormData();
   body.append("audio", audio);
 
   const response = await fetch("/api/transcribe", { method: "POST", body });
   if (!response.ok) {
     const data = await response.json().catch(() => ({}));
-    throw new Error(data.error || "Transcription failed");
+    throw new Error(data.error || getMessage(locale, "voice1.error.transcription"));
   }
 
   const data = await response.json();
@@ -44,15 +50,18 @@ export async function transcribeUtterance(audio: Blob): Promise<string> {
  * statuses a user actually meets. A bare code tells them nothing about what
  * to do next.
  */
-function speechFailure(status: number): string {
+function speechFailure(
+  status: number,
+  locale: Locale = DEFAULT_LOCALE,
+): string {
   if (status === 429) {
-    return "You've reached your usage limit — voice replies are paused until it resets.";
+    return getMessage(locale, "voice1.error.usageLimit");
   }
   if (status === 402) {
-    return "Voice replies need an active AutoGPT subscription.";
+    return getMessage(locale, "voice1.error.subscription");
   }
   if (status === 503) {
-    return "Voice replies are unavailable right now. Try again shortly.";
+    return getMessage(locale, "voice1.error.unavailable");
   }
-  return `Speech synthesis failed (${status})`;
+  return getMessage(locale, "voice1.error.synthesisFailed", { status });
 }

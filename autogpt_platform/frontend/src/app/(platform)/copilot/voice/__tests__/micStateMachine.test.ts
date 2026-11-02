@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  describeVoiceState,
   isMicOpen,
   voiceReduce,
   type VoiceEvent,
@@ -118,5 +119,23 @@ describe("mic gating", () => {
     ] as const) {
       expect(isMicOpen(state)).toBe(false);
     }
+  });
+});
+
+describe("describeVoiceState in vietnamese", () => {
+  it.each([
+    ["listening", "Đang nghe"],
+    ["hearing", "Đang nghe"],
+    ["transcribing", "Đang chuyển thành văn bản"],
+    ["thinking", "Đang suy nghĩ"],
+    ["speaking", "Đang nói"],
+    ["off", "Chế độ giọng nói đã tắt"],
+  ] as const)("labels %s", (state, expected) => {
+    expect(describeVoiceState(state, "vi")).toBe(expected);
+  });
+
+  it("keeps the english labels by default", () => {
+    expect(describeVoiceState("listening")).toBe("Listening");
+    expect(describeVoiceState("off", "en")).toBe("Voice mode off");
   });
 });

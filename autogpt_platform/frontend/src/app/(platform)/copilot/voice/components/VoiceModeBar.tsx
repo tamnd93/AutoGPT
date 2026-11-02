@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/atoms/Button/Button";
+import { useT } from "@/lib/i18n";
 
 import type { VoiceState } from "../micStateMachine";
 import type { VoiceFailure } from "../useVoiceMode";
@@ -43,6 +44,7 @@ export function VoiceModeBar({
   onRetry,
   onDownload,
 }: Props) {
+  const t = useT();
   if (state === "off") return null;
 
   // The trace says "everything is fine"; a failure has to take its place
@@ -58,10 +60,10 @@ export function VoiceModeBar({
           {failure.message}
         </span>
         <Button type="button" variant="ghost" size="xs" onClick={onRetry}>
-          Retry
+          {t("voice1.bar.retry")}
         </Button>
         <Button type="button" variant="ghost" size="xs" onClick={onDownload}>
-          Download recording
+          {t("voice1.bar.download")}
         </Button>
         {leaveButton}
       </div>

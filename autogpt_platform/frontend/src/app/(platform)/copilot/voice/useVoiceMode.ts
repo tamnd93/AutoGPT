@@ -4,6 +4,8 @@ import type { UIMessage } from "ai";
 import { useEffect, useInsertionEffect, useRef, useState } from "react";
 
 import { useToast } from "@/components/molecules/Toast/use-toast";
+import { useLocale } from "@/lib/i18n";
+import { getMessage } from "@/lib/i18n/translate";
 import { isMicrophonePermissionDenied } from "@/lib/microphone";
 import { trackVoiceMode } from "@/services/copilot/voice-mode-analytics";
 
@@ -75,6 +77,7 @@ export function useVoiceMode({
   silenceTimeoutMs = SILENCE_TIMEOUT_MS,
   onSend,
 }: Args) {
+  const locale = useLocale();
   const isReplyInFlight = isStreaming || isReconnecting || isFinishProbing;
   const [state, setState] = useState<VoiceState>("off");
   const { toast } = useToast();
@@ -140,9 +143,11 @@ export function useVoiceMode({
   function report(error: unknown) {
     console.error("[Voice mode]", error);
     toast({
-      title: "Voice mode",
+      title: getMessage(locale, "voice1.toast.title"),
       description:
-        error instanceof Error ? error.message : "Something went wrong.",
+        error instanceof Error
+          ? error.message
+          : getMessage(locale, "voice1.toast.genericError"),
       variant: "destructive",
     });
   }
@@ -235,7 +240,9 @@ export function useVoiceMode({
   function player(): SpeechPlayer {
     if (!playerRef.current) {
       playerRef.current = createSpeechPlayer({
-        synthesize: (text) => synthesizeSpeech(text, inputs.current.sessionId),
+        synthesize: (text) =>
+          synthesizeSpeech(text, inputs.current.sessionId, locale),
+        errorMessage: getMessage(locale, "voice1.error.audioPlayback"),
         onIdle: () => {
           if (replyDone.current) dispatch({ type: "REPLY_DONE" });
         },
@@ -355,7 +362,7 @@ export function useVoiceMode({
 
     let transcript = "";
     try {
-      transcript = await transcribeUtterance(wav);
+      transcript = await transcribeUtterance(wav, locale);
     } catch (error) {
       // A session the user has already left owns none of this: writing the
       // failure back here would resurrect the old recording under the next
@@ -371,7 +378,7 @@ export function useVoiceMode({
         message:
           error instanceof Error && error.message
             ? error.message
-            : "Transcription failed",
+            : getMessage(locale, "voice1.error.transcription"),
       });
       // The mic comes back, but its 8-second silence close must not: that
       // would take the recording with it before the user has read the error.
@@ -566,7 +573,7 @@ export function useVoiceMode({
     state,
     isActive: state !== "off",
     isStarting,
-    statusLabel: describeVoiceState(state),
+    statusLabel: describeVoiceState(state, locale),
     toggle,
     failure,
     retryFailedUtterance,
