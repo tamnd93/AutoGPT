@@ -3,6 +3,7 @@
 import { Expert } from "@/app/api/__generated__/models/expert";
 import { ErrorCard } from "@/components/molecules/ErrorCard/ErrorCard";
 import { InstallWorkflowPicker } from "@/components/molecules/InstallWorkflowPicker/InstallWorkflowPicker";
+import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { EmptyTeamState } from "./components/EmptyTeamState";
 import { ExpertChatDrawer } from "./components/ExpertChatDrawer/ExpertChatDrawer";
@@ -19,6 +20,7 @@ const MAIN_CLASS =
   "mx-auto min-h-screen w-full max-w-[1180px] space-y-5 px-4 pb-16 pt-6 duration-500 sm:px-8 md:px-12 animate-in fade-in slide-in-from-bottom-2 fill-mode-both motion-reduce:animate-none";
 
 export default function TeamPage() {
+  const t = useT();
   const {
     hiredExperts,
     schedulesForExpert,
@@ -62,8 +64,8 @@ export default function TeamPage() {
 
         {isError ? (
           <ErrorCard
-            context="your team"
-            hint="We could not load your hired experts."
+            context={t("team9.page.errorContext")}
+            hint={t("team9.page.errorHint")}
             onRetry={() => refetch()}
           />
         ) : null}

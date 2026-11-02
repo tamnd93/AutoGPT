@@ -4,6 +4,7 @@ import type { Expert } from "@/app/api/__generated__/models/expert";
 import { Text } from "@/components/atoms/Text/Text";
 import { AutopilotAvatar } from "@/components/molecules/AutopilotAvatar/AutopilotAvatar";
 import { ExpertAvatar } from "@/components/molecules/ExpertAvatar/ExpertAvatar";
+import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { TeamHeaderActions } from "../TeamHeaderActions";
 
@@ -25,6 +26,7 @@ const POSITIONS = [
 /** Otto flanked by the first two hires, over the page title and a line on
  *  what the team is for. */
 export function TeamPageHeader({ experts }: Props) {
+  const t = useT();
   const flank = experts.slice(0, 2);
 
   return (
@@ -54,10 +56,10 @@ export function TeamPageHeader({ experts }: Props) {
         </div>
         <div className="flex min-w-0 flex-col gap-0.5">
           <Text variant="h4" as="h1" className="!text-foreground-strong">
-            Team
+            {t("team9.page.title")}
           </Text>
           <Text variant="body" className="!text-foreground-tertiary">
-            Otto and your hired experts, ready to work.
+            {t("team9.page.subtitle")}
           </Text>
         </div>
       </div>

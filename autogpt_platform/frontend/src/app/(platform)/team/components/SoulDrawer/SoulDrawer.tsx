@@ -8,6 +8,7 @@ import { Input } from "@/components/atoms/Input/Input";
 import { Text } from "@/components/atoms/Text/Text";
 import { LockIcon } from "@hugeicons/core-free-icons";
 import { useState } from "react";
+import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { ExpertSidePanel } from "../ExpertSidePanel/ExpertSidePanel";
 import { LearnedNotes } from "./components/LearnedNotes/LearnedNotes";
@@ -21,6 +22,7 @@ interface Props {
 }
 
 export function SoulDrawer({ expert, onClose }: Props) {
+  const t = useT();
   return (
     <ExpertSidePanel
       identity={
@@ -32,9 +34,9 @@ export function SoulDrawer({ expert, onClose }: Props) {
             }
           : null
       }
-      title={expert ? `${expert.name}'s Soul` : ""}
+      title={expert ? t("team9.soul.title", { name: expert.name }) : ""}
       panelId="soul"
-      closeLabel="Close Soul panel"
+      closeLabel={t("team9.soul.closeAria")}
       onClose={onClose}
     >
       {expert ? <SoulPanelBody expert={expert} onClose={onClose} /> : null}
@@ -48,6 +50,7 @@ interface BodyProps {
 }
 
 function SoulPanelBody({ expert, onClose }: BodyProps) {
+  const t = useT();
   const { soul, updateField, save, isPending, canSave } = useSoulDrawer({
     expert,
     onClose,
@@ -65,7 +68,7 @@ function SoulPanelBody({ expert, onClose }: BodyProps) {
           className="h-full overflow-y-auto px-5 py-5"
         >
           <Text variant="small" tone="muted" className="mb-5">
-            A living document that shapes every reply.
+            {t("team9.soul.intro")}
           </Text>
           <SoulFields soul={soul} updateField={updateField} />
           <LearnedNotes expertId={expert.id} />
@@ -81,7 +84,7 @@ function SoulPanelBody({ expert, onClose }: BodyProps) {
       </div>
       <div className="flex shrink-0 justify-end gap-2 border-t border-t-sidebar-border px-5 py-3">
         <Button type="button" variant="ghost" size="small" onClick={onClose}>
-          Cancel
+          {t("team9.soul.cancel")}
         </Button>
         <Button
           type="submit"
@@ -90,7 +93,7 @@ function SoulPanelBody({ expert, onClose }: BodyProps) {
           loading={isPending}
           disabled={!canSave}
         >
-          Save Soul
+          {t("team9.soul.save")}
         </Button>
       </div>
     </form>
@@ -103,11 +106,12 @@ interface SoulFieldsProps {
 }
 
 function SoulFields({ soul, updateField }: SoulFieldsProps) {
+  const t = useT();
   return (
     <div className="space-y-1">
       <Input
         id="soul-name"
-        label="Name"
+        label={t("team9.soul.name")}
         labelVariant="small-medium"
         labelClassName="!text-foreground-body"
         value={soul.name}
@@ -117,7 +121,7 @@ function SoulFields({ soul, updateField }: SoulFieldsProps) {
       />
       <Input
         id="soul-identity"
-        label="Identity and personality"
+        label={t("team9.soul.identity")}
         labelVariant="small-medium"
         labelClassName="!text-foreground-body"
         type="textarea"
@@ -129,28 +133,28 @@ function SoulFields({ soul, updateField }: SoulFieldsProps) {
       />
       <Input
         id="soul-voice"
-        label="Voice"
+        label={t("team9.soul.voice")}
         labelVariant="small-medium"
         labelClassName="!text-foreground-body"
         type="textarea"
         rows={3}
         value={soul.voice_preferences}
         maxLength={4000}
-        placeholder="How should this expert sound?"
+        placeholder={t("team9.soul.voicePlaceholder")}
         onChange={(event) =>
           updateField("voice_preferences", event.target.value)
         }
       />
       <Input
         id="soul-boundaries"
-        label="Boundaries"
+        label={t("team9.soul.boundaries")}
         labelVariant="small-medium"
         labelClassName="!text-foreground-body"
         type="textarea"
         rows={4}
         value={soul.boundaries}
         maxLength={4000}
-        placeholder="What should this expert avoid or ask about first?"
+        placeholder={t("team9.soul.boundariesPlaceholder")}
         onChange={(event) => updateField("boundaries", event.target.value)}
       />
     </div>
@@ -158,11 +162,12 @@ function SoulFields({ soul, updateField }: SoulFieldsProps) {
 }
 
 function ProtectedRules({ rules }: { rules: string[] }) {
+  const t = useT();
   return (
     <section className="border-t border-border-base pt-6">
       <div className="mb-3 flex items-center gap-2">
         <Icon icon={LockIcon} size={16} className="text-foreground-tertiary" />
-        <SoulSectionTitle>Protected rules</SoulSectionTitle>
+        <SoulSectionTitle>{t("team9.soul.protectedRules")}</SoulSectionTitle>
       </div>
       <div className="space-y-2 rounded-xl bg-surface-muted p-4">
         {rules.map((rule) => (
@@ -179,7 +184,7 @@ function ProtectedRules({ rules }: { rules: string[] }) {
         ))}
       </div>
       <Text variant="small" tone="muted" className="mt-3">
-        These rules are part of every expert&apos;s soul and cannot be edited.
+        {t("team9.soul.protectedRulesNote")}
       </Text>
     </section>
   );

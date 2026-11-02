@@ -23,6 +23,7 @@ import { Expert } from "@/app/api/__generated__/models/expert";
 import { GraphExecutionJobInfo } from "@/app/api/__generated__/models/graphExecutionJobInfo";
 import { LibraryAgent } from "@/app/api/__generated__/models/libraryAgent";
 import { getGetV2ListSessionsMockHandler200 } from "@/app/api/__generated__/endpoints/chat/chat.msw";
+import { LocaleProvider } from "@/lib/i18n";
 import { server } from "@/mocks/mock-server";
 import {
   fireEvent,
@@ -214,6 +215,27 @@ const scheduledMaria: Expert = {
 };
 
 describe("TeamPage", () => {
+  test("reads the team chrome in Vietnamese", async () => {
+    server.use(getListExpertsMockHandler([hiredMaria]));
+
+    render(
+      <LocaleProvider locale="vi">
+        <TeamPage />
+      </LocaleProvider>,
+    );
+
+    expect(await screen.findByRole("heading", { name: "Đội ngũ" })).toBeDefined();
+    expect(
+      screen.getByText("Otto và những chuyên gia bạn đã thuê, sẵn sàng làm việc."),
+    ).toBeDefined();
+    expect(
+      screen.getByRole("link", { name: "Tạo một chuyên gia" }),
+    ).toBeDefined();
+    expect(
+      screen.getByRole("link", { name: "Thuê chuyên gia" }),
+    ).toBeDefined();
+  });
+
   test("renders the Otto card first", async () => {
     server.use(getListExpertsMockHandler([hiredMaria]));
 

@@ -15,14 +15,18 @@ import { trackExperts } from "@/services/experts/experts-analytics";
 import { invalidateExpertRosterQueries } from "@/services/experts/invalidate-experts";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
+import { useT } from "@/lib/i18n";
 import { useRef, useState } from "react";
 
-function celebrate(result: HireResult) {
+function celebrate(
+  result: HireResult,
+  t: ReturnType<typeof useT>,
+) {
   toast({
-    title: `${result.expert.name} joined your team`,
+    title: t("team9.hire.joined", { name: result.expert.name }),
     description:
       result.expert.setup_status === "installing"
-        ? "Their skills and workflows are installing."
+        ? t("team9.hire.installing")
         : undefined,
     variant: "success",
     action: (
@@ -33,7 +37,7 @@ function celebrate(result: HireResult) {
         size="small"
         className="border-white text-white hover:border-white hover:bg-white/15 hover:text-white"
       >
-        View team
+        {t("team9.hire.viewTeam")}
       </Button>
     ),
   });
@@ -43,6 +47,7 @@ function celebrate(result: HireResult) {
  *  the persona ships writing samples, then celebrate and hand the user to
  *  the expert's first thread. */
 export function useHireFlow(expert: Expert | null) {
+  const t = useT();
   const queryClient = useQueryClient();
   const router = useRouter();
   const [hireResult, setHireResult] = useState<HireResult | null>(null);
@@ -59,7 +64,7 @@ export function useHireFlow(expert: Expert | null) {
     setHireResult(null);
     setIsVoicePickOpen(false);
     if (completedHire) {
-      celebrate(completedHire);
+      celebrate(completedHire, t);
       // Hiring isn't installing: hand the user straight to the expert's
       // thread with kickoff=1 so it introduces itself and starts its job.
       router.push(`/copilot?expertId=${completedHire.expert.id}&kickoff=1`);
@@ -83,8 +88,8 @@ export function useHireFlow(expert: Expert | null) {
       finish();
     } catch {
       toast({
-        title: `Couldn't hire ${expert.name}`,
-        description: "Something went wrong. Please try again.",
+        title: t("team9.hire.failed", { name: expert.name }),
+        description: t("team9.hire.failedBody"),
         variant: "destructive",
       });
     }
@@ -126,8 +131,8 @@ export function useHireFlow(expert: Expert | null) {
       // The hire itself succeeded; keep the picker open so the choice can be
       // retried, and point at the Soul editor as the fallback.
       toast({
-        title: "Couldn't save the voice",
-        description: "You can set it later in the Soul editor.",
+        title: t("team9.hire.voiceFailedTitle"),
+        description: t("team9.hire.voiceFailedBody"),
         variant: "destructive",
       });
       return;

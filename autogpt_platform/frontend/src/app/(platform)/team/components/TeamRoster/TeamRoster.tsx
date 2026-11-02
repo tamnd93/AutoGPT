@@ -4,6 +4,7 @@ import { Expert } from "@/app/api/__generated__/models/expert";
 import { GraphExecutionJobInfo } from "@/app/api/__generated__/models/graphExecutionJobInfo";
 import { Text } from "@/components/atoms/Text/Text";
 import { ReactNode } from "react";
+import { useT } from "@/lib/i18n";
 import {
   SECTION_INSET_CLASS,
   TEAM_GRID_CLASS,
@@ -32,6 +33,7 @@ export function TeamRoster({
   renderCard,
   onAutopilotChat,
 }: Props) {
+  const t = useT();
   // Otto reports on the whole team, so its summary ignores the toolbar.
   const summary = getAutopilotSummary({ experts, schedulesForExpert });
   const autopilot = (
@@ -44,7 +46,10 @@ export function TeamRoster({
   );
 
   return (
-    <section aria-label="Experts" className="flex flex-col gap-4">
+    <section
+      aria-label={t("team9.roster.aria")}
+      className="flex flex-col gap-4"
+    >
       {isLoading ? (
         <div className={TEAM_GRID_CLASS}>
           {autopilot}
@@ -63,7 +68,7 @@ export function TeamRoster({
 
       {!isLoading && isNarrowed && visibleExperts.length === 0 ? (
         <Text variant="body" tone="muted" className={SECTION_INSET_CLASS}>
-          No experts match that search or filter.
+          {t("team9.roster.noMatches")}
         </Text>
       ) : null}
     </section>

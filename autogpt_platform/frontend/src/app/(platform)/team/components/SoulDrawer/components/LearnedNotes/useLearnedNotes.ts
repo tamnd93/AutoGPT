@@ -5,12 +5,14 @@ import {
 } from "@/app/api/__generated__/endpoints/memory/memory";
 import { toast } from "@/components/molecules/Toast/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
+import { useT } from "@/lib/i18n";
 
 /** Enough to show what the expert is picking up without crowding out the Soul
  *  fields above it; the rest is one click away on the memory page. */
 const SOUL_NOTES_LIMIT = 5;
 
 export function useLearnedNotes(expertId: string) {
+  const t = useT();
   const queryClient = useQueryClient();
 
   const factsQuery = useListMyExpertMemoryFacts(expertId, {
@@ -25,12 +27,12 @@ export function useLearnedNotes(expertId: string) {
         queryClient.invalidateQueries({
           queryKey: getListMyExpertMemoryFactsQueryKey(expertId),
         });
-        toast({ title: "Forgotten" });
+        toast({ title: t("team9.learnedNotes.forgotten") });
       },
       onError: () => {
         toast({
-          title: "Could not forget that memory",
-          description: "Please try again.",
+          title: t("team9.learnedNotes.forgetFailedTitle"),
+          description: t("team9.learnedNotes.retry"),
           variant: "destructive",
         });
       },

@@ -12,8 +12,10 @@ import { useToast } from "@/components/molecules/Toast/use-toast";
 import { invalidateExpertGrantQueries } from "@/services/experts/invalidate-experts";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
+import { useT } from "@/lib/i18n";
 
 export function useSetupNeeded() {
+  const t = useT();
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const [connecting, setConnecting] = useState<ExpertSetupItem | null>(null);
@@ -35,7 +37,10 @@ export function useSetupNeeded() {
       onSuccess: (_response, { expertId }) =>
         invalidateExpertGrantQueries(queryClient, expertId),
       onError: () =>
-        toast({ title: "Could not add integration", variant: "destructive" }),
+        toast({
+          title: t("team9.setup.grantFailed"),
+          variant: "destructive",
+        }),
     },
   });
 
@@ -61,7 +66,12 @@ export function useSetupNeeded() {
       { expertId: item.expert_id, data: { credential_ids: [credential.id] } },
       {
         onSuccess: () =>
-          toast({ title: `${item.expert_name} can now use ${service}` }),
+          toast({
+            title: t("team9.setup.granted", {
+              name: item.expert_name,
+              service,
+            }),
+          }),
       },
     );
   }

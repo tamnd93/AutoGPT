@@ -1,3 +1,4 @@
+import { useT } from "@/lib/i18n";
 import { TeamFilter } from "../../helpers";
 import { ToolbarSearch } from "../ToolbarSearch";
 import { TeamFilterMenu } from "./TeamFilterMenu";
@@ -17,11 +18,12 @@ export function TeamRosterToolbar({
   filter,
   onFilterChange,
 }: Props) {
+  const t = useT();
   return (
     <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-end">
       <ToolbarSearch
         id="team-roster-search"
-        label="Search experts"
+        label={t("team9.toolbar.search")}
         value={query}
         onChange={onQueryChange}
         className="sm:w-72"

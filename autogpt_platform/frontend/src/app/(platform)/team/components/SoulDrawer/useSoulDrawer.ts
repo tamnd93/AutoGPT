@@ -7,6 +7,7 @@ import { ExpertSoulUpdate } from "@/app/api/__generated__/models/expertSoulUpdat
 import { toast } from "@/components/molecules/Toast/use-toast";
 import { invalidateExpertRosterQueries } from "@/services/experts/invalidate-experts";
 import { useQueryClient } from "@tanstack/react-query";
+import { useT } from "@/lib/i18n";
 import { FormEvent, useState } from "react";
 
 interface Args {
@@ -22,6 +23,7 @@ const EMPTY_SOUL: ExpertSoulUpdate = {
 };
 
 export function useSoulDrawer({ expert, onClose }: Args) {
+  const t = useT();
   const queryClient = useQueryClient();
   const [soul, setSoul] = useState<ExpertSoulUpdate>(() =>
     expert ? soulFromExpert(expert) : EMPTY_SOUL,
@@ -44,12 +46,12 @@ export function useSoulDrawer({ expert, onClose }: Args) {
           queryKey: getGetExpertQueryKey(expert.id),
         }),
       ]);
-      toast({ title: "Soul saved", variant: "success" });
+      toast({ title: t("team9.soul.saved"), variant: "success" });
       onClose();
     } catch {
       toast({
-        title: "Couldn't save Soul",
-        description: "Your edits are still here. Please try again.",
+        title: t("team9.soul.saveFailedTitle"),
+        description: t("team9.soul.saveFailedBody"),
         variant: "destructive",
       });
     }

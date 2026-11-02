@@ -7,13 +7,14 @@ import {
   PauseIcon,
 } from "@hugeicons/core-free-icons";
 import type { TeamFilter } from "../../helpers";
+import { useT } from "@/lib/i18n";
 import { PillFilterMenu } from "../PillFilterMenu";
 
 const OPTIONS = [
-  { value: "all", label: "All experts", icon: ConferenceIcon },
-  { value: "scheduled", label: "Scheduled", icon: Calendar03Icon },
-  { value: "needs-setup", label: "Needs setup", icon: Alert01Icon },
-  { value: "paused", label: "Paused", icon: PauseIcon },
+  { value: "all", labelKey: "team9.filter.all", icon: ConferenceIcon },
+  { value: "scheduled", labelKey: "team9.filter.scheduled", icon: Calendar03Icon },
+  { value: "needs-setup", labelKey: "team9.filter.needsSetup", icon: Alert01Icon },
+  { value: "paused", labelKey: "team9.filter.paused", icon: PauseIcon },
 ] as const;
 
 interface Props {
@@ -22,12 +23,17 @@ interface Props {
 }
 
 export function TeamFilterMenu({ value, onChange }: Props) {
+  const t = useT();
+  const options = OPTIONS.map((option) => ({
+    ...option,
+    label: t(option.labelKey),
+  }));
   return (
     <PillFilterMenu
-      label="Filter experts"
+      label={t("team9.filter.label")}
       value={value}
       defaultValue="all"
-      options={OPTIONS}
+      options={options}
       onChange={onChange}
     />
   );
