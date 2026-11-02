@@ -90,4 +90,9 @@ export const build1En = {
   "build1.copyPaste.copied": "Copied successfully",
   "build1.copyPaste.copiedBody": "{count} node(s) copied to clipboard",
   "build1.draft.connection": "connection",
+  "build1.panelHeader.title": "Chat with Builder",
+  "build1.panelHeader.revert": "Revert",
+  "build1.panelHeader.close": "Close",
+  "build1.panelHeader.chatPanelAria": "Builder chat panel",
+  "build1.output.infoAria": "Info",
 } as const;

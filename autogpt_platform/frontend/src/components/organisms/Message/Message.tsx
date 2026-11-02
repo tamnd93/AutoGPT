@@ -270,11 +270,12 @@ export const MessageBranchPrevious = ({
   children,
   ...props
 }: MessageBranchPreviousProps) => {
+  const t = useT();
   const { goToPrevious, totalBranches } = useMessageBranch();
 
   return (
     <Button
-      aria-label="Previous branch"
+      aria-label={t("shared4.message.previousBranch")}
       disabled={totalBranches <= 1}
       onClick={goToPrevious}
       size="compact-icon-sm"
@@ -293,11 +294,12 @@ export const MessageBranchNext = ({
   children,
   ...props
 }: MessageBranchNextProps) => {
+  const t = useT();
   const { goToNext, totalBranches } = useMessageBranch();
 
   return (
     <Button
-      aria-label="Next branch"
+      aria-label={t("shared4.message.nextBranch")}
       disabled={totalBranches <= 1}
       onClick={goToNext}
       size="compact-icon-sm"

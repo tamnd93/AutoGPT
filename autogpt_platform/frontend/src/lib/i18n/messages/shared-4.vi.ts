@@ -46,4 +46,14 @@ export const Shared4Vi: Partial<Record<keyof typeof Shared4En, string>> = {
   "shared4.tally.openNewTab": "Mở biểu mẫu trong tab mới",
   "shared4.sidebar.toggle": "Bật/tắt thanh bên",
   "shared4.fileTree.toggle": "Bật/tắt",
+
+  "shared4.promptInput.loading": "Đang tải",
+  "shared4.promptInput.stop": "Dừng",
+  "shared4.promptInput.submit": "Gửi",
+  "shared4.message.previousBranch": "Nhánh trước",
+  "shared4.message.nextBranch": "Nhánh sau",
+  "shared4.taskStatus.completed": "Hoàn thành",
+  "shared4.taskStatus.inProgress": "Đang thực hiện",
+  "shared4.taskStatus.stopped": "Đã dừng",
+  "shared4.taskStatus.pending": "Đang chờ",
 };

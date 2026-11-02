@@ -139,4 +139,14 @@ export const Skills1En = {
   "skills1.summary.noVersion": "No version has been published yet.",
   "skills1.summary.blockedBy":
     "Blocked by content check: {block} at {step}. Replace the value with a typed input.",
+  "skills1.edit.intro":
+    "Your edit takes effect immediately and becomes a new version. The same content checks apply.",
+  "skills1.edit.conflict":
+    "v{version} was saved while you were editing. Your draft is kept. Compare it with the current version before saving.",
+  "skills1.edit.reviewAgainst": "Review changes against v{version}",
+  "skills1.edit.currentDescription": "Current description: {description}",
+  "skills1.edit.continueFrom": "Continue editing from v{version}",
+  "skills1.edit.keepAutoBody":
+    "Off by default after an edit: later automated changes become proposals for you to decide.",
+  "skills1.edit.cancel": "Cancel",
 } as const;

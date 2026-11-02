@@ -40,7 +40,7 @@ export function PanelHeader({
           // TODO(tokens): no exact role: text-slate-800 #475263
           className="text-slate-800"
         >
-          Chat with Builder
+          {t("build1.panelHeader.title")}
         </Text>
       </div>
       <div className="flex items-center gap-1">
@@ -59,14 +59,14 @@ export function PanelHeader({
             }
             title={t("build1.panelHeader.revertTooltip")}
           >
-            Revert
+            {t("build1.panelHeader.revert")}
           </Button>
         )}
         <Button
           variant="ghost"
           size="icon"
           onClick={onClose}
-          aria-label="Close"
+          aria-label={t("build1.panelHeader.close")}
         >
           <Icon icon={Cancel01Icon} size={16} />
         </Button>

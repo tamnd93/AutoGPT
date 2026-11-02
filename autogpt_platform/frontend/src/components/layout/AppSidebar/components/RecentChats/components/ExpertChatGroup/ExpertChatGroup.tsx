@@ -80,7 +80,7 @@ export function ExpertChatGroup({
           long labels then truncate against the link rather than under it. */}
       <div className="group/expert-header relative mb-1 flex items-center rounded-md hover:bg-surface-hover">
         <CollapsibleTrigger
-          aria-label={`${label} chats`}
+          aria-label={t("nav3.chats.groupAria", { label })}
           // The size and weight reach ManagedExpertImage's fallback initials (a
           // span that sets its colour, not its size or weight), and the weight
           // ExpertAvatar's initial; every other piece of copy is a toned Text.

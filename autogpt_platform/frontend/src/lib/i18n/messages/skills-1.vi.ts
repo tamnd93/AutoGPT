@@ -140,4 +140,14 @@ export const Skills1Vi: Partial<Record<keyof typeof Skills1En, string>> = {
   "skills1.summary.noVersion": "Chưa có phiên bản nào được xuất bản.",
   "skills1.summary.blockedBy":
     "Bị chặn bởi kiểm tra nội dung: {block} tại {step}. Thay giá trị bằng một trường nhập có kiểu.",
+  "skills1.edit.intro":
+    "Bản chỉnh sửa có hiệu lực ngay và trở thành phiên bản mới. Vẫn áp dụng các bước kiểm tra nội dung như cũ.",
+  "skills1.edit.conflict":
+    "v{version} đã được lưu trong lúc bạn đang sửa. Bản nháp của bạn vẫn được giữ. Hãy so sánh với phiên bản hiện tại trước khi lưu.",
+  "skills1.edit.reviewAgainst": "Xem thay đổi so với v{version}",
+  "skills1.edit.currentDescription": "Mô tả hiện tại: {description}",
+  "skills1.edit.continueFrom": "Tiếp tục sửa từ v{version}",
+  "skills1.edit.keepAutoBody":
+    "Tắt mặc định sau khi sửa: các thay đổi tự động về sau sẽ thành đề xuất để bạn quyết định.",
+  "skills1.edit.cancel": "Huỷ",
 };

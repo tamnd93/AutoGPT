@@ -43,4 +43,14 @@ export const Shared4En = {
   "shared4.tally.openNewTab": "Open the form in a new tab",
   "shared4.sidebar.toggle": "Toggle Sidebar",
   "shared4.fileTree.toggle": "Toggle",
+  "shared4.promptInput.loading": "Loading",
+  "shared4.promptInput.stop": "Stop",
+  "shared4.promptInput.submit": "Submit",
+  "shared4.message.previousBranch": "Previous branch",
+  "shared4.message.nextBranch": "Next branch",
+  "shared4.taskStatus.completed": "completed",
+  "shared4.taskStatus.inProgress": "in progress",
+  "shared4.taskStatus.stopped": "stopped",
+  "shared4.taskStatus.pending": "pending",
+
 } as const;

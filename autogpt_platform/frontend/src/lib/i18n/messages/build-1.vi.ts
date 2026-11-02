@@ -90,4 +90,9 @@ export const build1Vi: Partial<Record<keyof typeof build1En, string>> = {
   "build1.copyPaste.copied": "Đã sao chép",
   "build1.copyPaste.copiedBody": "{count} node đã được sao chép",
   "build1.draft.connection": "kết nối",
+  "build1.panelHeader.title": "Chat với Builder",
+  "build1.panelHeader.revert": "Hoàn tác",
+  "build1.panelHeader.close": "Đóng",
+  "build1.panelHeader.chatPanelAria": "Bảng chat của trình tạo workflow",
+  "build1.output.infoAria": "Thông tin",
 };

@@ -41,8 +41,7 @@ export function EditSkillForm({
       aria-label={t("skills1.edit.aria")}
     >
       <Text variant="small" tone="muted">
-        Your edit takes effect immediately and becomes a new version. The same
-        content checks apply.
+        {t("skills1.edit.intro")}
       </Text>
       {hasNewerVersion && currentVersion ? (
         <section
@@ -51,8 +50,7 @@ export function EditSkillForm({
           className="rounded-lg border border-warning-border bg-warning-surface p-3"
         >
           <Text variant="small" tone="primary">
-            v{currentVersion.version} was saved while you were editing. Your
-            draft is kept. Compare it with the current version before saving.
+            {t("skills1.edit.conflict", { version: currentVersion.version })}
           </Text>
           <details
             data-slot="edit-skill-form-conflict-details"
@@ -62,11 +60,15 @@ export function EditSkillForm({
               data-slot="edit-skill-form-conflict-summary"
               className="cursor-pointer text-sm font-medium"
             >
-              Review changes against v{currentVersion.version}
+              {t("skills1.edit.reviewAgainst", {
+                version: currentVersion.version,
+              })}
             </summary>
             {draft.description !== currentVersion.description ? (
               <Text variant="small" tone="secondary" className="mt-2">
-                Current description: {currentVersion.description}
+                {t("skills1.edit.currentDescription", {
+                  description: currentVersion.description,
+                })}
               </Text>
             ) : null}
             <pre
@@ -85,7 +87,9 @@ export function EditSkillForm({
               disabled={isBusy}
               onClick={onReviewCurrent}
             >
-              Continue editing from v{currentVersion.version}
+              {t("skills1.edit.continueFrom", {
+                version: currentVersion.version,
+              })}
             </Button>
           </details>
         </section>
@@ -120,17 +124,16 @@ export function EditSkillForm({
           className="flex flex-col"
         >
           <Text variant="small" tone="primary">
-            Keep automatic improvements on
+            {t("skills1.summary.keepAutoOn")}
           </Text>
           <Text variant="small" tone="muted">
-            Off by default after an edit: later automated changes become
-            proposals for you to decide.
+            {t("skills1.edit.keepAutoBody")}
           </Text>
         </span>
         <Switch
           checked={draft.keepAutoImprove}
           disabled={isBusy}
-          aria-label="Keep automatic improvements on"
+          aria-label={t("skills1.summary.keepAutoOn")}
           onCheckedChange={(checked) =>
             onDraftChange({ keepAutoImprove: checked })
           }
@@ -147,7 +150,7 @@ export function EditSkillForm({
           disabled={isBusy}
           onClick={onCancel}
         >
-          Cancel
+          {t("skills1.edit.cancel")}
         </Button>
         <Button
           type="submit"

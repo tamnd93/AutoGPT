@@ -35,6 +35,7 @@ import { cn } from "@/lib/utils";
 import { Children, useInsertionEffect, useLayoutEffect, useRef } from "react";
 import { ArrowUp02Icon, StopIcon } from "@hugeicons/core-free-icons";
 import { Icon as UIIcon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 import { isKey } from "@/lib/keyboard";
 import { isTouchDevice } from "@/lib/platform";
 
@@ -352,6 +353,7 @@ export function PromptInputSubmit({
   children,
   ...props
 }: PromptInputSubmitProps) {
+  const t = useT();
   const isGenerating = status === "submitted" || status === "streaming";
   const canStop = isGenerating && Boolean(onStop);
   const isDisabled = Boolean(disabled) || (isGenerating && !canStop);
@@ -359,7 +361,13 @@ export function PromptInputSubmit({
   let Icon = <UIIcon icon={ArrowUp02Icon} className="size-4" />;
 
   if (status === "submitted") {
-    Icon = <LoadingSpinner size="small" role="status" aria-label="Loading" />;
+    Icon = (
+      <LoadingSpinner
+        size="small"
+        role="status"
+        aria-label={t("shared4.promptInput.loading")}
+      />
+    );
   } else if (status === "streaming") {
     Icon = <UIIcon icon={StopIcon} className="size-4" />;
   }
@@ -379,7 +387,9 @@ export function PromptInputSubmit({
 
   return (
     <InputGroupButton
-      aria-label={canStop ? "Stop" : "Submit"}
+      aria-label={
+        canStop ? t("shared4.promptInput.stop") : t("shared4.promptInput.submit")
+      }
       className={cn(
         // TODO(tokens): no fitting role for the borders border-zinc-800 #3E3E43 and
         // hover:border-zinc-900 #2C2C30 (action and action-hover are fills,

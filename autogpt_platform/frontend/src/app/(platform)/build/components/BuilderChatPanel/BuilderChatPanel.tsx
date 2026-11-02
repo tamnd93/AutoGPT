@@ -69,7 +69,7 @@ export function BuilderChatPanel({ className }: Props) {
           <div
             ref={panelRef}
             role="complementary"
-            aria-label="Builder chat panel"
+            aria-label={t("build1.panelHeader.chatPanelAria")}
             // TODO(tokens): no fitting role for border-slate-200 #CFD4DB; #CFD4DB is node-border (the builder node ring), node-selected (the selected builder node ring)
             className="pointer-events-auto flex h-[70vh] max-h-[calc(100vh-6rem)] w-[26rem] max-w-[calc(100vw-2rem)] flex-col overflow-hidden rounded-xl border border-slate-200 bg-surface shadow-2xl sm:h-[75vh]"
           >

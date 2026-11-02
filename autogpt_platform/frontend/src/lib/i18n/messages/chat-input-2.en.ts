@@ -131,4 +131,7 @@ export const chatInput2En = {
   "chatInput2.sendAtReset.mayAlreadySend": "It may already be set to send",
   "chatInput2.sendAtReset.recoveryComposer":
     "your message is back in the composer",
+  "chatInput2.voice.startRecording": "Start recording",
+  "chatInput2.voice.stopRecording": "Stop recording",
+
 } as const;

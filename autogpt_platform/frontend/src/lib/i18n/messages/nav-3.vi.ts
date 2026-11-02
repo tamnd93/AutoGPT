@@ -21,4 +21,5 @@ export const nav3Vi: Partial<Record<keyof typeof nav3En, string>> = {
   "nav3.chats.loadAll": "Tải tất cả",
   "nav3.chats.loadAllAria": "Tải tất cả cuộc trò chuyện {label}",
   "nav3.chats.loadMoreAria": "Tải thêm cuộc trò chuyện {label}",
+  "nav3.chats.groupAria": "Đoạn chat của {label}",
 };

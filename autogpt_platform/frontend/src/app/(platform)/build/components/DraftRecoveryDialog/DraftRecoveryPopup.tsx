@@ -144,7 +144,7 @@ export function DraftRecoveryPopup({
                     className="aspect-square min-w-0 p-1.5"
                   >
                     <Icon icon={HistoryIcon} size={20} />
-                    <span className="sr-only">Restore changes</span>
+                    <span className="sr-only">{t("build1.draft.restore")}</span>
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>{t("build1.draft.restore")}</TooltipContent>
@@ -155,11 +155,11 @@ export function DraftRecoveryPopup({
                     variant="destructive"
                     size="icon"
                     onClick={onDiscard}
-                    aria-label="Discard changes"
+                    aria-label={t("build1.draft.discard")}
                     className="aspect-square min-w-0 p-1.5"
                   >
                     <Icon icon={Cancel01Icon} size={20} />
-                    <span className="sr-only">Discard changes</span>
+                    <span className="sr-only">{t("build1.draft.discard")}</span>
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>{t("build1.draft.discard")}</TooltipContent>

@@ -140,4 +140,7 @@ export const chatInput2Vi: Partial<Record<keyof typeof chatInput2En, string>> =
       "Tin nhắn có thể đã được đặt để gửi",
     "chatInput2.sendAtReset.recoveryComposer":
       "tin nhắn của bạn đã trở lại ô soạn",
+
+    "chatInput2.voice.startRecording": "Bắt đầu ghi âm",
+    "chatInput2.voice.stopRecording": "Dừng ghi âm",
   };

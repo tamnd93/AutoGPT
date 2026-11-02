@@ -19,4 +19,5 @@ export const nav3En = {
   "nav3.chats.loadAll": "Load all",
   "nav3.chats.loadAllAria": "Load all {label} chats",
   "nav3.chats.loadMoreAria": "Load more {label} chats",
+  "nav3.chats.groupAria": "{label} chats",
 } as const;

@@ -4,6 +4,7 @@ import { Button } from "@/components/atoms/Button/Button";
 import { cn } from "@/lib/utils";
 import { Loading03Icon, Mic01Icon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   isRecording: boolean;
@@ -27,12 +28,18 @@ export function RecordingButton({
   highlight = false,
   className,
 }: Props) {
+  const t = useT();
+
   return (
     <Button
       type="button"
       variant="icon"
       size="icon"
-      aria-label={isRecording ? "Stop recording" : "Start recording"}
+      aria-label={
+        isRecording
+          ? t("chatInput2.voice.stopRecording")
+          : t("chatInput2.voice.startRecording")
+      }
       disabled={disabled}
       onClick={onClick}
       className={cn(

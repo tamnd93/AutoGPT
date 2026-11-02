@@ -128,7 +128,7 @@ export const OutputHandler = ({
                     <TooltipTrigger asChild>
                       <span
                         style={{ marginLeft: 6, cursor: "pointer" }}
-                        aria-label="info"
+                        aria-label={t("build1.output.infoAria")}
                         tabIndex={0}
                       >
                         <Icon icon={InformationCircleIcon} />
