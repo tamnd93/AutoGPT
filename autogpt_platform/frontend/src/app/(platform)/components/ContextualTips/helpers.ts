@@ -39,8 +39,8 @@ export function tipStepOf(id: TipID) {
       {
         id: `tip-${id}`,
         icon: Idea01Icon,
-        title: tip.title,
-        body: "",
+        titleKey: tip.titleKey,
+        bodyKey: tip.bodyKey,
         targets: tip.targets,
       },
     ];

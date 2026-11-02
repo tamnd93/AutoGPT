@@ -1,5 +1,8 @@
 import { createIconComponent } from "@/components/atoms/Icon/Icon";
 import type { SearchCommandBucket } from "@/components/organisms/SearchCommandModal/helpers";
+import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/locale";
+import type { MessageKey } from "@/lib/i18n/messages/en";
+import { getMessage } from "@/lib/i18n/translate";
 import type { ComponentType } from "react";
 import {
   BubbleChatIcon,
@@ -12,7 +15,10 @@ import {
 } from "@hugeicons/core-free-icons";
 
 export const NAV_BUCKET_KEY = "navigation";
-export const NAV_BUCKET_LABEL = "Navigate";
+export const NAV_BUCKET_LABEL = getMessage(
+  DEFAULT_LOCALE,
+  "nav1.search.navigate",
+);
 
 // Idle (empty query) only previews a few destinations; typing reveals
 // the full filtered set.
@@ -20,10 +26,11 @@ const IDLE_NAV_LIMIT = 4;
 
 interface NavTarget {
   id: string;
-  title: string;
+  titleKey: MessageKey;
   href: string;
   // Extra terms that should match this target beyond its title (e.g.
-  // "agents" routing to the library page).
+  // "agents" routing to the library page). Kept in English in every locale:
+  // they are hidden search keywords, not copy.
   keywords: string[];
   icon: ComponentType<{ className?: string }>;
 }
@@ -33,49 +40,49 @@ interface NavTarget {
 const NAV_TARGETS: NavTarget[] = [
   {
     id: "nav:builder",
-    title: "Builder",
+    titleKey: "nav1.search.target.builder",
     href: "/build",
     keywords: ["build", "editor", "graph", "workflow", "create"],
     icon: createIconComponent(HammerIcon),
   },
   {
     id: "nav:library",
-    title: "Library",
+    titleKey: "nav1.search.target.library",
     href: "/library",
     keywords: ["agents", "my agents", "workflows", "my workflows"],
     icon: createIconComponent(Layers01Icon),
   },
   {
     id: "nav:marketplace",
-    title: "Marketplace",
+    titleKey: "nav.marketplace",
     href: "/marketplace",
     keywords: ["store", "explore", "templates"],
     icon: createIconComponent(Store01Icon),
   },
   {
     id: "nav:chat",
-    title: "Chat",
+    titleKey: "nav1.search.target.chat",
     href: "/copilot",
     keywords: ["copilot", "home", "assistant"],
     icon: createIconComponent(BubbleChatIcon),
   },
   {
     id: "nav:settings",
-    title: "Settings",
+    titleKey: "nav1.search.target.settings",
     href: "/settings",
     keywords: ["preferences", "account"],
     icon: createIconComponent(Settings01Icon),
   },
   {
     id: "nav:billing",
-    title: "Billing",
+    titleKey: "nav1.search.target.billing",
     href: "/settings/billing",
     keywords: ["credits", "payment", "wallet", "subscription"],
     icon: createIconComponent(CreditCardIcon),
   },
   {
     id: "nav:profile",
-    title: "Profile",
+    titleKey: "nav1.search.target.profile",
     href: "/settings/profile",
     keywords: ["account", "me"],
     icon: createIconComponent(UserIcon),
@@ -90,8 +97,20 @@ export function getNavigationHref(id: string): string | undefined {
   return HREF_BY_ID.get(id);
 }
 
-function isExactTitleMatch(target: NavTarget, query: string): boolean {
-  return target.title.toLocaleLowerCase() === query;
+function titlesOf(target: NavTarget, locale: Locale) {
+  const title = getMessage(locale, target.titleKey);
+  const englishTitle = getMessage(DEFAULT_LOCALE, target.titleKey);
+  return title === englishTitle ? [title] : [englishTitle, title];
+}
+
+function isExactTitleMatch(
+  target: NavTarget,
+  query: string,
+  locale: Locale,
+): boolean {
+  return titlesOf(target, locale).some(
+    (title) => title.toLocaleLowerCase() === query,
+  );
 }
 
 // True when ``currentPath`` is the target itself or any page nested under
@@ -108,8 +127,17 @@ function isCurrentDestination(
   );
 }
 
-function matchesQuery(target: NavTarget, query: string): boolean {
-  if (target.title.toLocaleLowerCase().includes(query)) return true;
+function matchesQuery(
+  target: NavTarget,
+  query: string,
+  locale: Locale,
+): boolean {
+  if (
+    titlesOf(target, locale).some((title) =>
+      title.toLocaleLowerCase().includes(query),
+    )
+  )
+    return true;
   return target.keywords.some((keyword) =>
     keyword.toLocaleLowerCase().includes(query),
   );
@@ -128,6 +156,7 @@ export function buildNavigationBucket(
   query: string,
   currentPath: string | null,
   isBillingEnabled = true,
+  locale: Locale = DEFAULT_LOCALE,
 ): {
   bucket: SearchCommandBucket | null;
   isExactMatch: boolean;
@@ -140,20 +169,20 @@ export function buildNavigationBucket(
       (isBillingEnabled || target.id !== "nav:billing"),
   );
   const matches = normalized
-    ? available.filter((target) => matchesQuery(target, normalized))
+    ? available.filter((target) => matchesQuery(target, normalized, locale))
     : available.slice(0, IDLE_NAV_LIMIT);
   if (matches.length === 0) return { bucket: null, isExactMatch: false };
 
   const isExactMatch = normalized
-    ? matches.some((target) => isExactTitleMatch(target, normalized))
+    ? matches.some((target) => isExactTitleMatch(target, normalized, locale))
     : false;
 
   const bucket: SearchCommandBucket = {
     key: NAV_BUCKET_KEY,
-    label: NAV_BUCKET_LABEL,
+    label: getMessage(locale, "nav1.search.navigate"),
     items: matches.map((target) => ({
       id: target.id,
-      title: target.title,
+      title: getMessage(locale, target.titleKey),
       icon: target.icon,
     })),
   };

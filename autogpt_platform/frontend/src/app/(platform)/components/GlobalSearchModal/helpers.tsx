@@ -6,6 +6,9 @@ import type {
   SearchCommandItem,
 } from "@/components/organisms/SearchCommandModal/helpers";
 import { createIconComponent } from "@/components/atoms/Icon/Icon";
+import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/locale";
+import type { MessageKey } from "@/lib/i18n/messages/en";
+import { getMessage } from "@/lib/i18n/translate";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import type { ComponentType } from "react";
@@ -71,10 +74,10 @@ function resolveIcon(
   return ICON_BY_TYPE[item.type];
 }
 
-const BUCKET_LABEL: Record<BucketKey, string> = {
-  agents: "Workflows",
-  files: "Files",
-  chats: "Chats",
+const BUCKET_LABEL_KEY: Record<BucketKey, MessageKey> = {
+  agents: "nav1.search.bucket.workflows",
+  files: "nav.files",
+  chats: "nav.chats",
 };
 
 const BUCKET_ORDER: BucketKey[] = ["chats", "agents", "files"];
@@ -104,6 +107,7 @@ function toCommandItem(item: SearchResultItem): SearchCommandItem {
  */
 export function buildBucketsFromResponse(
   response: GlobalSearchResponse | undefined,
+  locale: Locale = DEFAULT_LOCALE,
 ): {
   buckets: SearchCommandBucket[];
   itemsById: Map<string, SearchResultItem>;
@@ -116,7 +120,7 @@ export function buildBucketsFromResponse(
     for (const apiItem of apiItems) itemsById.set(itemKey(apiItem), apiItem);
     return {
       key,
-      label: BUCKET_LABEL[key],
+      label: getMessage(locale, BUCKET_LABEL_KEY[key]),
       items: apiItems.map(toCommandItem),
     };
   });

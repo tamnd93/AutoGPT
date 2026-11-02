@@ -1,5 +1,6 @@
 import { render, screen, waitFor } from "@/tests/integrations/test-utils";
 import { SparklesIcon } from "@hugeicons/core-free-icons";
+import { LocaleProvider } from "@/lib/i18n";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -65,6 +66,26 @@ describe("TabIntroCard", () => {
 
     expect(onDismiss).toHaveBeenCalledTimes(1);
     expect(onCta).not.toHaveBeenCalled();
+  });
+
+  it("reads its way out in Vietnamese", async () => {
+    render(
+      <LocaleProvider locale="vi">
+        <TabIntroCard
+          isOpen
+          icon={SparklesIcon}
+          title="Your mission control."
+          body="Everything in one place."
+          cta={{ label: "See my agents", onClick: onCta }}
+          onDismiss={onDismiss}
+        />
+      </LocaleProvider>,
+    );
+
+    await screen.findByText("Your mission control.");
+    await userEvent.click(screen.getByRole("button", { name: "Đã hiểu" }));
+
+    expect(onDismiss).toHaveBeenCalledTimes(1);
   });
 
   it("dismisses on Escape", async () => {

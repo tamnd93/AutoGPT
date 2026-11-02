@@ -9,6 +9,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useRef } from "react";
 import { getFocusableElements } from "./helpers";
 import { isKey, isKeyIgnoringComposition } from "@/lib/keyboard";
+import { useT } from "@/lib/i18n";
 
 interface Action {
   label: string;
@@ -40,6 +41,7 @@ export function TabIntroCard({
   altAction,
   onDismiss,
 }: Props) {
+  const t = useT();
   const dialogRef = useRef<HTMLDivElement>(null);
 
   // The listener below is installed once per open, so it would otherwise
@@ -177,7 +179,7 @@ export function TabIntroCard({
 
               <div className="mt-3 flex items-center justify-end gap-3">
                 <Button variant="secondary" size="small" onClick={onDismiss}>
-                  Got it
+                  {t("nav1.tip.gotIt")}
                 </Button>
                 <Button variant="primary" size="small" onClick={cta.onClick}>
                   {cta.label}

@@ -8,6 +8,7 @@ import {
   within,
 } from "@/tests/integrations/test-utils";
 import { SidebarProvider } from "@/components/molecules/Sidebar/Sidebar";
+import { LocaleProvider } from "@/lib/i18n";
 import { http, HttpResponse } from "msw";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -74,6 +75,18 @@ describe("RecentChats — empty + loading", () => {
     server.use(getGetV2ListSessionsMockHandler200({ sessions: [], total: 0 }));
     renderRecentChats();
     expect(await screen.findByText(/no conversations yet/i)).toBeDefined();
+  });
+
+  it("reads the empty state in Vietnamese", async () => {
+    server.use(getGetV2ListSessionsMockHandler200({ sessions: [], total: 0 }));
+    render(
+      <LocaleProvider locale="vi">
+        <SidebarProvider>
+          <RecentChats />
+        </SidebarProvider>
+      </LocaleProvider>,
+    );
+    expect(await screen.findByText("Chưa có đoạn chat nào")).toBeDefined();
   });
 });
 

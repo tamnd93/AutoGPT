@@ -73,8 +73,8 @@ export function resolveStop(step: TourStep): ResolvedStop {
 }
 
 // One string for the card and for what a screen reader hears.
-export function withMenuHint(body: string, viaMenu: boolean) {
-  return viaMenu ? `${body} Open the menu to find it.` : body;
+export function withMenuHint(body: string, viaMenu: boolean, menuHint: string) {
+  return viaMenu ? `${body} ${menuHint}` : body;
 }
 
 const SPOTLIGHT_PADDING = 6;

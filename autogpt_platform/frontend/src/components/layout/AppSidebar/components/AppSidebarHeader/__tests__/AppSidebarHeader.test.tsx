@@ -1,5 +1,6 @@
 import { render, screen } from "@/tests/integrations/test-utils";
 import { SidebarProvider } from "@/components/molecules/Sidebar/Sidebar";
+import { LocaleProvider } from "@/lib/i18n";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 
@@ -35,6 +36,23 @@ describe("AppSidebarHeader", () => {
 
     expect(
       await screen.findByRole("button", { name: "Expand sidebar" }),
+    ).toBeDefined();
+  });
+
+  it("reads the expand and collapse controls in Vietnamese", async () => {
+    const user = userEvent.setup();
+    render(
+      <LocaleProvider locale="vi">
+        <SidebarProvider>
+          <AppSidebarHeader />
+        </SidebarProvider>
+      </LocaleProvider>,
+    );
+
+    await user.click(screen.getByRole("button", { name: "Thu gọn thanh bên" }));
+
+    expect(
+      await screen.findByRole("button", { name: "Mở rộng thanh bên" }),
     ).toBeDefined();
   });
 

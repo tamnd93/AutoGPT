@@ -1,17 +1,24 @@
 import { createIconComponent } from "@/components/atoms/Icon/Icon";
 import type { SearchCommandBucket } from "@/components/organisms/SearchCommandModal/helpers";
+import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/locale";
+import type { MessageKey } from "@/lib/i18n/messages/en";
+import { getMessage } from "@/lib/i18n/translate";
 import type { ComponentType } from "react";
 import { Copy01Icon } from "@hugeicons/core-free-icons";
 
 export const ACTIONS_BUCKET_KEY = "actions";
-export const ACTIONS_BUCKET_LABEL = "Actions";
+export const ACTIONS_BUCKET_LABEL = getMessage(
+  DEFAULT_LOCALE,
+  "nav1.search.actions",
+);
 
 export const COPY_USER_ID_ACTION = "action:copy-user-id";
 
 interface ActionTarget {
   id: string;
-  title: string;
-  // Extra terms that match this action beyond its title.
+  titleKey: MessageKey;
+  // Extra terms that match this action beyond its title. Kept in English in
+  // every locale: they are hidden search keywords, not copy.
   keywords: string[];
   icon: ComponentType<{ className?: string }>;
 }
@@ -21,21 +28,42 @@ interface ActionTarget {
 const ACTION_TARGETS: ActionTarget[] = [
   {
     id: COPY_USER_ID_ACTION,
-    title: "Copy user ID",
+    titleKey: "nav1.search.copyUserId",
     keywords: ["copy", "user", "id", "uid", "account"],
     icon: createIconComponent(Copy01Icon),
   },
 ];
 
-function matchesQuery(target: ActionTarget, query: string): boolean {
-  if (target.title.toLocaleLowerCase().includes(query)) return true;
+function titlesOf(target: ActionTarget, locale: Locale) {
+  const title = getMessage(locale, target.titleKey);
+  const englishTitle = getMessage(DEFAULT_LOCALE, target.titleKey);
+  return title === englishTitle ? [title] : [englishTitle, title];
+}
+
+function matchesQuery(
+  target: ActionTarget,
+  query: string,
+  locale: Locale,
+): boolean {
+  if (
+    titlesOf(target, locale).some((title) =>
+      title.toLocaleLowerCase().includes(query),
+    )
+  )
+    return true;
   return target.keywords.some((keyword) =>
     keyword.toLocaleLowerCase().includes(query),
   );
 }
 
-function isExactTitleMatch(target: ActionTarget, query: string): boolean {
-  return target.title.toLocaleLowerCase() === query;
+function isExactTitleMatch(
+  target: ActionTarget,
+  query: string,
+  locale: Locale,
+): boolean {
+  return titlesOf(target, locale).some(
+    (title) => title.toLocaleLowerCase() === query,
+  );
 }
 
 /**
@@ -45,27 +73,32 @@ function isExactTitleMatch(target: ActionTarget, query: string): boolean {
  * ``isExactMatch`` lets the caller hoist actions above the search
  * results when the user typed an action name verbatim.
  */
-export function buildActionsBucket(query: string): {
+export function buildActionsBucket(
+  query: string,
+  locale: Locale = DEFAULT_LOCALE,
+): {
   bucket: SearchCommandBucket | null;
   isExactMatch: boolean;
 } {
   const normalized = query.trim().toLocaleLowerCase();
 
   const matches = normalized
-    ? ACTION_TARGETS.filter((target) => matchesQuery(target, normalized))
+    ? ACTION_TARGETS.filter((target) =>
+        matchesQuery(target, normalized, locale),
+      )
     : ACTION_TARGETS;
   if (matches.length === 0) return { bucket: null, isExactMatch: false };
 
   const isExactMatch = normalized
-    ? matches.some((target) => isExactTitleMatch(target, normalized))
+    ? matches.some((target) => isExactTitleMatch(target, normalized, locale))
     : false;
 
   const bucket: SearchCommandBucket = {
     key: ACTIONS_BUCKET_KEY,
-    label: ACTIONS_BUCKET_LABEL,
+    label: getMessage(locale, "nav1.search.actions"),
     items: matches.map((target) => ({
       id: target.id,
-      title: target.title,
+      title: getMessage(locale, target.titleKey),
       icon: target.icon,
     })),
   };

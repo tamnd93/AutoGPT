@@ -7,6 +7,7 @@ import { groupSessionsByExpert } from "@/app/(platform)/copilot/useSessionList";
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { Text } from "@/components/atoms/Text/Text";
 import { LoadingSpinner } from "@/components/atoms/LoadingSpinner/LoadingSpinner";
+import { useT } from "@/lib/i18n";
 import { SidebarMenu } from "@/components/molecules/Sidebar/Sidebar";
 import { Flag, useGetFlag } from "@/services/feature-flags/use-get-flag";
 import { PinIcon } from "@hugeicons/core-free-icons";
@@ -16,6 +17,7 @@ import { getNewChatHref } from "./helpers";
 import { useRecentChats } from "./useRecentChats";
 
 export function RecentChats() {
+  const t = useT();
   const chatPinningEnabled = useGetFlag(Flag.CHAT_PINNING);
 
   const isLearningEnabled = useGetFlag(Flag.DREAM_SKILL_LEARNING_ENABLED);
@@ -66,7 +68,7 @@ export function RecentChats() {
         // TODO(tokens): no exact role for text-neutral-500 (#737373)
         className="px-2 py-2 text-neutral-500"
       >
-        No conversations yet
+        {t("nav1.chats.empty")}
       </Text>
     );
   }
@@ -118,7 +120,7 @@ export function RecentChats() {
                 tone="muted"
                 className="truncate"
               >
-                Pinned
+                {t("nav1.chats.pinned")}
               </Text>
             </div>
             <SidebarMenu>{pinnedSessions.map(renderItem)}</SidebarMenu>
@@ -135,7 +137,9 @@ export function RecentChats() {
               key={group.expertId ?? "autopilot"}
               label={group.expertId ? (expert?.name ?? "Expert") : "Otto"}
               role={
-                group.expertId ? expert?.jobTitle || expert?.role : "Head of AI"
+                group.expertId
+                  ? expert?.jobTitle || expert?.role
+                  : t("nav1.chats.ottoRole")
               }
               avatarUrl={expert?.avatarUrl ?? null}
               color={expert?.color ?? null}
@@ -163,7 +167,7 @@ export function RecentChats() {
             />
           )}
           <Text as="span" variant="body-tight-touch" tone="inherit">
-            {isLoadingMore ? "Loading…" : "Load more"}
+            {isLoadingMore ? t("nav1.chats.loading") : t("nav1.chats.loadMore")}
           </Text>
         </button>
       )}

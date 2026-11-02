@@ -6,6 +6,7 @@ import { Text } from "@/components/atoms/Text/Text";
 import { BulbIcon } from "@hugeicons/core-free-icons";
 import { AnchoredPanel } from "@/components/molecules/AnchoredPanel/AnchoredPanel";
 import { isKey } from "@/lib/keyboard";
+import { useLocale, useT } from "@/lib/i18n";
 import { useStableCallback } from "@/hooks/useStableCallback";
 import { useUsageExperience } from "@/services/usageExperience/useUsageExperience";
 import { useEffect, useId, useRef } from "react";
@@ -53,6 +54,8 @@ function ContextualTip({
   othersWaiting,
 }: Props) {
   const tip = TIPS[id];
+  const t = useT();
+  const locale = useLocale();
   const [stop] = useTourStops(tipStepOf(id));
   const box = stop?.box ?? null;
   const boxRef = useRef<Box | null>(box);
@@ -73,9 +76,11 @@ function ContextualTip({
   const { experience } = useUsageExperience();
   const titleID = useId();
   const isMenu = stop?.target === "menu";
+  const title = t(tip.titleKey);
   const body = withMenuHint(
-    getTipBody(id, { isTrial: experience.isActiveTrial }),
+    getTipBody(locale, id, { isTrial: experience.isActiveTrial }),
     isMenu,
+    t("nav1.tour.menuHint"),
   );
   const hasBox = isOnScreen(box);
   const giveWay = useStableCallback(onUnavailable);
@@ -120,7 +125,7 @@ function ContextualTip({
           <span className="flex items-center gap-1.5 text-foreground-secondary">
             <Icon icon={BulbIcon} size={14} aria-hidden />
             <Text variant="small-medium" tone="inherit">
-              Tip
+              {t("nav1.tip.label")}
             </Text>
           </span>
           <Text
@@ -130,7 +135,7 @@ function ContextualTip({
             tone="primary"
             className="[overflow-wrap:anywhere]"
           >
-            {tip.title}
+            {title}
           </Text>
           <Text
             variant="small"
@@ -146,12 +151,12 @@ function ContextualTip({
             onClick={onDismiss}
             className="mt-1 self-end"
           >
-            Got it
+            {t("nav1.tip.gotIt")}
           </Button>
         </div>
       </AnchoredPanel>
       <p className="sr-only" role="status" aria-live="polite">
-        {`Tip: ${tip.title}. ${body}`}
+        {t("nav1.tip.announce", { title, body })}
       </p>
     </>
   );

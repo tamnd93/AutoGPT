@@ -3,6 +3,7 @@
 import { Button } from "@/components/atoms/Button/Button";
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { Text } from "@/components/atoms/Text/Text";
+import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { ArrowRight01Icon } from "@hugeicons/core-free-icons";
 import type { IconSvgElement } from "@hugeicons/react";
@@ -39,6 +40,8 @@ export function TourStepCard({
   onSkip,
   altAction,
 }: Props) {
+  const t = useT();
+
   return (
     <div className="flex flex-col gap-3">
       <div className="flex items-center gap-2.5">
@@ -85,7 +88,7 @@ export function TourStepCard({
           onClick={onSkip}
           className="-ml-2.5 text-foreground-secondary"
         >
-          {isLastStep ? "Close" : "Skip tour"}
+          {isLastStep ? t("nav1.tour.close") : t("nav1.tour.skip")}
         </Button>
         <div className="flex items-center gap-2">
           {!isFirstStep && (
@@ -95,7 +98,7 @@ export function TourStepCard({
               size="xs"
               onClick={onBack}
             >
-              Back
+              {t("nav1.tour.back")}
             </Button>
           )}
           <Button
@@ -110,7 +113,7 @@ export function TourStepCard({
               ) : undefined
             }
           >
-            {isLastStep ? "Start here" : "Next"}
+            {isLastStep ? t("nav1.tour.startHere") : t("nav1.tour.next")}
           </Button>
         </div>
       </div>
@@ -124,6 +127,8 @@ interface StepProgressProps {
 }
 
 function StepProgress({ stepNumber, stepCount }: StepProgressProps) {
+  const t = useT();
+
   return (
     <div className="flex items-center gap-2.5">
       <div aria-hidden className="flex items-center gap-1">
@@ -145,7 +150,10 @@ function StepProgress({ stepNumber, stepCount }: StepProgressProps) {
         className="tabular-nums"
         dir="auto"
       >
-        {stepNumber} of {stepCount}
+        {t("nav1.tour.stepProgress", {
+          current: stepNumber,
+          total: stepCount,
+        })}
       </Text>
     </div>
   );

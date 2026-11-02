@@ -11,6 +11,7 @@ import {
   within,
 } from "@/tests/integrations/test-utils";
 import userEvent from "@testing-library/user-event";
+import { LocaleProvider } from "@/lib/i18n";
 import { describe, expect, it, vi } from "vitest";
 import { GlobalSearchModal } from "../GlobalSearchModal";
 import { NAV_BUCKET_LABEL } from "../navigation";
@@ -142,6 +143,39 @@ describe("GlobalSearchModal", () => {
     expect(within(results).getByText(NAV_BUCKET_LABEL)).toBeDefined();
     expect(screen.getByRole("option", { name: /builder/i })).toBeDefined();
     expect(screen.queryByText("No recent items")).toBeNull();
+  });
+
+  it("reads the search chrome and destinations in Vietnamese", async () => {
+    const user = userEvent.setup();
+    server.use(
+      getGetSearchGlobalSearchMockHandler200({
+        agents: [],
+        files: [],
+        chats: [],
+      }),
+    );
+    render(
+      <LocaleProvider locale="vi">
+        <GlobalSearchModal isOpen onClose={vi.fn()} onSelectItem={vi.fn()} />
+      </LocaleProvider>,
+    );
+
+    const input = await screen.findByRole("textbox", {
+      name: "Tìm kiếm toàn cục",
+    });
+    expect(input.getAttribute("placeholder")).toBe(
+      "Tìm workflow, tệp, đoạn chat...",
+    );
+    expect(await screen.findByText("Điều hướng")).toBeDefined();
+    expect(
+      screen.getByRole("option", { name: /trình tạo workflow/i }),
+    ).toBeDefined();
+
+    await user.type(input, "copy");
+    expect(await screen.findByText("Thao tác")).toBeDefined();
+    expect(
+      screen.getByRole("option", { name: /sao chép id người dùng/i }),
+    ).toBeDefined();
   });
 
   it("shows a query-specific empty state when searching with no results", async () => {

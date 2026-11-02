@@ -3,6 +3,7 @@ import {
   SidebarProvider,
   useSidebar,
 } from "@/components/molecules/Sidebar/Sidebar";
+import { LocaleProvider } from "@/lib/i18n";
 import { act, render, screen, waitFor } from "@/tests/integrations/test-utils";
 import userEvent from "@testing-library/user-event";
 import { StrictMode } from "react";
@@ -196,6 +197,35 @@ describe("first-run walkthrough", () => {
       step_index: 4,
       via: "start_here",
     });
+  });
+
+  it("reads the walkthrough in Vietnamese", async () => {
+    render(
+      <LocaleProvider locale="vi">
+        <SidebarProvider defaultOpen={false}>
+          <Targets />
+          <FirstRunTour />
+        </SidebarProvider>
+      </LocaleProvider>,
+    );
+    openTour();
+
+    expect(
+      await screen.findByRole("dialog", {
+        name: "Mỗi tác vụ có một đoạn chat riêng",
+      }),
+    ).toBeDefined();
+    expect(screen.getByText("1/5")).toBeDefined();
+    expect(
+      screen.getByRole("button", { name: "Bỏ qua hướng dẫn" }),
+    ).toBeDefined();
+
+    await userEvent.click(screen.getByRole("button", { name: "Tiếp" }));
+
+    expect(
+      await screen.findByRole("dialog", { name: "Expert giúp bạn bớt việc" }),
+    ).toBeDefined();
+    expect(screen.getByRole("button", { name: "Quay lại" })).toBeDefined();
   });
 
   it("explains the trial allowance on the wallet step", async () => {

@@ -11,6 +11,7 @@ import {
   TooltipTrigger,
   TooltipPortal,
 } from "@/components/atoms/Tooltip/BaseTooltip";
+import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { SidebarLeftIcon } from "@hugeicons/core-free-icons";
@@ -19,14 +20,18 @@ import { SidebarSearch } from "../SidebarSearch/SidebarSearch";
 
 export function AppSidebarHeader() {
   const { state, toggleSidebar } = useSidebar();
+  const t = useT();
   const isCollapsed = state === "collapsed";
+  const toggleLabel = t(
+    isCollapsed ? "nav1.sidebar.expand" : "nav1.sidebar.collapse",
+  );
 
   const toggleButton = (
     <Tooltip inheritDelay>
       <TooltipTrigger asChild>
         <button
           type="button"
-          aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+          aria-label={toggleLabel}
           onClick={toggleSidebar}
           className={cn(
             "size-8 shrink-0 items-center justify-center rounded-md transition-colors hover:bg-surface-active max-md:size-10",
@@ -42,9 +47,7 @@ export function AppSidebarHeader() {
         </button>
       </TooltipTrigger>
       <TooltipPortal>
-        <TooltipContent side="right">
-          {isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
-        </TooltipContent>
+        <TooltipContent side="right">{toggleLabel}</TooltipContent>
       </TooltipPortal>
     </Tooltip>
   );

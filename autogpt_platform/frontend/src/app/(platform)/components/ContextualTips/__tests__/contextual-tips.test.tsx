@@ -1,4 +1,5 @@
 import { act, render, screen, waitFor } from "@/tests/integrations/test-utils";
+import { LocaleProvider } from "@/lib/i18n";
 import userEvent from "@testing-library/user-event";
 import type { ToolUIPart } from "ai";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -464,6 +465,22 @@ describe("contextual tips — showing one", () => {
     act(() => requestTip("first-expert"));
     await act(async () => {});
     expect(screen.queryByTestId("contextual-tip")).toBeNull();
+  });
+
+  it("reads the tip and its way out in Vietnamese", async () => {
+    render(
+      <LocaleProvider locale="vi">
+        <Page />
+      </LocaleProvider>,
+    );
+    act(() => requestTip("second-chat"));
+
+    expect(await screen.findByText("Bạn đã có hai đoạn chat")).toBeDefined();
+    expect(screen.getByText("Mẹo")).toBeDefined();
+    expect(screen.getByRole("button", { name: "Đã hiểu" })).toBeDefined();
+    expect(screen.getByRole("status").textContent).toContain(
+      "Bạn đã có hai đoạn chat",
+    );
   });
 
   it("says where costs come from on a trial", async () => {

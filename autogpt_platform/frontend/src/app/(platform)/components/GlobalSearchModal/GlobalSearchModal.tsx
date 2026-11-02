@@ -2,6 +2,7 @@ import type { SearchResultItem } from "@/app/api/__generated__/models/searchResu
 import { useToast } from "@/components/molecules/Toast/use-toast";
 import { SearchCommandModal } from "@/components/organisms/SearchCommandModal/SearchCommandModal";
 import { useAuth } from "@/lib/auth/hooks/useAuth";
+import { useT } from "@/lib/i18n";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { ACTIONS_BUCKET_KEY, COPY_USER_ID_ACTION } from "./actions";
@@ -17,6 +18,7 @@ interface Props {
 export function GlobalSearchModal({ isOpen, onClose, onSelectItem }: Props) {
   const router = useRouter();
   const pathname = usePathname();
+  const t = useT();
   const { toast } = useToast();
   const { user } = useAuth();
   const { query, setQuery, buckets, itemsById, isFetching, isError } =
@@ -43,14 +45,20 @@ export function GlobalSearchModal({ isOpen, onClose, onSelectItem }: Props) {
   async function runAction(id: string) {
     if (id === COPY_USER_ID_ACTION) {
       if (!user?.id) {
-        toast({ title: "You're not signed in", variant: "destructive" });
+        toast({
+          title: t("nav1.search.notSignedIn"),
+          variant: "destructive",
+        });
         return;
       }
       try {
         await navigator.clipboard.writeText(user.id);
-        toast({ title: "User ID copied to clipboard" });
+        toast({ title: t("nav1.search.userIdCopied") });
       } catch {
-        toast({ title: "Couldn't copy User ID", variant: "destructive" });
+        toast({
+          title: t("nav1.search.copyUserIdFailed"),
+          variant: "destructive",
+        });
       }
     }
   }
@@ -85,10 +93,10 @@ export function GlobalSearchModal({ isOpen, onClose, onSelectItem }: Props) {
       buckets={buckets}
       isLoading={isFetching}
       isError={isError}
-      placeholder="Search workflows, files, chats..."
-      inputAriaLabel="Global search"
-      idleEmptyLabel="No recent items"
-      searchingEmptyLabel="No results found"
+      placeholder={t("nav1.search.placeholder")}
+      inputAriaLabel={t("nav1.search.label")}
+      idleEmptyLabel={t("nav1.search.idleEmpty")}
+      searchingEmptyLabel={t("nav1.search.noResults")}
       loadingItemId={busyItemId ?? undefined}
       onSelectItem={(item, bucketKey) => handleSelect(item.id, bucketKey)}
     />

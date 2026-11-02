@@ -3,6 +3,7 @@
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { Button } from "@/components/atoms/Button/Button";
 import { useSidebar } from "@/components/molecules/Sidebar/Sidebar";
+import { useT } from "@/lib/i18n";
 import { tourTarget } from "@/lib/tour-targets";
 import { SidebarLeftIcon } from "@hugeicons/core-free-icons";
 import { createContext, useContext, type ReactNode } from "react";
@@ -36,6 +37,7 @@ interface Props {
 
 export function AppSidebarTrigger({ className }: Props) {
   const toggleSidebar = useAppSidebarToggle();
+  const t = useT();
 
   if (!toggleSidebar) return null;
 
@@ -51,7 +53,7 @@ export function AppSidebarTrigger({ className }: Props) {
       onClick={toggleSidebar}
     >
       <Icon icon={SidebarLeftIcon} className="!size-5" />
-      <span className="sr-only">Toggle Sidebar</span>
+      <span className="sr-only">{t("nav1.sidebar.toggle")}</span>
     </Button>
   );
 }

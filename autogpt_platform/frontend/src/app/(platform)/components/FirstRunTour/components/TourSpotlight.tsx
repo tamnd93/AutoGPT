@@ -6,6 +6,7 @@ import {
   PopoverContent,
 } from "@/components/molecules/Popover/Popover";
 import { useSidebar } from "@/components/molecules/Sidebar/Sidebar";
+import { useT } from "@/lib/i18n";
 import { useEffect, useId, useRef, useState } from "react";
 import { isPartlyOffScreen, withMenuHint, type Box } from "../helpers";
 import type { TourTarget } from "@/lib/tour-targets";
@@ -39,6 +40,7 @@ function anchorRect(box: Box | null) {
 }
 
 export function TourSpotlight({ tour }: Props) {
+  const t = useT();
   const step = tour.steps[tour.stepIndex];
   const [measured] = useTourStops(stepListOf(step));
   const stop = measured?.stepID === step.id ? measured : undefined;
@@ -58,9 +60,11 @@ export function TourSpotlight({ tour }: Props) {
   const { isMobile, openMobile } = useSidebar();
   const isOverSheet = isMobile && openMobile;
   const layer = useLayerAboveSheet(isOverSheet);
+  const title = t(step.titleKey);
   const body = withMenuHint(
     tour.bodyFor(tour.stepIndex, stop),
     stop?.viaMenu ?? false,
+    t("nav1.tour.menuHint"),
   );
   const target = stop?.target ?? null;
   const element = stop?.element ?? null;
@@ -109,7 +113,7 @@ export function TourSpotlight({ tour }: Props) {
         >
           <TourStepCard
             icon={step.icon}
-            title={step.title}
+            title={title}
             body={body}
             titleID={titleID}
             bodyID={bodyID}
@@ -123,7 +127,7 @@ export function TourSpotlight({ tour }: Props) {
             altAction={
               tour.isLastStep
                 ? {
-                    label: "Or connect your tools first",
+                    label: t("nav1.tour.connectToolsFirst"),
                     onClick: tour.connectToolsFirst,
                   }
                 : undefined
@@ -133,7 +137,12 @@ export function TourSpotlight({ tour }: Props) {
               from assistive tech, and focus stays on the same button from
               step to step, so this is what announces each new step. */}
           <p className="sr-only" aria-live="polite">
-            {`Step ${tour.stepIndex + 1} of ${tour.steps.length}. ${step.title}. ${body}`}
+            {t("nav1.tour.announce", {
+              current: tour.stepIndex + 1,
+              total: tour.steps.length,
+              title,
+              body,
+            })}
           </p>
         </PopoverContent>
       </Popover>

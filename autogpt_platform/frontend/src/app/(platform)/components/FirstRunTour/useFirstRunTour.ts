@@ -2,6 +2,7 @@
 
 import { useSidebar } from "@/components/molecules/Sidebar/Sidebar";
 import { useIsBillingEnabled } from "@/hooks/useIsBillingEnabled";
+import { useLocale } from "@/lib/i18n";
 import { useAuth } from "@/lib/auth/hooks/useAuth";
 import { useOnboarding } from "@/providers/onboarding/onboarding-provider";
 import { trackFirstRun } from "@/services/onboarding/first-run-analytics";
@@ -26,6 +27,7 @@ export function useFirstRunTour() {
   } = useSidebar();
   const { experience } = useUsageExperience();
   const isBillingEnabled = useIsBillingEnabled();
+  const locale = useLocale();
   const source = useFirstRunTourStore((state) => state.source);
   const stepID = useFirstRunTourStore((state) => state.stepID);
   const goTo = useFirstRunTourStore((state) => state.goTo);
@@ -122,7 +124,7 @@ export function useFirstRunTour() {
     isLastStep,
     trackStep,
     bodyFor: (index: number, stop: MeasuredStop | undefined) =>
-      getStepBody(steps[index], stop?.target ?? null, context),
+      getStepBody(locale, steps[index], stop?.target ?? null, context),
     next: () => (isLastStep ? startHere() : goTo(steps[safeIndex + 1].id)),
     back: () => goTo(steps[Math.max(safeIndex - 1, 0)].id),
     skip: () => {
