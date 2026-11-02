@@ -33,6 +33,7 @@ import { useT } from "@/lib/i18n";
 export const AgentOutputs = ({ flowID }: { flowID: string | null }) => {
   const hasOutputs = useGraphStore(useShallow((state) => state.hasOutputs));
   const nodes = useNodeStore(useShallow((state) => state.nodes));
+  const t = useT();
 
   const outputs = useMemo(() => {
     const outputNodes = nodes.filter(

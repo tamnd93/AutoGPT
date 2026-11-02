@@ -39,6 +39,8 @@ function SafeModeButton({
   isPending,
   fullWidth = false,
 }: SafeModeButtonProps) {
+  const t = useT();
+
   return (
     <Tooltip delayDuration={100}>
       <TooltipTrigger asChild>

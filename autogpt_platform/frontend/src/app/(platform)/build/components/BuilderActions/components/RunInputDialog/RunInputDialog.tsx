@@ -44,6 +44,8 @@ export const RunInputDialog = ({
     isExecutingGraph,
   } = useRunInputDialog({ setIsOpen, graphID, graphVersion });
 
+  const t = useT();
+
   // Tutorial integration - track input values for the tutorial
   const setTutorialInputValues = useTutorialStore(
     (state) => state.setTutorialInputValues,

@@ -20,6 +20,8 @@ export const ScheduleGraph = ({ flowID }: { flowID: string | null }) => {
     openCronSchedulerDialog,
     setOpenCronSchedulerDialog,
   } = useScheduleGraph();
+
+  const t = useT();
   return (
     <>
       <TooltipProvider>
