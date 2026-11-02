@@ -2,7 +2,7 @@ import type { TrialStatusResponse } from "@/app/api/__generated__/models/trialSt
 import { Button } from "@/components/atoms/Button/Button";
 import { Text } from "@/components/atoms/Text/Text";
 import { useLocale, useT } from "@/lib/i18n";
-import { formatTrialPrice } from "./helpers";
+import { formatTrialPrice, trialPlanLabels } from "./helpers";
 import { TrialTitle } from "./TrialTitle/TrialTitle";
 
 interface Props {
@@ -31,8 +31,10 @@ export function TrialOffer({ trial, isStarting, isBlocked, onStart }: Props) {
           className="flex flex-wrap items-center gap-2"
         >
           <TrialTitle>
-            
-            days
+            {t("billing3.trialOffer.title", {
+              plan: trialPlanLabels[offer.tier],
+              days: offer.duration_days,
+            })}
           </TrialTitle>
           <span
             data-slot="trial-offer-pill"
@@ -45,8 +47,8 @@ export function TrialOffer({ trial, isStarting, isBlocked, onStart }: Props) {
         </div>
         <Text variant="body" className="!text-foreground-emphasis">
           {t("billing3.trialOffer.bodyPrefix")}{" "}
-          {formatTrialPrice(offer, locale)}, {t("billing3.trialOffer.bodySuffix")}
-          
+          {formatTrialPrice(offer, locale)},{" "}
+          {t("billing3.trialOffer.bodySuffix")}
         </Text>
         <Text variant="small" tone="muted">
           {t("billing3.trialOffer.note")}

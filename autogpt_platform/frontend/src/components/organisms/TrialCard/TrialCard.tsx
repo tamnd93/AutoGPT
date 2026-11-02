@@ -55,7 +55,9 @@ export function TrialCardContent({
       />
     );
   if (queryError)
-    <ErrorCard context={t("billing3.trialCard.errorContext")} onRetry={retry} />
+    return (
+      <ErrorCard context={t("billing3.trialCard.errorContext")} onRetry={retry} />
+    );
   if (
     !trial?.offer ||
     trial.converted ||
