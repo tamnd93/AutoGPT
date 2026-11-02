@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Button } from "@/components/atoms/Button/Button";
 import { Dialog } from "@/components/molecules/Dialog/Dialog";
 import { Skeleton } from "@/components/atoms/Skeleton/Skeleton";
-import { useT } from "@/lib/i18n";
+import { useLocale, useT } from "@/lib/i18n";
 import { useSubscriptionTierSection } from "./useSubscriptionTierSection";
 import { PendingChangeBanner } from "./components/PendingChangeBanner/PendingChangeBanner";
 import {
@@ -18,6 +18,7 @@ import {
 
 export function SubscriptionTierSection() {
   const t = useT();
+  const locale = useLocale();
   const {
     subscription,
     isLoading,
@@ -92,7 +93,7 @@ export function SubscriptionTierSection() {
             // TODO(tokens): no exact role (dark:text-violet-200)
             className="text-accent-strong dark:text-violet-200"
           >
-            Enterprise Plan
+            {t("profile4.tier.enterprisePlan")}
           </Text>
           <Text
             variant="body-tight"
@@ -100,8 +101,7 @@ export function SubscriptionTierSection() {
             // TODO(tokens): no exact role (text-neutral-600 #525252, dark:text-neutral-400)
             className="mt-1 text-neutral-600 dark:text-neutral-400"
           >
-            Your Enterprise plan is managed by your administrator. Contact your
-            account team for changes.
+            {t("profile4.tier.enterpriseBody")}
           </Text>
         </div>
       </div>
@@ -151,7 +151,7 @@ export function SubscriptionTierSection() {
   return (
     <div className="space-y-4">
       <Text variant="lg-medium" as="h3" tone="inherit">
-        Subscription Plan
+        {t("profile4.tier.heading")}
       </Text>
 
       {needsSubscription && (
@@ -161,11 +161,10 @@ export function SubscriptionTierSection() {
           className="rounded-md border border-violet-300 bg-accent-surface px-4 py-3 text-violet-900 dark:border-violet-700 dark:bg-violet-900/20 dark:text-violet-200"
         >
           <Text variant="body-medium-tight" as="p" tone="inherit">
-            Pick a plan to continue using AutoGPT.
+            {t("profile4.tier.pickPlan")}
           </Text>
           <Text variant="body-tight" as="p" tone="inherit" className="mt-1">
-            Your account doesn&apos;t have an active subscription. Choose a tier
-            below to start working with experts and running workflows.
+            {t("profile4.tier.pickPlanBody")}
           </Text>
         </div>
       )}
@@ -233,13 +232,13 @@ export function SubscriptionTierSection() {
                     // TODO(tokens): no exact role (bg-violet-100 #EDE9FE, dark:bg-violet-800, dark:text-violet-200)
                     className="rounded-full bg-violet-100 px-2 py-0.5 text-accent-strong dark:bg-violet-800 dark:text-violet-200"
                   >
-                    Current
+                    {t("profile4.tier.current")}
                   </Text>
                 )}
               </div>
 
               <Text variant="2xl-bold" as="p" tone="inherit" className="mb-1">
-                {formatCost(cost, tier.key)}
+                {formatCost(cost, tier.key, locale)}
               </Text>
               {rateLimitLabel && (
                 <Text
@@ -269,14 +268,14 @@ export function SubscriptionTierSection() {
                   onClick={() => onTierButtonClick(tier.key)}
                 >
                   {isThisPending
-                    ? "Updating..."
+                    ? t("profile4.tier.updating")
                     : isScheduledTier
-                      ? "Scheduled"
+                      ? t("profile4.tier.scheduled")
                       : isUpgrade
-                        ? `Upgrade to ${tier.label}`
+                        ? t("profile4.tier.upgradeTo", { tier: tier.label })
                         : isDowngrade
-                          ? `Downgrade to ${tier.label}`
-                          : `Switch to ${tier.label}`}
+                          ? t("profile4.tier.downgradeTo", { tier: tier.label })
+                          : t("profile4.tier.switchTo", { tier: tier.label })}
                 </Button>
               )}
             </div>
@@ -292,9 +291,7 @@ export function SubscriptionTierSection() {
             // TODO(tokens): no exact role (text-neutral-500 #737373)
             className="text-neutral-500"
           >
-            Your subscription is managed through Stripe. Upgrades take effect
-            immediately. Downgrades take effect at the end of your current
-            billing period.
+            {t("profile4.tier.stripeNote")}
           </Text>
           {!hasPendingChange && (
             <Button
@@ -305,14 +302,14 @@ export function SubscriptionTierSection() {
               disabled={isPending}
               onClick={() => setConfirmDowngradeTo("NO_TIER")}
             >
-              Cancel subscription
+              {t("profile4.tier.cancelSubscription")}
             </Button>
           )}
         </div>
       )}
 
       <Dialog
-        title="Confirm Downgrade"
+        title={t("profile4.tier.confirmDowngradeTitle")}
         controlled={{
           isOpen: !!confirmDowngradeTo,
           set: (open) => {
@@ -338,21 +335,21 @@ export function SubscriptionTierSection() {
               size="compact"
               onClick={() => setConfirmDowngradeTo(null)}
             >
-              Cancel
+              {t("profile4.common.cancel")}
             </Button>
             <Button
               variant="compact-destructive"
               size="compact"
               onClick={() => void confirmDowngrade()}
             >
-              Confirm Downgrade
+              {t("profile4.tier.confirmDowngrade")}
             </Button>
           </Dialog.Footer>
         </Dialog.Content>
       </Dialog>
 
       <Dialog
-        title="Replace pending change?"
+        title={t("profile4.tier.replaceTitle")}
         controlled={{
           isOpen: !!confirmReplacePendingTo,
           set: (open) => {
@@ -381,21 +378,21 @@ export function SubscriptionTierSection() {
               size="compact"
               onClick={() => setConfirmReplacePendingTo(null)}
             >
-              Cancel
+              {t("profile4.common.cancel")}
             </Button>
             <Button
               variant="compact-destructive"
               size="compact"
               onClick={() => void confirmReplacePending()}
             >
-              Replace pending change
+              {t("profile4.tier.replace")}
             </Button>
           </Dialog.Footer>
         </Dialog.Content>
       </Dialog>
 
       <Dialog
-        title="Confirm Upgrade"
+        title={t("profile4.tier.confirmUpgradeTitle")}
         controlled={{
           isOpen: !!pendingUpgradeTier,
           set: (open) => {
@@ -420,7 +417,7 @@ export function SubscriptionTierSection() {
               size="compact"
               onClick={() => setPendingUpgradeTier(null)}
             >
-              Cancel
+              {t("profile4.common.cancel")}
             </Button>
             <Button
               variant="compact-primary"
@@ -428,8 +425,8 @@ export function SubscriptionTierSection() {
               onClick={() => void confirmUpgrade()}
             >
               {subscription.has_active_stripe_subscription
-                ? "Confirm Upgrade"
-                : "Continue to Checkout"}
+                ? t("profile4.tier.confirmUpgradeTitle")
+                : t("profile4.tier.continueCheckout")}
             </Button>
           </Dialog.Footer>
         </Dialog.Content>
