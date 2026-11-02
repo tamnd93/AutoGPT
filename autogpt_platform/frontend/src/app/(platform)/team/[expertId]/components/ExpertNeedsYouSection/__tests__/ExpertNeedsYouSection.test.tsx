@@ -2,6 +2,7 @@ import userEvent from "@testing-library/user-event";
 import { http, HttpResponse } from "msw";
 import { expect, test } from "vitest";
 import type { Expert } from "@/app/api/__generated__/models/expert";
+import { LocaleProvider } from "@/lib/i18n";
 import { server } from "@/mocks/mock-server";
 import { render, screen, within } from "@/tests/integrations/test-utils";
 import {
@@ -47,4 +48,25 @@ test("an Expert's page reviews its held calls with Home's row and dialog", async
   expect(dialog.textContent).toContain("dana@acme.com");
   // Scoped to this Expert: two held calls, never Leo's.
   expect(within(dialog).getByText("1 of 2")).toBeDefined();
+});
+
+test("words the section and its count in Vietnamese", async () => {
+  const email = homeHeldItem(mail("m1"), { expert: ada });
+  const bare = homeHeldItem(folder("f1", "Q3 reports"), { expert: ada });
+  server.use(
+    http.get(/\/api\/proxy\/api\/home(?:\?.*)?$/, () =>
+      HttpResponse.json(makeDashboard([email, bare])),
+    ),
+  );
+
+  render(
+    <LocaleProvider locale="vi">
+      <ExpertNeedsYouSection expert={{ id: ada.id } as Expert} />
+    </LocaleProvider>,
+  );
+
+  expect(
+    await screen.findByRole("region", { name: "Cần bạn xử lý" }),
+  ).toBeDefined();
+  expect(screen.getByRole("status").textContent).toBe("2 mục cần bạn xử lý");
 });

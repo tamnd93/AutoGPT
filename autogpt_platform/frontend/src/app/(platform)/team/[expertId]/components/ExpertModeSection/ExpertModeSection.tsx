@@ -6,6 +6,7 @@ import { AUTOPILOT_MODE_OPTIONS } from "@/app/(platform)/copilot/components/Chat
 import { UnsupervisedConfirmDialog } from "@/app/(platform)/copilot/components/ChatInput/components/AutopilotModeSelector/UnsupervisedConfirmDialog";
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { Text } from "@/components/atoms/Text/Text";
+import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { Flag, useGetFlag } from "@/services/feature-flags/use-get-flag";
 import { useExpertModeSection } from "./useExpertModeSection";
@@ -29,22 +30,20 @@ function ExpertModeOptions({ expert }: Props) {
     confirmUnsupervised,
     cancelUnsupervised,
   } = useExpertModeSection({ expert });
+  const t = useT();
 
   return (
     <section
-      aria-label={`${expert.name} approval mode`}
+      aria-label={t("team3.mode.aria", { name: expert.name })}
       className="rounded-xl border border-border-base bg-surface p-4"
     >
-      <Text variant="large-medium">Approvals</Text>
+      <Text variant="large-medium">{t("team3.mode.heading")}</Text>
       <Text variant="small" tone="secondary" className="mt-1">
-        How every new web chat with {expert.name} starts. You can still change
-        it per chat from the composer, and chats already open keep their own
-        setting. Routines, scheduled runs and chats from Slack, Discord, Teams
-        or Telegram are not affected.
+        {t("team3.mode.description", { name: expert.name })}
       </Text>
       <fieldset className="mt-4 flex flex-col gap-2" disabled={isPending}>
         <legend className="sr-only">
-          Approval mode for new chats with {expert.name}
+          {t("team3.mode.legend", { name: expert.name })}
         </legend>
         {AUTOPILOT_MODE_OPTIONS.map((option) => {
           const isSelected = option.value === mode;
@@ -80,11 +79,13 @@ function ExpertModeOptions({ expert }: Props) {
               />
               <span className="flex flex-col gap-0.5">
                 <Text variant="body-md-medium" as="span" tone="primary">
-                  {option.label}
-                  {option.value === DEFAULT_AUTOPILOT_MODE ? " (default)" : ""}
+                  {t(option.labelKey)}
+                  {option.value === DEFAULT_AUTOPILOT_MODE
+                    ? t("team3.mode.defaultSuffix")
+                    : ""}
                 </Text>
                 <Text variant="small-tight" as="span" tone="muted">
-                  {option.description}
+                  {t(option.descriptionKey)}
                 </Text>
               </span>
             </label>
@@ -95,8 +96,10 @@ function ExpertModeOptions({ expert }: Props) {
         isOpen={isConfirmOpen}
         onConfirm={confirmUnsupervised}
         onCancel={cancelUnsupervised}
-        title={`Run ${expert.name} unsupervised by default?`}
-        description={`${expert.name} will not ask before anything in new chats. Edits, commands and actions outside the platform, like sending a message or an email, run without your approval unless you switch a chat back from the composer.`}
+        title={t("team3.mode.confirmTitle", { name: expert.name })}
+        description={t("team3.mode.confirmDescription", {
+          name: expert.name,
+        })}
       />
     </section>
   );

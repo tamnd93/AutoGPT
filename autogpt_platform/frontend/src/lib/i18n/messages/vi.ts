@@ -58,6 +58,7 @@ import { settingsRest2Vi } from "./settings-rest-2.vi";
 import { settingsRest3Vi } from "./settings-rest-3.vi";
 import { team1Vi } from "./team-1.vi";
 import { Team2Vi } from "./team-2.vi";
+import { team3Vi } from "./team-3.vi";
 import { Team4Vi } from "./team-4.vi";
 import { voice1Vi } from "./voice-1.vi";
 
@@ -121,6 +122,7 @@ export const vi: Partial<Record<MessageKey, string>> = {
   ...settingsRest3Vi,
   ...team1Vi,
   ...Team2Vi,
+  ...team3Vi,
   ...Team4Vi,
   ...voice1Vi,
   "common.planSuffix": "gói {plan}",

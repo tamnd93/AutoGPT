@@ -11,6 +11,7 @@ import {
 } from "@/app/(platform)/copilot/autopilotModeStore";
 import { toast } from "@/components/molecules/Toast/use-toast";
 import { ApiError } from "@/lib/autogpt-server-api/helpers";
+import { useT } from "@/lib/i18n";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 
@@ -19,6 +20,7 @@ interface Args {
 }
 
 export function useExpertModeSection({ expert }: Args) {
+  const t = useT();
   const queryClient = useQueryClient();
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const mode: AutopilotMode = expert.autopilot_mode ?? DEFAULT_AUTOPILOT_MODE;
@@ -35,15 +37,15 @@ export function useExpertModeSection({ expert }: Args) {
             queryKey: getListExpertIdentitiesQueryKey(),
           }),
         ]);
-        toast({ title: "Approval mode updated" });
+        toast({ title: t("team3.mode.updated") });
       },
       onError: (error) => {
         const isDisabled = error instanceof ApiError && error.status === 403;
         toast({
           title: isDisabled
-            ? "Approval modes are not enabled for your account"
-            : "Could not update the approval mode",
-          description: isDisabled ? undefined : "Please try again.",
+            ? t("team3.mode.disabledTitle")
+            : t("team3.mode.failedTitle"),
+          description: isDisabled ? undefined : t("team3.mode.retry"),
           variant: "destructive",
         });
       },

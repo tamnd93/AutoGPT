@@ -4,6 +4,7 @@ import { HeldCall } from "@/app/(platform)/home/components/NeedsYou/components/H
 import { HeldReviewDialog } from "@/app/(platform)/home/components/NeedsYou/components/HeldReviewDialog";
 import { isHeldCall } from "@/app/(platform)/home/components/NeedsYou/helpers";
 import type { Expert } from "@/app/api/__generated__/models/expert";
+import { useT } from "@/lib/i18n";
 import { ExpertAttentionCard } from "./ExpertAttentionCard";
 import { useExpertNeedsYou } from "./useExpertNeedsYou";
 
@@ -14,6 +15,7 @@ interface Props {
 /** One card per item, styled like the stack sections in the chat sidebar.
  *  A held AutoPilot call is the same row and detail Home shows. */
 export function ExpertNeedsYouSection({ expert }: Props) {
+  const t = useT();
   const { rows, pendingCount, pendingIDs, decide, held, carousel } =
     useExpertNeedsYou({
       expertId: expert.id,
@@ -22,11 +24,19 @@ export function ExpertNeedsYouSection({ expert }: Props) {
   if (rows.length === 0) return null;
 
   return (
-    <section aria-label="Needs you" className="flex min-w-0 flex-col">
+    <section
+      aria-label={t("team3.needsYou.aria")}
+      className="flex min-w-0 flex-col"
+    >
       {/* No visible heading: the cards say what needs doing. The count is
           still announced for screen readers. */}
       <span role="status" className="sr-only">
-        {`${pendingCount} ${pendingCount === 1 ? "item needs" : "items need"} your attention`}
+        {t(
+          pendingCount === 1
+            ? "team3.needsYou.statusOne"
+            : "team3.needsYou.statusMany",
+          { count: pendingCount },
+        )}
       </span>
       <div className="flex flex-col gap-2">
         {rows.map(({ item, receipt }) =>
