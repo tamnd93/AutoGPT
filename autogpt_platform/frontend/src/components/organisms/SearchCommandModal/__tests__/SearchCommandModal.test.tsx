@@ -1,4 +1,5 @@
 import { fireEvent, render, screen } from "@/tests/integrations/test-utils";
+import { LocaleProvider } from "@/lib/i18n";
 import userEvent from "@testing-library/user-event";
 import { useState } from "react";
 import { describe, expect, it, vi } from "vitest";
@@ -88,6 +89,101 @@ function Harness({
     />
   );
 }
+
+describe("SearchCommandModal — Vietnamese defaults", () => {
+  it("reads the default labels, hints and empty state in Vietnamese", () => {
+    render(
+      <LocaleProvider locale="vi">
+        <SearchCommandModal
+          isOpen
+          onClose={() => {}}
+          query=""
+          onQueryChange={() => {}}
+          buckets={[]}
+          onSelectItem={() => {}}
+        />
+      </LocaleProvider>,
+    );
+
+    expect(screen.getByRole("dialog", { name: "Tìm kiếm" })).toBeDefined();
+    expect(screen.getByRole("textbox", { name: "Tìm kiếm" })).toBeDefined();
+    expect(screen.getByPlaceholderText("Tìm…")).toBeDefined();
+    expect(screen.getByText("Không có mục nào")).toBeDefined();
+    expect(screen.getByText("Điều hướng")).toBeDefined();
+    expect(screen.getByText("Chọn")).toBeDefined();
+    expect(screen.getByText("Đóng")).toBeDefined();
+  });
+
+  it("reads the searching, error and clear states in Vietnamese", () => {
+    const { unmount } = render(
+      <LocaleProvider locale="vi">
+        <SearchCommandModal
+          isOpen
+          onClose={() => {}}
+          query="alpha"
+          onQueryChange={() => {}}
+          buckets={[]}
+          isLoading
+          onSelectItem={() => {}}
+        />
+      </LocaleProvider>,
+    );
+    expect(screen.getByLabelText("Đang tìm kiếm")).toBeDefined();
+    unmount();
+
+    const error = render(
+      <LocaleProvider locale="vi">
+        <SearchCommandModal
+          isOpen
+          onClose={() => {}}
+          query=""
+          onQueryChange={() => {}}
+          buckets={[]}
+          isError
+          onSelectItem={() => {}}
+        />
+      </LocaleProvider>,
+    );
+    expect(screen.getByText("Đã xảy ra lỗi. Thử lại.")).toBeDefined();
+    error.unmount();
+
+    render(
+      <LocaleProvider locale="vi">
+        <SearchCommandModal
+          isOpen
+          onClose={() => {}}
+          query="zzz"
+          onQueryChange={() => {}}
+          buckets={[]}
+          onSelectItem={() => {}}
+        />
+      </LocaleProvider>,
+    );
+    expect(screen.getByText("Không tìm thấy kết quả")).toBeDefined();
+    expect(screen.getByRole("button", { name: "Xoá tìm kiếm" })).toBeDefined();
+  });
+
+  it("reads the result list and its in-flight row in Vietnamese", () => {
+    render(
+      <LocaleProvider locale="vi">
+        <SearchCommandModal
+          isOpen
+          onClose={() => {}}
+          query=""
+          onQueryChange={() => {}}
+          buckets={BASE_BUCKETS}
+          loadingItemId="a1"
+          onSelectItem={() => {}}
+        />
+      </LocaleProvider>,
+    );
+
+    expect(
+      screen.getByRole("listbox", { name: "Kết quả tìm kiếm" }),
+    ).toBeDefined();
+    expect(screen.getByLabelText("Đang mở")).toBeDefined();
+  });
+});
 
 describe("SearchCommandModal", () => {
   it("returns null when closed", () => {

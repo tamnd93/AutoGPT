@@ -166,7 +166,12 @@ describe("GlobalSearchModal", () => {
     expect(input.getAttribute("placeholder")).toBe(
       "Tìm workflow, tệp, đoạn chat...",
     );
-    expect(await screen.findByText("Điều hướng")).toBeDefined();
+    // Scope to the result list: the footer's "Điều hướng" hint now shares
+    // the bucket label's wording.
+    const results = await screen.findByRole("listbox", {
+      name: "Kết quả tìm kiếm",
+    });
+    expect(within(results).getByText("Điều hướng")).toBeDefined();
     expect(
       screen.getByRole("option", { name: /trình tạo workflow/i }),
     ).toBeDefined();

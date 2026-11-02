@@ -1,6 +1,7 @@
 import { Text } from "@/components/atoms/Text/Text";
 import { LoadingSpinner } from "@/components/atoms/LoadingSpinner/LoadingSpinner";
 import { Button } from "@/components/atoms/Button/Button";
+import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import type { MutableRefObject } from "react";
 import { highlightMatch, type SearchCommandItem } from "./helpers";
@@ -28,6 +29,7 @@ export function SearchCommandResultItem({
   onHighlight,
   onSelect,
 }: Props) {
+  const t = useT();
   const Icon = item.icon;
 
   return (
@@ -114,7 +116,7 @@ export function SearchCommandResultItem({
         {isLoading ? (
           <LoadingSpinner
             size="small"
-            aria-label="Opening"
+            aria-label={t("nav3.search.opening")}
             className="shrink-0 text-foreground-tertiary"
           />
         ) : (

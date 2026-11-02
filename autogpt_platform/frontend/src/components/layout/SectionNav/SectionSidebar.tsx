@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ArrowLeft02Icon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { Text } from "@/components/atoms/Text/Text";
+import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { SectionNavItem, type SectionNavLink } from "./SectionNavItem";
 
@@ -14,6 +15,7 @@ interface Props {
 }
 
 export function SectionSidebar({ items, className }: Props) {
+  const t = useT();
   const reduceMotion = useReducedMotion();
 
   const container = {
@@ -38,13 +40,13 @@ export function SectionSidebar({ items, className }: Props) {
     >
       <Link
         href="/copilot"
-        aria-label="Back to home"
+        aria-label={t("nav3.sectionSidebar.backAria")}
         // TODO(tokens): no exact role for hover:text-[#1F1F20] (#1F1F20)
         className="mb-[16px] flex w-fit items-center gap-2 rounded-[8px] px-4 py-1 text-foreground-body transition-colors hover:text-[#1F1F20]"
       >
         <Icon icon={ArrowLeft02Icon} size={16} />
         <Text variant="body" as="span" className="font-medium">
-          Back
+          {t("nav3.sectionSidebar.back")}
         </Text>
       </Link>
       <motion.nav

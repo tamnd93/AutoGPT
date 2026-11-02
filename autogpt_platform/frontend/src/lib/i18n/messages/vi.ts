@@ -3,6 +3,7 @@ import { formatVi } from "./format.vi";
 import { integrationsVi } from "./integrations.vi";
 import { nav1Vi } from "./nav-1.vi";
 import { nav2Vi } from "./nav-2.vi";
+import { nav3Vi } from "./nav-3.vi";
 import { navVi } from "./nav.vi";
 
 export const vi: Partial<Record<MessageKey, string>> = {
@@ -11,5 +12,6 @@ export const vi: Partial<Record<MessageKey, string>> = {
   ...formatVi,
   ...nav1Vi,
   ...nav2Vi,
+  ...nav3Vi,
   "common.planSuffix": "gói {plan}",
 };

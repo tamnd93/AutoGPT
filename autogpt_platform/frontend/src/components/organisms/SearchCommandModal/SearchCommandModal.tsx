@@ -18,6 +18,7 @@ import { useKeyboardNav } from "./useKeyboardNav";
 import { Cancel01Icon, Search01Icon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { isKey } from "@/lib/keyboard";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   isOpen: boolean;
@@ -48,15 +49,23 @@ export function SearchCommandModal({
   onQueryChange,
   buckets,
   onSelectItem,
-  idleEmptyLabel = "No items",
-  searchingEmptyLabel = "No results found",
-  errorLabel = "Something went wrong. Try again.",
+  idleEmptyLabel,
+  searchingEmptyLabel,
+  errorLabel,
   isLoading = false,
   isError = false,
-  placeholder = "Search…",
-  inputAriaLabel = "Search",
+  placeholder,
+  inputAriaLabel,
   loadingItemId,
 }: Props) {
+  const t = useT();
+  // The prop API stays as callers have it; the fallback is computed here so
+  // an omitted label still speaks the interface language.
+  const idleLabel = idleEmptyLabel ?? t("nav3.search.idleEmpty");
+  const searchingLabel = searchingEmptyLabel ?? t("nav3.search.searchingEmpty");
+  const errorText = errorLabel ?? t("nav3.search.error");
+  const placeholderText = placeholder ?? t("nav3.search.placeholder");
+  const inputLabel = inputAriaLabel ?? t("nav3.search.title");
   const inputRef = useRef<HTMLInputElement>(null);
   const reactId = useId();
   // Strip the colons React uses in ``useId`` so the result survives a
@@ -124,9 +133,11 @@ export function SearchCommandModal({
           className="fixed left-1/2 top-[18vh] z-[80] w-[calc(100%-2rem)] max-w-xl -translate-x-1/2 overflow-hidden rounded-3xl bg-surface shadow-2xl ring-1 ring-border-base focus:outline-none"
           onKeyDown={handleKeyDown}
         >
-          <RXDialog.Title className="sr-only">Search</RXDialog.Title>
+          <RXDialog.Title className="sr-only">
+            {t("nav3.search.title")}
+          </RXDialog.Title>
           <RXDialog.Description className="sr-only">
-            Search commands and results.
+            {t("nav3.search.description")}
           </RXDialog.Description>
           <div
             data-slot="search-command-modal-search-bar"
@@ -141,8 +152,8 @@ export function SearchCommandModal({
               ref={inputRef}
               value={query}
               onChange={(event) => onQueryChange(event.target.value)}
-              placeholder={placeholder}
-              aria-label={inputAriaLabel}
+              placeholder={placeholderText}
+              aria-label={inputLabel}
               aria-controls={`${idPrefix}-results`}
               aria-activedescendant={
                 highlightedFlat
@@ -155,7 +166,7 @@ export function SearchCommandModal({
             {isLoading && isSearching ? (
               <LoadingSpinner
                 size="small"
-                aria-label="Searching"
+                aria-label={t("nav3.search.searching")}
                 className="shrink-0 text-foreground-tertiary"
               />
             ) : null}
@@ -164,7 +175,7 @@ export function SearchCommandModal({
                 type="button"
                 variant="compact-ghost"
                 size="compact-icon-sm"
-                aria-label="Clear search"
+                aria-label={t("nav3.search.clear")}
                 onClick={() => onQueryChange("")}
                 className="shrink-0"
               >
@@ -190,7 +201,7 @@ export function SearchCommandModal({
                   data-slot="search-command-modal-error"
                   className="px-3 py-8 text-center"
                 >
-                  {errorLabel}
+                  {errorText}
                 </Text>
               ) : showResults ? (
                 <SearchCommandResults
@@ -218,7 +229,7 @@ export function SearchCommandModal({
                   data-slot="search-command-modal-empty"
                   className="px-3 py-8 text-center"
                 >
-                  {isSearching ? searchingEmptyLabel : idleEmptyLabel}
+                  {isSearching ? searchingLabel : idleLabel}
                 </Text>
               ) : null}
             </div>
@@ -262,7 +273,7 @@ export function SearchCommandModal({
                   tone="body"
                   data-slot="search-command-modal-hint-label"
                 >
-                  Navigate
+                  {t("nav3.search.hint.navigate")}
                 </Text>
               </div>
               <div
@@ -285,7 +296,7 @@ export function SearchCommandModal({
                   tone="body"
                   data-slot="search-command-modal-hint-label"
                 >
-                  Select
+                  {t("nav3.search.hint.select")}
                 </Text>
               </div>
             </div>
@@ -309,7 +320,7 @@ export function SearchCommandModal({
                 tone="body"
                 data-slot="search-command-modal-hint-label"
               >
-                Close
+                {t("nav3.search.hint.close")}
               </Text>
             </div>
           </div>

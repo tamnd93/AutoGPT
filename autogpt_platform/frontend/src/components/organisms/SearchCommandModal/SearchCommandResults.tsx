@@ -5,6 +5,7 @@ import {
   type SearchCommandBucket,
   type SearchCommandItem,
 } from "./helpers";
+import { useT } from "@/lib/i18n";
 import { SearchCommandResultItem } from "./SearchCommandResultItem";
 
 interface Props {
@@ -29,6 +30,7 @@ export function SearchCommandResults({
   onSelect,
   loadingItemId,
 }: Props) {
+  const t = useT();
   const flat = flattenBuckets(buckets);
   // Group the flat list back by bucket so the absolute ``index`` survives
   // for keyboard nav while we still render each section under its
@@ -40,7 +42,7 @@ export function SearchCommandResults({
   return (
     <div
       role="listbox"
-      aria-label="Search results"
+      aria-label={t("nav3.search.resultsAria")}
       data-slot="search-command-results"
       className="flex flex-col gap-1"
     >
