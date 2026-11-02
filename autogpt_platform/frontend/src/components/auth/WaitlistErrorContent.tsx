@@ -1,3 +1,4 @@
+import { useT } from "@/lib/i18n";
 import { environment } from "@/services/environment";
 import { Button } from "../atoms/Button/Button";
 import { Text } from "../atoms/Text/Text";
@@ -7,15 +8,14 @@ interface Props {
 }
 
 export function WaitlistErrorContent(props: Props) {
+  const t = useT();
   if (!environment.isCloud()) return <SelfHostedNotAllowed {...props} />;
   return (
     <div className="flex flex-col items-center gap-6">
-      <Text variant="h3">We&apos;re in closed beta</Text>
+      <Text variant="h3">{t("auth2.waitlist.title")}</Text>
       <div className="flex flex-col gap-4 text-center">
         <Text variant="large" className="text-center">
-          Looks like your email isn&apos;t in our early access list just yet.
-          Join the waitlist and we will let you know the moment we open up
-          access!
+          {t("auth2.waitlist.body")}
         </Text>
       </div>
       <div className="flex gap-2">
@@ -24,33 +24,33 @@ export function WaitlistErrorContent(props: Props) {
             window.open("https://agpt.co/waitlist", "_blank");
           }}
         >
-          Join Waitlist
+          {t("auth2.waitlist.join")}
         </Button>
         {props.onBackToLogin ? (
           <Button variant="secondary" onClick={props.onBackToLogin}>
-            Back to Login
+            {t("auth2.waitlist.backToLogin")}
           </Button>
         ) : null}
       </div>
       <div className="flex flex-col gap-2">
         <Text variant="small" className="text-center text-muted-foreground">
-          Already joined? Double-check you are using the same email you signed
-          up with. Need a hand? Emails us at{" "}
+          {t("auth2.waitlist.footerPrefix")}{" "}
           <a
             href="mailto:contact@agpt.co"
             className="underline hover:text-foreground"
           >
             contact@agpt.co
           </a>{" "}
-          or{" "}
+          {t("auth2.waitlist.footerOr")}{" "}
           <a
             href="https://discord.gg/autogpt"
             target="_blank"
             rel="noopener noreferrer"
             className="underline hover:text-foreground"
           >
-            message us on Discord
+            {t("auth2.waitlist.footerDiscord")}
           </a>
+          .
         </Text>
       </div>
     </div>
@@ -60,16 +60,16 @@ export function WaitlistErrorContent(props: Props) {
 // A self-hosted instance's allowlist belongs to its operator, not to AutoGPT's
 // waitlist, so point the user at whoever runs it.
 function SelfHostedNotAllowed(props: Props) {
+  const t = useT();
   return (
     <div className="flex flex-col items-center gap-6">
-      <Text variant="h3">This email can&apos;t sign up here</Text>
+      <Text variant="h3">{t("auth2.waitlist.selfHostTitle")}</Text>
       <Text variant="large" className="text-center">
-        This instance only allows approved emails. Ask your administrator to add
-        yours, or sign up with an email they have already approved.
+        {t("auth2.waitlist.selfHostBody")}
       </Text>
       {props.onBackToLogin ? (
         <Button variant="secondary" onClick={props.onBackToLogin}>
-          Back to Login
+          {t("auth2.waitlist.backToLogin")}
         </Button>
       ) : null}
     </div>

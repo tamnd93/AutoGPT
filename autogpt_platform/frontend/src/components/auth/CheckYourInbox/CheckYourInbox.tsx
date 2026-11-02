@@ -3,10 +3,11 @@
 import { Button } from "@/components/atoms/Button/Button";
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { Text } from "@/components/atoms/Text/Text";
+import { useT } from "@/lib/i18n";
 import { Mail01Icon } from "@hugeicons/core-free-icons";
 import {
-  CHECK_YOUR_INBOX_COPY,
   CHECK_YOUR_INBOX_HEADING_ID,
+  CHECK_YOUR_INBOX_KEYS,
   type CheckYourInboxReason,
 } from "./helpers";
 import { useCheckYourInbox } from "./useCheckYourInbox";
@@ -26,7 +27,8 @@ export function CheckYourInbox({
   marketingOptOut,
   onBack,
 }: Props) {
-  const copy = CHECK_YOUR_INBOX_COPY[reason];
+  const t = useT();
+  const keys = CHECK_YOUR_INBOX_KEYS[reason];
   const { cooldown, isResending, canResend, handleResend } = useCheckYourInbox({
     email,
     next,
@@ -51,22 +53,22 @@ export function CheckYourInbox({
         // TODO(tokens): no exact role for !text-slate-950 (#020617)
         className="!text-slate-950 outline-none"
       >
-        {copy.title}
+        {t(keys.title)}
       </Text>
 
       <Text variant="body" tone="secondary" className="mt-3">
-        We sent an email to{" "}
+        {t("auth2.inbox.sentPrefix")}{" "}
         <span
           // TODO(tokens): no exact role for text-slate-950 (#020617)
           className="break-all font-medium text-slate-950"
         >
           {email}
         </span>
-        . Open the link in it to {copy.action}.
+        {t("auth2.inbox.sentSuffix", { action: t(keys.action) })}
       </Text>
 
       <Text variant="small" tone="muted" className="mt-2">
-        Can&apos;t find it? Check your spam folder.
+        {t("auth2.inbox.spam")}
       </Text>
 
       <Button
@@ -77,7 +79,9 @@ export function CheckYourInbox({
         onClick={handleResend}
         className="mt-8 w-full"
       >
-        {cooldown > 0 ? `Resend email in ${cooldown}s` : "Resend email"}
+        {cooldown > 0
+          ? t("auth2.inbox.resendIn", { seconds: cooldown })
+          : t("auth2.inbox.resend")}
       </Button>
 
       <div className="mt-6 inline-flex items-center justify-center gap-1">
@@ -86,7 +90,7 @@ export function CheckYourInbox({
           // TODO(tokens): no exact role for !text-slate-500 (#64748B)
           className="!text-slate-500"
         >
-          {copy.backPrompt}
+          {t(keys.backPrompt)}
         </Text>
         <Button
           type="button"
@@ -94,7 +98,7 @@ export function CheckYourInbox({
           className="h-auto min-w-0 p-0"
           onClick={onBack}
         >
-          {copy.backLabel}
+          {t(keys.backLabel)}
         </Button>
       </div>
     </div>

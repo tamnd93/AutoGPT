@@ -1,5 +1,6 @@
 import { useToast } from "@/components/molecules/Toast/use-toast";
 import { authClient } from "@/lib/auth/client";
+import { useT } from "@/lib/i18n";
 import { getEmailVerificationCallbackURL } from "@/lib/auth/email-verification";
 import {
   UNDELIVERABLE_EMAIL_CODE,
@@ -19,6 +20,7 @@ interface Args {
 }
 
 export function useCheckYourInbox({ email, next, marketingOptOut }: Args) {
+  const t = useT();
   const { toast } = useToast();
   const [cooldown, setCooldown] = useState(RESEND_COOLDOWN_SECONDS);
   const [isResending, setIsResending] = useState(false);
@@ -63,15 +65,15 @@ export function useCheckYourInbox({ email, next, marketingOptOut }: Args) {
     }
 
     setCooldown(RESEND_COOLDOWN_SECONDS);
-    toast({ title: `Email sent to ${email}`, variant: "success" });
+    toast({ title: t("auth2.inbox.sentToast", { email }), variant: "success" });
   }
 
   function showResendFailed(rateLimited: boolean) {
     toast({
-      title: "We couldn't send the email",
+      title: t("auth2.inbox.resendFailedTitle"),
       description: rateLimited
-        ? "Too many attempts. Please try again in a few minutes."
-        : "Please try again in a moment.",
+        ? t("auth2.inbox.resendRateLimited")
+        : t("auth2.inbox.resendRetry"),
       variant: "destructive",
     });
   }

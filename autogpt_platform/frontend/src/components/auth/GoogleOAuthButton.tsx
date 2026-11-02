@@ -1,3 +1,4 @@
+import { useT } from "@/lib/i18n";
 import Image from "next/image";
 import { Button } from "../atoms/Button/Button";
 
@@ -12,6 +13,8 @@ export function GoogleOAuthButton({
   isLoading,
   disabled,
 }: GoogleOAuthButtonProps) {
+  const t = useT();
+
   return (
     <Button
       type="button"
@@ -22,7 +25,7 @@ export function GoogleOAuthButton({
       loading={isLoading}
     >
       <Image src="/google-logo.svg" alt="Google" width={20} height={20} />
-      {isLoading ? "Connecting..." : "Continue with Google"}
+      {isLoading ? t("auth2.google.connecting") : t("auth2.google.continue")}
     </Button>
   );
 }

@@ -1,11 +1,13 @@
 "use client";
 
 import { useBreakpoint } from "@/lib/hooks/useBreakpoint";
+import { useT } from "@/lib/i18n";
 import { Text } from "../atoms/Text/Text";
 import { SmartPhone01Icon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
 
 export function MobileWarningBanner() {
+  const t = useT();
   const breakpoint = useBreakpoint();
   const isMobile = breakpoint === "base" || breakpoint === "sm";
 
@@ -27,15 +29,14 @@ export function MobileWarningBanner() {
             // TODO(tokens): no exact role for text-amber-900 (#78350F)
             className="text-amber-900"
           >
-            Heads up: AutoGPT works best on desktop
+            {t("auth2.mobile.title")}
           </Text>
           <Text
             variant="small"
             // TODO(tokens): no exact role for text-amber-800 (#92400E)
             className="text-amber-800"
           >
-            Some features may be limited on mobile. For the best experience,
-            consider switching to a desktop.
+            {t("auth2.mobile.body")}
           </Text>
         </div>
       </div>

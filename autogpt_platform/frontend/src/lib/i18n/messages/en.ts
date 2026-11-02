@@ -1,4 +1,5 @@
 import { auth1En } from "./auth-1.en";
+import { auth2En } from "./auth-2.en";
 import { chatInput1En } from "./chat-input-1.en";
 import { chatInput2En } from "./chat-input-2.en";
 import { chatInput3En } from "./chat-input-3.en";
@@ -11,16 +12,17 @@ import { integrationsEn } from "./integrations.en";
 import { marketplace1En } from "./marketplace-1.en";
 import { marketplace2En } from "./marketplace-2.en";
 import { marketplace3En } from "./marketplace-3.en";
+import { navEn } from "./nav.en";
 import { nav1En } from "./nav-1.en";
 import { nav2En } from "./nav-2.en";
 import { nav3En } from "./nav-3.en";
-import { navEn } from "./nav.en";
 import { onboarding1En } from "./onboarding-1.en";
 import { onboarding2En } from "./onboarding-2.en";
 import { onboarding3En } from "./onboarding-3.en";
 
 export const en = {
   ...auth1En,
+  ...auth2En,
   ...chatInput1En,
   ...chatInput2En,
   ...chatInput3En,
@@ -33,10 +35,10 @@ export const en = {
   ...marketplace1En,
   ...marketplace2En,
   ...marketplace3En,
+  ...navEn,
   ...nav1En,
   ...nav2En,
   ...nav3En,
-  ...navEn,
   ...onboarding1En,
   ...onboarding2En,
   ...onboarding3En,

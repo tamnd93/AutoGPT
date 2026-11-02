@@ -1,3 +1,4 @@
+import { useT } from "@/lib/i18n";
 import { Dialog } from "../molecules/Dialog/Dialog";
 import { WaitlistErrorContent } from "./WaitlistErrorContent";
 
@@ -7,9 +8,11 @@ interface Props {
 }
 
 export function EmailNotAllowedModal({ isOpen, onClose }: Props) {
+  const t = useT();
+
   return (
     <Dialog
-      title="Email Not Allowed"
+      title={t("auth2.emailNotAllowed.title")}
       controlled={{ isOpen, set: onClose }}
       styling={{ maxWidth: "35rem" }}
     >

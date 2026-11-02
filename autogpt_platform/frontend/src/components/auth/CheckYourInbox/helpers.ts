@@ -5,19 +5,19 @@ export const RESEND_COOLDOWN_SECONDS = 60;
 // Focused when the screen replaces the form, so screen readers announce it.
 export const CHECK_YOUR_INBOX_HEADING_ID = "check-your-inbox-heading";
 
-export const CHECK_YOUR_INBOX_COPY = {
+export const CHECK_YOUR_INBOX_KEYS = {
   signup: {
-    title: "Check your inbox",
-    action: "continue",
-    backPrompt: "Wrong address?",
-    backLabel: "Start again",
+    title: "auth2.inbox.signup.title",
+    action: "auth2.inbox.signup.action",
+    backPrompt: "auth2.inbox.signup.backPrompt",
+    backLabel: "auth2.inbox.signup.backLabel",
   },
   login: {
-    title: "Verify your email to log in",
-    action: "log in",
-    backPrompt: "Wrong account?",
-    backLabel: "Back to log in",
+    title: "auth2.inbox.login.title",
+    action: "auth2.inbox.login.action",
+    backPrompt: "auth2.inbox.login.backPrompt",
+    backLabel: "auth2.inbox.login.backLabel",
   },
 } as const;
 
-export type CheckYourInboxReason = keyof typeof CHECK_YOUR_INBOX_COPY;
+export type CheckYourInboxReason = keyof typeof CHECK_YOUR_INBOX_KEYS;
