@@ -6,6 +6,7 @@ import { Text } from "@/components/atoms/Text/Text";
 import { ExpertAvatar } from "@/components/molecules/ExpertAvatar/ExpertAvatar";
 import { AttentionCard } from "@/components/organisms/AttentionCard/AttentionCard";
 import { getReviewLink } from "@/lib/review-links";
+import { useT } from "@/lib/i18n";
 import { getReviewTitle } from "../helpers";
 
 interface Props {
@@ -21,6 +22,7 @@ export function NeedsAttentionRow({
   onApprove,
   onDecline,
 }: Props) {
+  const t = useT();
   // Decline rejects the agent's action outright, with no undo, in a flow
   // built for fast tapping — so it takes a second, deliberate tap.
   const [isConfirmingDecline, setIsConfirmingDecline] = useState(false);
@@ -74,10 +76,10 @@ export function NeedsAttentionRow({
             variant="primary"
             size="small"
             disabled={isProcessing}
-            aria-label={`Approve: ${title}`}
+            aria-label={t("shared4.needsAttention.approveAria", { title })}
             onClick={() => onApprove(review)}
           >
-            Approve
+            {t("shared4.needsAttention.approve")}
           </Button>
           <Button
             // The armed state carries the destructive colour as well as the
@@ -88,13 +90,15 @@ export function NeedsAttentionRow({
             disabled={isProcessing}
             aria-label={
               isConfirmingDecline
-                ? `Confirm decline: ${title}`
-                : `Decline: ${title}`
+                ? t("shared4.needsAttention.confirmDeclineAria", { title })
+                : t("shared4.needsAttention.declineAria", { title })
             }
             onClick={handleDecline}
             onBlur={() => setIsConfirmingDecline(false)}
           >
-            {isConfirmingDecline ? "Confirm" : "Decline"}
+            {isConfirmingDecline
+              ? t("shared4.needsAttention.confirm")
+              : t("shared4.needsAttention.decline")}
           </Button>
         </AttentionCard.Actions>
         <span
@@ -102,7 +106,9 @@ export function NeedsAttentionRow({
           data-slot="needs-attention-row-announcement"
           className="sr-only"
         >
-          {isConfirmingDecline ? `Tap again to decline: ${title}` : ""}
+          {isConfirmingDecline
+            ? t("shared4.needsAttention.tapAgain", { title })
+            : ""}
         </span>
       </AttentionCard.Row>
     </AttentionCard.Root>

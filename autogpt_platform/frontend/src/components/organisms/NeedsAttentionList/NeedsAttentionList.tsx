@@ -1,10 +1,12 @@
 import { Skeleton } from "@/components/atoms/Skeleton/Skeleton";
+import { useT } from "@/lib/i18n";
 import { Text } from "@/components/atoms/Text/Text";
 import { ErrorCard } from "@/components/molecules/ErrorCard/ErrorCard";
 import { NeedsAttentionRow } from "./components/NeedsAttentionRow";
 import { useNeedsAttentionList } from "./useNeedsAttentionList";
 
 export function NeedsAttentionList() {
+  const t = useT();
   const {
     reviews,
     countLabel,
@@ -31,8 +33,8 @@ export function NeedsAttentionList() {
   if (isError) {
     return (
       <ErrorCard
-        context="pending reviews"
-        httpError={{ message: "Failed to load pending reviews" }}
+        context={t("shared4.needsAttention.errorContext")}
+        httpError={{ message: t("shared4.needsAttention.loadFailed") }}
         onRetry={() => refetch()}
       />
     );
@@ -42,7 +44,9 @@ export function NeedsAttentionList() {
 
   return (
     <section data-slot="needs-attention-list" className="flex flex-col gap-3">
-      <Text variant="h5">Needs your attention ({countLabel})</Text>
+      <Text variant="h5">
+        {t("shared4.needsAttention.heading", { count: countLabel })}
+      </Text>
       <div
         data-slot="needs-attention-list-items"
         className="flex flex-col gap-2"

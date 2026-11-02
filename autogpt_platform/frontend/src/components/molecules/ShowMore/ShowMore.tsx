@@ -6,6 +6,7 @@ import { Text } from "@/components/atoms/Text/Text";
 import { getIconSize, ShowMoreTextVariant } from "./helpers";
 import { ArrowDown01Icon, ArrowUp01Icon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 
 interface ShowMoreProps {
   children: string;
@@ -24,6 +25,7 @@ export function ShowMore({
   toggleClassName,
   defaultExpanded = false,
 }: ShowMoreProps) {
+  const t = useT();
   const [isExpanded, setIsExpanded] = React.useState(defaultExpanded);
 
   const shouldTruncate = children.length > previewLimit;
@@ -70,7 +72,9 @@ export function ShowMore({
               icon={ArrowUp01Icon}
               size={iconSize}
             />
-            <span data-slot="show-more-toggle-label">less</span>
+            <span data-slot="show-more-toggle-label">
+              {t("shared4.showMore.less")}
+            </span>
           </>
         ) : (
           <>
@@ -79,7 +83,9 @@ export function ShowMore({
               icon={ArrowDown01Icon}
               size={iconSize}
             />
-            <span data-slot="show-more-toggle-label">more</span>
+            <span data-slot="show-more-toggle-label">
+              {t("shared4.showMore.more")}
+            </span>
           </>
         )}
       </button>

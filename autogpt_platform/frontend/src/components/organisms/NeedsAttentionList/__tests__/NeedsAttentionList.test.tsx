@@ -8,6 +8,7 @@ import {
 } from "@/app/api/__generated__/endpoints/executions/executions.msw";
 import type { PendingHumanReviewModel } from "@/app/api/__generated__/models/pendingHumanReviewModel";
 import { Toaster } from "@/components/molecules/Toast/toaster";
+import { LocaleProvider } from "@/lib/i18n";
 import { server } from "@/mocks/mock-server";
 import { render, screen, waitFor } from "@/tests/integrations/test-utils";
 import { NeedsAttentionList } from "../NeedsAttentionList";
@@ -35,6 +36,34 @@ const review: PendingHumanReviewModel = {
   session_id: null,
   created_at: new Date(),
 };
+
+test("reads its heading, buttons and toast in Vietnamese", async () => {
+  server.use(
+    getGetV2GetPendingReviewsMockHandler200([review]),
+    getPostV2ProcessReviewActionMockHandler200({
+      approved_count: 1,
+      rejected_count: 0,
+      failed_count: 0,
+    }),
+  );
+
+  render(
+    <>
+      <LocaleProvider locale="vi">
+        <NeedsAttentionList />
+      </LocaleProvider>
+      <Toaster />
+    </>,
+  );
+
+  expect(await screen.findByText(/Cần bạn xử lý/)).toBeDefined();
+  await userEvent.click(
+    await screen.findByRole("button", {
+      name: "Duyệt: Approve outreach email",
+    }),
+  );
+  expect(await screen.findByText("Đã duyệt")).toBeDefined();
+});
 
 test("renders attributed rows and approves in one tap", async () => {
   let actionBody: unknown;
