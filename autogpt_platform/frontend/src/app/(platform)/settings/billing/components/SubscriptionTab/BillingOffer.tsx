@@ -11,7 +11,7 @@ import {
   getFeaturedUsagePercent,
   getUsageStatus,
 } from "@/services/usageExperience/helpers";
-import { useT } from "@/lib/i18n";
+import { useLocale, useT } from "@/lib/i18n";
 import { formatCents } from "../../helpers";
 import {
   ENTERPRISE_CONTACT_URL,
@@ -25,6 +25,7 @@ interface Props {
 
 export function BillingOffer({ controller }: Props) {
   const t = useT();
+  const locale = useLocale();
   const { experience, trial, subscription, usage } = useUsageExperience();
   const activation = useProActivation();
   const isTrial = experience.isActiveTrial;
@@ -100,7 +101,7 @@ export function BillingOffer({ controller }: Props) {
     isTrial &&
     getUsageStatus(getFeaturedUsagePercent(experience, usage)) === "plenty";
   const title = quiet
-    ? formatTrialStartTitle(experience.trialEndsAt)
+    ? formatTrialStartTitle(experience.trialEndsAt, locale)
     : isTrial
       ? t("billing2.offer.startProNow")
       : t(
@@ -118,7 +119,7 @@ export function BillingOffer({ controller }: Props) {
         isTrial && experience.freshProUsage
           ? quiet
             ? t("billing2.offer.trialQuietBody")
-            : formatTrialStartDescription(experience.trialEndsAt)
+            : formatTrialStartDescription(experience.trialEndsAt, locale)
           : undefined
       }
       price={price}

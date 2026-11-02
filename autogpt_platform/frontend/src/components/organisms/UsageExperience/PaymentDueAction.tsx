@@ -2,6 +2,7 @@ import { LinkSquare01Icon } from "@hugeicons/core-free-icons";
 import { Button } from "@/components/atoms/Button/Button";
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { Text } from "@/components/atoms/Text/Text";
+import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
 interface Props {
@@ -17,6 +18,7 @@ export function PaymentDueAction({
   size = "large",
   layout = "stacked",
 }: Props) {
+  const t = useT();
   const stacked = layout === "stacked";
   return (
     <div
@@ -47,7 +49,7 @@ export function PaymentDueAction({
         tone="muted"
         className={cn("!text-xs", stacked && "text-center")}
       >
-        Opens a secure Stripe page. You can use a different card there.
+        {t("billing4.payment.dueNote")}
       </Text>
     </div>
   );

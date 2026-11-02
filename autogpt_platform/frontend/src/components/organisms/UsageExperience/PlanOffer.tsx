@@ -8,6 +8,7 @@ import {
 import { Button } from "@/components/atoms/Button/Button";
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { Text } from "@/components/atoms/Text/Text";
+import { useT } from "@/lib/i18n";
 import { formatOfferPrice } from "@/services/usageExperience/helpers";
 
 interface Props {
@@ -35,30 +36,39 @@ export function PlanOffer({
   onUpgrade,
   disabled = false,
 }: Props) {
+  const t = useT();
   const name = tier === "PRO" ? "Pro" : "Max";
   const amount = formatOfferPrice(price, currency);
+  const cycleWord =
+    cycle === "yearly"
+      ? t("billing4.planOffer.cycleYearly")
+      : t("billing4.planOffer.cycleMonthly");
   const features =
     tier === "PRO"
       ? [
-          freshUsage
-            ? "A full daily and weekly allowance once payment goes through"
-            : "Experts for content, sales and research, with Otto coordinating",
-          freshUsage
-            ? "Your chats, workflows and files stay where they are"
-            : "Workflows that keep working in the background on a schedule",
+          t(
+            freshUsage
+              ? "billing4.planOffer.proFreshBenefit1"
+              : "billing4.planOffer.proBenefit1",
+          ),
+          t(
+            freshUsage
+              ? "billing4.planOffer.proFreshBenefit2"
+              : "billing4.planOffer.proBenefit2",
+          ),
         ]
       : [
           usageMultiplier
-            ? `${usageMultiplier}× the usage of Pro`
-            : "More room for your daily and weekly work",
+            ? t("billing4.planOffer.timesUsage", { count: usageMultiplier })
+            : t("billing4.planOffer.maxUsageFallback"),
           storageMultiplier
-            ? `${storageMultiplier}× the workspace storage`
-            : "More workspace storage",
-          "Priority support",
+            ? t("billing4.planOffer.timesStorage", { count: storageMultiplier })
+            : t("billing4.planOffer.maxStorageFallback"),
+          t("billing4.planOffer.prioritySupport"),
         ];
   return (
     <section
-      aria-label={`${name} plan`}
+      aria-label={t("billing4.planOffer.aria", { name })}
       data-slot="plan-offer"
       // TODO(tokens): no role for the purple-200 border or the purple-50 to
       // blue-50 gradient.
@@ -85,7 +95,7 @@ export function PlanOffer({
               {name}
             </Text>
             <Text variant="small" tone="muted">
-              Billed {cycle}
+              {t("billing4.planOffer.billed", { cycle: cycleWord })}
             </Text>
           </div>
         </div>
@@ -95,7 +105,11 @@ export function PlanOffer({
               {amount}
             </Text>
             <Text variant="small" tone="muted">
-              per {cycle === "yearly" ? "year" : "month"} + tax
+              {t(
+                cycle === "yearly"
+                  ? "billing4.planOffer.perYearTax"
+                  : "billing4.planOffer.perMonthTax",
+              )}
             </Text>
           </div>
         )}
@@ -126,17 +140,19 @@ export function PlanOffer({
       >
         {actionLabel ??
           (tier === "MAX"
-            ? "Upgrade to Max"
+            ? t("billing4.offer.upgradeMax")
             : freshUsage
-              ? `Start Pro now${amount ? ` · ${amount}` : ""}`
-              : "Start Pro")}
+              ? amount
+                ? t("billing4.offer.startProNowAmount", { amount })
+                : t("billing4.offer.startProNow")
+              : t("billing4.offer.startPro"))}
       </Button>
       <Text variant="small" tone="muted" className="mt-3 text-center !text-xs">
         {freshUsage
-          ? "You’ll see the full charge before you pay."
+          ? t("billing4.planOffer.footnoteFresh")
           : tier === "MAX"
-            ? "What you’ve already used counts toward Max’s higher limit."
-            : "Review your plan and payment before confirming."}
+            ? t("billing4.planOffer.footnoteMax")
+            : t("billing4.planOffer.footnotePro")}
       </Text>
     </section>
   );

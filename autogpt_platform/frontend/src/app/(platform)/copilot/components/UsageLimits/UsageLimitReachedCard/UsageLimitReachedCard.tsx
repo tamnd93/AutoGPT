@@ -5,7 +5,7 @@ import { ArrowRight02Icon } from "@hugeicons/core-free-icons";
 import { Button } from "@/components/atoms/Button/Button";
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { Text } from "@/components/atoms/Text/Text";
-import { useT } from "@/lib/i18n";
+import { useLocale, useT } from "@/lib/i18n";
 import { getUsageOfferAction } from "@/services/usageExperience/helpers";
 import { formatPaymentDue } from "@/services/usageExperience/payment";
 import { usagePresentation } from "@/services/usageExperience/presentation";
@@ -21,6 +21,7 @@ import { useUsageLimitReachedCard } from "./useUsageLimitReachedCard";
 
 export function UsageLimitReachedCard(props: UsageNoticeContext = {}) {
   const t = useT();
+  const locale = useLocale();
   const state = useUsageLimitReachedCard(props);
   // Relative to the clock, so read on every render rather than cached.
   const resetSentence = useReadEveryRender(() =>
@@ -28,7 +29,11 @@ export function UsageLimitReachedCard(props: UsageNoticeContext = {}) {
   );
   if (state.isLoading || (!state.experience.blocked && !state.isError))
     return null;
-  const copy = usagePresentation(state.experience, state.offer.usageMultiplier);
+  const copy = usagePresentation(
+    state.experience,
+    state.offer.usageMultiplier,
+    locale,
+  );
   const isOffer =
     state.isBillingEnabled && state.experience.targetTier && !state.isError;
   const due = formatPaymentDue(state.experience.payment);
@@ -97,7 +102,7 @@ export function UsageLimitReachedCard(props: UsageNoticeContext = {}) {
             disabled={state.offer.disabled}
             rightIcon={<Icon icon={ArrowRight02Icon} size={14} />}
           >
-            {getUsageOfferAction(state.experience, state.offer)}
+            {getUsageOfferAction(state.experience, state.offer, locale)}
           </Button>
           {state.experience.freshProUsage && (
             <Text

@@ -21,7 +21,7 @@ import {
   budgetResetSentence,
   type ResetWait,
 } from "@/services/usageExperience/budget";
-import { useT } from "@/lib/i18n";
+import { useLocale, useT } from "@/lib/i18n";
 import { useRouter } from "next/navigation";
 import type { ComponentProps } from "react";
 import { ResetWaitBox } from "./components/ResetWaitBox";
@@ -71,6 +71,7 @@ export function RateLimitResetDialog({
   isSchedulingAtReset,
 }: Props) {
   const t = useT();
+  const locale = useLocale();
   const router = useRouter();
   const model =
     experience ??
@@ -81,7 +82,7 @@ export function RateLimitResetDialog({
         resets_at: resetsAt ? new Date(resetsAt).toISOString() : "",
       },
     });
-  const copy = usagePresentation(model, offer?.usageMultiplier);
+  const copy = usagePresentation(model, offer?.usageMultiplier, locale);
   // A top-tier plan has no upgrade to lead with, so waiting for the reset
   // leads instead.
   const waitTitle =
@@ -192,7 +193,7 @@ export function RateLimitResetDialog({
               <PlanOffer
                 tier={model.targetTier}
                 {...offer}
-                actionLabel={getUsageOfferAction(model, offer ?? {})}
+                actionLabel={getUsageOfferAction(model, offer ?? {}, locale)}
                 onUpgrade={upgrade}
               />
             )}
