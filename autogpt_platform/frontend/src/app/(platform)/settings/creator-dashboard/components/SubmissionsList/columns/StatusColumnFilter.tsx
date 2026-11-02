@@ -3,8 +3,13 @@ import type { SubmissionStatus } from "@/app/api/__generated__/models/submission
 import { Button } from "@/components/atoms/Button/Button";
 import { Text } from "@/components/atoms/Text/Text";
 import { cn } from "@/lib/utils";
+import { useLocale, useT } from "@/lib/i18n";
 
-import { STATUS_OPTIONS, STATUS_VISUAL } from "../../../helpers";
+import {
+  STATUS_OPTIONS,
+  STATUS_VISUAL,
+  statusOptionLabel,
+} from "../../../helpers";
 import { ColumnFilter } from "../../ColumnFilter/ColumnFilter";
 import { Tick02Icon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
@@ -15,6 +20,9 @@ interface Props {
 }
 
 export function StatusColumnFilter({ value, onChange }: Props) {
+  const t = useT();
+  const locale = useLocale();
+
   function toggle(status: SubmissionStatus) {
     if (value.includes(status)) {
       onChange(value.filter((s) => s !== status));
@@ -24,10 +32,14 @@ export function StatusColumnFilter({ value, onChange }: Props) {
   }
 
   return (
-    <ColumnFilter active={value.length > 0} label="Status" align="start">
+    <ColumnFilter
+      active={value.length > 0}
+      label={t("settingsRest2.statusFilter.label")}
+      align="start"
+    >
       <div className="flex flex-col gap-2">
         <Text variant="small-medium" as="span" className="px-2 text-textBlack">
-          Filter by status
+          {t("settingsRest2.statusFilter.heading")}
         </Text>
         <ul className="flex flex-col gap-1">
           {STATUS_OPTIONS.map((option) => {
@@ -49,7 +61,7 @@ export function StatusColumnFilter({ value, onChange }: Props) {
                   <span
                     className={`inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-xs font-medium ${visual.pillClass}`}
                   >
-                    {option.label}
+                    {statusOptionLabel(option.value, locale)}
                   </span>
                   <span
                     className={cn(
@@ -75,7 +87,7 @@ export function StatusColumnFilter({ value, onChange }: Props) {
             onClick={() => onChange([])}
             className="self-end"
           >
-            Clear
+            {t("settingsRest2.statusFilter.clear")}
           </Button>
         ) : null}
       </div>

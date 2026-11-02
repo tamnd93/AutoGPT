@@ -5,6 +5,7 @@ import { ChatMessagesContainer } from "@/app/(platform)/copilot/components/ChatM
 import { CopilotChatActionsProvider } from "@/app/(platform)/copilot/components/CopilotChatActionsProvider/CopilotChatActionsProvider";
 import { Button } from "@/components/atoms/Button/Button";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 import { BrainIcon, Cancel01Icon } from "@hugeicons/core-free-icons";
 
 interface Props {
@@ -40,6 +41,7 @@ export function MemoryChatPanel({
   onRetry,
   onClose,
 }: Props) {
+  const t = useT();
   if (!isOpen) return null;
 
   const isStreaming = status === "streaming" || status === "submitted";
@@ -49,7 +51,7 @@ export function MemoryChatPanel({
       <CopilotChatActionsProvider onSend={onSend}>
         <div
           role="complementary"
-          aria-label="Memory chat panel"
+          aria-label={t("settingsRest2.memory.chat.aria")}
           className="pointer-events-auto flex h-[70vh] max-h-[calc(100vh-6rem)] w-[26rem] max-w-[calc(100vw-2rem)] flex-col overflow-hidden rounded-xl border border-border-base bg-surface shadow-2xl sm:h-[75vh]"
         >
           <div className="flex items-center justify-between border-b border-separator px-4 py-3">
@@ -89,7 +91,7 @@ export function MemoryChatPanel({
               </div>
             ) : isStarting || !sessionId ? (
               <div className="flex flex-1 items-center justify-center px-4 py-6 text-sm text-foreground-tertiary">
-                Starting memory chat…
+                {t("settingsRest2.memory.chat.starting")}
               </div>
             ) : (
               <>

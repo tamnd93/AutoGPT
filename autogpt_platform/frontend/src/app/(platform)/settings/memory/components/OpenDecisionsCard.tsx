@@ -6,6 +6,7 @@ import type { SkillVersionSummary } from "@/app/api/__generated__/models/skillVe
 import { Button } from "@/components/atoms/Button/Button";
 import { Text } from "@/components/atoms/Text/Text";
 import { skillDetailHref } from "@/services/skill-learning/helpers";
+import { useT } from "@/lib/i18n";
 import Link from "next/link";
 
 interface Props {
@@ -24,6 +25,7 @@ export function OpenDecisionsCard({
   isDeciding,
   onDecide,
 }: Props) {
+  const t = useT();
   if (decisions.length === 0) return null;
   return (
     <div
@@ -31,10 +33,10 @@ export function OpenDecisionsCard({
       data-testid="open-decisions-card"
     >
       <Text variant="body-medium" as="span" className="text-textBlack">
-        Needs your decision
+        {t("settingsRest2.memory.decisions.title")}
       </Text>
       <Text variant="small" as="span" className="text-foreground-tertiary">
-        Proposed changes to skills you control. Unrelated learning continues.
+        {t("settingsRest2.memory.decisions.body")}
       </Text>
       <ul
         // TODO(tokens): no exact role (divide-amber-100 #FEF3C7)
@@ -59,7 +61,7 @@ export function OpenDecisionsCard({
                 </Link>
                 {" · "}
                 {experts.find((expert) => expert.id === proposal.expert_id)
-                  ?.name ?? "Otto"}
+                  ?.name ?? t("settingsRest2.memory.learning.otto")}
               </Text>
               <Text
                 variant="small"
@@ -77,7 +79,7 @@ export function OpenDecisionsCard({
                 disabled={isDeciding}
                 onClick={() => onDecide(proposal, "keep_current")}
               >
-                Keep current
+                {t("settingsRest2.memory.decisions.keep")}
               </Button>
               <Button
                 variant="primary"
@@ -85,7 +87,7 @@ export function OpenDecisionsCard({
                 disabled={isDeciding}
                 onClick={() => onDecide(proposal, "apply")}
               >
-                Apply change
+                {t("settingsRest2.memory.decisions.apply")}
               </Button>
             </div>
           </li>

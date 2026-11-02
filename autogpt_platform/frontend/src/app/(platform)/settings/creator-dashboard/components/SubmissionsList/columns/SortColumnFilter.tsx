@@ -2,6 +2,7 @@
 import { Button } from "@/components/atoms/Button/Button";
 import { Text } from "@/components/atoms/Text/Text";
 import { cn } from "@/lib/utils";
+import { useT } from "@/lib/i18n";
 
 import { type SortDir, type SortKey } from "../../../helpers";
 import { ColumnFilter } from "../../ColumnFilter/ColumnFilter";
@@ -25,6 +26,7 @@ export function SortColumnFilter({
   ascLabel,
   descLabel,
 }: Props) {
+  const t = useT();
   const isActive = activeKey === sortKey;
 
   function pick(dir: SortDir) {
@@ -36,10 +38,14 @@ export function SortColumnFilter({
   }
 
   return (
-    <ColumnFilter active={isActive} label="Sort" align="start">
+    <ColumnFilter
+      active={isActive}
+      label={t("settingsRest2.sort.label")}
+      align="start"
+    >
       <div className="flex flex-col gap-2">
         <Text variant="small-medium" as="span" className="px-2 text-textBlack">
-          Sort
+          {t("settingsRest2.sort.label")}
         </Text>
         <SortOption
           icon={<Icon icon={ArrowDown02Icon} size={14} />}
@@ -60,7 +66,7 @@ export function SortColumnFilter({
             onClick={clear}
             className="self-end"
           >
-            Clear
+            {t("settingsRest2.sort.clear")}
           </Button>
         ) : null}
       </div>

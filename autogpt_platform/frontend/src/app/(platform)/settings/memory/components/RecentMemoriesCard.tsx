@@ -4,6 +4,7 @@ import type { MemoryFact } from "@/app/api/__generated__/models/memoryFact";
 import { Button } from "@/components/atoms/Button/Button";
 import { Skeleton } from "@/components/atoms/Skeleton/Skeleton";
 import { Text } from "@/components/atoms/Text/Text";
+import { useT } from "@/lib/i18n";
 import { formatWhen } from "../helpers";
 
 interface Props {
@@ -21,13 +22,14 @@ export function RecentMemoriesCard({
   onForget,
   onForgetTopic,
 }: Props) {
+  const t = useT();
   return (
     <div className="flex flex-col rounded-[18px] border border-border-base bg-surface px-4 py-4 shadow-[0_1px_2px_rgba(15,15,20,0.04)]">
       <Text variant="body-medium" as="span" className="text-textBlack">
-        Recent memories
+        {t("settingsRest2.memory.recent.title")}
       </Text>
       <Text variant="small" as="span" className="text-foreground-tertiary">
-        The latest things this memory has learned. Forget any of them.
+        {t("settingsRest2.memory.recent.body")}
       </Text>
 
       <div className="mt-2 flex flex-col divide-y divide-separator">
@@ -43,7 +45,7 @@ export function RecentMemoriesCard({
             as="p"
             className="py-3 text-foreground-tertiary"
           >
-            Nothing remembered yet. Memories show up here as you chat.
+            {t("settingsRest2.memory.recent.empty")}
           </Text>
         ) : (
           facts.map((fact) => (
@@ -81,7 +83,7 @@ export function RecentMemoriesCard({
 
       <div className="mt-3">
         <Button variant="secondary" size="small" onClick={onForgetTopic}>
-          Forget a topic…
+          {t("settingsRest2.memory.recent.forgetTopic")}
         </Button>
       </div>
     </div>

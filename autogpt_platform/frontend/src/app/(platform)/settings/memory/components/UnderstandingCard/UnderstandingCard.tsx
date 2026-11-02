@@ -5,11 +5,13 @@ import { Text } from "@/components/atoms/Text/Text";
 import { Dialog } from "@/components/molecules/Dialog/Dialog";
 import { ErrorCard } from "@/components/molecules/ErrorCard/ErrorCard";
 import { useState } from "react";
+import { useT } from "@/lib/i18n";
 import { useUnderstandingCard } from "./useUnderstandingCard";
 
 const LONG_VALUE_CHARS = 280;
 
 export function UnderstandingCard() {
+  const t = useT();
   const {
     rows,
     isError,
@@ -25,7 +27,7 @@ export function UnderstandingCard() {
     return (
       <ErrorCard
         responseError={error || undefined}
-        context="what Otto knows about your work"
+        context={t("settingsRest2.memory.understanding.errorContext")}
         onRetry={refetch}
       />
     );
@@ -44,7 +46,7 @@ export function UnderstandingCard() {
             id="understanding-title"
             className="text-textBlack"
           >
-            What Otto knows about your work
+            {t("settingsRest2.memory.understanding.title")}
           </Text>
           <Text variant="small" as="span" className="text-zinc-500">
             From your onboarding and your chats. Every new chat with Otto starts
@@ -106,6 +108,7 @@ export function UnderstandingCard() {
 }
 
 function UnderstandingValue({ value }: { value: string }) {
+  const t = useT();
   const [isExpanded, setIsExpanded] = useState(false);
   // By code point, so the cut never splits an emoji's surrogate pair.
   const chars = Array.from(value);
@@ -124,7 +127,9 @@ function UnderstandingValue({ value }: { value: string }) {
           className="ml-1 text-zinc-500 underline"
           onClick={() => setIsExpanded(!isExpanded)}
         >
-          {isExpanded ? "Show less" : "Show all"}
+          {isExpanded
+            ? t("settingsRest2.memory.understanding.showLess")
+            : t("settingsRest2.memory.understanding.showAll")}
         </button>
       ) : null}
     </dd>

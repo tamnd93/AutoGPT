@@ -9,6 +9,7 @@ import type { SubmissionStatus } from "@/app/api/__generated__/models/submission
 import { Button } from "@/components/atoms/Button/Button";
 import { Text } from "@/components/atoms/Text/Text";
 import { SearchInput } from "@/components/molecules/SearchInput/SearchInput";
+import { useT } from "@/lib/i18n";
 
 import {
   EASE_OUT,
@@ -63,6 +64,7 @@ export function MobileSubmissionsList({
   creatorUsername,
   index = 0,
 }: Props) {
+  const t = useT();
   const reduceMotion = useReducedMotion();
 
   function setStatuses(statuses: SubmissionStatus[]) {
@@ -88,11 +90,14 @@ export function MobileSubmissionsList({
       <div className="flex items-center justify-between gap-3 px-1">
         <div className="flex items-center gap-2">
           <Text variant="body-medium" as="span" className="text-textBlack">
-            Submissions
+            {t("settingsRest2.list.title")}
           </Text>
         </div>
         <Text variant="small" className="text-foreground-tertiary">
-          {submissions.length} of {totalCount}
+          {t("settingsRest2.list.count", {
+            count: submissions.length,
+            total: totalCount,
+          })}
         </Text>
       </div>
 
@@ -100,8 +105,8 @@ export function MobileSubmissionsList({
         <SearchInput
           value={searchInput}
           onChange={onSearchChange}
-          placeholder="Search by workflow or listing name"
-          aria-label="Search submissions"
+          placeholder={t("settingsRest2.list.searchPlaceholder")}
+          aria-label={t("settingsRest2.list.searchAria")}
           maxLength={100}
           loading={isFetching}
           size="small"
@@ -109,30 +114,30 @@ export function MobileSubmissionsList({
       </div>
 
       <div className="flex flex-wrap items-center gap-2 px-1">
-        <FilterChip label="Status">
+        <FilterChip label={t("settingsRest2.list.filterStatus")}>
           <StatusColumnFilter
             value={filterState.statuses}
             onChange={setStatuses}
           />
         </FilterChip>
-        <FilterChip label="Date">
+        <FilterChip label={t("settingsRest2.list.filterDate")}>
           <SortColumnFilter
             sortKey="submitted"
             activeKey={filterState.sortKey}
             activeDir={filterState.sortDir}
             onChange={setSort}
-            ascLabel="Oldest first"
-            descLabel="Newest first"
+            ascLabel={t("settingsRest2.list.sortSubmittedAsc")}
+            descLabel={t("settingsRest2.list.sortSubmittedDesc")}
           />
         </FilterChip>
-        <FilterChip label="Runs">
+        <FilterChip label={t("settingsRest2.list.filterRuns")}>
           <SortColumnFilter
             sortKey="runs"
             activeKey={filterState.sortKey}
             activeDir={filterState.sortDir}
             onChange={setSort}
-            ascLabel="Lowest first"
-            descLabel="Highest first"
+            ascLabel={t("settingsRest2.list.sortRunsAsc")}
+            descLabel={t("settingsRest2.list.sortRunsDesc")}
           />
         </FilterChip>
       </div>
@@ -154,8 +159,10 @@ export function MobileSubmissionsList({
           <div className="flex flex-col items-center justify-center gap-3 px-4 py-10 text-center">
             <Text variant="body-medium" className="text-textBlack">
               {debouncedSearch
-                ? `No submissions match "${debouncedSearch}"`
-                : "No submissions match these filters"}
+                ? t("settingsRest2.list.noMatchSearch", {
+                    query: debouncedSearch,
+                  })
+                : t("settingsRest2.list.noMatchFilters")}
             </Text>
             {debouncedSearch ? (
               <Button
@@ -163,11 +170,11 @@ export function MobileSubmissionsList({
                 size="small"
                 onClick={() => onSearchChange("")}
               >
-                Clear search
+                {t("settingsRest2.list.clearSearch")}
               </Button>
             ) : (
               <Button variant="secondary" size="small" onClick={onResetFilters}>
-                Clear filters
+                {t("settingsRest2.list.clearFilters")}
               </Button>
             )}
           </div>

@@ -1,3 +1,4 @@
+import { LocaleProvider } from "@/lib/i18n";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import {
@@ -122,6 +123,19 @@ describe("Pagination", () => {
         }) as HTMLButtonElement
       ).disabled,
     ).toBe(true);
+  });
+
+  it("reads its range and controls in Vietnamese", () => {
+    render(
+      <LocaleProvider locale="vi">
+        <Pagination pagination={makePagination()} onPageChange={() => {}} />
+      </LocaleProvider>,
+    );
+
+    expect(screen.getByText(/Hiển thị 21–40 trong 87/)).toBeDefined();
+    expect(screen.getByRole("button", { name: "Trang trước" })).toBeDefined();
+    expect(screen.getByRole("button", { name: "Trang sau" })).toBeDefined();
+    expect(screen.getByRole("button", { name: "Tới trang 3" })).toBeDefined();
   });
 
   it("renders every page number when total_pages is small", () => {

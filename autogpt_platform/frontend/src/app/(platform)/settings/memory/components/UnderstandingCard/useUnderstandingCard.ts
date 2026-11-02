@@ -4,11 +4,13 @@ import {
   useGetMyBusinessUnderstanding,
 } from "@/app/api/__generated__/endpoints/memory/memory";
 import { toast } from "@/components/molecules/Toast/use-toast";
+import { useT } from "@/lib/i18n";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { getUnderstandingRows } from "./helpers";
 
 export function useUnderstandingCard() {
+  const t = useT();
   const queryClient = useQueryClient();
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
 
@@ -24,7 +26,7 @@ export function useUnderstandingCard() {
         queryClient.invalidateQueries({
           queryKey: getGetMyBusinessUnderstandingQueryKey(),
         });
-        toast({ title: "Forgotten" });
+        toast({ title: t("settingsRest2.memory.understanding.forgotten") });
       },
       onError() {
         toast({

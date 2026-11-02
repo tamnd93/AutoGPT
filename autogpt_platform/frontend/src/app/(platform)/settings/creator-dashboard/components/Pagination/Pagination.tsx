@@ -2,6 +2,7 @@
 import type { Pagination as PaginationModel } from "@/app/api/__generated__/models/pagination";
 import { Button } from "@/components/atoms/Button/Button";
 import { Text } from "@/components/atoms/Text/Text";
+import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { ArrowLeft01Icon, ArrowRight01Icon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
@@ -28,6 +29,7 @@ function getVisiblePages(current: number, total: number): number[] {
 }
 
 export function Pagination({ pagination, onPageChange, disabled }: Props) {
+  const t = useT();
   const { current_page, total_pages, total_items, page_size } = pagination;
 
   if (total_pages <= 1) return null;
@@ -42,7 +44,11 @@ export function Pagination({ pagination, onPageChange, disabled }: Props) {
       data-testid="submissions-pagination"
     >
       <Text variant="small" className="text-foreground-tertiary">
-        Showing {startItem}–{endItem} of {total_items}
+        {t("settingsRest2.pagination.showing", {
+          start: startItem,
+          end: endItem,
+          total: total_items,
+        })}
       </Text>
       <div className="flex items-center gap-1.5">
         <Button
@@ -51,9 +57,9 @@ export function Pagination({ pagination, onPageChange, disabled }: Props) {
           leftIcon={<Icon icon={ArrowLeft01Icon} size={14} />}
           disabled={disabled || current_page <= 1}
           onClick={() => onPageChange(current_page - 1)}
-          aria-label="Previous page"
+          aria-label={t("settingsRest2.pagination.previous")}
         >
-          Previous
+          {t("settingsRest2.pagination.previousShort")}
         </Button>
         <div className="flex items-center gap-1">
           {visiblePages.map((page) => {
@@ -64,7 +70,7 @@ export function Pagination({ pagination, onPageChange, disabled }: Props) {
                 type="button"
                 disabled={disabled}
                 onClick={() => onPageChange(page)}
-                aria-label={`Go to page ${page}`}
+                aria-label={t("settingsRest2.pagination.goTo", { page })}
                 aria-current={isActive ? "page" : undefined}
                 className={cn(
                   "ease-[cubic-bezier(0.16,1,0.3,1)] inline-flex h-8 min-w-8 items-center justify-center rounded-full px-2 text-xs font-medium tabular-nums transition-colors duration-150 disabled:cursor-not-allowed disabled:opacity-50",
@@ -84,9 +90,9 @@ export function Pagination({ pagination, onPageChange, disabled }: Props) {
           rightIcon={<Icon icon={ArrowRight01Icon} size={14} />}
           disabled={disabled || current_page >= total_pages}
           onClick={() => onPageChange(current_page + 1)}
-          aria-label="Next page"
+          aria-label={t("settingsRest2.pagination.next")}
         >
-          Next
+          {t("settingsRest2.pagination.nextShort")}
         </Button>
       </div>
     </div>

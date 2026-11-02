@@ -1,4 +1,7 @@
 import { SubmissionStatus } from "@/app/api/__generated__/models/submissionStatus";
+import type { Locale } from "@/lib/i18n/locale";
+import type { MessageKey } from "@/lib/i18n/messages/en";
+import { getMessage } from "@/lib/i18n/translate";
 import type { StoreSubmission } from "@/app/api/__generated__/models/storeSubmission";
 import type { StoreSubmissionEditRequest } from "@/app/api/__generated__/models/storeSubmissionEditRequest";
 import type { SubmissionStats } from "@/app/api/__generated__/models/submissionStats";
@@ -96,6 +99,7 @@ export function isFiltered(state: FilterState): boolean {
 
 export interface StatusVisual {
   label: string;
+  labelKey: MessageKey;
   Icon: IconSvgElement;
   pillClass: string;
   dotClass: string;
@@ -108,6 +112,7 @@ export function getStatusVisual(status: SubmissionStatus): StatusVisual {
 export const STATUS_VISUAL: Record<SubmissionStatus, StatusVisual> = {
   [SubmissionStatus.DRAFT]: {
     label: "Draft",
+    labelKey: "settingsRest2.status.draft",
     Icon: Clock01Icon,
     pillClass:
       "bg-surface-hover text-foreground-body ring-1 ring-inset ring-border-base",
@@ -115,6 +120,7 @@ export const STATUS_VISUAL: Record<SubmissionStatus, StatusVisual> = {
   },
   [SubmissionStatus.PENDING]: {
     label: "In review",
+    labelKey: "settingsRest2.status.inReview",
     Icon: Clock01Icon,
     pillClass:
       "bg-warning-surface text-amber-800 ring-1 ring-inset ring-warning-border",
@@ -122,6 +128,7 @@ export const STATUS_VISUAL: Record<SubmissionStatus, StatusVisual> = {
   },
   [SubmissionStatus.APPROVED]: {
     label: "Approved",
+    labelKey: "settingsRest2.status.approved",
     Icon: CheckmarkCircle02Icon,
     pillClass:
       "bg-emerald-50 text-emerald-800 ring-1 ring-inset ring-emerald-200",
@@ -129,11 +136,48 @@ export const STATUS_VISUAL: Record<SubmissionStatus, StatusVisual> = {
   },
   [SubmissionStatus.REJECTED]: {
     label: "Needs changes",
+    labelKey: "settingsRest2.status.needsChanges",
     Icon: UnavailableIcon,
     pillClass: "bg-rose-50 text-rose-800 ring-1 ring-inset ring-rose-200",
     dotClass: "bg-rose-500",
   },
 };
+
+const STATUS_OPTION_LABEL_KEYS: Record<SubmissionStatus, MessageKey> = {
+  [SubmissionStatus.PENDING]: "settingsRest2.status.inReview",
+  [SubmissionStatus.APPROVED]: "settingsRest2.status.approved",
+  [SubmissionStatus.REJECTED]: "settingsRest2.status.needsChanges",
+  [SubmissionStatus.DRAFT]: "settingsRest2.status.draft",
+};
+
+const STATUS_FILTER_LABEL_KEYS: Record<StatusFilterValue, MessageKey> = {
+  all: "settingsRest2.status.all",
+  [SubmissionStatus.PENDING]: "settingsRest2.status.inReview",
+  [SubmissionStatus.APPROVED]: "settingsRest2.status.approved",
+  [SubmissionStatus.REJECTED]: "settingsRest2.status.needsChanges",
+  [SubmissionStatus.DRAFT]: "settingsRest2.status.drafts",
+};
+
+export function statusLabel(
+  status: SubmissionStatus,
+  locale: Locale = "en",
+): string {
+  return getMessage(locale, STATUS_OPTION_LABEL_KEYS[status]);
+}
+
+export function statusOptionLabel(
+  status: SubmissionStatus,
+  locale: Locale = "en",
+): string {
+  return getMessage(locale, STATUS_OPTION_LABEL_KEYS[status]);
+}
+
+export function statusFilterLabel(
+  value: StatusFilterValue,
+  locale: Locale = "en",
+): string {
+  return getMessage(locale, STATUS_FILTER_LABEL_KEYS[value]);
+}
 
 export const STATUS_FILTERS: { value: StatusFilterValue; label: string }[] = [
   { value: "all", label: "All" },
@@ -187,11 +231,14 @@ export function formatRuns(value: number): string {
   return value.toLocaleString();
 }
 
-export function formatSubmittedAt(value: Date | null | undefined): string {
+export function formatSubmittedAt(
+  value: Date | null | undefined,
+  locale: Locale = "en",
+): string {
   if (!value) return "—";
   const date = value instanceof Date ? value : new Date(value);
   if (Number.isNaN(date.getTime())) return "—";
-  return date.toLocaleDateString(undefined, {
+  return date.toLocaleDateString(locale === "vi" ? "vi-VN" : undefined, {
     month: "short",
     day: "numeric",
     year: "numeric",

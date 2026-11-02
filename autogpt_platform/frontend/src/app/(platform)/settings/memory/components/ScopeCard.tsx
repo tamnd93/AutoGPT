@@ -2,6 +2,7 @@
 
 import type { Expert } from "@/app/api/__generated__/models/expert";
 import { Text } from "@/components/atoms/Text/Text";
+import { useT } from "@/lib/i18n";
 import { ScopeSelect } from "./ScopeSelect";
 
 interface Props {
@@ -11,14 +12,15 @@ interface Props {
 }
 
 export function ScopeCard({ scopeExpertID, experts, onSelect }: Props) {
+  const t = useT();
   return (
     <div className="flex flex-col gap-3 rounded-[18px] border border-border-base bg-surface px-4 py-4 shadow-[0_1px_2px_rgba(15,15,20,0.04)] sm:flex-row sm:items-center sm:justify-between">
       <div className="flex min-w-0 flex-col">
         <Text variant="body-medium" as="span" className="text-textBlack">
-          Memory scope
+          {t("settingsRest2.memory.scope.title")}
         </Text>
         <Text variant="small" as="span" className="text-foreground-tertiary">
-          Choose whose memory you&apos;re looking at. Experts keep their own.
+          {t("settingsRest2.memory.scope.body")}
         </Text>
       </div>
       <div className="w-full sm:w-[280px]">

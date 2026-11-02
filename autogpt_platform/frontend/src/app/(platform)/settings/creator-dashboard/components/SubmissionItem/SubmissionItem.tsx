@@ -9,6 +9,7 @@ import type { StoreSubmissionEditRequest } from "@/app/api/__generated__/models/
 import { Button } from "@/components/atoms/Button/Button";
 import { Text } from "@/components/atoms/Text/Text";
 import { Dialog } from "@/components/molecules/Dialog/Dialog";
+import { useLocale, useT } from "@/lib/i18n";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -56,6 +57,8 @@ export function SubmissionItem({
   onDelete,
   creatorUsername,
 }: Props) {
+  const t = useT();
+  const locale = useLocale();
   const reduceMotion = useReducedMotion();
   const {
     canModify,
@@ -176,12 +179,12 @@ export function SubmissionItem({
           className={`inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-medium ${visual.pillClass}`}
         >
           <UIIcon icon={visual.Icon} size={12} />
-          {visual.label}
+          {t(visual.labelKey)}
         </span>
       </td>
 
       <td className="whitespace-nowrap px-4 py-3 align-middle text-sm text-foreground-body">
-        {formatSubmittedAt(submission.submitted_at)}
+        {formatSubmittedAt(submission.submitted_at, locale)}
       </td>
 
       <td className="whitespace-nowrap px-4 py-3 text-right align-middle text-sm tabular-nums text-foreground-body">
@@ -193,7 +196,7 @@ export function SubmissionItem({
           <DropdownMenuTrigger asChild>
             <button
               type="button"
-              aria-label="Submission actions"
+              aria-label={t("settingsRest2.submission.actionsAria")}
               data-testid="submission-actions"
               className="ease-[cubic-bezier(0.16,1,0.3,1)] inline-flex h-8 w-8 items-center justify-center rounded-full text-foreground-tertiary transition-[background-color,color,transform] duration-150 hover:bg-surface-hover hover:text-foreground-strong active:scale-[0.92] motion-reduce:transition-none motion-reduce:active:scale-100"
             >
@@ -211,7 +214,7 @@ export function SubmissionItem({
                 className="flex cursor-pointer items-center gap-2"
               >
                 <UIIcon icon={PencilIcon} size={14} />
-                Edit details
+                {t("settingsRest2.submission.edit")}
               </DropdownMenuItem>
             ) : (
               <DropdownMenuItem
@@ -219,7 +222,7 @@ export function SubmissionItem({
                 className="flex cursor-pointer items-center gap-2"
               >
                 <UIIcon icon={EyeIcon} size={14} />
-                View submission
+                {t("settingsRest2.submission.view")}
               </DropdownMenuItem>
             )}
             {marketplaceUrl ? (
@@ -232,7 +235,7 @@ export function SubmissionItem({
                   data-testid="submission-marketplace-menu-link"
                 >
                   <UIIcon icon={LinkSquare01Icon} size={14} />
-                  View on marketplace
+                  {t("settingsRest2.submission.viewMarketplace")}
                 </Link>
               </DropdownMenuItem>
             ) : null}
@@ -245,7 +248,7 @@ export function SubmissionItem({
                   className="flex cursor-pointer items-center gap-2 text-rose-600 focus:text-rose-700"
                 >
                   <UIIcon icon={Delete02Icon} size={14} />
-                  Delete
+                  {t("settingsRest2.submission.delete")}
                 </DropdownMenuItem>
               </>
             ) : null}
@@ -253,7 +256,7 @@ export function SubmissionItem({
         </DropdownMenu>
 
         <Dialog
-          title="Delete submission?"
+          title={t("settingsRest2.submission.deleteTitle")}
           styling={{ maxWidth: "420px" }}
           controlled={{
             isOpen: confirmDeleteOpen,

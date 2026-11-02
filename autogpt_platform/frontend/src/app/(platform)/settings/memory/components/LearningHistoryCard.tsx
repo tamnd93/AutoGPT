@@ -5,6 +5,7 @@ import type { LearningHistoryItem } from "@/app/api/__generated__/models/learnin
 import { Select } from "@/components/atoms/Select/Select";
 import { Skeleton } from "@/components/atoms/Skeleton/Skeleton";
 import { Text } from "@/components/atoms/Text/Text";
+import { useT } from "@/lib/i18n";
 import { formatWhen } from "../helpers";
 import { ORIGIN_FILTERS, STATE_FILTERS } from "../useLearningHistory";
 
@@ -29,9 +30,14 @@ export function LearningHistoryCard({
   onStateChange,
   onOpen,
 }: Props) {
+  const t = useT();
+
   function expertName(expertId: string | null | undefined) {
-    if (!expertId) return "Otto";
-    return experts.find((expert) => expert.id === expertId)?.name ?? "Expert";
+    if (!expertId) return t("settingsRest2.memory.learning.otto");
+    return (
+      experts.find((expert) => expert.id === expertId)?.name ??
+      t("settingsRest2.memory.learning.expertFallback")
+    );
   }
   return (
     <div
@@ -39,16 +45,15 @@ export function LearningHistoryCard({
       data-testid="learning-history-card"
     >
       <Text variant="body-medium" as="span" className="text-textBlack">
-        Learning history
+        {t("settingsRest2.memory.learning.title")}
       </Text>
       <Text variant="small" as="span" className="text-foreground-tertiary">
-        What overnight learning changed, where it came from, and what it did not
-        learn.
+        {t("settingsRest2.memory.learning.body")}
       </Text>
       <div className="mt-3 flex flex-col gap-2 sm:flex-row">
         <Select
           id="learning-origin"
-          label="Origin"
+          label={t("settingsRest2.memory.learning.origin")}
           hideLabel
           size="small"
           value={origin}
@@ -57,7 +62,7 @@ export function LearningHistoryCard({
         />
         <Select
           id="learning-state"
-          label="State"
+          label={t("settingsRest2.memory.learning.state")}
           hideLabel
           size="small"
           value={state}
@@ -77,7 +82,7 @@ export function LearningHistoryCard({
             as="p"
             className="py-3 text-foreground-tertiary"
           >
-            Nothing learned yet. A quiet night means nothing needed to change.
+            {t("settingsRest2.memory.learning.empty")}
           </Text>
         ) : (
           items.map((item) => (
@@ -98,7 +103,7 @@ export function LearningHistoryCard({
                       {item.version ? ` v${item.version}` : ""}
                     </button>
                   ) : (
-                    "Review"
+                    t("settingsRest2.memory.learning.review")
                   )}
                 </Text>
                 <Text

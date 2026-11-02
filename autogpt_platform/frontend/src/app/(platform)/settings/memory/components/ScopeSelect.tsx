@@ -13,6 +13,7 @@ import {
 import { AutopilotAvatar } from "@/components/molecules/AutopilotAvatar/AutopilotAvatar";
 import { ExpertAvatar } from "@/components/molecules/ExpertAvatar/ExpertAvatar";
 import { cn } from "@/lib/utils";
+import { useT } from "@/lib/i18n";
 import { ArrowDown01Icon, Tick02Icon } from "@hugeicons/core-free-icons";
 
 interface Props {
@@ -34,6 +35,7 @@ function ScopeCheck({ selected }: { selected: boolean }) {
 }
 
 export function ScopeSelect({ scopeExpertID, experts, onSelect }: Props) {
+  const t = useT();
   const selectedExpert = scopeExpertID
     ? experts.find((expert) => expert.id === scopeExpertID)
     : undefined;
@@ -43,7 +45,7 @@ export function ScopeSelect({ scopeExpertID, experts, onSelect }: Props) {
       <DropdownMenuTrigger asChild>
         <button
           type="button"
-          aria-label="Memory scope"
+          aria-label={t("settingsRest2.memory.scopeSelect.aria")}
           className={cn(
             "flex w-full items-center gap-2.5 rounded-[10px] border border-border-base bg-surface px-3 py-2 text-sm font-medium text-textBlack",
             // TODO(tokens): no exact role (focus-visible:ring-violet-400 #A78BFA)
@@ -83,7 +85,7 @@ export function ScopeSelect({ scopeExpertID, experts, onSelect }: Props) {
           <span className="flex min-w-0 flex-col leading-snug">
             <span className="text-sm font-medium text-textBlack">Otto</span>
             <span className="text-xs text-foreground-tertiary">
-              Your account memory — everything you do together
+              {t("settingsRest2.memory.scopeSelect.ottoDesc")}
             </span>
           </span>
           <ScopeCheck selected={scopeExpertID === null} />
@@ -93,7 +95,7 @@ export function ScopeSelect({ scopeExpertID, experts, onSelect }: Props) {
           <>
             <DropdownMenuSeparator />
             <DropdownMenuLabel className="px-2.5 pb-0.5 pt-1.5 text-tiny font-semibold uppercase leading-inherit tracking-caps text-foreground-subtle">
-              Your experts
+              {t("settingsRest2.memory.scopeSelect.experts")}
             </DropdownMenuLabel>
             {experts.map((expert) => (
               <DropdownMenuItem

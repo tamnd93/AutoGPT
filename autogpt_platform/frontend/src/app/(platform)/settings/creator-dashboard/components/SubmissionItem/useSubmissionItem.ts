@@ -4,6 +4,7 @@ import * as Sentry from "@sentry/nextjs";
 import { SubmissionStatus } from "@/app/api/__generated__/models/submissionStatus";
 import type { StoreSubmission } from "@/app/api/__generated__/models/storeSubmission";
 import { toast } from "@/components/molecules/Toast/use-toast";
+import { useT } from "@/lib/i18n";
 import { getApprovedMarketplaceUrl } from "@/lib/utils";
 
 import { buildEditPayload, type EditPayload } from "../../helpers";
@@ -23,6 +24,7 @@ export function useSubmissionItem({
   onDelete,
   creatorUsername,
 }: Args) {
+  const t = useT();
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -50,7 +52,7 @@ export function useSubmissionItem({
     } catch (err) {
       Sentry.captureException(err);
       toast({
-        title: "Couldn't delete submission",
+        title: t("settingsRest2.submission.deleteFailed"),
         description: err instanceof Error ? err.message : undefined,
         variant: "destructive",
       });

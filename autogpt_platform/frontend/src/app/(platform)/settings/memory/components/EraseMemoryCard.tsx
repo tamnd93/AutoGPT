@@ -4,6 +4,7 @@ import { Button } from "@/components/atoms/Button/Button";
 import { Input } from "@/components/atoms/Input/Input";
 import { Text } from "@/components/atoms/Text/Text";
 import { Dialog } from "@/components/molecules/Dialog/Dialog";
+import { useT } from "@/lib/i18n";
 import { useState } from "react";
 
 interface Props {
@@ -19,6 +20,7 @@ export function EraseMemoryCard({
   isErasing,
   onErase,
 }: Props) {
+  const t = useT();
   const [isOpen, setIsOpen] = useState(false);
   const [confirmText, setConfirmText] = useState("");
   const isConfirmed = confirmText.trim() === scopeName;
@@ -44,7 +46,9 @@ export function EraseMemoryCard({
         </Text>
       </div>
       <Dialog
-        title={`Erase all of ${scopeName}'s memory`}
+        title={t("settingsRest2.memory.erase.dialogTitle", {
+          name: scopeName,
+        })}
         styling={{ maxWidth: "440px" }}
         controlled={{
           isOpen,
@@ -56,7 +60,7 @@ export function EraseMemoryCard({
       >
         <Dialog.Trigger>
           <Button variant="destructive" size="small">
-            Erase memory
+            {t("settingsRest2.memory.erase.button")}
           </Button>
         </Dialog.Trigger>
         <Dialog.Content>

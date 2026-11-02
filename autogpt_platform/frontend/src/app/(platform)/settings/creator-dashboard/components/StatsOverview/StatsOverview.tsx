@@ -2,6 +2,7 @@
 import { motion, useReducedMotion } from "framer-motion";
 
 import { Text } from "@/components/atoms/Text/Text";
+import { useT } from "@/lib/i18n";
 
 import { EASE_OUT, formatRuns, type DashboardStats } from "../../helpers";
 import {
@@ -27,30 +28,31 @@ interface StatTile {
 }
 
 export function StatsOverview({ stats, index = 0 }: Props) {
+  const t = useT();
   const reduceMotion = useReducedMotion();
 
   const tiles: StatTile[] = [
     {
-      label: "Total submissions",
+      label: t("settingsRest2.stats.total"),
       value: stats.total.toLocaleString(),
       Icon: Layers01Icon,
       iconClass: "bg-accent-surface text-accent-strong ring-violet-200",
     },
     {
-      label: "Approved",
+      label: t("settingsRest2.stats.approved"),
       value: stats.approved.toLocaleString(),
       Icon: CheckmarkCircle02Icon,
       iconClass: "bg-emerald-50 text-emerald-700 ring-emerald-200",
     },
     {
-      label: "In review",
+      label: t("settingsRest2.stats.inReview"),
       value: stats.pending.toLocaleString(),
       Icon: Clock01Icon,
       iconClass:
         "bg-warning-surface text-warning-foreground ring-warning-border",
     },
     {
-      label: "Total runs",
+      label: t("settingsRest2.stats.totalRuns"),
       value: formatRuns(stats.totalRuns),
       Icon: PlayIcon,
       iconClass: "bg-sky-50 text-sky-700 ring-sky-200",
@@ -71,7 +73,7 @@ export function StatsOverview({ stats, index = 0 }: Props) {
             }
       }
       className="grid w-full grid-cols-2 gap-3 lg:grid-cols-4"
-      aria-label="Submission stats"
+      aria-label={t("settingsRest2.stats.aria")}
     >
       {tiles.map((tile) => (
         <StatTileCard key={tile.label} tile={tile} />

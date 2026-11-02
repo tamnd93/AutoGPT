@@ -2,12 +2,14 @@
 import { motion, useReducedMotion } from "framer-motion";
 
 import { Text } from "@/components/atoms/Text/Text";
+import { useT } from "@/lib/i18n";
 
 import { EASE_OUT } from "../../helpers";
 import { Rocket01Icon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
 
 export function EmptyState() {
+  const t = useT();
   const reduceMotion = useReducedMotion();
 
   return (
@@ -19,11 +21,10 @@ export function EmptyState() {
     >
       <Icon icon={Rocket01Icon} size={28} className="text-foreground-subtle" />
       <Text variant="body-medium" className="text-textBlack">
-        No submissions yet
+        {t("settingsRest2.empty.title")}
       </Text>
       <Text variant="small" className="max-w-[460px] text-foreground-tertiary">
-        Once you submit a workflow to the store, it&apos;ll show up here with
-        its status, runs, and reviews.
+        {t("settingsRest2.empty.body")}
       </Text>
     </motion.div>
   );

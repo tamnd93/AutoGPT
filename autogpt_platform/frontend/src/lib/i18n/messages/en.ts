@@ -30,6 +30,7 @@ import { onboarding1En } from "./onboarding-1.en";
 import { onboarding2En } from "./onboarding-2.en";
 import { onboarding3En } from "./onboarding-3.en";
 import { settingsRest1En } from "./settings-rest-1.en";
+import { settingsRest2En } from "./settings-rest-2.en";
 
 export const en = {
   ...account1En,
@@ -64,6 +65,7 @@ export const en = {
   ...onboarding2En,
   ...onboarding3En,
   ...settingsRest1En,
+  ...settingsRest2En,
   "common.planSuffix": "{plan} plan",
 } as const;
 

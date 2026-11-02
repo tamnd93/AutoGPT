@@ -4,6 +4,8 @@ import { useEffect } from "react";
 
 import { ErrorCard } from "@/components/molecules/ErrorCard/ErrorCard";
 import { EditAgentModal } from "@/components/contextual/EditAgentModal/EditAgentModal";
+import { useLocale, useT } from "@/lib/i18n";
+import { getMessage } from "@/lib/i18n/translate";
 
 import { DashboardHeader } from "./components/DashboardHeader/DashboardHeader";
 import { DashboardSkeleton } from "./components/DashboardSkeleton/DashboardSkeleton";
@@ -14,9 +16,12 @@ import { SubmissionsList } from "./components/SubmissionsList/SubmissionsList";
 import { useCreatorDashboardPage } from "./useCreatorDashboardPage";
 
 export default function SettingsCreatorDashboardPage() {
+  const t = useT();
+  const locale = useLocale();
+
   useEffect(() => {
-    document.title = "Creator dashboard – AutoGPT Platform";
-  }, []);
+    document.title = getMessage(locale, "settingsRest2.page.title");
+  }, [locale]);
 
   const {
     submissions,
@@ -50,7 +55,7 @@ export default function SettingsCreatorDashboardPage() {
   if (error) {
     return (
       <ErrorCard
-        context="creator dashboard"
+        context={t("settingsRest2.page.errorContext")}
         responseError={
           error ? { detail: (error as { detail?: string }).detail } : undefined
         }

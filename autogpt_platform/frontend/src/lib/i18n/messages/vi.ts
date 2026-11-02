@@ -31,6 +31,7 @@ import { onboarding1Vi } from "./onboarding-1.vi";
 import { onboarding2Vi } from "./onboarding-2.vi";
 import { onboarding3Vi } from "./onboarding-3.vi";
 import { settingsRest1Vi } from "./settings-rest-1.vi";
+import { settingsRest2Vi } from "./settings-rest-2.vi";
 
 export const vi: Partial<Record<MessageKey, string>> = {
   ...account1Vi,
@@ -65,5 +66,6 @@ export const vi: Partial<Record<MessageKey, string>> = {
   ...onboarding2Vi,
   ...onboarding3Vi,
   ...settingsRest1Vi,
+  ...settingsRest2Vi,
   "common.planSuffix": "gói {plan}",
 };
