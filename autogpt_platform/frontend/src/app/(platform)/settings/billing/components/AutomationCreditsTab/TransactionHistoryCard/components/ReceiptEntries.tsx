@@ -133,7 +133,7 @@ function ChargeEntries({ transaction }: Props) {
         <Text variant="small" className="mt-2 text-foreground-secondary">
           {t("billing1.entries.truncated", {
             shown: charges.length,
-            total: transaction.charges_total_count,
+            total: transaction.charges_total_count ?? charges.length,
           })}
         </Text>
       )}

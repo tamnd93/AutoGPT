@@ -39,8 +39,10 @@ export function consumePaywallCheckoutCancel() {
   }
 }
 
+import type { MessageKey } from "@/lib/i18n";
+
 export type Translate = (
-  key: string,
+  key: MessageKey,
   values?: Record<string, string | number>,
 ) => string;
 

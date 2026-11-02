@@ -12,7 +12,7 @@ import { useCheckoutRedirect } from "@/hooks/useCheckoutRedirect";
 import { useMountEffect } from "@/hooks/useMountEffect";
 import { ApiError } from "@/lib/autogpt-server-api/helpers";
 import { useAuth } from "@/lib/auth/hooks/useAuth";
-import { useT } from "@/lib/i18n";
+import { useT, type MessageKey } from "@/lib/i18n";
 import { COUNTRIES } from "@/components/molecules/PlanCard/countries";
 import {
   type BackendTierKey,
@@ -54,7 +54,7 @@ function deriveAvailablePlans(
   tierCostsYearly: Record<string, number> | undefined,
   multipliers: Record<string, number> | undefined,
   currentTier: string | undefined,
-  t: (key: string, values?: Record<string, string | number>) => string,
+  t: (key: MessageKey, values?: Record<string, string | number>) => string,
 ): PlanDef[] {
   if (!tierCosts) return [];
   return TIER_DISPLAY_ORDER.filter(
