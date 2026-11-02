@@ -1,5 +1,6 @@
 import type { SkillVersionFileSummary } from "@/app/api/__generated__/models/skillVersionFileSummary";
 import { Text } from "@/components/atoms/Text/Text";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   file?: SkillVersionFileSummary;
@@ -7,6 +8,7 @@ interface Props {
 }
 
 export function FilePreview({ file, label }: Props) {
+  const t = useT();
   if (!file) return null;
   return (
     <div data-slot="skill-learning-sheet-file-preview" className="min-w-0">
@@ -22,7 +24,7 @@ export function FilePreview({ file, label }: Props) {
           className="mt-1 max-h-80 overflow-auto whitespace-pre-wrap break-words rounded-md bg-action-hover p-3 text-xs text-zinc-100"
         >
           {file.content ||
-            (file.content_truncated ? "(preview unavailable)" : "(empty file)")}
+            (file.content_truncated ? t("skills1.preview.unavailable") : t("skills1.preview.empty"))}
         </pre>
       ) : (
         <Text variant="small" tone="muted">

@@ -4,6 +4,7 @@ import { SkillVersionSummary } from "@/app/api/__generated__/models/skillVersion
 import { Button } from "@/components/atoms/Button/Button";
 import { Text } from "@/components/atoms/Text/Text";
 import Link from "next/link";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   version: SkillVersionSummary | null;
@@ -12,6 +13,7 @@ interface Props {
 }
 
 export function SourcesView({ version, isBusy, onExclude }: Props) {
+  const t = useT();
   const sources = version?.sources ?? [];
   if (!version || sources.length === 0) {
     return (
@@ -24,7 +26,7 @@ export function SourcesView({ version, isBusy, onExclude }: Props) {
     <ul
       data-slot="skill-learning-sheet-sources"
       className="flex flex-col gap-3"
-      aria-label="Sources"
+      aria-label={t("skills1.sources.aria")}
     >
       {sources.map((source) => (
         <li
@@ -35,11 +37,11 @@ export function SourcesView({ version, isBusy, onExclude }: Props) {
           {source.accessible ? (
             <>
               <Text variant="small-medium" tone="primary">
-                {source.title || "Conversation"}
+                {source.title || t("skills1.sources.conversation")}
               </Text>
               <Text variant="small" tone="muted">
                 Revision {source.revision.replace(/^0+/, "") || "0"}
-                {source.excluded ? " · Excluded from learning" : ""}
+                {source.excluded ? t("skills1.sources.excluded") : ""}
               </Text>
               <div
                 data-slot="skill-learning-sheet-sources-item-actions"

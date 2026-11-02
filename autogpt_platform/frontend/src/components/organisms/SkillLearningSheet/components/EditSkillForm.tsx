@@ -7,6 +7,7 @@ import { Switch } from "@/components/atoms/Switch/Switch";
 import { Text } from "@/components/atoms/Text/Text";
 import { lineDiff } from "@/services/skill-learning/helpers";
 import { SkillEditDraft } from "../useSkillReviewState";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   currentVersion: SkillVersionSummary | null;
@@ -27,6 +28,7 @@ export function EditSkillForm({
   onSave,
   onCancel,
 }: Props) {
+  const t = useT();
   const hasNewerVersion = draft.baseVersionId !== (currentVersion?.id ?? null);
   return (
     <form
@@ -36,7 +38,7 @@ export function EditSkillForm({
         event.preventDefault();
         if (!hasNewerVersion && !isBusy) onSave();
       }}
-      aria-label="Edit skill"
+      aria-label={t("skills1.edit.aria")}
     >
       <Text variant="small" tone="muted">
         Your edit takes effect immediately and becomes a new version. The same
@@ -44,7 +46,7 @@ export function EditSkillForm({
       </Text>
       {hasNewerVersion && currentVersion ? (
         <section
-          aria-label="Newer version available"
+          aria-label={t("skills1.edit.newerAvailable")}
           data-slot="edit-skill-form-conflict"
           className="rounded-lg border border-warning-border bg-warning-surface p-3"
         >
@@ -74,7 +76,7 @@ export function EditSkillForm({
               className="my-3 overflow-x-auto rounded-lg bg-action-hover p-3 text-xs text-zinc-100"
             >
               {lineDiff(currentVersion.body ?? "", draft.body) ||
-                "Your procedure matches the current version."}
+                t("skills1.edit.matchesCurrent")}
             </pre>
             <Button
               type="button"
@@ -90,7 +92,7 @@ export function EditSkillForm({
       ) : null}
       <Input
         id="skill-edit-description"
-        label="Description"
+        label={t("skills1.edit.description")}
         labelVariant="small-medium"
         value={draft.description}
         maxLength={1024}
@@ -100,7 +102,7 @@ export function EditSkillForm({
       />
       <Input
         id="skill-edit-body"
-        label="Procedure (Markdown)"
+        label={t("skills1.edit.procedure")}
         labelVariant="small-medium"
         type="textarea"
         rows={12}

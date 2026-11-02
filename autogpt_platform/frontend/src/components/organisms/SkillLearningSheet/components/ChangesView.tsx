@@ -6,6 +6,7 @@ import { Text } from "@/components/atoms/Text/Text";
 import { lineDiff, stepChanges } from "@/services/skill-learning/helpers";
 import { useState } from "react";
 import { PackageFiles } from "./PackageFiles/PackageFiles";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   version: SkillVersionSummary | null;
@@ -14,6 +15,7 @@ interface Props {
 }
 
 export function ChangesView({ version, versions, onSelect }: Props) {
+  const t = useT();
   const [showRaw, setShowRaw] = useState(false);
   if (!version) {
     return (
@@ -43,7 +45,7 @@ export function ChangesView({ version, versions, onSelect }: Props) {
           className="rounded-md border border-border-base px-2 py-1 text-sm"
           value={version.id}
           onChange={(event) => onSelect(event.target.value)}
-          aria-label="Choose a version"
+          aria-label={t("skills1.changes.chooseVersion")}
         >
           {versions.map((item) => (
             <option
@@ -58,8 +60,8 @@ export function ChangesView({ version, versions, onSelect }: Props) {
       </label>
       <Text variant="small" tone="secondary">
         {base
-          ? `Compared with v${base.version}`
-          : "First version — nothing to compare with"}
+          ? t("skills1.changes.comparedWith", { version: base.version })
+          : t("skills1.changes.firstVersion")}
       </Text>
       {changes.length === 0 ? (
         <Text variant="small" tone="muted">
@@ -69,7 +71,7 @@ export function ChangesView({ version, versions, onSelect }: Props) {
         <ul
           data-slot="skill-learning-sheet-changes-list"
           className="flex flex-col gap-3"
-          aria-label="Changes by step"
+          aria-label={t("skills1.changes.byStep")}
         >
           {changes.map((change) => (
             <li
@@ -99,7 +101,7 @@ export function ChangesView({ version, versions, onSelect }: Props) {
         </ul>
       )}
       <Button variant="ghost" size="small" onClick={() => setShowRaw(!showRaw)}>
-        {showRaw ? "Hide raw diff" : "Show raw Markdown diff"}
+        {showRaw ? t("skills1.changes.hideRaw") : t("skills1.changes.showRaw")}
       </Button>
       <PackageFiles before={base?.files} after={version.files} />
       {showRaw ? (
@@ -109,7 +111,7 @@ export function ChangesView({ version, versions, onSelect }: Props) {
           // code surface.
           className="overflow-x-auto rounded-lg bg-action-hover p-3 text-xs text-zinc-100"
         >
-          {lineDiff(before, after) || "(no line-level differences)"}
+          {lineDiff(before, after) || t("skills1.changes.noLineDiff")}
         </pre>
       ) : null}
     </div>

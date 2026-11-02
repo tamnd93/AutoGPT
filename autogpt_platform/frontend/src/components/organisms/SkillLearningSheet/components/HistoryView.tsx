@@ -5,6 +5,7 @@ import { Button } from "@/components/atoms/Button/Button";
 import { Text } from "@/components/atoms/Text/Text";
 import { canRestore } from "@/services/skill-learning/helpers";
 import { formatDistanceToNow } from "date-fns";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   versions: SkillVersionSummary[];
@@ -21,6 +22,7 @@ export function HistoryView({
   onRestore,
   onSelect,
 }: Props) {
+  const t = useT();
   return (
     <div
       data-slot="skill-learning-sheet-history"
@@ -33,7 +35,7 @@ export function HistoryView({
       <ul
         data-slot="skill-learning-sheet-history-list"
         className="flex flex-col gap-2"
-        aria-label="Version history"
+        aria-label={t("skills1.history.aria")}
       >
         {versions.map((version) => {
           const restorable = canRestore(version, currentVersionId);
@@ -49,7 +51,7 @@ export function HistoryView({
               >
                 <Text variant="small-medium" tone="primary">
                   v{version.version} · {version.origin_label}
-                  {version.id === currentVersionId ? " · current" : ""}
+                  {version.id === currentVersionId ? t("skills1.history.current") : ""}
                 </Text>
                 <Text variant="small" tone="muted">
                   {version.state_label} ·{" "}
@@ -76,7 +78,7 @@ export function HistoryView({
                     size="small"
                     disabled={isBusy}
                     onClick={() => onRestore(version.id)}
-                    aria-label={`Restore v${version.version}`}
+                    aria-label={t("skills1.history.restoreVersion", { version: version.version })}
                   >
                     Restore
                   </Button>

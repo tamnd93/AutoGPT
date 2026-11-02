@@ -10,6 +10,7 @@ import {
   stripFrontmatter,
 } from "@/services/skill-learning/helpers";
 import { PackageFiles } from "./PackageFiles/PackageFiles";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   proposal: SkillVersionSummary;
@@ -32,10 +33,11 @@ export function DecisionView({
   onDraftChange,
   onDecide,
 }: Props) {
+  const t = useT();
   const changes = stepChanges(current?.body ?? "", proposal.body ?? "");
   return (
     <section
-      aria-label="Needs your decision"
+      aria-label={t("skills1.decision.needsYou")}
       data-slot="skill-learning-sheet-decision"
       className="flex flex-col gap-3 rounded-xl border border-warning-border bg-warning-surface/60 p-3"
     >
@@ -48,7 +50,7 @@ export function DecisionView({
       <ul
         data-slot="skill-learning-sheet-decision-list"
         className="flex flex-col gap-2"
-        aria-label="Proposed changes by step"
+        aria-label={t("skills1.decision.proposedByStep")}
       >
         {changes.map((change) => (
           <li
@@ -65,7 +67,7 @@ export function DecisionView({
               </Text>
             ) : null}
             <Text variant="small" tone="primary">
-              {change.after ?? "Removed"}
+              {change.after ?? t("skills1.decision.removed")}
             </Text>
           </li>
         ))}
@@ -92,7 +94,7 @@ export function DecisionView({
       ) : null}
       <Input
         id={`decision-edit-${proposal.id}`}
-        label="Edited alternative (optional)"
+        label={t("skills1.decision.editedAlternative")}
         labelVariant="small-medium"
         type="textarea"
         rows={5}

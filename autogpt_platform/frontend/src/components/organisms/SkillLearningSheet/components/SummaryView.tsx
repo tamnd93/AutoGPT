@@ -11,6 +11,7 @@ import { formatDistanceToNow } from "date-fns";
 import { OutcomeReportRequestOutcome } from "@/app/api/__generated__/models/outcomeReportRequestOutcome";
 import { SkillPolicyRequest } from "@/app/api/__generated__/models/skillPolicyRequest";
 import { SourceRemovedNotice } from "./SourceRemovedNotice";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   detail: SkillLearningDetail;
@@ -38,6 +39,7 @@ export function SummaryView({
   onEdit,
   onReport,
 }: Props) {
+  const t = useT();
   const isCurrent =
     version != null && version.id === detail.current_version?.id;
   const badgeState = version && !isCurrent ? version.state : detail.state;
@@ -84,7 +86,7 @@ export function SummaryView({
           </Text>
           <section
             data-slot="skill-learning-sheet-summary-evidence"
-            aria-label="Evidence"
+            aria-label={t("skills1.summary.evidence")}
           >
             <Text variant="small-medium" tone="primary">
               Evidence
@@ -117,7 +119,7 @@ export function SummaryView({
           {(version.limits ?? []).length > 0 ? (
             <section
               data-slot="skill-learning-sheet-summary-limits"
-              aria-label="Limits"
+              aria-label={t("skills1.summary.limits")}
             >
               <Text variant="small-medium" tone="primary">
                 Limits
@@ -141,18 +143,20 @@ export function SummaryView({
           ) : null}
           {version.blocked_pattern_class ? (
             <Text variant="small" tone="danger">
-              Blocked by content check: {version.blocked_pattern_class} at{" "}
-              {version.blocked_step}. Replace the value with a typed input.
+              {t("skills1.summary.blockedBy", {
+                block: version.blocked_pattern_class,
+                step: version.blocked_step,
+              })}
             </Text>
           ) : null}
         </>
       ) : (
         <Text variant="small" tone="muted">
-          No version has been published yet.
+          {t("skills1.summary.noVersion")}
         </Text>
       )}
       <section
-        aria-label="Learning controls"
+        aria-label={t("skills1.summary.controls")}
         data-slot="skill-learning-sheet-summary-controls"
         className="flex flex-col gap-3"
       >
@@ -161,12 +165,12 @@ export function SummaryView({
           className="flex items-center justify-between gap-3"
         >
           <Text variant="small" tone="primary">
-            Automatic improvements
+            {t("skills1.summary.autoImprovementsLabel")}
           </Text>
           <Switch
             checked={detail.policy.auto_improve}
             disabled={isBusy}
-            aria-label="Automatic improvements"
+            aria-label={t("skills1.summary.autoImprovements")}
             onCheckedChange={(checked) => onPolicy({ auto_improve: checked })}
           />
         </label>
@@ -183,8 +187,8 @@ export function SummaryView({
             }
           >
             {detail.policy.learning_paused
-              ? "Resume learning"
-              : "Pause learning"}
+              ? t("skills1.summary.resumeLearning")
+              : t("skills1.summary.pauseLearning")}
           </Button>
           <Button
             variant="secondary"
@@ -193,13 +197,12 @@ export function SummaryView({
             onClick={() => onPolicy({ use_paused: !detail.policy.use_paused })}
           >
             {detail.policy.use_paused
-              ? "Resume using this skill"
-              : "Stop using this skill"}
+              ? t("skills1.summary.resumeUsing")
+              : t("skills1.summary.stopUsing")}
           </Button>
         </div>
         <Text variant="small" tone="muted">
-          Pause learning stops future automatic changes only; stop using removes
-          the skill from retrieval. Each is separate.
+          {t("skills1.summary.pauseExplain")}
         </Text>
         <div
           data-slot="skill-learning-sheet-summary-edit-actions"
@@ -211,14 +214,14 @@ export function SummaryView({
             disabled={isBusy || !isCurrent}
             title={
               !version
-                ? "Editing is available after a version is published."
+                ? t("skills1.summary.editingNeedsPublish")
                 : isCurrent
                   ? undefined
-                  : "Editing starts from the current version. Restore this version first to build on it."
+                  : t("skills1.summary.editingFromCurrent")
             }
             onClick={onEdit}
           >
-            Edit skill
+            {t("skills1.summary.editSkill")}
           </Button>
           {version ? (
             <>
