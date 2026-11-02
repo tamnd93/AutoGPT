@@ -3,6 +3,7 @@ import type { WorkspaceFileItem } from "@/app/api/__generated__/models/workspace
 import { useToast } from "@/components/molecules/Toast/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
+import { useT } from "@/lib/i18n";
 import {
   deriveFileOrigin,
   downloadFileBlob,
@@ -10,6 +11,7 @@ import {
 } from "./helpers";
 
 export function useFileActionsMenu(file: WorkspaceFileItem) {
+  const t = useT();
   const origin = deriveFileOrigin(file.path);
   const [isMoveOpen, setIsMoveOpen] = useState(false);
   const [isRenameOpen, setIsRenameOpen] = useState(false);
@@ -21,13 +23,15 @@ export function useFileActionsMenu(file: WorkspaceFileItem) {
       mutation: {
         onSuccess: () => {
           invalidateWorkspaceFileQueries(queryClient);
-          toast({ title: "File deleted" });
+          toast({ title: t("artifacts1.fileActions.fileDeleted") });
         },
         onError: (error) => {
           toast({
-            title: "Failed to delete file",
+            title: t("artifacts1.fileActions.deleteFailed"),
             description:
-              error instanceof Error ? error.message : "Please try again.",
+              error instanceof Error
+                ? error.message
+                : t("artifacts1.fileActions.tryAgain"),
             variant: "destructive",
           });
         },
@@ -41,9 +45,11 @@ export function useFileActionsMenu(file: WorkspaceFileItem) {
       await downloadFileBlob(file.id, file.name);
     } catch (error) {
       toast({
-        title: "Failed to download file",
+        title: t("artifacts1.fileActions.downloadFailed"),
         description:
-          error instanceof Error ? error.message : "Please try again.",
+          error instanceof Error
+            ? error.message
+            : t("artifacts1.fileActions.tryAgain"),
         variant: "destructive",
       });
     } finally {
@@ -53,7 +59,9 @@ export function useFileActionsMenu(file: WorkspaceFileItem) {
 
   async function handleDelete() {
     if (isDeleting) return;
-    const confirmed = window.confirm(`Delete "${file.name}"?`);
+    const confirmed = window.confirm(
+      t("artifacts1.fileActions.deleteConfirm", { name: file.name }),
+    );
     if (!confirmed) return;
     try {
       await deleteFile({ fileId: file.id });
@@ -63,7 +71,10 @@ export function useFileActionsMenu(file: WorkspaceFileItem) {
   }
 
   return {
-    goLabel: origin.kind === "session" ? "Open chat" : "Open in Builder",
+    goLabel:
+      origin.kind === "session"
+        ? t("artifacts1.fileActions.openChat")
+        : t("artifacts1.fileActions.openInBuilder"),
     goHref: origin.href,
     isMoveOpen,
     setIsMoveOpen,

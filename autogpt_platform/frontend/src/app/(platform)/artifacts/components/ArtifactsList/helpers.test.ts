@@ -541,3 +541,31 @@ describe("getEmptyMessage - nested folders and the expert filter", () => {
     ).toBe("No files from this expert here");
   });
 });
+
+describe("vietnamese helpers", () => {
+  test("translates file types, day labels and empty messages", () => {
+    expect(getFileTypeLabel("image/png", undefined, "vi")).toBe("Ảnh");
+    expect(getFileTypeLabel("application/pdf", undefined, "vi")).toBe(
+      "Tài liệu PDF",
+    );
+    expect(formatDayLabel(new Date(), "vi")).toBe("Hôm nay");
+    expect(
+      getEmptyMessage(
+        { hasSearchTerm: true, isInFolder: false, hasFolders: false },
+        "vi",
+      ),
+    ).toBe("Không có tệp nào khớp tìm kiếm");
+    expect(
+      getEmptyMessage(
+        {
+          hasSearchTerm: false,
+          isInFolder: false,
+          hasFolders: true,
+          hasExpertFilter: true,
+          expertName: "Maria",
+        },
+        "vi",
+      ),
+    ).toBe("Không có tệp nào từ Maria ở đây");
+  });
+});

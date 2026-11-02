@@ -10,6 +10,9 @@ import {
   Video01Icon,
 } from "@hugeicons/core-free-icons";
 import type { IconSvgElement } from "@hugeicons/react";
+import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/locale";
+import type { MessageKey } from "@/lib/i18n/messages/en";
+import { getMessage } from "@/lib/i18n/translate";
 import {
   getGetWorkspaceStorageUsageQueryKey,
   getListWorkspaceFoldersQueryKey,
@@ -179,10 +182,10 @@ function getOfficeDocKind(
   return null;
 }
 
-const OFFICE_LABEL: Record<OfficeDocKind, string> = {
-  presentation: "Presentation",
-  document: "Document",
-  spreadsheet: "Spreadsheet",
+const OFFICE_LABEL: Record<OfficeDocKind, MessageKey> = {
+  presentation: "artifacts1.fileType.presentation",
+  document: "artifacts1.fileType.document",
+  spreadsheet: "artifacts1.fileType.spreadsheet",
 };
 
 const OFFICE_ICON: Record<OfficeDocKind, IconSvgElement> = {
@@ -194,22 +197,26 @@ const OFFICE_ICON: Record<OfficeDocKind, IconSvgElement> = {
 export function getFileTypeLabel(
   mimeType: string | undefined,
   fileName?: string,
+  locale: Locale = DEFAULT_LOCALE,
 ): string {
-  if (isCodeFile(fileName)) return "Code";
+  const m = (key: MessageKey) => getMessage(locale, key);
+  if (isCodeFile(fileName)) return m("artifacts1.fileType.code");
   const mt = (mimeType ?? "").toLowerCase();
   const officeKind = getOfficeDocKind(mt, (fileName ?? "").toLowerCase());
-  if (officeKind) return OFFICE_LABEL[officeKind];
-  if (mt.startsWith("image/")) return "Image";
-  if (mt.startsWith("video/")) return "Video";
-  if (mt.startsWith("audio/")) return "Audio";
-  if (mt.includes("pdf")) return "PDF document";
-  if (mt.includes("html") || mt.includes("xhtml")) return "Web page";
-  if (mt.includes("csv")) return "Spreadsheet";
-  if (mt.includes("spreadsheet") || mt.includes("excel")) return "Spreadsheet";
-  if (mt.includes("json")) return "JSON data";
-  if (mt.includes("markdown")) return "Markdown";
-  if (mt.includes("text")) return "Document";
-  return "Generated file";
+  if (officeKind) return m(OFFICE_LABEL[officeKind]);
+  if (mt.startsWith("image/")) return m("artifacts1.fileType.image");
+  if (mt.startsWith("video/")) return m("artifacts1.fileType.video");
+  if (mt.startsWith("audio/")) return m("artifacts1.fileType.audio");
+  if (mt.includes("pdf")) return m("artifacts1.fileType.pdf");
+  if (mt.includes("html") || mt.includes("xhtml"))
+    return m("artifacts1.fileType.webPage");
+  if (mt.includes("csv")) return m("artifacts1.fileType.spreadsheet");
+  if (mt.includes("spreadsheet") || mt.includes("excel"))
+    return m("artifacts1.fileType.spreadsheet");
+  if (mt.includes("json")) return m("artifacts1.fileType.json");
+  if (mt.includes("markdown")) return m("artifacts1.fileType.markdown");
+  if (mt.includes("text")) return m("artifacts1.fileType.document");
+  return m("artifacts1.fileType.generated");
 }
 
 export function getFileTypeIcon(
@@ -334,7 +341,10 @@ export function getPreviewKind(
   return "none";
 }
 
-export function formatDayLabel(input: string | Date): string {
+export function formatDayLabel(
+  input: string | Date,
+  locale: Locale = DEFAULT_LOCALE,
+): string {
   const date = input instanceof Date ? input : new Date(input);
   if (Number.isNaN(date.getTime())) return "—";
 
@@ -350,8 +360,8 @@ export function formatDayLabel(input: string | Date): string {
     date.getDate(),
   ).getTime();
   const dayDiff = Math.round((startOfToday - startOfDay) / 86_400_000);
-  if (dayDiff === 0) return "Today";
-  if (dayDiff === 1) return "Yesterday";
+  if (dayDiff === 0) return getMessage(locale, "artifacts1.day.today");
+  if (dayDiff === 1) return getMessage(locale, "artifacts1.day.yesterday");
 
   return date.toLocaleDateString(undefined, {
     month: "short",
@@ -374,28 +384,35 @@ export function hasImageThumbnail(kind: PreviewKind): boolean {
   return kind === "image" || kind === "pdf" || kind === "office";
 }
 
-export function getEmptyMessage(opts: {
-  hasSearchTerm: boolean;
-  isInFolder: boolean;
-  /** Child folders are listed above the empty files area. */
-  hasFolders: boolean;
-  hasExpertFilter?: boolean;
-  expertName?: string | null;
-}): string {
-  if (opts.hasSearchTerm) return "No files match your search";
+export function getEmptyMessage(
+  opts: {
+    hasSearchTerm: boolean;
+    isInFolder: boolean;
+    /** Child folders are listed above the empty files area. */
+    hasFolders: boolean;
+    hasExpertFilter?: boolean;
+    expertName?: string | null;
+  },
+  locale: Locale = DEFAULT_LOCALE,
+): string {
+  const m = (key: MessageKey, values?: Record<string, string | number>) =>
+    getMessage(locale, key, values);
+  if (opts.hasSearchTerm) return m("artifacts1.empty.search");
   if (opts.hasExpertFilter) {
     // "yet" is only true of a workspace with nowhere else to look; anywhere
     // with folders or inside one, the files may simply be elsewhere.
     if (!opts.isInFolder && !opts.hasFolders)
-      return "No files from this expert yet";
-    return `No files from ${opts.expertName ?? "this expert"} here`;
+      return m("artifacts1.empty.expertYet");
+    return m("artifacts1.empty.fromExpertHere", {
+      name: opts.expertName ?? m("artifacts1.emptyState.thisExpert"),
+    });
   }
   if (opts.isInFolder)
     return opts.hasFolders
-      ? "No files directly in this folder"
-      : "This folder is empty";
-  if (opts.hasFolders) return "No files at the root yet";
-  return "No files yet";
+      ? m("artifacts1.empty.directInFolder")
+      : m("artifacts1.empty.folder");
+  if (opts.hasFolders) return m("artifacts1.empty.rootYet");
+  return m("artifacts1.empty.none");
 }
 
 export interface EmptyStateContent {
@@ -413,56 +430,66 @@ export function getEmptyState(opts: {
   hasFolders: boolean;
   folderId: string | null;
   expert: { id: string; name: string | null } | null;
+  locale?: Locale;
 }): EmptyStateContent {
-  const title = getEmptyMessage({
+  const locale = opts.locale ?? DEFAULT_LOCALE;
+  const m = (key: MessageKey, values?: Record<string, string | number>) =>
+    getMessage(locale, key, values);
+  const title = getEmptyMessage(
+    {
     hasSearchTerm: opts.hasSearchTerm,
     isInFolder: opts.isInFolder,
     hasFolders: opts.hasFolders,
     hasExpertFilter: opts.expert !== null,
     expertName: opts.expert?.name,
-  });
+    },
+    locale,
+  );
   const base: EmptyStateContent = {
     title,
     description: "",
     showUpload: false,
     uploadFolderId: opts.folderId,
     chatHref: null,
-    chatLabel: "Start a task",
+    chatLabel: m("artifacts1.emptyState.startTask"),
   };
   if (opts.hasSearchTerm) {
     return {
       ...base,
-      description: "Try another name, or clear the search to see everything.",
+      description: m("artifacts1.emptyState.tryAnother"),
     };
   }
   if (opts.expert) {
     const name = opts.expert.name;
     return {
       ...base,
-      description: `Files ${name ?? "this expert"} creates while working on a task will show up here.`,
+      description: m("artifacts1.emptyState.expertFiles", {
+        name: name ?? m("artifacts1.emptyState.thisExpert"),
+      }),
       chatHref: name
         ? `/copilot?expertId=${encodeURIComponent(opts.expert.id)}`
         : null,
-      chatLabel: name ? `Chat with ${name}` : base.chatLabel,
+      chatLabel: name
+        ? m("artifacts1.emptyState.chatWith", { name })
+        : base.chatLabel,
     };
   }
   if (opts.isInFolder) {
     return {
       ...base,
-      description: "Upload a file here, or drag one in from the list.",
+      description: m("artifacts1.emptyState.uploadHere"),
       showUpload: true,
     };
   }
   if (opts.hasFolders) {
     return {
       ...base,
-      description: "Your files live inside the folders above.",
+      description: m("artifacts1.emptyState.insideFolders"),
     };
   }
   return {
     ...base,
-    description:
-      "Files your team generates and files you upload will show up here.",
+    description: m("artifacts1.emptyState.teamFiles"),
     showUpload: true,
     chatHref: "/copilot",
   };

@@ -23,6 +23,7 @@ import Link from "next/link";
 import { MoveToFolderDialog } from "../MoveToFolderDialog/MoveToFolderDialog";
 import { RenameFileDialog } from "../RenameFileDialog/RenameFileDialog";
 import { useFileActionsMenu } from "./useFileActionsMenu";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   file: WorkspaceFileItem;
@@ -30,6 +31,7 @@ interface Props {
 }
 
 export function FileActionsMenu({ file, className }: Props) {
+  const t = useT();
   const {
     goLabel,
     goHref,
@@ -49,7 +51,9 @@ export function FileActionsMenu({ file, className }: Props) {
         <DropdownMenuTrigger asChild>
           <button
             type="button"
-            aria-label={`Actions for ${file.name}`}
+            aria-label={t("artifacts1.fileActions.actionsFor", {
+              name: file.name,
+            })}
             className={cn(
               "inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-foreground-tertiary transition-colors hover:bg-surface-hover hover:text-foreground-strong",
               className,
@@ -74,7 +78,9 @@ export function FileActionsMenu({ file, className }: Props) {
             ) : (
               <Icon icon={Download04Icon} size={16} className="mr-2" />
             )}
-            {isDownloading ? "Downloading…" : "Download"}
+            {isDownloading
+              ? t("artifacts1.fileActions.downloading")
+              : t("artifacts1.fileActions.download")}
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
             <Link href={goHref} data-testid="artifacts-origin-link">
@@ -92,7 +98,7 @@ export function FileActionsMenu({ file, className }: Props) {
             data-testid="artifacts-rename-menu"
           >
             <Icon icon={PencilEdit02Icon} size={16} className="mr-2" />
-            Rename
+            {t("artifacts1.fileActions.rename")}
           </DropdownMenuItem>
           <DropdownMenuItem
             onSelect={(e) => {
@@ -102,7 +108,7 @@ export function FileActionsMenu({ file, className }: Props) {
             data-testid="artifacts-move-to-folder"
           >
             <Icon icon={Folder01Icon} size={16} className="mr-2" />
-            Move to folder
+            {t("artifacts1.fileActions.moveToFolder")}
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem
@@ -121,7 +127,9 @@ export function FileActionsMenu({ file, className }: Props) {
             ) : (
               <Icon icon={Delete02Icon} size={16} className="mr-2" />
             )}
-            {isDeleting ? "Deleting…" : "Delete"}
+            {isDeleting
+              ? t("artifacts1.fileActions.deleting")
+              : t("artifacts1.fileActions.delete")}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
