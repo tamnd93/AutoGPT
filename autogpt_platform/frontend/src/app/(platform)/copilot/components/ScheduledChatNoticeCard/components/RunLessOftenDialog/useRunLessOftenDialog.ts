@@ -11,6 +11,7 @@ import * as Sentry from "@sentry/nextjs";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { changeErrorText, lowerFirst, refusalText } from "./helpers";
+import { useLocale, useT } from "@/lib/i18n";
 
 interface Args {
   scheduleKey: string;
@@ -19,6 +20,8 @@ interface Args {
 }
 
 export function useRunLessOftenDialog({ scheduleKey, isOpen, onDone }: Args) {
+  const locale = useLocale();
+  const t = useT();
   const queryClient = useQueryClient();
   const [selected, setSelected] = useState<string | null>(null);
 
@@ -45,22 +48,25 @@ export function useRunLessOftenDialog({ scheduleKey, isOpen, onDone }: Args) {
         void invalidateAllScheduleQueries(queryClient);
         const runs = chosen?.label ?? changed?.current;
         toast({
-          title: "It runs less often now",
+          title: t("chatStates2.runLessOften.lessOftenTitle"),
           description:
             changed && runs
-              ? `“${changed.title}” now runs ${lowerFirst(runs)}.`
+              ? t("chatStates2.runLessOften.lessOftenDescription", {
+                  title: changed.title,
+                  runs: lowerFirst(runs),
+                })
               : undefined,
         });
         setSelected(null);
         onDone();
       },
       onError: (error) => {
-        const known = changeErrorText(error);
+        const known = changeErrorText(error, locale);
         if (known === null) Sentry.captureException(error);
         toast({
           variant: "destructive",
-          title: "Couldn't change how often it runs",
-          description: known ?? "Please try again.",
+          title: t("chatStates2.runLessOften.changeFailedTitle"),
+          description: known ?? t("chatStates2.runLessOften.tryAgain"),
         });
       },
     },
@@ -74,7 +80,7 @@ export function useRunLessOftenDialog({ scheduleKey, isOpen, onDone }: Args) {
   return {
     cadence,
     isLoading: cadenceQuery.isLoading,
-    refusal: refusalText(cadenceQuery.error),
+    refusal: refusalText(cadenceQuery.error, locale),
     isError: cadenceQuery.isError,
     selected,
     select: setSelected,

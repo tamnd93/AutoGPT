@@ -8,6 +8,7 @@ import { Dialog } from "@/components/molecules/Dialog/Dialog";
 import { ErrorCard } from "@/components/molecules/ErrorCard/ErrorCard";
 import { cn } from "@/lib/utils";
 import { useId } from "react";
+import { useT } from "@/lib/i18n";
 import { lowerFirst } from "./helpers";
 import { useRunLessOftenDialog } from "./useRunLessOftenDialog";
 
@@ -18,6 +19,7 @@ interface Props {
 }
 
 export function RunLessOftenDialog({ scheduleKey, isOpen, setIsOpen }: Props) {
+  const t = useT();
   const dialog = useRunLessOftenDialog({
     scheduleKey,
     isOpen,
@@ -31,8 +33,10 @@ export function RunLessOftenDialog({ scheduleKey, isOpen, setIsOpen }: Props) {
       styling={{ maxWidth: "28rem" }}
       title={
         dialog.cadence
-          ? `Run “${dialog.cadence.title}” less often`
-          : "Run less often"
+          ? t("chatStates2.runLessOften.titleNamed", {
+              cadence: dialog.cadence.title,
+            })
+          : t("chatStates2.runLessOften.title")
       }
     >
       <Dialog.Content>
@@ -47,7 +51,9 @@ export function RunLessOftenDialog({ scheduleKey, isOpen, setIsOpen }: Props) {
           </Text>
         ) : dialog.isError || !dialog.cadence ? (
           <ErrorCard
-            responseError={{ message: "Couldn't load how often it runs." }}
+            responseError={{
+              message: t("chatStates2.runLessOften.loadFailed"),
+            }}
             context="its schedule"
           />
         ) : (
@@ -64,7 +70,7 @@ export function RunLessOftenDialog({ scheduleKey, isOpen, setIsOpen }: Props) {
             size="small"
             onClick={() => setIsOpen(false)}
           >
-            Cancel
+            {t("chatStates2.runLessOften.cancel")}
           </Button>
           {canChoose ? (
             <Button
@@ -75,7 +81,7 @@ export function RunLessOftenDialog({ scheduleKey, isOpen, setIsOpen }: Props) {
               loading={dialog.isSaving}
               onClick={dialog.save}
             >
-              Save
+              {t("chatStates2.runLessOften.save")}
             </Button>
           ) : null}
         </Dialog.Footer>
@@ -91,25 +97,33 @@ interface ChoicesProps {
 }
 
 function CadenceChoices({ cadence, selected, onSelect }: ChoicesProps) {
+  const t = useT();
   const groupName = useId();
 
   if (cadence.options.length === 0) {
     return (
       <Text variant="body" className="text-foreground-secondary">
-        “{cadence.title}” already runs once a week or less, so there is nothing
-        less often to switch it to.
+        {t("chatStates2.runLessOften.nothingLessOften", {
+          cadence: cadence.title,
+        })}
       </Text>
     );
   }
   return (
     <div className="flex flex-col gap-3">
       <Text variant="body" className="text-foreground-secondary">
-        {cadence.current ? `It runs ${lowerFirst(cadence.current)} now. ` : ""}
-        Fewer runs use less of your allowance. Times are in {cadence.timezone}.
+        {cadence.current
+          ? t("chatStates2.runLessOften.runsNow", {
+              current: lowerFirst(cadence.current),
+            })
+          : ""}
+        {t("chatStates2.runLessOften.allowanceHint", {
+          timezone: cadence.timezone,
+        })}
       </Text>
       <div
         role="radiogroup"
-        aria-label="How often it runs"
+        aria-label={t("chatStates2.runLessOften.freqAria")}
         className="flex flex-col gap-2"
       >
         {cadence.options.map((option) => (

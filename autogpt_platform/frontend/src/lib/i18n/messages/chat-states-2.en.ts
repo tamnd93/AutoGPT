@@ -54,4 +54,33 @@ export const ChatStates2En = {
 
   "chatStates2.panelResize.resize": "Resize panel",
   "chatStates2.credentialMention.inputAria": "Chat message input",
+
+  "chatStates2.runLessOften.titleNamed": "Run “{cadence}” less often",
+  "chatStates2.runLessOften.title": "Run less often",
+  "chatStates2.runLessOften.loadFailed":
+    "Couldn't load how often it runs.",
+  "chatStates2.runLessOften.cancel": "Cancel",
+  "chatStates2.runLessOften.save": "Save",
+  "chatStates2.runLessOften.nothingLessOften":
+    "“{cadence}” already runs once a week or less, so there is nothing less often to switch it to.",
+  "chatStates2.runLessOften.runsNow": "It runs {current} now. ",
+  "chatStates2.runLessOften.allowanceHint":
+    "Fewer runs use less of your allowance. Times are in {timezone}.",
+  "chatStates2.runLessOften.freqAria": "How often it runs",
+  "chatStates2.runLessOften.pausedFirst": "It's paused. Resume it first.",
+  "chatStates2.runLessOften.noLongerScheduled":
+    "It no longer runs on a schedule this can change.",
+  "chatStates2.runLessOften.pickOption": "Pick one of the options shown.",
+  "chatStates2.runLessOften.lessOftenTitle": "It runs less often now",
+  "chatStates2.runLessOften.lessOftenDescription":
+    "“{title}” now runs {runs}.",
+  "chatStates2.runLessOften.changeFailedTitle":
+    "Couldn't change how often it runs",
+  "chatStates2.runLessOften.tryAgain": "Please try again.",
+  "chatStates2.scheduledChat.resumedTitle": "Resumed",
+  "chatStates2.scheduledChat.resumedDescription":
+    "It runs again at its next scheduled time.",
+  "chatStates2.scheduledChat.alreadyRunning": "Already running",
+  "chatStates2.scheduledChat.resumeFailedTitle":
+    "Couldn't resume this scheduled chat",
 } as const;

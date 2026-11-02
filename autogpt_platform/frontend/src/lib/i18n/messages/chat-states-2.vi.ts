@@ -58,4 +58,36 @@ export const ChatStates2Vi: Partial<Record<keyof typeof ChatStates2En, string>> 
 
     "chatStates2.panelResize.resize": "Đổi kích thước bảng",
     "chatStates2.credentialMention.inputAria": "Ô nhập tin nhắn",
+
+    "chatStates2.runLessOften.titleNamed":
+      "Chạy “{cadence}” ít thường xuyên hơn",
+    "chatStates2.runLessOften.title": "Chạy ít thường xuyên hơn",
+    "chatStates2.runLessOften.loadFailed": "Không tải được tần suất chạy.",
+    "chatStates2.runLessOften.cancel": "Huỷ",
+    "chatStates2.runLessOften.save": "Lưu",
+    "chatStates2.runLessOften.nothingLessOften":
+      "“{cadence}” đã chạy mỗi tuần một lần hoặc ít hơn nên không có mức nào thưa hơn để chuyển sang.",
+    "chatStates2.runLessOften.runsNow": "Hiện tại nó chạy {current}. ",
+    "chatStates2.runLessOften.allowanceHint":
+      "Chạy ít hơn sẽ dùng ít hạn mức hơn. Giờ tính theo {timezone}.",
+    "chatStates2.runLessOften.freqAria": "Tần suất chạy",
+    "chatStates2.runLessOften.pausedFirst":
+      "Chat này đang tạm dừng. Hãy tiếp tục trước.",
+    "chatStates2.runLessOften.noLongerScheduled":
+      "Chat này không còn chạy theo lịch có thể thay đổi được.",
+    "chatStates2.runLessOften.pickOption":
+      "Hãy chọn một trong các lựa chọn bên dưới.",
+    "chatStates2.runLessOften.lessOftenTitle":
+      "Giờ chạy ít thường xuyên hơn",
+    "chatStates2.runLessOften.lessOftenDescription":
+      "“{title}” giờ chạy {runs}.",
+    "chatStates2.runLessOften.changeFailedTitle":
+      "Không đổi được tần suất chạy",
+    "chatStates2.runLessOften.tryAgain": "Hãy thử lại.",
+    "chatStates2.scheduledChat.resumedTitle": "Đã tiếp tục",
+    "chatStates2.scheduledChat.resumedDescription":
+      "Chat sẽ chạy lại vào lần tới theo lịch.",
+    "chatStates2.scheduledChat.alreadyRunning": "Đang chạy rồi",
+    "chatStates2.scheduledChat.resumeFailedTitle":
+      "Không tiếp tục được chat theo lịch này",
   };

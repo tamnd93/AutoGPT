@@ -10,6 +10,7 @@ import { invalidateAllScheduleQueries } from "@/services/schedules/invalidate-sc
 import * as Sentry from "@sentry/nextjs";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRef, useState } from "react";
+import { useT } from "@/lib/i18n";
 
 interface Args {
   scheduleKey: string | null;
@@ -17,6 +18,7 @@ interface Args {
 }
 
 export function useScheduledChatNoticeCard({ scheduleKey, sessionID }: Args) {
+  const t = useT();
   const queryClient = useQueryClient();
   const [connectProvider, setConnectProvider] = useState<string | null>(null);
   const [resumed, setResumed] = useState(false);
@@ -45,22 +47,23 @@ export function useScheduledChatNoticeCard({ scheduleKey, sessionID }: Args) {
         setResumed(true);
         refresh();
         toast({
-          title: "Resumed",
-          description: "It runs again at its next scheduled time.",
+          title: t("chatStates2.scheduledChat.resumedTitle"),
+          description: t("chatStates2.scheduledChat.resumedDescription"),
         });
       },
       onError: (error) => {
         if (error instanceof ApiError && error.status === 404) {
           setResumed(true);
           refresh();
-          if (!quietRef.current) toast({ title: "Already running" });
+          if (!quietRef.current)
+            toast({ title: t("chatStates2.scheduledChat.alreadyRunning") });
           return;
         }
         Sentry.captureException(error);
         toast({
           variant: "destructive",
-          title: "Couldn't resume this scheduled chat",
-          description: "Please try again.",
+          title: t("chatStates2.scheduledChat.resumeFailedTitle"),
+          description: t("chatStates2.runLessOften.tryAgain"),
         });
       },
     },
