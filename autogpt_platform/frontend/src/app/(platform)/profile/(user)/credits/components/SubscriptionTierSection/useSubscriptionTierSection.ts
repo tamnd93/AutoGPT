@@ -8,6 +8,8 @@ import type { SubscriptionStatusResponse } from "@/app/api/__generated__/models/
 import type { SubscriptionTierRequestTier } from "@/app/api/__generated__/models/subscriptionTierRequestTier";
 import { useToast } from "@/components/molecules/Toast/use-toast";
 import { useCheckoutRedirect } from "@/hooks/useCheckoutRedirect";
+import { useLocale, useT } from "@/lib/i18n";
+import { getMessage } from "@/lib/i18n/translate";
 import { Flag, useGetFlag } from "@/services/feature-flags/use-get-flag";
 import { getTierLabel } from "./helpers";
 import {
@@ -20,6 +22,8 @@ export type SubscriptionStatus = SubscriptionStatusResponse;
 const TIER_ORDER = ["NO_TIER", "BASIC", "PRO", "MAX", "BUSINESS", "ENTERPRISE"];
 
 export function useSubscriptionTierSection() {
+  const t = useT();
+  const locale = useLocale();
   const isPaymentEnabled = useGetFlag(Flag.ENABLE_PLATFORM_PAYMENT);
   const searchParams = useSearchParams();
   const subscriptionStatus = searchParams.get("subscription");
@@ -43,7 +47,7 @@ export function useSubscriptionTierSection() {
     query: { select: (data) => (data.status === 200 ? data.data : null) },
   });
 
-  const fetchError = queryError ? "Failed to load subscription info" : null;
+  const fetchError = queryError ? t("profile4.tier.loadError") : null;
 
   const {
     mutateAsync: doUpdateTier,
@@ -58,9 +62,8 @@ export function useSubscriptionTierSection() {
     if (subscriptionStatus === "success") {
       refetch();
       toast({
-        title: "Subscription upgraded",
-        description:
-          "Your plan has been updated. It may take a moment to reflect.",
+        title: getMessage(locale, "profile4.hook.upgradedTitle"),
+        description: getMessage(locale, "profile4.hook.upgradedBody"),
       });
     }
     // Strip ?subscription=success|cancelled from the URL so a page refresh
@@ -75,7 +78,7 @@ export function useSubscriptionTierSection() {
     // refetch and toast are new references each render but are stable in
     // practice; the effect must only re-run when subscriptionStatus/pathname
     // changes.
-  }, [subscriptionStatus, refetch, toast, router, pathname]);
+  }, [subscriptionStatus, refetch, toast, router, pathname, locale]);
 
   async function changeTier(tier: string) {
     if (isPending) return;
@@ -109,17 +112,21 @@ export function useSubscriptionTierSection() {
       const targetIdx = TIER_ORDER.indexOf(tier);
       const isDowngrade = targetIdx >= 0 && targetIdx < currentIdx;
       toast({
-        title: "Subscription updated",
+        title: t("profile4.hook.updatedTitle"),
         description:
           tier === "NO_TIER"
-            ? "Your subscription is cancelled at the end of your current billing period; no further charges."
+            ? t("profile4.hook.cancelledBody")
             : isDowngrade
-              ? `Your plan will be downgraded to ${getTierLabel(tier)} at the end of your current billing period; from then your saved card is billed at the new lower rate.`
-              : `Upgraded to ${getTierLabel(tier)}. On the next invoice your saved card is charged for the upgrade proration plus the next month at the new rate.`,
+              ? t("profile4.hook.downgradedTo", {
+                  tier: getTierLabel(tier, locale),
+                })
+              : t("profile4.hook.upgradedTo", {
+                  tier: getTierLabel(tier, locale),
+                }),
       });
     } catch (e: unknown) {
       const msg =
-        e instanceof Error ? e.message : "Failed to change subscription tier";
+        e instanceof Error ? e.message : t("profile4.hook.changeFailed");
       setTierError(msg);
     } finally {
       setIsChangingTier(false);
@@ -164,16 +171,14 @@ export function useSubscriptionTierSection() {
       });
       await refetch();
       toast({
-        title: "Pending subscription change cancelled.",
+        title: t("profile4.hook.pendingCancelled"),
       });
     } catch (e: unknown) {
       const msg =
-        e instanceof Error
-          ? e.message
-          : "Failed to cancel pending subscription change";
+        e instanceof Error ? e.message : t("profile4.hook.cancelFailed");
       setTierError(msg);
       toast({
-        title: "Failed to cancel pending change",
+        title: t("profile4.hook.cancelFailedTitle"),
         description: msg,
         variant: "destructive",
       });

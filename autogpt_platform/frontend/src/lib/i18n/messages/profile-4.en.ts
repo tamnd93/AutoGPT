@@ -1,0 +1,75 @@
+export const Profile4En = {
+  "profile4.dashboard.title": "Workflow dashboard",
+  "profile4.dashboard.submitTitle": "Submit a New Workflow",
+  "profile4.dashboard.submitBody":
+    "Select from the list of workflows you currently have, or upload from your local machine.",
+  "profile4.dashboard.submitButton": "Submit workflow",
+  "profile4.dashboard.uploadedTitle": "Your uploaded workflows",
+  "profile4.dashboard.emptyTitle": "No workflows submitted yet",
+  "profile4.dashboard.emptyBody":
+    'You haven\'t submitted any workflows to the store yet. Click "Submit workflow" above to get started.',
+  "profile4.dashboard.errorTitle": "Failed to load workflows",
+  "profile4.dashboard.errorBody":
+    "Something went wrong while loading your submitted workflows.",
+  "profile4.dashboard.tryAgain": "Try again",
+  "profile4.dashboard.pageTitle": "Creator Dashboard – AutoGPT Platform",
+  "profile4.table.workflowInfo": "Workflow info",
+  "profile4.table.dateSubmitted": "Date submitted",
+  "profile4.table.status": "Status",
+  "profile4.table.runs": "Runs",
+  "profile4.table.reviews": "Reviews",
+  "profile4.table.empty":
+    "No workflows available. Create your first workflow to get started!",
+  "profile4.row.runs": "{count} runs",
+  "profile4.row.noReviews": "No reviews",
+  "profile4.row.edit": "Edit",
+  "profile4.row.view": "View",
+  "profile4.row.delete": "Delete",
+  "profile4.refund.title": "Request Refund",
+  "profile4.refund.selectError": "Please select a transaction to refund",
+  "profile4.refund.reasonError": "Please provide a clear reason for the refund",
+  "profile4.refund.noneEligible": "No eligible transactions found for refund.",
+  "profile4.refund.selectLabel": "Select Transaction",
+  "profile4.refund.selectPlaceholder": "Select a transaction",
+  "profile4.refund.reasonLabel": "Reason for Refund",
+  "profile4.refund.reasonPlaceholder":
+    "Please explain why you're requesting a refund...",
+  "profile4.common.cancel": "Cancel",
+  "profile4.tier.heading": "Subscription Plan",
+  "profile4.tier.enterprisePlan": "Enterprise Plan",
+  "profile4.tier.enterpriseBody":
+    "Your Enterprise plan is managed by your administrator. Contact your account team for changes.",
+  "profile4.tier.current": "Current",
+  "profile4.tier.updating": "Updating...",
+  "profile4.tier.scheduled": "Scheduled",
+  "profile4.tier.upgradeTo": "Upgrade to {tier}",
+  "profile4.tier.downgradeTo": "Downgrade to {tier}",
+  "profile4.tier.switchTo": "Switch to {tier}",
+  "profile4.tier.stripeNote":
+    "Your subscription is managed through Stripe. Upgrades take effect immediately. Downgrades take effect at the end of your current billing period.",
+  "profile4.tier.cancelSubscription": "Cancel subscription",
+  "profile4.tier.pickPlan": "Pick a plan to continue using AutoGPT.",
+  "profile4.tier.pickPlanBody":
+    "Your account doesn't have an active subscription. Choose a tier below to start working with experts and running workflows.",
+  "profile4.tier.confirmDowngradeTitle": "Confirm Downgrade",
+  "profile4.tier.confirmDowngrade": "Confirm Downgrade",
+  "profile4.tier.replaceTitle": "Replace pending change?",
+  "profile4.tier.replace": "Replace pending change",
+  "profile4.tier.confirmUpgradeTitle": "Confirm Upgrade",
+  "profile4.tier.continueCheckout": "Continue to Checkout",
+  "profile4.tier.loadError": "Failed to load subscription info",
+  "profile4.hook.upgradedTitle": "Subscription upgraded",
+  "profile4.hook.upgradedBody":
+    "Your plan has been updated. It may take a moment to reflect.",
+  "profile4.hook.updatedTitle": "Subscription updated",
+  "profile4.hook.cancelledBody":
+    "Your subscription is cancelled at the end of your current billing period; no further charges.",
+  "profile4.hook.downgradedTo":
+    "Your plan will be downgraded to {tier} at the end of your current billing period; from then your saved card is billed at the new lower rate.",
+  "profile4.hook.upgradedTo":
+    "Upgraded to {tier}. On the next invoice your saved card is charged for the upgrade proration plus the next month at the new rate.",
+  "profile4.hook.changeFailed": "Failed to change subscription tier",
+  "profile4.hook.pendingCancelled": "Pending subscription change cancelled.",
+  "profile4.hook.cancelFailed": "Failed to cancel pending subscription change",
+  "profile4.hook.cancelFailedTitle": "Failed to cancel pending change",
+} as const;

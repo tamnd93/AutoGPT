@@ -5,6 +5,7 @@ import { AgentTableCard } from "../AgentTableCard/AgentTableCard";
 import { StoreSubmission } from "@/app/api/__generated__/models/storeSubmission";
 import { AgentTableRow } from "../AgentTableRow/AgentTableRow";
 import { StoreSubmissionEditRequest } from "@/app/api/__generated__/models/storeSubmissionEditRequest";
+import { useT } from "@/lib/i18n";
 
 export interface AgentTableProps {
   storeAgentSubmissions: StoreSubmission[];
@@ -24,6 +25,8 @@ export const AgentTable: React.FC<AgentTableProps> = ({
   onDeleteSubmission,
   onEditSubmission,
 }) => {
+  const t = useT();
+
   return (
     <div className="w-full" data-testid="agent-table">
       {/* Table header - Hide on mobile */}
@@ -38,31 +41,31 @@ export const AgentTable: React.FC<AgentTableProps> = ({
               // TODO(tokens): no exact role (text-neutral-800 #262626, dark:text-neutral-200)
               className="text-sm font-medium text-neutral-800 dark:text-neutral-200"
             >
-              Workflow info
+              {t("profile4.table.workflowInfo")}
             </div>
             <div
               // TODO(tokens): no exact role (text-neutral-800 #262626, dark:text-neutral-200)
               className="text-sm font-medium text-neutral-800 dark:text-neutral-200"
             >
-              Date submitted
+              {t("profile4.table.dateSubmitted")}
             </div>
             <div
               // TODO(tokens): no exact role (text-neutral-800 #262626, dark:text-neutral-200)
               className="text-sm font-medium text-neutral-800 dark:text-neutral-200"
             >
-              Status
+              {t("profile4.table.status")}
             </div>
             <div
               // TODO(tokens): no exact role (text-neutral-800 #262626, dark:text-neutral-200)
               className="text-right text-sm font-medium text-neutral-800 dark:text-neutral-200"
             >
-              Runs
+              {t("profile4.table.runs")}
             </div>
             <div
               // TODO(tokens): no exact role (text-neutral-800 #262626, dark:text-neutral-200)
               className="text-right text-sm font-medium text-neutral-800 dark:text-neutral-200"
             >
-              Reviews
+              {t("profile4.table.reviews")}
             </div>
             <div></div>
           </div>
@@ -98,7 +101,7 @@ export const AgentTable: React.FC<AgentTableProps> = ({
           // TODO(tokens): no exact role (text-neutral-600 #525252, dark:text-neutral-400)
           className="py-4 text-center font-sans text-base text-neutral-600 dark:text-neutral-400"
         >
-          No workflows available. Create your first workflow to get started!
+          {t("profile4.table.empty")}
         </div>
       )}
     </div>

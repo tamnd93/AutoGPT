@@ -1,8 +1,11 @@
 import { Text } from "@/components/atoms/Text/Text";
 import { InboxIcon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 
 export function EmptySubmissions() {
+  const t = useT();
+
   return (
     <div
       // TODO(tokens): no exact role (border-neutral-200 #E5E5E5, dark:border-neutral-700, dark:bg-neutral-800/50)
@@ -25,16 +28,14 @@ export function EmptySubmissions() {
             // TODO(tokens): no exact role (text-neutral-900 #171717, dark:text-neutral-100)
             className="text-neutral-900 dark:text-neutral-100"
           >
-            No workflows submitted yet
+            {t("profile4.dashboard.emptyTitle")}
           </Text>
           <Text
             variant="body"
             // TODO(tokens): no exact role (text-neutral-600 #525252, dark:text-neutral-400)
             className="text-neutral-600 dark:text-neutral-400"
           >
-            You haven&apos;t submitted any workflows to the store yet.
-            <br />
-            Click &ldquo;Submit workflow&rdquo; above to get started.
+            {t("profile4.dashboard.emptyBody")}
           </Text>
         </div>
       </div>

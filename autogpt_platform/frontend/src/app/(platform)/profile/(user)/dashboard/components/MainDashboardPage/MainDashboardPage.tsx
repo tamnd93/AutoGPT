@@ -8,8 +8,10 @@ import { EmptySubmissions } from "./components/EmptySubmissions";
 import { SubmissionLoadError } from "./components/SumbmissionLoadError";
 import { SubmissionsLoading } from "./components/SubmissionsLoading";
 import { Text } from "@/components/atoms/Text/Text";
+import { useT } from "@/lib/i18n";
 
 export const MainDashboardPage = () => {
+  const t = useT();
   const {
     onDeleteSubmission,
     onViewSubmission,
@@ -32,7 +34,7 @@ export const MainDashboardPage = () => {
       <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div className="space-y-6">
           <Text variant="h1" size="h3">
-            Workflow dashboard
+            {t("profile4.dashboard.title")}
           </Text>
           <div className="space-y-2">
             <Text
@@ -41,11 +43,10 @@ export const MainDashboardPage = () => {
               // TODO(tokens): no exact role (text-neutral-900 #171717, dark:text-neutral-100)
               className="text-neutral-900 dark:text-neutral-100"
             >
-              Submit a New Workflow
+              {t("profile4.dashboard.submitTitle")}
             </Text>
             <Text variant="body" size="small">
-              Select from the list of workflows you currently have, or upload
-              from your local machine.
+              {t("profile4.dashboard.submitBody")}
             </Text>
           </div>
         </div>
@@ -58,7 +59,7 @@ export const MainDashboardPage = () => {
               size="small"
               onClick={onOpenSubmitModal}
             >
-              Submit workflow
+              {t("profile4.dashboard.submitButton")}
             </Button>
           }
         />
@@ -74,7 +75,7 @@ export const MainDashboardPage = () => {
           // TODO(tokens): no exact role (text-neutral-900 #171717, dark:text-neutral-100)
           className="mb-4 text-neutral-900 dark:text-neutral-100"
         >
-          Your uploaded workflows
+          {t("profile4.dashboard.uploadedTitle")}
         </Text>
 
         {error ? (

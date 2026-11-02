@@ -20,6 +20,7 @@ import {
 } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { useImageFallback } from "@/hooks/useImageFallback";
+import { useT } from "@/lib/i18n";
 
 export type AgentTableRowProps = {
   storeAgentSubmission: StoreSubmission;
@@ -39,6 +40,7 @@ export const AgentTableRow = ({
   onDeleteSubmission,
   onEditSubmission,
 }: AgentTableRowProps) => {
+  const t = useT();
   const { handleView, handleDelete, handleEdit } = useAgentTableRow({
     storeAgentSubmission,
     onViewSubmission,
@@ -156,7 +158,7 @@ export const AgentTableRow = ({
               // TODO(tokens): no exact role (text-neutral-600 #525252, dark:text-neutral-400)
               className="text-sm text-neutral-600 dark:text-neutral-400"
             >
-              No reviews
+              {t("profile4.row.noReviews")}
             </span>
           )}
         </div>
@@ -190,7 +192,7 @@ export const AgentTableRow = ({
                     // TODO(tokens): no exact role (dark:text-gray-100)
                     className="dark:text-gray-100"
                   >
-                    Edit
+                    {t("profile4.row.edit")}
                   </span>
                 </DropdownMenu.Item>
               ) : (
@@ -208,7 +210,7 @@ export const AgentTableRow = ({
                     // TODO(tokens): no exact role (dark:text-gray-100)
                     className="dark:text-gray-100"
                   >
-                    View
+                    {t("profile4.row.view")}
                   </span>
                 </DropdownMenu.Item>
               )}
@@ -232,7 +234,7 @@ export const AgentTableRow = ({
                       // TODO(tokens): no exact role (dark:text-red-400)
                       className="dark:text-red-400"
                     >
-                      Delete
+                      {t("profile4.row.delete")}
                     </span>
                   </DropdownMenu.Item>
                 </>

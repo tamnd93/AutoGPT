@@ -2,8 +2,11 @@ import { Text } from "@/components/atoms/Text/Text";
 import { Button } from "@/components/atoms/Button/Button";
 import { InboxIcon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { useT } from "@/lib/i18n";
 
 export function SubmissionLoadError() {
+  const t = useT();
+
   return (
     <div
       // TODO(tokens): no exact role (border-neutral-200 #E5E5E5, dark:border-neutral-700, dark:bg-neutral-800/50)
@@ -26,14 +29,14 @@ export function SubmissionLoadError() {
             // TODO(tokens): no exact role (text-neutral-900 #171717, dark:text-neutral-100)
             className="text-neutral-900 dark:text-neutral-100"
           >
-            Failed to load workflows
+            {t("profile4.dashboard.errorTitle")}
           </Text>
           <Text
             variant="body"
             // TODO(tokens): no exact role (text-neutral-600 #525252, dark:text-neutral-400)
             className="text-neutral-600 dark:text-neutral-400"
           >
-            Something went wrong while loading your submitted workflows.
+            {t("profile4.dashboard.errorBody")}
           </Text>
         </div>
         <Button
@@ -41,7 +44,7 @@ export function SubmissionLoadError() {
           size="small"
           onClick={() => window.location.reload()}
         >
-          Try again
+          {t("profile4.dashboard.tryAgain")}
         </Button>
       </div>
     </div>

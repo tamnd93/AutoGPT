@@ -1,4 +1,5 @@
 import { describe, expect, test } from "vitest";
+import { LocaleProvider } from "@/lib/i18n";
 import { fireEvent, render, screen } from "@/tests/integrations/test-utils";
 
 import { AgentTableCard } from "../AgentTableCard";
@@ -27,6 +28,19 @@ const SUBMISSION = {
 } as unknown as StoreSubmission;
 
 describe("AgentTableCard", () => {
+  test("reads its run count in Vietnamese", () => {
+    render(
+      <LocaleProvider locale="vi">
+        <AgentTableCard
+          storeAgentSubmission={{ ...SUBMISSION, run_count: 12 }}
+          onViewSubmission={() => {}}
+        />
+      </LocaleProvider>,
+    );
+
+    expect(screen.getByText("12 lượt chạy")).toBeDefined();
+  });
+
   test("renders the submission image while the URL loads", () => {
     render(
       <AgentTableCard

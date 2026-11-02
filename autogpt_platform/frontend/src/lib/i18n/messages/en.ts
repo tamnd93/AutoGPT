@@ -58,6 +58,7 @@ import { onboarding3En } from "./onboarding-3.en";
 import { Profile1En } from "./profile-1.en";
 import { Profile2En } from "./profile-2.en";
 import { profile3En } from "./profile-3.en";
+import { Profile4En } from "./profile-4.en";
 import { profile5En } from "./profile-5.en";
 import { settingsRest1En } from "./settings-rest-1.en";
 import { settingsRest2En } from "./settings-rest-2.en";
@@ -133,6 +134,7 @@ export const en = {
   ...Profile1En,
   ...Profile2En,
   ...profile3En,
+  ...Profile4En,
   ...profile5En,
   ...settingsRest1En,
   ...settingsRest2En,

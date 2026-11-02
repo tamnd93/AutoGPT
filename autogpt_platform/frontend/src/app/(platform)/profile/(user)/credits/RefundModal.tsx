@@ -19,6 +19,7 @@ import {
   SelectValue,
 } from "@/components/atoms/Select/components/SelectPrimitives";
 import { Textarea } from "@/components/atoms/Textarea/Textarea";
+import { useT } from "@/lib/i18n";
 
 interface RefundModalProps {
   isOpen: boolean;
@@ -35,6 +36,7 @@ export const RefundModal = ({
   formatCredits,
   refundCredits,
 }: RefundModalProps) => {
+  const t = useT();
   const [selectedTransactionId, setSelectedTransactionId] =
     useState<string>("");
   const [refundReason, setRefundReason] = useState("");
@@ -55,12 +57,12 @@ export const RefundModal = ({
     );
 
     if (!selectedTransaction) {
-      setError("Please select a transaction to refund");
+      setError(t("profile4.refund.selectError"));
       return;
     }
 
     if (refundReason.trim().length < 20) {
-      setError("Please provide a clear reason for the refund");
+      setError(t("profile4.refund.reasonError"));
       return;
     }
 
@@ -73,7 +75,7 @@ export const RefundModal = ({
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Request Refund</DialogTitle>
+          <DialogTitle>{t("profile4.refund.title")}</DialogTitle>
         </DialogHeader>
         <div className="py-4">
           <div className="space-y-4">
@@ -94,19 +96,21 @@ export const RefundModal = ({
                 // TODO(tokens): no exact role (text-gray-500 #6B7280)
                 className="text-gray-500"
               >
-                No eligible transactions found for refund.
+                {t("profile4.refund.noneEligible")}
               </Text>
             ) : (
               <div className="space-y-2">
                 <Text variant="body-medium-tight" as="label" tone="inherit">
-                  Select Transaction
+                  {t("profile4.refund.selectLabel")}
                 </Text>
                 <Select
                   value={selectedTransactionId}
                   onValueChange={setSelectedTransactionId}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Select a transaction" />
+                    <SelectValue
+                      placeholder={t("profile4.refund.selectPlaceholder")}
+                    />
                   </SelectTrigger>
                   <SelectContent>
                     {transactions.map((transaction) => (
@@ -135,12 +139,12 @@ export const RefundModal = ({
             <div className="space-y-2">
               <label htmlFor="refundReason">
                 <Text variant="body-medium-tight" as="span" tone="inherit">
-                  Reason for Refund
+                  {t("profile4.refund.reasonLabel")}
                 </Text>
               </label>
               <Textarea
                 id="refundReason"
-                placeholder="Please explain why you're requesting a refund..."
+                placeholder={t("profile4.refund.reasonPlaceholder")}
                 value={refundReason}
                 onChange={(e) => setRefundReason(e.target.value)}
                 className="min-h-[100px]"
@@ -150,10 +154,10 @@ export const RefundModal = ({
         </div>
         <div className="flex justify-end space-x-4">
           <Button variant="legacy-outline" onClick={handleClose}>
-            Cancel
+            {t("profile4.common.cancel")}
           </Button>
           <Button variant="legacy-default" onClick={handleRefundRequest}>
-            Request Refund
+            {t("profile4.refund.title")}
           </Button>
         </div>
       </DialogContent>

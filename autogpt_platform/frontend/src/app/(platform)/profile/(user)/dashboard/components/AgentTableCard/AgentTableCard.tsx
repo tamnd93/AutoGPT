@@ -11,6 +11,7 @@ import { Status } from "@/components/__legacy__/Status";
 import { ImageNotFound01Icon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { useImageFallback } from "@/hooks/useImageFallback";
+import { useT } from "@/lib/i18n";
 
 export interface AgentTableCardProps {
   storeAgentSubmission: StoreSubmission;
@@ -21,6 +22,7 @@ export const AgentTableCard = ({
   storeAgentSubmission,
   onViewSubmission,
 }: AgentTableCardProps) => {
+  const t = useT();
   const onView = () => {
     onViewSubmission(storeAgentSubmission);
   };
@@ -114,7 +116,9 @@ export const AgentTableCard = ({
           // TODO(tokens): no exact role (text-neutral-600 #525252, dark:text-neutral-400)
           className="text-sm text-neutral-600 dark:text-neutral-400"
         >
-          {(run_count ?? 0).toLocaleString()} runs
+          {t("profile4.row.runs", {
+            count: (run_count ?? 0).toLocaleString(),
+          })}
         </div>
         <div className="flex items-center gap-1">
           <span
