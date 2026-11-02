@@ -176,13 +176,18 @@ export default function CredentialsProvider({
   const locale = useLocale();
 
   /** A vi failure names the whole toast; en keeps the existing action frame. */
-  function credentialsFailToast(actionKey: MessageKey, englishAction: string) {
-    if (locale !== "vi") return onFailToast(englishAction);
-    return (error: Error) => {
+  function credentialsFailToast(
+    actionKey: MessageKey,
+    englishAction: string,
+  ): (error: unknown) => void {
+    const failToast = onFailToast(englishAction);
+    return (error) => {
+      if (locale !== "vi") return failToast(error);
       toast({
         title: getMessage(locale, actionKey),
         description:
-          error?.message ?? getMessage(locale, "credentials2.genericError"),
+          (error instanceof Error ? error.message : undefined) ??
+          getMessage(locale, "credentials2.genericError"),
         variant: "destructive",
       });
     };

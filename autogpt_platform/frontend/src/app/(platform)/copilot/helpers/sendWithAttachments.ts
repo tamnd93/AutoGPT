@@ -93,6 +93,7 @@ export async function sendWithAttachments({
   sessionId,
   message,
   sendMessage,
+  locale,
   waitUntilReady,
 }: SendArgs) {
   const { text, files, parts, metadata } = message;
@@ -116,13 +117,16 @@ export async function sendWithAttachments({
   useCopilotStreamStore.getState().setPendingUploadSend(sessionId, pending);
   let send: Promise<void> | undefined;
   try {
-    const uploaded = await uploadFiles(files, sessionId, locale);
+    const uploaded = await uploadFiles(files, sessionId, locale ?? DEFAULT_LOCALE);
     let sentParts = [...parts, ...buildFileParts(uploaded)];
     if (files.length > 0 && uploaded.length === 0) {
       toast({
-        title: getMessage(locale, "chatStates3.attachments.uploadFailedTitle"),
+        title: getMessage(
+          locale ?? DEFAULT_LOCALE,
+          "chatStates3.attachments.uploadFailedTitle",
+        ),
         description: getMessage(
-          locale,
+          locale ?? DEFAULT_LOCALE,
           "chatStates3.attachments.uploadNoneBody",
         ),
         variant: "destructive",
