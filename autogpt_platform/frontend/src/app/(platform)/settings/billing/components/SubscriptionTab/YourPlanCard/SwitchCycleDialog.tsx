@@ -3,6 +3,7 @@
 import { Button } from "@/components/atoms/Button/Button";
 import { Text } from "@/components/atoms/Text/Text";
 import { Dialog } from "@/components/molecules/Dialog/Dialog";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   isOpen: boolean;
@@ -23,11 +24,15 @@ export function SwitchCycleDialog({
   isSaving,
   onConfirm,
 }: Props) {
-  const targetLabel = targetCycle === "yearly" ? "Yearly" : "Monthly";
+  const t = useT();
+  const targetLabel =
+    targetCycle === "yearly"
+      ? t("billing2.cycle.yearly")
+      : t("billing2.cycle.monthly");
 
   return (
     <Dialog
-      title={title ?? `Switch billing to ${targetLabel}?`}
+      title={title ?? t("billing2.cycle.switchTitle", { cycle: targetLabel })}
       styling={{ maxWidth: "440px" }}
       controlled={{ isOpen, set: onOpenChange }}
     >
@@ -62,7 +67,7 @@ export function SwitchCycleDialog({
             onClick={() => onOpenChange(false)}
             disabled={isSaving}
           >
-            Cancel
+            {t("billing2.cycle.cancel")}
           </Button>
           <Button
             type="button"
@@ -72,7 +77,7 @@ export function SwitchCycleDialog({
             disabled={isSaving}
             loading={isSaving}
           >
-            Switch to {targetLabel}
+            {t("billing2.cycle.switchAction", { cycle: targetLabel })}
           </Button>
         </Dialog.Footer>
       </Dialog.Content>

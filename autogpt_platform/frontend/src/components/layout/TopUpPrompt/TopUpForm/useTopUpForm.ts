@@ -5,15 +5,19 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-
-const topUpSchema = z.object({
-  amount: z
-    .number({ coerce: true, invalid_type_error: "Enter top-up amount" })
-    .int("Enter a whole-dollar amount")
-    .min(5, "Top-ups start at $5. Please enter a higher amount."),
-});
+import { useT } from "@/lib/i18n";
 
 export function useTopUpForm() {
+  const t = useT();
+  const topUpSchema = z.object({
+    amount: z
+      .number({
+        coerce: true,
+        invalid_type_error: t("billing2.topUp.enterAmount"),
+      })
+      .int(t("billing2.topUp.wholeDollars"))
+      .min(5, t("billing2.topUp.minimum")),
+  });
   const toastOnFail = useToastOnFail();
   const { requestTopUp } = useCredits();
 

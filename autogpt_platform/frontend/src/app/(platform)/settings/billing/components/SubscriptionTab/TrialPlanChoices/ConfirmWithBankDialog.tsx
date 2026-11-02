@@ -1,6 +1,7 @@
 import { Button } from "@/components/atoms/Button/Button";
 import { Text } from "@/components/atoms/Text/Text";
 import { Dialog } from "@/components/molecules/Dialog/Dialog";
+import { useT } from "@/lib/i18n";
 
 import { formatChoicePrice } from "./helpers";
 import type { PaymentPage } from "./useTrialPlanRequest";
@@ -11,9 +12,10 @@ interface Props {
 }
 
 export function ConfirmWithBankDialog({ page, onClose }: Props) {
+  const t = useT();
   return (
     <Dialog
-      title="Confirm with your bank"
+      title={t("billing2.confirmBank.title")}
       styling={{ maxWidth: "28rem", minWidth: "auto" }}
       controlled={{
         isOpen: page !== null,
@@ -25,15 +27,15 @@ export function ConfirmWithBankDialog({ page, onClose }: Props) {
       <Dialog.Content>
         {page ? (
           <Text variant="body">
-            Your bank wants to confirm the {formatChoicePrice(page.plan)}{" "}
-            payment for {page.plan.label}. Pay on Stripe&apos;s secure page and{" "}
-            {page.plan.label} starts right away. Until then your trial stays as
-            it is.
+            {t("billing2.confirmBank.body", {
+              price: formatChoicePrice(page.plan, t),
+              name: page.plan.label,
+            })}
           </Text>
         ) : null}
         <Dialog.Footer>
           <Button variant="outline" onClick={onClose}>
-            Done
+            {t("billing2.confirmBank.done")}
           </Button>
           {page ? (
             <Button
@@ -43,7 +45,7 @@ export function ConfirmWithBankDialog({ page, onClose }: Props) {
               target="_blank"
               rel="noopener noreferrer"
             >
-              Pay on Stripe
+              {t("billing2.confirmBank.pay")}
             </Button>
           ) : null}
         </Dialog.Footer>

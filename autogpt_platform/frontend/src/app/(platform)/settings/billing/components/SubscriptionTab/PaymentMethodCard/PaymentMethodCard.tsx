@@ -4,6 +4,7 @@ import { motion, useReducedMotion } from "framer-motion";
 import { Button } from "@/components/atoms/Button/Button";
 import { Text } from "@/components/atoms/Text/Text";
 
+import { useT } from "@/lib/i18n";
 import { getSectionMotionProps } from "../../../helpers";
 import { usePaymentMethodCard } from "./usePaymentMethodCard";
 import { CreditCardIcon, LinkSquare01Icon } from "@hugeicons/core-free-icons";
@@ -14,6 +15,7 @@ interface Props {
 }
 
 export function PaymentMethodCard({ index = 0 }: Props) {
+  const t = useT();
   const reduceMotion = useReducedMotion();
   const { canManage, isOpening, onManage } = usePaymentMethodCard();
 
@@ -24,7 +26,7 @@ export function PaymentMethodCard({ index = 0 }: Props) {
     >
       <div className="sr-only">
         <Text variant="body-medium" as="span" className="text-textBlack">
-          Payment method
+          {t("billing2.paymentMethod.aria")}
         </Text>
       </div>
 
@@ -35,14 +37,14 @@ export function PaymentMethodCard({ index = 0 }: Props) {
           </div>
           <div className="flex min-w-0 flex-col">
             <Text variant="body-medium" as="span" className="text-textBlack">
-              Manage payment method
+              {t("billing2.paymentMethod.title")}
             </Text>
             <Text
               variant="small"
               as="span"
               className="text-foreground-tertiary"
             >
-              Open the Stripe portal to update your card or download invoices.
+              {t("billing2.paymentMethod.body")}
             </Text>
           </div>
         </div>
@@ -54,7 +56,7 @@ export function PaymentMethodCard({ index = 0 }: Props) {
           disabled={!canManage}
           loading={isOpening}
         >
-          Open portal
+          {t("billing2.paymentMethod.openPortal")}
           <Icon icon={LinkSquare01Icon} size={14} />
         </Button>
       </div>

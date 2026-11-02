@@ -1,6 +1,7 @@
 import { Button } from "@/components/atoms/Button/Button";
 import { Text } from "@/components/atoms/Text/Text";
 import { Dialog } from "@/components/molecules/Dialog/Dialog";
+import { useT } from "@/lib/i18n";
 
 interface Props {
   isOpen: boolean;
@@ -19,9 +20,10 @@ export function ConfirmTrialPlanDialog({
   onConfirm,
   onClose,
 }: Props) {
+  const t = useT();
   return (
     <Dialog
-      title={`Start ${planLabel} today?`}
+      title={t("billing2.confirmTrial.title", { name: planLabel })}
       styling={{ maxWidth: "28rem", minWidth: "auto" }}
       controlled={{
         isOpen,
@@ -31,13 +33,10 @@ export function ConfirmTrialPlanDialog({
       }}
     >
       <Dialog.Content>
-        <Text variant="body">
-          Your trial ends now and your saved card is charged {price}, plus
-          applicable tax.
-        </Text>
+        <Text variant="body">{t("billing2.confirmTrial.body", { price })}</Text>
         <Dialog.Footer>
           <Button variant="outline" onClick={onClose} disabled={isSaving}>
-            Keep my trial
+            {t("billing2.confirmTrial.keep")}
           </Button>
           <Button
             variant="primary"
@@ -45,7 +44,7 @@ export function ConfirmTrialPlanDialog({
             disabled={isSaving}
             loading={isSaving}
           >
-            Subscribe to {planLabel}
+            {t("billing2.confirmTrial.subscribe", { name: planLabel })}
           </Button>
         </Dialog.Footer>
       </Dialog.Content>

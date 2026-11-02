@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { usePreviewSubscriptionUpgrade } from "@/app/api/__generated__/endpoints/credits/credits";
 import type { SubscriptionUpgradePreview } from "@/app/api/__generated__/models/subscriptionUpgradePreview";
 import { useAuthStore } from "@/lib/auth/hooks/useAuthStore";
+import { useT } from "@/lib/i18n";
 
 interface ReviewState {
   userID: string;
@@ -14,6 +15,7 @@ export function useTierUpgradePreview(
   enabled: boolean,
   billingCycle: "monthly" | "yearly",
 ) {
+  const t = useT();
   const { mutateAsync } = usePreviewSubscriptionUpgrade();
   const userID = useAuthStore((state) => state.user?.id);
   const [state, setState] = useState<ReviewState>();
@@ -35,8 +37,7 @@ export function useTierUpgradePreview(
         if (response.data.expires_at * 1000 <= Date.now()) {
           setState({
             ...owner,
-            error:
-              "This review expired. Review the charge again before paying.",
+            error: t("billing2.upgradePreview.expired"),
           });
           return;
         }
@@ -46,7 +47,7 @@ export function useTierUpgradePreview(
         if (current && useAuthStore.getState().user?.id === userID)
           setState({
             ...owner,
-            error: "We couldn’t load your charge. Try again before upgrading.",
+            error: t("billing2.upgradePreview.loadFailed"),
           });
       });
     return () => {
@@ -63,8 +64,7 @@ export function useTierUpgradePreview(
             ? {
                 ...value,
                 preview: undefined,
-                error:
-                  "This review expired. Review the charge again before paying.",
+                error: t("billing2.upgradePreview.expired"),
               }
             : value,
         );
@@ -80,9 +80,7 @@ export function useTierUpgradePreview(
     error,
     isLoading: enabled && !preview && !error,
     retry: () => setAttempt((value) => value + 1),
-    invalidate: (
-      message = "Your billing details changed. Review the updated charge before paying.",
-    ) => {
+    invalidate: (message = t("billing2.upgradePreview.changed")) => {
       setState((value) =>
         value
           ? {

@@ -1,6 +1,7 @@
 "use client";
 import { Button } from "@/components/atoms/Button/Button";
 import { Alert, AlertDescription } from "@/components/molecules/Alert/Alert";
+import { useT } from "@/lib/i18n";
 
 import { useLowCreditBanner } from "./useLowCreditBanner";
 import { Cancel01Icon } from "@hugeicons/core-free-icons";
@@ -11,6 +12,7 @@ interface Props {
 }
 
 export function LowCreditBanner({ className }: Props) {
+  const t = useT();
   const { visible, openTopUp, dismiss } = useLowCreditBanner();
 
   if (!visible) return null;
@@ -19,18 +21,17 @@ export function LowCreditBanner({ className }: Props) {
     <Alert variant="warning" aria-live="polite">
       <div className="flex flex-wrap items-center gap-3">
         <AlertDescription className="min-w-[12rem] flex-1">
-          You&apos;re out of automation credits. Top up to keep your workflows
-          running.
+          {t("billing2.lowCredit.body")}
         </AlertDescription>
         <Button variant="primary" size="small" onClick={openTopUp}>
-          Top up
+          {t("billing2.lowCredit.topUp")}
         </Button>
         <Button
           variant="ghost"
           size="icon"
           onClick={dismiss}
-          aria-label="Dismiss"
-          title="Dismiss"
+          aria-label={t("billing2.lowCredit.dismiss")}
+          title={t("billing2.lowCredit.dismiss")}
           // TODO(tokens): no exact role for hover:border-[#FFE4BF] (#FFE4BF), hover:bg-[#FFE4BF] (#FFE4BF)
           className="hover:border-[#FFE4BF] hover:bg-[#FFE4BF]"
         >

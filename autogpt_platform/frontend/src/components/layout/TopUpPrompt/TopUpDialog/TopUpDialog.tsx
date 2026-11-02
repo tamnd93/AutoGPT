@@ -5,6 +5,7 @@ import Link from "next/link";
 
 import { Text } from "@/components/atoms/Text/Text";
 import { Dialog } from "@/components/molecules/Dialog/Dialog";
+import { useT } from "@/lib/i18n";
 
 import { TopUpForm } from "../TopUpForm/TopUpForm";
 
@@ -21,6 +22,7 @@ export function TopUpDialog({
   onClose,
   variant = "out-of-credits",
 }: Props) {
+  const t = useT();
   const isOutOfCredits = variant === "out-of-credits";
 
   function handleOpenChange(open: boolean) {
@@ -36,10 +38,10 @@ export function TopUpDialog({
               // TODO(tokens): no exact role for text-orange-600 (#E77B00)
               className="h-[1.125rem] w-[1.125rem] text-orange-600"
             />
-            You&apos;re out of automation credits
+            {t("billing2.topUp.outOfCreditsTitle")}
           </span>
         ) : (
-          "Add automation credits"
+          t("billing2.topUp.addCreditsTitle")
         )
       }
       styling={{ maxWidth: "28rem" }}
@@ -48,14 +50,14 @@ export function TopUpDialog({
       <Dialog.Content>
         <Text variant="large">
           {isOutOfCredits
-            ? "Top up to keep your workflows and experts running. You can also "
-            : "Credits are used to run your workflows and experts. You can also "}
+            ? t("billing2.topUp.outOfCreditsBody")
+            : t("billing2.topUp.addCreditsBody")}
           <Link href="/settings/billing" className="underline">
-            enable auto-refill in billing settings
+            {t("billing2.topUp.autoRefillLink")}
           </Link>
           .
         </Text>
-        <TopUpForm submitLabel="Top up" />
+        <TopUpForm submitLabel={t("billing2.topUp.submit")} />
       </Dialog.Content>
     </Dialog>
   );

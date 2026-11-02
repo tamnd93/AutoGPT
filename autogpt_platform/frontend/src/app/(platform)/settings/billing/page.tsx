@@ -16,6 +16,8 @@ import {
   TabsLineTrigger,
 } from "@/components/molecules/TabsLine/TabsLine";
 import { toast } from "@/components/molecules/Toast/use-toast";
+import { useLocale, useT } from "@/lib/i18n";
+import { getMessage } from "@/lib/i18n/translate";
 import {
   getGetSubscriptionStatusQueryKey,
   usePatchV1FulfillCheckoutSession,
@@ -54,6 +56,8 @@ export default function SettingsBillingRoute() {
 }
 
 function SettingsBillingPage() {
+  const t = useT();
+  const locale = useLocale();
   const router = useRouter();
   const searchParams = useSearchParams();
   const queryClient = useQueryClient();
@@ -77,7 +81,7 @@ function SettingsBillingPage() {
   }
 
   useEffect(function setBillingDocumentTitle() {
-    document.title = "Billing – AutoGPT Platform";
+    document.title = getMessage(locale, "billing2.page.title");
   }, []);
 
   useEffect(
@@ -90,9 +94,8 @@ function SettingsBillingPage() {
 
       if (topupStatus === "success") {
         toast({
-          title: "Payment successful",
-          description:
-            "Your credits will appear shortly. Refresh if you don't see them.",
+          title: t("billing2.page.paymentSuccessTitle"),
+          description: t("billing2.page.paymentSuccessBody"),
         });
         fulfillCheckout().catch(() => {
           // Background fulfillment call — webhook is the source of truth,
@@ -101,8 +104,8 @@ function SettingsBillingPage() {
       } else if (topupStatus === "cancel") {
         trackCheckoutAbandoned({ checkout_kind: "top_up", surface: "billing" });
         toast({
-          title: "Payment cancelled",
-          description: "Your payment method was not charged.",
+          title: t("billing2.page.paymentCancelledTitle"),
+          description: t("billing2.page.paymentCancelledBody"),
           variant: "destructive",
         });
       }
@@ -120,9 +123,8 @@ function SettingsBillingPage() {
 
       if (subscriptionStatus === "success") {
         toast({
-          title: "Confirming your subscription",
-          description:
-            "Your new plan is being applied. It may take a moment to reflect.",
+          title: t("billing2.page.confirmingTitle"),
+          description: t("billing2.page.confirmingBody"),
         });
         queryClient.invalidateQueries({
           queryKey: getGetSubscriptionStatusQueryKey(),
@@ -136,8 +138,8 @@ function SettingsBillingPage() {
           surface: "billing",
         });
         toast({
-          title: "Checkout cancelled",
-          description: "Your plan was not changed.",
+          title: t("billing2.page.checkoutCancelledTitle"),
+          description: t("billing2.page.checkoutCancelledBody"),
           variant: "destructive",
         });
       }
@@ -164,28 +166,30 @@ function SettingsBillingPage() {
             as="h1"
             className="tracking-[-0.035em]"
           >
-            Billing &amp; usage
+            {t("billing2.page.header")}
           </Text>
           <Button
             type="button"
             variant="ghost"
             size="icon-sm"
             leadingIcon={InformationCircleIcon}
-            aria-label="How usage and credits work"
+            aria-label={t("billing2.page.explainerAria")}
             onClick={() => setIsExplainerOpen(true)}
             className="text-foreground-tertiary"
           />
         </div>
         <Text variant="body" tone="secondary">
-          Everything you need to manage your plan.
+          {t("billing2.page.subtitle")}
         </Text>
       </header>
 
       <TabsLine value={activeTab} onValueChange={handleTabChange}>
         <TabsLineList flush className="overflow-x-auto">
-          <TabsLineTrigger value="subscription">Subscription</TabsLineTrigger>
+          <TabsLineTrigger value="subscription">
+            {t("billing2.page.tabSubscription")}
+          </TabsLineTrigger>
           <TabsLineTrigger value="automation-credits">
-            Automation Credits
+            {t("billing2.page.tabCredits")}
           </TabsLineTrigger>
         </TabsLineList>
 

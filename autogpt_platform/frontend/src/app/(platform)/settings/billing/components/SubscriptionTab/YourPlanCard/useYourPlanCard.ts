@@ -17,6 +17,7 @@ import type { SubscriptionTierRequestTier } from "@/app/api/__generated__/models
 import type { SubscriptionUpgradePreview } from "@/app/api/__generated__/models/subscriptionUpgradePreview";
 import { ApiError } from "@/lib/autogpt-server-api/helpers";
 import { toast } from "@/components/molecules/Toast/use-toast";
+import { useT } from "@/lib/i18n";
 import { useCheckoutRedirect } from "@/hooks/useCheckoutRedirect";
 import {
   centsToUSD,
@@ -74,6 +75,7 @@ function getPreviousTier(current: string): SubscriptionTierRequestTier | null {
 }
 
 export function useYourPlanCard() {
+  const t = useT();
   const queryClient = useQueryClient();
   const searchParams = useSearchParams();
   const [handledUpgrade, setHandledUpgrade] = useState(false);
@@ -308,7 +310,7 @@ export function useYourPlanCard() {
       ) {
         upgradeReview.invalidate(
           error.status === 402
-            ? "Payment wasn’t completed. Check your payment method, then review the charge again."
+            ? t("billing2.planHook.paymentIncomplete")
             : undefined,
         );
         return false;
@@ -324,18 +326,18 @@ export function useYourPlanCard() {
         billingCycle === "yearly"
       ) {
         toast({
-          title: "Yearly billing is not yet available for your plan.",
-          description: "Please contact support.",
+          title: t("billing2.planHook.yearlyUnavailableTitle"),
+          description: t("billing2.planHook.yearlyUnavailableBody"),
           variant: "destructive",
         });
         return false;
       }
       toast({
-        title: "Couldn't update your plan",
+        title: t("billing2.planHook.updateFailedTitle"),
         description:
           error instanceof Error
             ? error.message
-            : "Stripe didn't accept the change. Please try again.",
+            : t("billing2.planHook.updateFailedBody"),
         variant: "destructive",
       });
       return false;
@@ -360,7 +362,7 @@ export function useYourPlanCard() {
       ? formatShortDate(plan.currentPeriodEnd * 1000)
       : null;
     toast({
-      title: "Downgrade scheduled",
+      title: t("billing2.planHook.downgradeScheduled"),
       description: periodEnd
         ? `You keep ${plan.label} until ${periodEnd}, then switch to ${targetLabel}. No charge today.`
         : `Your plan will switch to ${targetLabel} at the close of the current billing period. No charge today.`,
@@ -391,10 +393,10 @@ export function useYourPlanCard() {
     if (!ok) return;
     toast({
       title: plan.isPendingCancel
-        ? "Subscription resumed"
+        ? t("billing2.planHook.resumed")
         : plan.isPendingCycleSwitch
-          ? "Cycle switch cancelled"
-          : "Downgrade cancelled",
+          ? t("billing2.planHook.cycleCancelled")
+          : t("billing2.planHook.downgradeCancelled"),
       description: `Your ${plan.label} plan will continue to renew as normal.`,
     });
   }
@@ -428,12 +430,12 @@ export function useYourPlanCard() {
     toast({
       title:
         pendingCycle === "yearly"
-          ? "Switched to yearly billing"
-          : "Switching to monthly at period end",
+          ? t("billing2.planHook.switchedYearly")
+          : t("billing2.planHook.switchingMonthly"),
       description:
         pendingCycle === "yearly"
-          ? "Stripe will charge the prorated difference today."
-          : "Your plan will switch to monthly at the end of the current period.",
+          ? t("billing2.planHook.chargeToday")
+          : t("billing2.planHook.switchMonthlyEnd"),
     });
   }
 
@@ -452,8 +454,8 @@ export function useYourPlanCard() {
       effectiveTier === "BUSINESS"
     ) {
       return pendingCycle === "yearly"
-        ? "Switch billing to Yearly?"
-        : "Switch billing to Monthly?";
+        ? t("billing2.planHook.switchYearlyTitle")
+        : t("billing2.planHook.switchMonthlyTitle");
     }
     return pendingCycle === "yearly"
       ? `Switch ${tierLabel} to yearly billing?`
@@ -477,12 +479,14 @@ export function useYourPlanCard() {
         currentYearlyCents <= currentMonthlyCents * 12;
       if (!hasPrices) {
         return [
-          { text: "You'll be charged the prorated difference today." },
+          {
+            text: t("billing2.planHook.chargeTodayBody"),
+          },
           {
             text:
               currentYearlyCents !== undefined
                 ? `Renews at ${formatCents(currentYearlyCents)}/year after this period.`
-                : "Renews on the new yearly cadence after this period.",
+                : t("billing2.planHook.renewsYearlyCadence"),
           },
         ];
       }
@@ -506,19 +510,32 @@ export function useYourPlanCard() {
       const chargedToday =
         prorationCreditCents > 0
           ? {
-              label: "Charged today:",
+              label: t("billing2.planHook.chargedToday"),
               text: `${formatCents(netChargeCents)} (prorated from your monthly plan).`,
             }
-          : { text: "You'll be charged the prorated difference today." };
+          : {
+              text: t("billing2.planHook.chargeTodayBody"),
+            };
       const renews = periodEndLabel
-        ? { label: "Renews", text: `${yearly}/year on ${periodEndLabel}.` }
-        : { label: "Renews", text: `at ${yearly}/year after this period.` };
+        ? {
+            label: t("billing2.planHook.renews"),
+            text: t("billing2.planHook.renewsOnDate", {
+              amount: yearly,
+              date: periodEndLabel,
+            }),
+          }
+        : {
+            label: t("billing2.planHook.renews"),
+            text: t("billing2.planHook.renewsAfter", { amount: yearly }),
+          };
       return [
         savingsPercent > 0
           ? { text: `Save ${savingsPercent}% with yearly billing.` }
           : null,
         {
-          label: tierLabel ? `${tierLabel} yearly:` : "Yearly:",
+          label: tierLabel
+            ? t("billing2.planHook.tierYearly", { tier: tierLabel })
+            : t("billing2.planHook.yearlyLabel"),
           text: `${yearly}/year (${monthlyEquivalent}/month).`,
         },
         chargedToday,
@@ -533,10 +550,15 @@ export function useYourPlanCard() {
       {
         text: periodEndLabel
           ? `Switches to monthly billing on ${periodEndLabel}.`
-          : "Switches to monthly at the end of your current yearly period.",
+          : t("billing2.planHook.switchMonthlyEndYearly"),
       },
-      monthly ? { label: "New price:", text: `${monthly}/month.` } : null,
-      { text: "No charge today." },
+      monthly
+        ? {
+            label: t("billing2.planHook.newPrice"),
+            text: t("billing2.planHook.newPriceValue", { amount: monthly }),
+          }
+        : null,
+      { text: t("billing2.planHook.noChargeToday") },
     ].filter((line): line is { label?: string; text: string } => line !== null);
   }
 
@@ -567,14 +589,20 @@ export function useYourPlanCard() {
     const newPrice =
       typeof targetCents === "number" ? formatCents(targetCents) : "";
     const cycleNoun = serverCycle === "yearly" ? "yearly" : "monthly";
-    const cycleUnit = serverCycle === "yearly" ? "year" : "month";
+    const cycleUnit =
+      serverCycle === "yearly"
+        ? t("billing2.offer.perYear")
+        : t("billing2.offer.perMonth");
     const renewLine = newPrice
-      ? `After this period, your plan renews at ${newPrice} per ${cycleUnit}.`
+      ? t("billing2.planHook.renewsLine", {
+          amount: newPrice,
+          unit: cycleUnit,
+        })
       : "";
     return [
-      `You'll be charged the prorated difference immediately for the rest of your ${cycleNoun} period.`,
+      t("billing2.planHook.proratedImmediately", { cycle: cycleNoun }),
       renewLine,
-      "Your current usage carries over into the higher allowance.",
+      t("billing2.planHook.usageCarriesOver"),
     ]
       .filter(Boolean)
       .join(" ");
@@ -601,7 +629,12 @@ export function useYourPlanCard() {
       ? formatShortDate(plan.currentPeriodEnd * 1000)
       : null;
     if (periodEnd) {
-      return `You'll keep ${plan.label} (${cycleNoun}) until ${periodEnd}, then switch to ${targetLabel}. No charge today.`;
+      return t("billing2.planHook.downgradeBody", {
+        name: plan.label,
+        cycle: cycleNoun,
+        date: periodEnd,
+        tier: targetLabel,
+      });
     }
     return `Your plan will switch to ${targetLabel} at the close of the current billing period. No charge today.`;
   }

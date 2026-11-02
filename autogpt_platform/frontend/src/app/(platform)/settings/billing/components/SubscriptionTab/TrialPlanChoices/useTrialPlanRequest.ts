@@ -13,6 +13,7 @@ import { getGetTrialsGetTrialStatusQueryKey } from "@/app/api/__generated__/endp
 import type { TrialOfferResponse } from "@/app/api/__generated__/models/trialOfferResponse";
 import { toast } from "@/components/molecules/Toast/use-toast";
 import { useAuthStore } from "@/lib/auth/hooks/useAuthStore";
+import { useT } from "@/lib/i18n";
 
 import { readTier } from "../helpers";
 import {
@@ -28,6 +29,7 @@ export interface PaymentPage {
 }
 
 export function useTrialPlanRequest(offer: TrialOfferResponse) {
+  const t = useT();
   const userID = useAuthStore((state) => state.user?.id);
   const queryClient = useQueryClient();
   const { mutateAsync: updateTier } = useUpdateSubscriptionTier();
@@ -52,8 +54,8 @@ export function useTrialPlanRequest(offer: TrialOfferResponse) {
       // change, charged without the confirmation this page shows.
       if (!(await isStillOnTrial())) {
         toast({
-          title: "Your plan changed",
-          description: "Review your current plan below.",
+          title: t("billing2.trialRequest.planChanged"),
+          description: t("billing2.trialRequest.reviewPlan"),
         });
         await refreshBilling();
         return;
@@ -69,16 +71,18 @@ export function useTrialPlanRequest(offer: TrialOfferResponse) {
         setPaymentPage({ ownerID: requestUserID, plan, url: data.url });
         return;
       }
-      toast(describePlanResult(plan, data?.tier));
+      toast(describePlanResult(plan, data?.tier, t));
       await refreshBilling();
     } catch (error) {
       if (useAuthStore.getState().user?.id !== requestUserID) return;
       // A toast, not an inline alert: the refresh below usually unmounts these
       // choices (the trial was resumed or ended elsewhere).
       toast({
-        title: `Unable to start ${plan.label}`,
+        title: t("billing2.trialRequest.unable", { name: plan.label }),
         description:
-          error instanceof Error ? error.message : "Please try again.",
+          error instanceof Error
+            ? error.message
+            : t("billing2.trialRequest.tryAgain"),
         variant: "destructive",
       });
       await refreshBilling();

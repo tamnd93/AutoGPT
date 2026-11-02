@@ -6,6 +6,7 @@ import { ConfirmTrialPlanDialog } from "./ConfirmTrialPlanDialog";
 import { ConfirmWithBankDialog } from "./ConfirmWithBankDialog";
 import { formatChoicePrice } from "./helpers";
 import { PlanChoice } from "./PlanChoice";
+import { useT } from "@/lib/i18n";
 import { useTrialPlanChoices } from "./useTrialPlanChoices";
 
 interface Props {
@@ -13,6 +14,7 @@ interface Props {
 }
 
 export function TrialPlanChoices({ offer }: Props) {
+  const t = useT();
   const {
     isVisible,
     ownPlan,
@@ -32,11 +34,16 @@ export function TrialPlanChoices({ offer }: Props) {
   const dialogPlan = confirmPlan ?? ownPlan;
 
   return (
-    <section aria-label="Plan choices" className="flex flex-col gap-3">
+    <section
+      aria-label={t("billing2.trialChoices.aria")}
+      className="flex flex-col gap-3"
+    >
       <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <PlanChoice
           plan={ownPlan}
-          actionLabel={`Subscribe to ${ownPlan.label}`}
+          actionLabel={t("billing2.trialChoices.subscribe", {
+            name: ownPlan.label,
+          })}
           variant="primary"
           isLoading={requestedTier === ownPlan.tier}
           isDisabled={isBusy}
@@ -45,7 +52,9 @@ export function TrialPlanChoices({ offer }: Props) {
         {upgradePlan ? (
           <PlanChoice
             plan={upgradePlan}
-            actionLabel={`Upgrade to ${upgradePlan.label}`}
+            actionLabel={t("billing2.trialChoices.upgrade", {
+              name: upgradePlan.label,
+            })}
             variant="outline"
             isLoading={requestedTier === upgradePlan.tier}
             isDisabled={isBusy}
@@ -56,7 +65,7 @@ export function TrialPlanChoices({ offer }: Props) {
       <ConfirmTrialPlanDialog
         isOpen={confirmPlan !== null}
         planLabel={dialogPlan.label}
-        price={formatChoicePrice(dialogPlan)}
+        price={formatChoicePrice(dialogPlan, t)}
         isSaving={requestedTier === dialogPlan.tier}
         onConfirm={onConfirmPlan}
         onClose={onCloseConfirm}

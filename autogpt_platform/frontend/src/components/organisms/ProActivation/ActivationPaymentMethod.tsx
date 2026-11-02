@@ -2,8 +2,10 @@ import { useGetV1ManagePaymentMethods } from "@/app/api/__generated__/endpoints/
 import { Button } from "@/components/atoms/Button/Button";
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { CreditCardIcon, LinkSquare01Icon } from "@hugeicons/core-free-icons";
+import { useT } from "@/lib/i18n";
 
 export function ActivationPaymentMethod() {
+  const t = useT();
   const { data } = useGetV1ManagePaymentMethods({ query: { retry: false } });
   const raw = data?.data;
   const portal =
@@ -23,7 +25,7 @@ export function ActivationPaymentMethod() {
         className="flex items-center gap-2 text-sm text-foreground-secondary"
       >
         <Icon icon={CreditCardIcon} size={18} />
-        Payment method
+        {t("billing2.activation.paymentMethod")}
       </div>
       <Button
         as="NextLink"
@@ -33,9 +35,9 @@ export function ActivationPaymentMethod() {
         variant="ghost"
         size="small"
         className="h-auto min-w-0 p-0 text-sm underline underline-offset-4"
-        aria-label="Manage payment method in a new tab"
+        aria-label={t("billing2.activation.manageAria")}
       >
-        Manage
+        {t("billing2.activation.manage")}
         <Icon icon={LinkSquare01Icon} size={14} />
       </Button>
     </div>

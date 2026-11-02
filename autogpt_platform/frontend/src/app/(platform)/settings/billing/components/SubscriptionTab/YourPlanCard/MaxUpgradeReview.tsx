@@ -1,6 +1,7 @@
 import { Button } from "@/components/atoms/Button/Button";
 import { Text } from "@/components/atoms/Text/Text";
 import { Skeleton } from "@/components/atoms/Skeleton/Skeleton";
+import { useT } from "@/lib/i18n";
 import { MaxUpgradeSummary } from "./MaxUpgradeSummary";
 import type { useTierUpgradePreview } from "./useTierUpgradePreview";
 
@@ -9,12 +10,13 @@ interface Props {
 }
 
 export function MaxUpgradeReview({ review }: Props) {
+  const t = useT();
   return (
     <div aria-live="polite">
       {review.isLoading && (
         <div className="space-y-3">
           <Text variant="small" tone="secondary">
-            Reviewing your charge…
+            {t("billing2.maxReview.reviewing")}
           </Text>
           <Skeleton className="h-48 rounded-2xl" />
         </div>
@@ -29,7 +31,7 @@ export function MaxUpgradeReview({ review }: Props) {
             {review.error}
           </Text>
           <Button variant="secondary" size="small" onClick={review.retry}>
-            Retry review
+            {t("billing2.maxReview.retry")}
           </Button>
         </div>
       )}

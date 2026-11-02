@@ -8,9 +8,18 @@ import {
   trialPlanLabels,
 } from "@/components/organisms/TrialCard/helpers";
 
+import type { MessageKey } from "@/lib/i18n/messages/en";
+import { getMessage } from "@/lib/i18n/translate";
 import { getCheckoutReturnURLs } from "../helpers";
 
 type PlanTier = TrialOfferResponse["tier"];
+
+export type Translate = (
+  key: MessageKey,
+  values?: Record<string, string | number>,
+) => string;
+
+const english: Translate = (key, values) => getMessage("en", key, values);
 
 // Team (BUSINESS) is contact-sales, so it is never offered as a self-serve
 // step up from a trial.
@@ -29,19 +38,23 @@ export function getCancelPendingOffer(trial: TrialStatusResponse | undefined) {
   return trial.cancel_at_period_end ? trial.offer : null;
 }
 
-export function getOwnPlanChoice(offer: TrialOfferResponse): PlanChoiceDetails {
+export function getOwnPlanChoice(
+  offer: TrialOfferResponse,
+  t: Translate = english,
+): PlanChoiceDetails {
   return {
     tier: offer.tier,
     label: trialPlanLabels[offer.tier],
     amount: formatPlanAmount(offer),
     cadence: getCadence(offer),
-    description: "Starts today. Your trial ends and the plan takes over.",
+    description: t("billing2.trialChoices.ownDescription"),
   };
 }
 
 export function getUpgradePlanChoice(
   offer: TrialOfferResponse,
   subscription: SubscriptionStatusResponse,
+  t: Translate = english,
 ): PlanChoiceDetails | null {
   const tier = getNextSelfServeTier(offer.tier);
   if (!tier) return null;
@@ -61,12 +74,20 @@ export function getUpgradePlanChoice(
       offer.tier,
       tier,
       subscription.tier_multipliers,
+      t,
     ),
   };
 }
 
-export function formatChoicePrice(plan: PlanChoiceDetails) {
-  return `${plan.amount} / ${plan.cadence}`;
+export function formatChoicePrice(
+  plan: PlanChoiceDetails,
+  t: Translate = english,
+) {
+  return `${plan.amount} / ${
+    plan.cadence === "year"
+      ? t("billing2.offer.perYear")
+      : t("billing2.offer.perMonth")
+  }`;
 }
 
 export function findPlanChoice(
@@ -81,16 +102,16 @@ export function findPlanChoice(
 export function describePlanResult(
   plan: PlanChoiceDetails,
   tier: SubscriptionStatusResponse["tier"] | undefined,
+  t: Translate = english,
 ) {
   if (tier === plan.tier)
     return {
-      title: `You're on ${plan.label}`,
-      description: "Your trial has ended and your plan starts today.",
+      title: t("billing2.trialChoices.onPlan", { name: plan.label }),
+      description: t("billing2.trialChoices.planStartsToday"),
     };
   return {
-    title: "Payment received",
-    description:
-      "Your plan is still being set up. This page updates when it's ready.",
+    title: t("billing2.trialChoices.paymentReceived"),
+    description: t("billing2.trialChoices.settingUp"),
   };
 }
 
@@ -121,13 +142,17 @@ function describeUpgrade(
   own: PlanTier,
   upgrade: PlanTier,
   multipliers: Record<string, number> | undefined,
+  t: Translate,
 ) {
   const ownLabel = trialPlanLabels[own];
   const ratio = (multipliers?.[upgrade] ?? 0) / (multipliers?.[own] ?? 0);
   if (!Number.isFinite(ratio) || ratio <= 1)
-    return `More usage than ${ownLabel} for people who run a lot.`;
+    return t("billing2.trialChoices.moreUsage", { name: ownLabel });
   const multiple = String(Math.round(ratio * 10) / 10);
-  return `${multiple}x the usage of ${ownLabel} for people who run a lot.`;
+  return t("billing2.trialChoices.multipleUsage", {
+    multiple,
+    name: ownLabel,
+  });
 }
 
 function getCadence(offer: TrialOfferResponse) {

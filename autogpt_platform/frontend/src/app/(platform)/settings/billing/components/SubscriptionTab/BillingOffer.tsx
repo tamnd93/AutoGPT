@@ -11,6 +11,7 @@ import {
   getFeaturedUsagePercent,
   getUsageStatus,
 } from "@/services/usageExperience/helpers";
+import { useT } from "@/lib/i18n";
 import { formatCents } from "../../helpers";
 import {
   ENTERPRISE_CONTACT_URL,
@@ -23,6 +24,7 @@ interface Props {
 }
 
 export function BillingOffer({ controller }: Props) {
+  const t = useT();
   const { experience, trial, subscription, usage } = useUsageExperience();
   const activation = useProActivation();
   const isTrial = experience.isActiveTrial;
@@ -37,10 +39,10 @@ export function BillingOffer({ controller }: Props) {
   if (activation.isReady && experience.tier === "PRO")
     return (
       <SupportOffer
-        eyebrow="AutoGPT Pro"
-        title="Pro is active"
-        description="Pro is active. Pick up where you left off with your conversations and workflows."
-        label="Back to your work"
+        eyebrow={t("billing2.offer.proEyebrow")}
+        title={t("billing2.offer.proTitle")}
+        description={t("billing2.offer.proBody")}
+        label={t("billing2.offer.backToWork")}
         href="/copilot"
         ready
       />
@@ -48,17 +50,17 @@ export function BillingOffer({ controller }: Props) {
   if (!canUpgrade || !target)
     return (
       <SupportOffer
-        eyebrow="Your plan"
-        title="Need more capacity?"
+        eyebrow={t("billing2.offer.planEyebrow")}
+        title={t("billing2.offer.capacityTitle")}
         description={
           experience.tier === "ENTERPRISE"
-            ? "For additional capacity or changes to your plan, your account team is ready to help."
-            : "When your work calls for more capacity, talk with us about what you need."
+            ? t("billing2.offer.capacityEnterprise")
+            : t("billing2.offer.capacityDefault")
         }
         label={
           experience.tier === "ENTERPRISE"
-            ? "Contact account team"
-            : "Contact us"
+            ? t("billing2.offer.contactAccountTeam")
+            : t("billing2.offer.contactUs")
         }
         href={
           experience.tier === "MAX" ? TEAM_UPGRADE_URL : ENTERPRISE_CONTACT_URL
@@ -67,9 +69,17 @@ export function BillingOffer({ controller }: Props) {
     );
   const price =
     isTrial && trial?.offer
-      ? `${formatOfferPrice(trial.offer.unit_amount, trial.offer.currency)} / ${trial.offer.billing_cycle === "yearly" ? "year" : "month"}`
+      ? `${formatOfferPrice(trial.offer.unit_amount, trial.offer.currency)} / ${
+          trial.offer.billing_cycle === "yearly"
+            ? t("billing2.offer.perYear")
+            : t("billing2.offer.perMonth")
+        }`
       : controller?.offerPriceCents !== undefined
-        ? `${formatCents(controller.offerPriceCents)} / ${controller.plan?.billingCycle === "yearly" ? "year" : "month"}`
+        ? `${formatCents(controller.offerPriceCents)} / ${
+            controller.plan?.billingCycle === "yearly"
+              ? t("billing2.offer.perYear")
+              : t("billing2.offer.perMonth")
+          }`
         : null;
   const multipliers = subscription?.tier_multipliers;
   const multiplier =
@@ -77,29 +87,28 @@ export function BillingOffer({ controller }: Props) {
       ? Math.round((multipliers.MAX / multipliers.PRO) * 10) / 10
       : null;
   const benefits = isTrial
-    ? [
-        "A full daily and weekly allowance once payment goes through",
-        "Your chats, workflows and files stay where they are",
-      ]
+    ? [t("billing2.offer.trialBenefit1"), t("billing2.offer.trialBenefit2")]
     : target === "Max"
       ? [
           multiplier
             ? `${multiplier}× the usage of Pro`
-            : "More room for demanding work",
-          "More workspace storage and priority support",
+            : t("billing2.offer.maxBenefit1"),
+          t("billing2.offer.maxBenefit2"),
         ]
-      : [
-          "Experts for content, sales and research, with Otto coordinating",
-          "Workflows that keep working in the background on a schedule",
-        ];
+      : [t("billing2.offer.proBenefit1"), t("billing2.offer.proBenefit2")];
   const quiet =
     isTrial &&
     getUsageStatus(getFeaturedUsagePercent(experience, usage)) === "plenty";
   const title = quiet
     ? formatTrialStartTitle(experience.trialEndsAt)
     : isTrial
-      ? "Start Pro now"
-      : `${experience.tier === "NO_TIER" ? "Start" : "Upgrade to"} ${target}`;
+      ? t("billing2.offer.startProNow")
+      : t(
+          experience.tier === "NO_TIER"
+            ? "billing2.offer.startTier"
+            : "billing2.offer.upgradeToTier",
+          { tier: target },
+        );
   return (
     <BillingPlanOffer
       target={target}
@@ -108,7 +117,7 @@ export function BillingOffer({ controller }: Props) {
       description={
         isTrial && experience.freshProUsage
           ? quiet
-            ? "Your trial keeps going until then. You can also start today."
+            ? t("billing2.offer.trialQuietBody")
             : formatTrialStartDescription(experience.trialEndsAt)
           : undefined
       }
@@ -116,9 +125,12 @@ export function BillingOffer({ controller }: Props) {
       benefits={benefits}
       actionLabel={
         quiet
-          ? "Start Pro now"
+          ? t("billing2.offer.startProNow")
           : isTrial && price
-            ? `${title} · ${price.split(" / ")[0]}`
+            ? t("billing2.offer.actionWithPrice", {
+                title,
+                price: price.split(" / ")[0],
+              })
             : title
       }
       onAction={
@@ -133,10 +145,10 @@ export function BillingOffer({ controller }: Props) {
       }
       caption={
         isTrial
-          ? "Starting now ends your trial early. You’ll review the charge first."
+          ? t("billing2.offer.trialCaption")
           : target === "Max"
-            ? "What you’ve already used counts toward Max’s higher limit."
-            : "Review your options before paying."
+            ? t("billing2.offer.maxCaption")
+            : t("billing2.offer.defaultCaption")
       }
     />
   );

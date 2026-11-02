@@ -4,6 +4,7 @@ import { Button } from "@/components/atoms/Button/Button";
 import { Text } from "@/components/atoms/Text/Text";
 import { formatCents } from "../../../helpers";
 import { Dialog } from "@/components/molecules/Dialog/Dialog";
+import { useT } from "@/lib/i18n";
 import { formatUpgradeAmount } from "./MaxUpgradeSummary";
 import { MaxUpgradeReview } from "./MaxUpgradeReview";
 import type { useTierUpgradePreview } from "./useTierUpgradePreview";
@@ -39,19 +40,27 @@ export function SwitchTierDialog({
   usageMultiplier,
   upgradeReview,
 }: Props) {
+  const t = useT();
   const preview = upgradeReview?.preview;
   const reviewing = upgradeReview?.required;
   const cannotConfirm = isSaving || (reviewing && !preview);
   const action = preview
-    ? `Pay ${formatUpgradeAmount(preview.amount_due, preview.currency)} and upgrade`
-    : (confirmLabel ?? `Upgrade to ${targetTierLabel}`);
+    ? t("billing2.switchTier.pay", {
+        amount: formatUpgradeAmount(preview.amount_due, preview.currency),
+      })
+    : (confirmLabel ??
+      t("billing2.switchTier.upgradeAction", { name: targetTierLabel }));
   return (
     <Dialog
       variant="compact"
       title={
         <div className="space-y-2 pr-7">
           <Text variant="small" className="text-foreground-tertiary">
-            {title ? "Your subscription" : `Upgrade to ${targetTierLabel}`}
+            {title
+              ? t("billing2.switchTier.eyebrow")
+              : t("billing2.switchTier.upgradeAction", {
+                  name: targetTierLabel,
+                })}
           </Text>
           <Text
             variant="h3"
@@ -59,7 +68,8 @@ export function SwitchTierDialog({
             // TODO(tokens): SECRT-3152 rare size (text-[26px])
             className="block text-[26px] leading-8 tracking-tight"
           >
-            {title ?? `Upgrade to ${targetTierLabel}`}
+            {title ??
+              t("billing2.switchTier.upgradeAction", { name: targetTierLabel })}
           </Text>
         </div>
       }
@@ -73,8 +83,10 @@ export function SwitchTierDialog({
             className="mb-5 leading-6 text-foreground-secondary"
           >
             {usageMultiplier
-              ? `${usageMultiplier} times the usage of Pro and priority support.`
-              : "More room for demanding work and priority support."}
+              ? t("billing2.switchTier.carryOver", {
+                  multiple: usageMultiplier,
+                })
+              : t("billing2.switchTier.carryOverDefault")}
           </Text>
         )}
         {reviewing ? (
@@ -83,14 +95,21 @@ export function SwitchTierDialog({
           <>
             {priceCents !== undefined && (
               <div className="mb-5 flex flex-wrap items-baseline justify-between gap-3 rounded-2xl border border-border-base bg-surface-muted p-5">
-                <Text variant="large-medium">AutoGPT {targetTierLabel}</Text>
+                <Text variant="large-medium">
+                  {t("billing2.switchTier.planTitle", {
+                    name: targetTierLabel,
+                  })}
+                </Text>
                 <div>
                   <Text variant="h3" as="span">
                     {formatCents(priceCents)}
                   </Text>
                   <Text variant="small" as="span" tone="secondary">
                     {" "}
-                    / {billingCycle === "yearly" ? "year" : "month"}
+                    /{" "}
+                    {billingCycle === "yearly"
+                      ? t("billing2.offer.perYear")
+                      : t("billing2.offer.perMonth")}
                   </Text>
                 </div>
               </div>
@@ -106,10 +125,11 @@ export function SwitchTierDialog({
             tone="secondary"
             className="mt-4 rounded-xl bg-surface-muted p-4 leading-6"
           >
-            You can keep going once payment goes through. What you’ve already
-            used counts toward Max’s limit
+            {t("billing2.switchTier.carryOverBodyLead")}
             {usageMultiplier
-              ? `, which is ${usageMultiplier} times as high as Pro’s.`
+              ? t("billing2.switchTier.carryOverBodyMultiple", {
+                  multiple: usageMultiplier,
+                })
               : "."}
           </Text>
         )}
@@ -134,7 +154,7 @@ export function SwitchTierDialog({
                 onClick={() => onOpenChange(false)}
                 disabled={isSaving}
               >
-                Keep Pro
+                {t("billing2.switchTier.keepPro")}
               </Button>
             </>
           ) : (
@@ -146,7 +166,7 @@ export function SwitchTierDialog({
                 onClick={() => onOpenChange(false)}
                 disabled={isSaving}
               >
-                Cancel
+                {t("billing2.switchTier.cancel")}
               </Button>
               <ConfirmButton
                 label={action}

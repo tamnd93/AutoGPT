@@ -7,6 +7,7 @@ import {
   fireEvent,
   waitFor,
 } from "@/tests/integrations/test-utils";
+import { LocaleProvider } from "@/lib/i18n";
 import { server } from "@/mocks/mock-server";
 import { restoreFromBackForwardCache } from "@/tests/integrations/back-forward-cache";
 
@@ -35,6 +36,27 @@ function captureTopUpRequest() {
 }
 
 describe("TopUpForm", () => {
+  test("reads the form and its validation in Vietnamese", async () => {
+    captureTopUpRequest();
+
+    render(
+      <LocaleProvider locale="vi">
+        <TopUpForm />
+      </LocaleProvider>,
+    );
+
+    fireEvent.change(screen.getByLabelText("Số tiền"), {
+      target: { value: "3" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Nạp tiền" }));
+
+    expect(
+      await screen.findByText(
+        /Nạp tiền bắt đầu từ \$5\. Vui lòng nhập số tiền cao hơn\./,
+      ),
+    ).toBeDefined();
+  });
+
   beforeEach(() => {
     routerPush.mockClear();
   });

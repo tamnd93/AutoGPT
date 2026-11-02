@@ -6,6 +6,7 @@ import { Button } from "@/components/atoms/Button/Button";
 import { Skeleton } from "@/components/atoms/Skeleton/Skeleton";
 import { Text } from "@/components/atoms/Text/Text";
 import { ErrorCard } from "@/components/molecules/ErrorCard/ErrorCard";
+import { useT } from "@/lib/i18n";
 
 import {
   getSectionMotionProps,
@@ -29,6 +30,7 @@ const STATUS_VARIANT: Record<string, "success" | "info" | "error"> = {
 };
 
 export function InvoicesCard({ index = 0 }: Props) {
+  const t = useT();
   const reduceMotion = useReducedMotion();
   const { invoices, isLoading, isError, refetch } = useInvoicesCard();
   const sectionMotion = getSectionMotionProps(index, Boolean(reduceMotion));
@@ -44,8 +46,8 @@ export function InvoicesCard({ index = 0 }: Props) {
   if (isError) {
     return (
       <ErrorCard
-        context="invoices"
-        hint="We couldn't load your invoices."
+        context={t("billing2.invoices.errorContext")}
+        hint={t("billing2.invoices.errorHint")}
         onRetry={() => void refetch()}
       />
     );
@@ -55,7 +57,7 @@ export function InvoicesCard({ index = 0 }: Props) {
     <motion.section {...sectionMotion} className="flex w-full flex-col gap-2">
       <div className="px-1">
         <Text variant="body-medium" as="span" className="text-textBlack">
-          Invoices
+          {t("billing2.invoices.title")}
         </Text>
       </div>
 
@@ -67,7 +69,7 @@ export function InvoicesCard({ index = 0 }: Props) {
               as="span"
               className="text-foreground-tertiary"
             >
-              No invoices yet.
+              {t("billing2.invoices.empty")}
             </Text>
           </div>
         ) : (
@@ -75,13 +77,19 @@ export function InvoicesCard({ index = 0 }: Props) {
             <table className="w-full border-collapse text-left">
               <thead className="bg-surface-muted">
                 <tr className="border-b border-border-base">
-                  <Th>Invoice</Th>
-                  <Th className="hidden sm:table-cell">Date</Th>
-                  <Th className="hidden md:table-cell">Description</Th>
-                  <Th align="right">Amount</Th>
-                  <Th>Status</Th>
+                  <Th>{t("billing2.invoices.columnInvoice")}</Th>
+                  <Th className="hidden sm:table-cell">
+                    {t("billing2.invoices.columnDate")}
+                  </Th>
+                  <Th className="hidden md:table-cell">
+                    {t("billing2.invoices.columnDescription")}
+                  </Th>
+                  <Th align="right">{t("billing2.invoices.columnAmount")}</Th>
+                  {t("billing2.invoices.columnStatus")}
                   <th scope="col" className="w-12 px-2 py-3 sm:px-4">
-                    <span className="sr-only">Download</span>
+                    <span className="sr-only">
+                      {t("billing2.invoices.download")}
+                    </span>
                   </th>
                 </tr>
               </thead>
@@ -148,7 +156,9 @@ export function InvoicesCard({ index = 0 }: Props) {
                       <Button
                         variant="secondary"
                         size="small"
-                        aria-label={`Download invoice ${invoice.number}`}
+                        aria-label={t("billing2.invoices.downloadAria", {
+                          number: invoice.number,
+                        })}
                         className="h-7 min-w-0 px-1.5 py-0.5"
                         disabled={!invoice.pdfUrl}
                         onClick={() => {

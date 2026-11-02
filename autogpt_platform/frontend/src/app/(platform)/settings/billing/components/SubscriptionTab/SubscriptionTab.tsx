@@ -4,6 +4,7 @@ import { Text } from "@/components/atoms/Text/Text";
 import { TrialCard } from "@/components/organisms/TrialCard/TrialCard";
 import { TrialCheckoutConfirmation } from "@/components/organisms/TrialCard/TrialCheckoutConfirmation";
 import { PaymentRecoveryCard } from "@/components/organisms/UsageExperience/PaymentRecoveryCard";
+import { useT } from "@/lib/i18n";
 
 import { BillingOffer } from "./BillingOffer";
 import { AutopilotUsageCard } from "./AutopilotUsageCard/AutopilotUsageCard";
@@ -18,6 +19,7 @@ interface Props {
 }
 
 export function SubscriptionTab({ isPlanCheckoutReturn = false }: Props) {
+  const t = useT();
   const {
     showPlan,
     showTrialCard,
@@ -35,13 +37,13 @@ export function SubscriptionTab({ isPlanCheckoutReturn = false }: Props) {
         {paymentFailed ? (
           <PaymentRecoveryCard
             payment={payment}
-            fallback="Update your payment method below to continue. Your chats, workflows and results are saved."
+            fallback={t("billing2.subscription.recoveryFallback")}
           />
         ) : null}
         {showTrialCard ? <TrialCard /> : null}
         {isConfirmingPlan ? (
           <Text variant="small" tone="secondary" role="status" className="px-4">
-            Finishing your new plan…
+            {t("billing2.subscription.finishingPlan")}
           </Text>
         ) : null}
         {planChoicesOffer ? (

@@ -1,5 +1,6 @@
 "use client";
 
+import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
 interface Props {
@@ -11,10 +12,11 @@ interface Props {
 const CYCLES = ["monthly", "yearly"] as const;
 
 export function CycleToggle({ value, onChange, disabled }: Props) {
+  const t = useT();
   return (
     <div
       role="radiogroup"
-      aria-label="Billing cycle"
+      aria-label={t("billing2.cycle.aria")}
       // TODO(tokens): no exact role (border-[#d8d8d8])
       className="inline-flex rounded-full border border-[#d8d8d8] bg-surface-hover p-[3px]"
     >
@@ -37,15 +39,15 @@ export function CycleToggle({ value, onChange, disabled }: Props) {
             )}
           >
             {cycle === "monthly" ? (
-              "Monthly"
+              t("billing2.cycle.monthly")
             ) : (
               <>
-                Yearly{" "}
+                {t("billing2.cycle.yearly")}{" "}
                 <span
                   // TODO(tokens): no exact role (from-green-500 #16A34A, via-emerald-500 #10B981, to-teal-500 #14B8A6)
                   className="ml-1 bg-gradient-to-r from-green-500 via-emerald-500 to-teal-500 bg-clip-text text-caption-sm font-semibold leading-inherit text-transparent"
                 >
-                  Save 15%
+                  {t("billing2.cycle.save")}
                 </span>
               </>
             )}

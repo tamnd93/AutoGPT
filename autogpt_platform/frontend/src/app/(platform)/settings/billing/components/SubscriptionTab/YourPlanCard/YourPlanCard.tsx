@@ -17,6 +17,7 @@ import {
 import { CycleToggle } from "./CycleToggle";
 import { SwitchCycleDialog } from "./SwitchCycleDialog";
 import { SwitchTierDialog } from "./SwitchTierDialog";
+import { useLocale, useT } from "@/lib/i18n";
 import { ENTERPRISE_CONTACT_URL, useYourPlanCard } from "./useYourPlanCard";
 import { LinkSquare01Icon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/atoms/Icon/Icon";
@@ -27,6 +28,8 @@ interface Props {
 }
 
 export function YourPlanCard({ index = 0, showUsage = false }: Props) {
+  const t = useT();
+  const locale = useLocale();
   const reduceMotion = useReducedMotion();
   const controller = useYourPlanCard();
   const {
@@ -67,7 +70,10 @@ export function YourPlanCard({ index = 0, showUsage = false }: Props) {
   const sectionMotion = getSectionMotionProps(index, Boolean(reduceMotion));
 
   if (plan?.tierKey === "TRIAL") return null;
-  if (isError) return <ErrorCard context="your subscription" onRetry={retry} />;
+  if (isError)
+    return (
+      <ErrorCard context={t("billing2.plan.errorContext")} onRetry={retry} />
+    );
 
   if (isLoading || !plan) {
     return (
@@ -81,7 +87,7 @@ export function YourPlanCard({ index = 0, showUsage = false }: Props) {
     <motion.section {...sectionMotion} className="flex w-full flex-col gap-4">
       <div className="sr-only">
         <Text variant="body-medium" as="span" className="text-textBlack">
-          Your plan
+          {t("billing2.plan.aria")}
         </Text>
       </div>
 
@@ -105,14 +111,14 @@ export function YourPlanCard({ index = 0, showUsage = false }: Props) {
               }
             >
               {!plan.isPaidPlan
-                ? "Inactive"
+                ? t("billing2.plan.badge.inactive")
                 : plan.isPendingCancel
-                  ? "Cancellation scheduled"
+                  ? t("billing2.plan.badge.cancellationScheduled")
                   : plan.isPendingDowngrade
-                    ? "Downgrade scheduled"
+                    ? t("billing2.plan.badge.downgradeScheduled")
                     : plan.isPendingCycleSwitch
-                      ? "Cycle switch scheduled"
-                      : "Active"}
+                      ? t("billing2.plan.badge.cycleSwitchScheduled")
+                      : t("billing2.plan.badge.active")}
             </Badge>
             {isCycleToggleVisible ? (
               <CycleToggle
@@ -124,33 +130,49 @@ export function YourPlanCard({ index = 0, showUsage = false }: Props) {
           </div>
           {plan.isAdminManaged ? (
             <Text variant="body" as="span" className="text-foreground-body">
-              Managed by your AutoGPT account team.{" "}
+              {t("billing2.plan.managed")}{" "}
               <a
                 href={ENTERPRISE_CONTACT_URL}
                 // TODO(tokens): no fitting role for hover:text-purple-600 #6C2EDF; #6C2EDF is brand-hover, a hover fill
                 className="font-medium text-brand no-underline hover:text-purple-600"
               >
-                Contact us
+                {t("billing2.plan.contactUs")}
               </a>{" "}
-              for changes.
+              {t("billing2.plan.forChanges")}
             </Text>
           ) : plan.isPaidPlan ? (
             <Text variant="body" as="span" className="text-foreground-body">
               {formatCents(plan.monthlyCostCents)}
-              {plan.billingCycle === "yearly" ? " / year" : " / month"}
+              {plan.billingCycle === "yearly"
+                ? t("billing2.plan.perYear")
+                : t("billing2.plan.perMonth")}
               {plan.isPendingCancel && plan.pendingEffectiveAt
-                ? ` · Ends on ${formatShortDate(plan.pendingEffectiveAt)}`
-                : plan.isPendingDowngrade && plan.pendingEffectiveAt
-                  ? ` · Switches to ${plan.pendingTierLabel} on ${formatShortDate(plan.pendingEffectiveAt)}`
+                ? t("billing2.plan.endsOn", {
+                    date: formatShortDate(plan.pendingEffectiveAt, locale),
+                  })
+                : plan.isPendingDowngrade &&
+                    plan.pendingEffectiveAt &&
+                    plan.pendingTierLabel
+                  ? t("billing2.plan.switchesTo", {
+                      tier: plan.pendingTierLabel,
+                      date: formatShortDate(plan.pendingEffectiveAt, locale),
+                    })
                   : plan.isPendingCycleSwitch && plan.pendingEffectiveAt
-                    ? ` · Active until ${formatShortDate(plan.pendingEffectiveAt)}`
+                    ? t("billing2.plan.activeUntil", {
+                        date: formatShortDate(plan.pendingEffectiveAt, locale),
+                      })
                     : plan.currentPeriodEnd
-                      ? ` · Renews on ${formatShortDate(plan.currentPeriodEnd * 1000)}`
+                      ? t("billing2.plan.renewsOn", {
+                          date: formatShortDate(
+                            plan.currentPeriodEnd * 1000,
+                            locale,
+                          ),
+                        })
                       : null}
             </Text>
           ) : (
             <Text variant="body" as="span" className="text-foreground-body">
-              Pick a plan to continue using AutoGPT.
+              {t("billing2.plan.pickPlan")}
             </Text>
           )}
           {plan.isPaidPlan &&
@@ -162,8 +184,12 @@ export function YourPlanCard({ index = 0, showUsage = false }: Props) {
               as="span"
               className="text-foreground-tertiary"
             >
-              Switching to {plan.pendingCycle} {plan.label} on{" "}
-              {formatShortDate(plan.pendingEffectiveAt)} · No charge today
+              {t("billing2.plan.pendingSwitch", {
+                cycle: plan.pendingCycle,
+                name: plan.label,
+                date: formatShortDate(plan.pendingEffectiveAt, locale),
+              })}{" "}
+              {t("billing2.plan.noChargeToday")}
             </Text>
           ) : null}
         </div>
@@ -178,10 +204,10 @@ export function YourPlanCard({ index = 0, showUsage = false }: Props) {
               loading={isUpdatingTier}
             >
               {plan.isPendingCancel
-                ? "Resume subscription"
+                ? t("billing2.plan.resumeSubscription")
                 : plan.isPendingCycleSwitch
-                  ? "Cancel cycle switch"
-                  : "Cancel downgrade"}
+                  ? t("billing2.plan.cancelCycleSwitch")
+                  : t("billing2.plan.cancelDowngrade")}
             </Button>
           ) : null}
           {canDowngrade && plan.previousTierLabel ? (
@@ -192,7 +218,9 @@ export function YourPlanCard({ index = 0, showUsage = false }: Props) {
               disabled={isUpdatingTier || isRedirecting}
               loading={isUpdatingTier}
             >
-              Downgrade to {plan.previousTierLabel}
+              {t("billing2.plan.downgradeTo", {
+                tier: plan.previousTierLabel,
+              })}
             </Button>
           ) : null}
           {plan.isPaidPlan && !plan.isAdminManaged ? (
@@ -202,7 +230,7 @@ export function YourPlanCard({ index = 0, showUsage = false }: Props) {
               onClick={onManage}
               disabled={!canManagePortal}
             >
-              Manage subscription
+              {t("billing2.plan.manageSubscription")}
             </Button>
           ) : null}
           {canUpgrade &&
@@ -221,10 +249,10 @@ export function YourPlanCard({ index = 0, showUsage = false }: Props) {
               }
             >
               {!plan.isPaidPlan
-                ? `Start ${plan.nextTierLabel}`
+                ? t("billing2.plan.startTier", { tier: plan.nextTierLabel })
                 : plan.nextTierIsTeamLink
-                  ? `Talk to sales — ${plan.nextTierLabel}`
-                  : `Upgrade to ${plan.nextTierLabel}`}
+                  ? t("billing2.plan.talkToSales", { tier: plan.nextTierLabel })
+                  : t("billing2.plan.upgradeTo", { tier: plan.nextTierLabel })}
             </Button>
           ) : null}
         </div>
@@ -278,8 +306,12 @@ export function YourPlanCard({ index = 0, showUsage = false }: Props) {
             if (!open) onCancelTierDowngrade();
           }}
           targetTierLabel={pendingTierDowngradeLabel}
-          title={`Downgrade to ${pendingTierDowngradeLabel}?`}
-          confirmLabel={`Downgrade to ${pendingTierDowngradeLabel}`}
+          title={t("billing2.plan.downgradeTitle", {
+            tier: pendingTierDowngradeLabel,
+          })}
+          confirmLabel={t("billing2.plan.downgradeAction", {
+            tier: pendingTierDowngradeLabel,
+          })}
           body={tierDowngradeDialogBody}
           isSaving={isUpdatingTier}
           onConfirm={onConfirmTierDowngrade}
