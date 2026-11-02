@@ -37,7 +37,8 @@ export const Shared3En = {
 
   "shared3.searchInput.placeholder": "Search",
   "shared3.searchInput.searching": "Searching",
-  "shared3.searchInput.clear": "Clear search",  "shared3.sheet.close": "Close",
+  "shared3.searchInput.clear": "Clear search",
+  "shared3.sheet.close": "Close",
   "shared3.scrollArea.scrollToTop": "Scroll to top",
   "shared3.multiSelect.removeOption": "Remove {item} option",
   "shared3.multiSelect.removeRole": "button to remove option",
