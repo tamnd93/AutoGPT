@@ -29,7 +29,7 @@ export function OfficePreview({ file, downloadUrl }: Props) {
   }
 
   const isPresentation =
-    getFileTypeLabel(file.mime_type, file.name) === "Presentation";
+    getFileTypeLabel(file.mime_type, file.name, "en") === "Presentation";
 
   return (
     <div className="flex h-full min-h-0 flex-col gap-4">

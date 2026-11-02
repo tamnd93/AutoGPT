@@ -11,6 +11,7 @@ import {
   getFileTypeLabel,
   getPreviewKind,
 } from "../helpers";
+import { useLocale } from "@/lib/i18n";
 
 interface Props {
   file: WorkspaceFileItem;
@@ -20,6 +21,7 @@ interface Props {
 export const PREVIEW_IMAGE_WIDTH = 800;
 
 export function FilePreviewCard({ file }: Props) {
+  const locale = useLocale();
   const kind = getPreviewKind(file.mime_type, file.size_bytes, file.name);
 
   return (
@@ -46,9 +48,9 @@ export function FilePreviewCard({ file }: Props) {
             as="span"
             className="truncate text-foreground-tertiary"
           >
-            {getFileTypeLabel(file.mime_type, file.name)} ·{" "}
+            {getFileTypeLabel(file.mime_type, file.name, locale)} ·{" "}
             {formatFileSize(file.size_bytes)} ·{" "}
-            {formatDayLabel(file.created_at)}
+            {formatDayLabel(file.created_at, locale)}
           </Text>
         </div>
       </div>

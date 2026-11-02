@@ -12,6 +12,7 @@ import { FolderActionsMenu } from "../../WorkspaceFolders/FolderActionsMenu";
 import { folderSummary } from "../../WorkspaceFolders/folderTree";
 import { FOLDER_STYLE } from "../../WorkspaceFolders/folder-constants";
 import { formatDayLabel, formatFullDate } from "../helpers";
+import { useLocale } from "@/lib/i18n";
 import {
   ACTIONS_CELL_CLASS,
   DATE_CELL_CLASS,
@@ -50,6 +51,7 @@ export function FolderRow({
   onFileDrop,
   index = 0,
 }: Props) {
+  const locale = useLocale();
   const reduceMotion = useReducedMotion();
   const [isDragOver, setIsDragOver] = useState(false);
 
@@ -122,7 +124,7 @@ export function FolderRow({
         className={cn(DATE_CELL_CLASS, "text-foreground-tertiary")}
         title={formatFullDate(updatedAt)}
       >
-        {formatDayLabel(updatedAt)}
+        {formatDayLabel(updatedAt, locale)}
       </Text>
       <Text
         variant="body"

@@ -4,7 +4,7 @@ import { useExpertMap } from "@/app/(platform)/copilot/useExpertMap";
 import { Text } from "@/components/atoms/Text/Text";
 import type { Transition, Variants } from "framer-motion";
 import { motion, useReducedMotion } from "framer-motion";
-import { useT } from "@/lib/i18n";
+import { useLocale, useT } from "@/lib/i18n";
 import { useEffect } from "react";
 import { ArtifactsList } from "./components/ArtifactsList/ArtifactsList";
 import { getEmptyState } from "./components/ArtifactsList/helpers";
@@ -43,6 +43,7 @@ const MAIN_CLASS_NAME =
 
 export default function ArtifactsPage() {
   const t = useT();
+  const locale = useLocale();
   const reduceMotion = useReducedMotion();
   const {
     folders,
@@ -191,6 +192,7 @@ export default function ArtifactsPage() {
             isInFolder,
             hasFolders,
             folderId: selectedFolderId,
+            locale,
             expert: expertFilter
               ? {
                   id: expertFilter,

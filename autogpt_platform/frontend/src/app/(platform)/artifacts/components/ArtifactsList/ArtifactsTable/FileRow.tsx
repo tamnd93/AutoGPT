@@ -18,6 +18,7 @@ import { useFileDrag } from "../../WorkspaceFolders/useFileDrag";
 import { ExpertBadge } from "../ExpertBadge";
 import { FileActionsMenu } from "../FileActionsMenu";
 import { formatDayLabel, formatFileSize, formatFullDate } from "../helpers";
+import { useLocale } from "@/lib/i18n";
 import { FilePreviewCard } from "./FilePreviewCard";
 import { FileThumbnail } from "./FileThumbnail";
 import {
@@ -54,6 +55,7 @@ export function FileRow({
   selectedIds,
   onToggleSelect,
 }: Props) {
+  const locale = useLocale();
   const reduceMotion = useReducedMotion();
   const dragIds = isSelected ? selectedIds : [file.id];
   const dragLabel = dragIds.length > 1 ? `${dragIds.length} files` : file.name;
@@ -159,7 +161,7 @@ export function FileRow({
         className={cn(DATE_CELL_CLASS, "text-foreground-tertiary")}
         title={formatFullDate(file.created_at)}
       >
-        {formatDayLabel(file.created_at)}
+        {formatDayLabel(file.created_at, locale)}
       </Text>
       <Text
         variant="body"

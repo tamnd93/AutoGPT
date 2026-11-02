@@ -16,6 +16,7 @@ import {
 } from "../helpers";
 import { STAGGER_CAP, STAGGER_STEP_S } from "../ArtifactsTable/row-layout";
 import { CardPreview } from "./CardPreview";
+import { useLocale } from "@/lib/i18n";
 
 interface Props {
   file: WorkspaceFileItem;
@@ -47,6 +48,7 @@ const REDUCED_CARD_VARIANTS: Variants = {
 };
 
 export function ArtifactCard({ file, onOpen, index = 0 }: Props) {
+  const locale = useLocale();
   const typeIcon = getFileTypeIcon(file.mime_type, file.name);
   const reduceMotion = useReducedMotion();
   const { handleDragStart, handleDragEnd } = useFileDrag([file.id], file.name);
@@ -95,7 +97,7 @@ export function ArtifactCard({ file, onOpen, index = 0 }: Props) {
                 variant="small"
                 className="truncate text-foreground-tertiary"
               >
-                {getFileTypeLabel(file.mime_type, file.name)} ·{" "}
+                {getFileTypeLabel(file.mime_type, file.name, locale)} ·{" "}
                 {formatFileSize(file.size_bytes)} ·{" "}
                 {formatRelativeDate(file.created_at)}
               </Text>
