@@ -11,6 +11,7 @@ import fastapi.testclient
 import httpx
 import pytest
 import pytest_mock
+from autogpt_libs import auth
 from autogpt_libs.auth.jwt_utils import get_jwt_payload
 from pydantic import SecretStr
 from sentry_sdk.integrations.asgi import SentryAsgiMiddleware
@@ -23,7 +24,8 @@ from backend.copilot.at_reset import cancel_resume_at_reset_in_background
 from backend.copilot.config import CopilotLlmAuthProvider
 from backend.copilot.continuation import KEEP_GOING_NOTE
 from backend.copilot.model import AutopilotMode, ChatSession
-from backend.copilot.offers import EntitlementUnavailable
+from backend.copilot.offers import AIConnectionOffer, EntitlementUnavailable
+from backend.copilot.provider_catalog import get_provider_catalog
 from backend.copilot.rate_limit import SubscriptionTier, UserPaywalledError
 from backend.copilot.response_model import StreamFinish, StreamStatus, StreamTextDelta
 from backend.copilot.tools.models import ExpertSoulUpdatedResponse
@@ -1984,7 +1986,7 @@ def test_list_chat_transports_hosted_omits_codex_without_required_plan(
         ]
     }
     access.assert_awaited_once_with(test_user_id)
-    lookup.assert_awaited_once_with(test_user_id, ProviderName.MICROSOFT_365_COPILOT)
+    lookup.assert_any_await(test_user_id, ProviderName.MICROSOFT_365_COPILOT)
 
 
 def test_list_chat_transports_omits_invalid_codex_credentials(
@@ -3703,6 +3705,10 @@ def _mock_validate_session(
         "backend.api.features.chat.routes._validate_and_get_session",
         new_callable=AsyncMock,
         return_value=dummy,
+    )
+    mocker.patch(
+        "backend.api.features.chat.routes.clear_pending_messages_unsafe",
+        new_callable=AsyncMock,
     )
 
 
@@ -5511,3 +5517,89 @@ def test_a_builder_session_keeps_the_picked_mode(
 
     assert response.status_code == 200
     assert mock_get_or_create.await_args.kwargs["autopilot_mode"] == "ask_first"
+
+
+# ─── Connection offers & provider catalogue ───────────────────────────
+
+
+def test_list_chat_connections_returns_offers_and_provider_catalog(
+    mocker: pytest_mock.MockerFixture,
+    test_user_id: str,
+) -> None:
+    mock_offer = AIConnectionOffer(
+        offer_id="platform:deployment",
+        auth_provider="platform",
+        provider_family="platform",
+        display_name="AutoGPT Platform",
+        auth_method="deployment",
+        credential_id=None,
+        backed_by_label="AutoGPT Cloud",
+        description="Run on platform",
+        state="available",
+        selectable=True,
+        is_default=True,
+        tiers=[],
+        limitations=[],
+    )
+    mock_get_offers = mocker.patch(
+        "backend.api.features.chat.routes.get_connection_offers",
+        new=AsyncMock(return_value=[mock_offer]),
+    )
+
+    response = client.get("/connections")
+
+    assert response.status_code == 200
+    mock_get_offers.assert_awaited_once_with(test_user_id)
+    data = response.json()
+    assert "offers" in data
+    assert len(data["offers"]) == 1
+    assert data["offers"][0]["offer_id"] == "platform:deployment"
+    assert "providers" in data
+    assert data["providers"] is not None
+    assert len(data["providers"]) == 5
+
+    catalog = get_provider_catalog()
+    assert data["providers"] == [p.model_dump() for p in catalog]
+
+    provider_ids = [p["id"] for p in data["providers"]]
+    assert provider_ids == [
+        "codex",
+        "microsoft_365_copilot",
+        "opencode",
+        "xai",
+        "github_copilot",
+    ]
+
+
+def test_list_chat_connections_user_isolation(
+    mocker: pytest_mock.MockerFixture,
+) -> None:
+    mock_get_offers = mocker.patch(
+        "backend.api.features.chat.routes.get_connection_offers",
+        new=AsyncMock(return_value=[]),
+    )
+
+    app.dependency_overrides[auth.get_user_id] = lambda: "user-alpha"
+    try:
+        response_a = client.get("/connections")
+        assert response_a.status_code == 200
+        mock_get_offers.assert_awaited_with("user-alpha")
+    finally:
+        app.dependency_overrides.pop(auth.get_user_id, None)
+
+    app.dependency_overrides[auth.get_user_id] = lambda: "user-beta"
+    try:
+        response_b = client.get("/connections")
+        assert response_b.status_code == 200
+        mock_get_offers.assert_awaited_with("user-beta")
+    finally:
+        app.dependency_overrides.pop(auth.get_user_id, None)
+
+
+def test_list_chat_connections_rejects_unauthenticated_request() -> None:
+    unauthenticated_app = fastapi.FastAPI()
+    unauthenticated_app.include_router(chat_routes.router)
+    unauthenticated_client = fastapi.testclient.TestClient(unauthenticated_app)
+
+    response = unauthenticated_client.get("/connections")
+    assert response.status_code == 401

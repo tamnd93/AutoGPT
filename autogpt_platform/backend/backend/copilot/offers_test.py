@@ -8,12 +8,14 @@ import pytest_mock
 
 from backend.copilot import offers, provider_tiers, transports
 from backend.copilot.offers import (
+    AIConnectionOffersResponse,
     EntitlementUnavailable,
     advanced_tier_allowed,
     advanced_tier_entitled,
     get_connection_offers,
     offer_id_for,
 )
+from backend.copilot.provider_catalog import get_provider_catalog
 from backend.copilot.transports import ChatTransportResponse
 from backend.data.llm_registry import registry
 from backend.util.settings import BehaveAs
@@ -629,3 +631,25 @@ async def test_an_opencode_connection_says_what_backs_it(
         "claude-haiku-5-5",
         "claude-haiku-5-5",
     ]
+
+
+def test_ai_connection_offers_response_backward_compatible_without_providers() -> None:
+    resp = AIConnectionOffersResponse(offers=[])
+    assert resp.offers == []
+    assert resp.providers is None
+    dump = resp.model_dump()
+    assert dump["offers"] == []
+    assert dump["providers"] is None
+
+
+def test_ai_connection_offers_response_serializes_with_providers() -> None:
+    catalog = get_provider_catalog()
+    resp = AIConnectionOffersResponse(offers=[], providers=catalog)
+    assert resp.providers is not None
+    assert len(resp.providers) == 5
+    dump = resp.model_dump()
+    assert len(dump["providers"]) == 5
+    assert dump["providers"][0]["id"] == "codex"
+    assert dump["providers"][0]["status"] == "available"
+    assert dump["providers"][3]["id"] == "xai"
+    assert dump["providers"][3]["status"] == "coming-soon"

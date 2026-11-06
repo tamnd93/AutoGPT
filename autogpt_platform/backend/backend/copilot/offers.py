@@ -15,6 +15,7 @@ import logging
 from pydantic import BaseModel
 
 from backend.copilot.config import ChatConfig, CopilotLlmAuthProvider, CopilotLLMModel
+from backend.copilot.provider_catalog import AIProviderDefinition
 from backend.copilot.provider_tiers import (
     TIER_LABELS,
     codex_tier_models,
@@ -81,6 +82,7 @@ class AIConnectionOffer(BaseModel):
 
 class AIConnectionOffersResponse(BaseModel):
     offers: list[AIConnectionOffer]
+    providers: list[AIProviderDefinition] | None = None
 
 
 async def get_connection_offers(user_id: str) -> list[AIConnectionOffer]:
