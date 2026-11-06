@@ -10,9 +10,20 @@ import { ProviderBox } from "./ProviderBox";
 interface Props {
   isLinked: boolean;
   onSuccess: () => void;
+  name?: string;
+  logoSrc?: string;
+  description?: string;
+  provider?: string;
 }
 
-export function MicrosoftCopilotProviderBox({ isLinked, onSuccess }: Props) {
+export function MicrosoftCopilotProviderBox({
+  isLinked,
+  onSuccess,
+  name = "Microsoft 365 Copilot",
+  logoSrc = "/integrations/microsoft.webp",
+  description,
+  provider = "microsoft_365_copilot",
+}: Props) {
   const t = useT();
   const [isOpen, setIsOpen] = useState(false);
 
@@ -23,17 +34,24 @@ export function MicrosoftCopilotProviderBox({ isLinked, onSuccess }: Props) {
 
   const card = (
     <ProviderBox
-      name="Microsoft 365 Copilot"
-      logoSrc="/integrations/microsoft.webp"
+      name={name}
+      logoSrc={logoSrc}
+      description={description}
       state={isLinked ? "connected" : "available"}
     />
   );
 
   if (isLinked) return card;
 
+  const isMicrosoft = provider === "microsoft_365_copilot";
+
   return (
     <Dialog
-      title={t("aiConnections1.microsoft.dialogTitle")}
+      title={
+        isMicrosoft
+          ? t("aiConnections1.microsoft.dialogTitle")
+          : t("providerCatalogue.connectDialogTitle", { name })
+      }
       variant="compact"
       controlled={{ isOpen, set: setIsOpen }}
     >
@@ -41,11 +59,13 @@ export function MicrosoftCopilotProviderBox({ isLinked, onSuccess }: Props) {
       <Dialog.Content>
         <div className="flex flex-col gap-4">
           <Text variant="small" as="p" tone="muted">
-            {t("aiConnections1.microsoft.requires")}
+            {isMicrosoft
+              ? t("aiConnections1.microsoft.requires")
+              : (description ?? "")}
           </Text>
           <DeviceAuthConnectButton
-            provider="microsoft_365_copilot"
-            providerName="Microsoft 365 Copilot"
+            provider={provider}
+            providerName={name}
             onSuccess={handleSuccess}
           />
         </div>

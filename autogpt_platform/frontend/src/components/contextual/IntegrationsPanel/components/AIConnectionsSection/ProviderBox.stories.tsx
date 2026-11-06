@@ -1,6 +1,11 @@
 import type { Meta, StoryObj } from "@storybook/nextjs";
-import { UpcomingProviderBoxes } from "./UpcomingProviderBoxes";
 import { ProviderBox } from "./ProviderBox";
+import { ProviderCatalogueCard } from "./ProviderCatalogueCard";
+import { normalizeProviderCatalog } from "./providerCatalogue";
+
+const COMING_SOON_PROVIDERS = normalizeProviderCatalog(undefined).filter(
+  (provider) => provider.status === "coming-soon",
+);
 
 const meta = {
   title: "Integrations/Subscription Provider",
@@ -48,7 +53,13 @@ export const AllProviders: Story = {
         logoSrc="/integrations/microsoft.webp"
         state="available"
       />
-      <UpcomingProviderBoxes />
+      {COMING_SOON_PROVIDERS.map((provider) => (
+        <ProviderCatalogueCard
+          key={provider.id}
+          provider={provider}
+          onSuccess={() => undefined}
+        />
+      ))}
     </div>
   ),
 };

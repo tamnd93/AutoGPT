@@ -21,11 +21,20 @@ const OPENCODE_KEY_DOCS_URL = "https://opencode.ai/docs/zen/";
 interface Props {
   isLinked: boolean;
   onSuccess: () => void;
+  name?: string;
+  logoSrc?: string;
+  description?: string;
 }
 
 // The second user-owned subscription: a key pasted once, instead of an OAuth
 // round trip. Chats on it run on the user's OpenCode plan.
-export function OpenCodeProviderBox({ isLinked, onSuccess }: Props) {
+export function OpenCodeProviderBox({
+  isLinked,
+  onSuccess,
+  name = "OpenCode",
+  logoSrc,
+  description,
+}: Props) {
   const queryClient = useQueryClient();
   const [isOpen, setIsOpen] = useState(false);
   const [apiKey, setApiKey] = useState("");
@@ -67,8 +76,10 @@ export function OpenCodeProviderBox({ isLinked, onSuccess }: Props) {
 
   const card = (
     <ProviderBox
-      name="OpenCode"
+      name={name}
+      logoSrc={logoSrc}
       icon={<Icon icon={TerminalIcon} size={24} />}
+      description={description}
       state={isLinked ? "connected" : "available"}
     />
   );

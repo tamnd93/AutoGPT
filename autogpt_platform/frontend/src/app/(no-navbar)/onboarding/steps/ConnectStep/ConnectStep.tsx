@@ -5,10 +5,15 @@ import { FadeIn } from "@/components/atoms/FadeIn/FadeIn";
 import { Text } from "@/components/atoms/Text/Text";
 import { AutopilotAvatar } from "@/components/molecules/AutopilotAvatar/AutopilotAvatar";
 import { MicrosoftCopilotProviderBox } from "@/components/contextual/IntegrationsPanel/components/AIConnectionsSection/MicrosoftCopilotProviderBox";
-import { UpcomingProviderBoxes } from "@/components/contextual/IntegrationsPanel/components/AIConnectionsSection/UpcomingProviderBoxes";
 import { ProviderBox } from "@/components/contextual/IntegrationsPanel/components/AIConnectionsSection/ProviderBox";
+import { ProviderCatalogueCard } from "@/components/contextual/IntegrationsPanel/components/AIConnectionsSection/ProviderCatalogueCard";
+import { normalizeProviderCatalog } from "@/components/contextual/IntegrationsPanel/components/AIConnectionsSection/providerCatalogue";
 import { useT } from "@/lib/i18n";
 import { useConnectStep } from "./useConnectStep";
+
+const COMING_SOON_PROVIDERS = normalizeProviderCatalog(undefined).filter(
+  (provider) => provider.status === "coming-soon",
+);
 
 /**
  * The last thing a self-host install asks for: a model to run on.
@@ -56,7 +61,13 @@ export function ConnectStep() {
             isLinked={isMicrosoftLinked}
             onSuccess={finishConnection}
           />
-          <UpcomingProviderBoxes />
+          {COMING_SOON_PROVIDERS.map((provider) => (
+            <ProviderCatalogueCard
+              key={provider.id}
+              provider={provider}
+              onSuccess={finishConnection}
+            />
+          ))}
         </div>
 
         {isMicrosoftLinked && (

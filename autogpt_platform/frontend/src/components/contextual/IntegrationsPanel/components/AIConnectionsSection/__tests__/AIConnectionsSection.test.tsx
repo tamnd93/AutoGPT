@@ -9,6 +9,7 @@ import {
   getGetV1ListCredentialsMockHandler200,
 } from "@/app/api/__generated__/endpoints/integrations/integrations.msw";
 import type { AIConnectionOffer } from "@/app/api/__generated__/models/aIConnectionOffer";
+import type { AIProviderDefinition } from "@/app/api/__generated__/models/aIProviderDefinition";
 import { LocaleProvider } from "@/lib/i18n";
 import { server } from "@/mocks/mock-server";
 import {
@@ -23,13 +24,19 @@ import { HttpResponse, http } from "msw";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const connectChatGPT = vi.hoisted(() =>
-  vi.fn<(onSuccess: () => void) => void>(),
+  vi.fn<(onSuccess: () => void, provider?: string) => void>(),
 );
 vi.mock(
   "@/components/contextual/IntegrationsPanel/components/ConnectServiceDialog/components/DetailView/useOAuthConnect",
   () => ({
-    useOAuthConnect: ({ onSuccess }: { onSuccess: () => void }) => ({
-      connect: () => connectChatGPT(onSuccess),
+    useOAuthConnect: ({
+      provider,
+      onSuccess,
+    }: {
+      provider: string;
+      onSuccess: () => void;
+    }) => ({
+      connect: () => connectChatGPT(onSuccess, provider),
       isPending: false,
     }),
   }),
@@ -187,9 +194,10 @@ interface MockCredential {
 function mockTransports(
   offers: AIConnectionOffer[],
   credentials: MockCredential[] = [],
+  providers?: AIProviderDefinition[] | null,
 ) {
   server.use(
-    getGetV2ListChatConnectionsMockHandler200({ offers }),
+    getGetV2ListChatConnectionsMockHandler200({ offers, providers }),
     getPutV2SetDefaultChatTransportMockHandler200({ transports: [] }),
     getGetV1ListCredentialsMockHandler200(
       credentials.map((credential) => ({
@@ -816,5 +824,123 @@ describe("AIConnectionsSection in Vietnamese", () => {
       await screen.findByRole("heading", { name: "AI subscriptions" }),
     ).toBeDefined();
     expect(screen.queryByText("Gói AI (đã đăng ký)")).toBeNull();
+  });
+
+  it("renders dynamic provider ordering and triggers OAuth with the catalogue credential_provider", async () => {
+    mockTransports(
+      [platform(true)],
+      [],
+      [
+        {
+          id: "claude_max",
+          display_name: "Claude Max",
+          logo_src: "/integrations/anthropic.png",
+          description: {
+            en: "Connect your Claude Max plan.",
+            vi: "Kết nối gói Claude Max của bạn.",
+          },
+          status: "available",
+          connect_method: "oauth",
+          credential_provider: "anthropic_oauth",
+        },
+        {
+          id: "codex",
+          display_name: "ChatGPT",
+          logo_src: "/integrations/openai.png",
+          description: {
+            en: "Connect your ChatGPT plan.",
+            vi: "Kết nối gói ChatGPT của bạn.",
+          },
+          status: "available",
+          connect_method: "oauth",
+          credential_provider: "openai",
+        },
+      ],
+    );
+
+    render(
+      <LocaleProvider locale="vi">
+        <AIConnectionsSection />
+      </LocaleProvider>,
+    );
+
+    const group = await screen.findByRole("group", {
+      name: "Gói AI có thể kết nối",
+    });
+    const buttons = within(group).getAllByRole("button");
+    expect(buttons.map((b) => b.textContent)).toEqual([
+      "Claude Max",
+      "ChatGPT",
+    ]);
+    expect(buttons[0].getAttribute("title")).toBe(
+      "Kết nối gói Claude Max của bạn.",
+    );
+
+    await userEvent.click(buttons[0]);
+    expect(connectChatGPT).toHaveBeenCalledTimes(1);
+    expect(connectChatGPT.mock.calls[0][1]).toBe("anthropic_oauth");
+  });
+
+  it("renders no provider cards when backend explicitly returns an empty providers array", async () => {
+    mockTransports([platform(true)], [], []);
+
+    render(<AIConnectionsSection />);
+
+    const group = await screen.findByRole("group", {
+      name: "Available AI subscriptions",
+    });
+    expect(within(group).queryAllByRole("button")).toHaveLength(0);
+    expect(screen.queryByText("Coming soon")).toBeNull();
+  });
+
+  it("disables providers with unknown connect_method or status and never exposes Manage for unknown offer providers", async () => {
+    const unknownOffer = {
+      ...chatgpt(false, "cred-unknown"),
+      offer_id: "future_ai:cred-unknown",
+      auth_provider: "future_ai",
+      display_name: "Future AI",
+    } as unknown as AIConnectionOffer;
+
+    const codexAccountCalled = vi.fn();
+    server.use(
+      http.get("*/api/integrations/codex/*/account", () => {
+        codexAccountCalled();
+        return HttpResponse.json({
+          connected: true,
+          requires_openai_auth: false,
+        });
+      }),
+    );
+
+    mockTransports(
+      [platform(true), unknownOffer],
+      [],
+      [
+        {
+          id: "quantum_ai",
+          display_name: "Quantum AI",
+          logo_src: "/integrations/openai.png",
+          description: {
+            en: "Requires hardware key.",
+            vi: "Cần khoá phần cứng.",
+          },
+          status: "available",
+          connect_method: "quantum_handshake",
+          credential_provider: "quantum",
+        },
+      ],
+    );
+
+    render(
+      <LocaleProvider locale="vi">
+        <AIConnectionsSection />
+      </LocaleProvider>,
+    );
+
+    expect(await screen.findByText("Quantum AI")).toBeDefined();
+    expect(screen.getByText("Không hỗ trợ")).toBeDefined();
+    expect(screen.queryByRole("button", { name: "Quantum AI" })).toBeNull();
+    expect(screen.queryByRole("button", { name: "Quản lý" })).toBeNull();
+    expect(codexAccountCalled).not.toHaveBeenCalled();
   });
 });

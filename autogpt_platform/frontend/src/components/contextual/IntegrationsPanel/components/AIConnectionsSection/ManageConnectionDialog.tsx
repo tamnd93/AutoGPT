@@ -50,6 +50,10 @@ export function ManageConnectionDialog({
     );
   }
 
+  if (connection !== null && connection.auth_provider !== "codex") {
+    return null;
+  }
+
   return (
     <ChatGPTConnectionDialog
       connection={connection}

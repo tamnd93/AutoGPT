@@ -17,6 +17,10 @@ import { useT } from "@/lib/i18n";
 import { useOAuthConnect } from "../ConnectServiceDialog/components/DetailView/useOAuthConnect";
 
 import { isProviderLinked, routeOf, visibleOffers } from "./helpers";
+import {
+  isCatalogProviderLinked,
+  normalizeProviderCatalog,
+} from "./providerCatalogue";
 
 export function useAIConnectionsSection() {
   const t = useT();
@@ -46,11 +50,18 @@ export function useAIConnectionsSection() {
       select: (response) => (response.status === 200 ? response.data : []),
     },
   });
+  const credentials = credentialsQuery.data ?? [];
   const credentialById = new Map(
-    (credentialsQuery.data ?? []).map((credential) => [
-      credential.id,
-      credential,
-    ]),
+    credentials.map((credential) => [credential.id, credential]),
+  );
+
+  const catalogProviders = normalizeProviderCatalog(
+    connectionsQuery.data?.status === 200
+      ? connectionsQuery.data.data.providers
+      : undefined,
+  );
+  const availableProviders = catalogProviders.filter(
+    (provider) => !isCatalogProviderLinked(provider, offers, credentials),
   );
 
   function credentialFor(
@@ -114,6 +125,7 @@ export function useAIConnectionsSection() {
     isChatGPTLinked: isProviderLinked(offers, "codex"),
     isMicrosoftLinked: isProviderLinked(offers, "microsoft_365_copilot"),
     isOpenCodeLinked: isProviderLinked(offers, "opencode"),
+    availableProviders,
     connections: offers,
     accountFor,
     credentialFor,

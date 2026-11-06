@@ -18,7 +18,8 @@ interface Props {
   logoSrc?: string;
   /** Drawn in place of a logo for providers with no image asset. */
   icon?: ReactNode;
-  state: "available" | "connected" | "coming-soon";
+  description?: string;
+  state: "available" | "connected" | "coming-soon" | "unsupported";
   isBusy?: boolean;
   onClick?: () => void;
 }
@@ -32,11 +33,13 @@ export function ProviderBox({
   name,
   logoSrc,
   icon,
+  description,
   state,
   isBusy = false,
   onClick,
 }: Props) {
   const t = useT();
+  const isMuted = state === "coming-soon" || state === "unsupported";
   const body = (
     <>
       <span className="relative flex h-12 w-12 shrink-0 items-center justify-center">
@@ -48,14 +51,14 @@ export function ProviderBox({
             height={48}
             className={cn(
               "h-12 w-12 rounded-xl object-contain",
-              state === "coming-soon" && "opacity-50",
+              isMuted && "opacity-50",
             )}
           />
         ) : (
           <span
             className={cn(
               "flex h-12 w-12 items-center justify-center rounded-xl bg-surface-hover text-foreground-body",
-              state === "coming-soon" && "opacity-50",
+              isMuted && "opacity-50",
             )}
           >
             {icon}
@@ -75,9 +78,7 @@ export function ProviderBox({
           as="span"
           className={cn(
             "flex min-h-11 items-center justify-center",
-            state === "coming-soon"
-              ? "text-foreground-tertiary"
-              : "text-foreground-base",
+            isMuted ? "text-foreground-tertiary" : "text-foreground-base",
           )}
         >
           {name}
@@ -96,6 +97,11 @@ export function ProviderBox({
             {t("integrations.comingSoon")}
           </span>
         )}
+        {state === "unsupported" && (
+          <span className="inline-flex items-center rounded-[10px] bg-surface-hover px-2 py-[2px] text-body-sm font-medium leading-5 text-foreground-tertiary">
+            {t("providerCatalogue.unsupported")}
+          </span>
+        )}
       </span>
     </>
   );
@@ -103,11 +109,11 @@ export function ProviderBox({
   if (state !== "available") {
     return (
       <div
+        title={description}
+        aria-disabled={isMuted ? true : undefined}
         className={cn(
           FRAME,
-          state === "coming-soon"
-            ? "border-dashed border-border-base"
-            : "border-border-base",
+          isMuted ? "border-dashed border-border-base" : "border-border-base",
         )}
       >
         {body}
@@ -118,6 +124,7 @@ export function ProviderBox({
   return (
     <button
       type="button"
+      title={description}
       onClick={onClick}
       aria-busy={isBusy}
       disabled={isBusy}

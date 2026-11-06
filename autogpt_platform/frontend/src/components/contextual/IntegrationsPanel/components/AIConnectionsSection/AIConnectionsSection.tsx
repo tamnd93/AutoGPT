@@ -15,21 +15,14 @@ import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
 import { IntegrationLogo } from "@/components/molecules/IntegrationLogo/IntegrationLogo";
-import { UpcomingProviderBoxes } from "./UpcomingProviderBoxes";
-import { ProviderBox } from "./ProviderBox";
-import { MicrosoftCopilotProviderBox } from "./MicrosoftCopilotProviderBox";
-import { OpenCodeProviderBox } from "./OpenCodeProviderBox";
 import { ManageConnectionDialog } from "./ManageConnectionDialog";
+import { ProviderCatalogueCard } from "./ProviderCatalogueCard";
 import { isSelectable, tierSummary } from "./helpers";
 import { useAIConnectionsSection } from "./useAIConnectionsSection";
 
 export function AIConnectionsSection() {
   const {
-    connectChatGPT,
-    isConnectingChatGPT,
-    isChatGPTLinked,
-    isMicrosoftLinked,
-    isOpenCodeLinked,
+    availableProviders,
     connections,
     accountFor,
     credentialFor,
@@ -110,22 +103,15 @@ export function AIConnectionsSection() {
           aria-label={t("integrations.ai.availableLabel")}
           className="mt-4 grid w-full grid-cols-2 gap-3 sm:grid-cols-4"
         >
-          {!isChatGPTLinked && (
-            <ProviderBox
-              name="ChatGPT"
-              logoSrc="/integrations/openai.png"
-              state="available"
-              isBusy={isConnectingChatGPT}
-              onClick={connectChatGPT}
+          {availableProviders.map((provider) => (
+            <ProviderCatalogueCard
+              key={provider.id}
+              provider={provider}
+              onSuccess={() => {
+                void refetch();
+              }}
             />
-          )}
-          {!isMicrosoftLinked && (
-            <MicrosoftCopilotProviderBox isLinked={false} onSuccess={refetch} />
-          )}
-          {!isOpenCodeLinked && (
-            <OpenCodeProviderBox isLinked={false} onSuccess={refetch} />
-          )}
-          <UpcomingProviderBoxes />
+          ))}
         </div>
       )}
 
