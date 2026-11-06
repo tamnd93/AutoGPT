@@ -98,4 +98,31 @@ export const team1En = {
 
   "team1.voice.custom": "My own writing sample",
   "team1.voice.someVoice": "A voice",
+  "team1.voice.skipped": "I'll decide the voice later",
+  "team1.voice.conciseLabel": "Concise and direct",
+  "team1.voice.conciseText":
+    "Here's what I found and what I'd do next. No fluff — just the decision and the reason behind it.",
+  "team1.voice.warmLabel": "Warm and detailed",
+  "team1.voice.warmText":
+    "I dug into this for you and want to walk you through what stood out, why it matters, and where I think we should head together.",
+
+  "team1.prompts.defaultExpertName": "your expert",
+  "team1.prompts.greeting":
+    "Hello, I'm Otto. I'll help you create your own AI Expert.",
+  "team1.prompts.categoryQuestion":
+    "First — which area should your expert work in? It sets their color.",
+  "team1.prompts.jobTitleQuestion": "And what's their job title?",
+  "team1.prompts.nameQuestion": "Good pick. What do you want to call them?",
+  "team1.prompts.avatarQuestion":
+    "Here's an avatar for {name}. Use it, generate another, or upload a picture.",
+  "team1.prompts.aboutQuestion":
+    "Anything else I should know about {name}? How they should work, what matters to you — or skip it.",
+  "team1.prompts.voiceQuestion":
+    "How should {name} sound when they write? Pick the one that feels right.",
+  "team1.prompts.budgetQuestion":
+    "How much weekly budget should {name} have? $5 a week is the default — pick an amount, or skip.",
+  "team1.prompts.marketplaceQuestion":
+    "Want {name} to run workflows? Search the marketplace and your library, then add any you like — or skip.",
+  "team1.prompts.skillsQuestion":
+    "Should {name} have extra skills? Add one from the marketplace or your own library — or skip.",
 } as const;

@@ -147,4 +147,7 @@ export const team8En = {
   "team8.pods.noPods": "No pods yet",
   "team8.pods.intro": "Group experts into pods to keep related work together.",
   "team8.pods.newPod": "New Pod",
+  "team8.pods.removedToast": "Removed from pod",
+  "team8.pods.movedToToast": "Moved to {name}",
+  "team8.pods.movedToast": "Expert moved",
 } as const;

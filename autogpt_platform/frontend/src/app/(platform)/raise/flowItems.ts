@@ -1,4 +1,6 @@
-import { RAISE_PROMPTS, type RaiseDraft } from "./helpers";
+import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/locale";
+import { getMessage } from "@/lib/i18n/translate";
+import { type RaiseDraft } from "./helpers";
 
 // One beat per question: the question waits for the previous answer, and the
 // controls it introduces wait for the question to finish typing.
@@ -31,27 +33,42 @@ export type RaiseFlowItem =
 export function buildFlowItems(
   draft: RaiseDraft,
   progress: RaiseProgress,
+  locale: Locale = DEFAULT_LOCALE,
 ): RaiseFlowItem[] {
+  const expertName =
+    draft.name || getMessage(locale, "team1.prompts.defaultExpertName");
   const items: RaiseFlowItem[] = [
     {
       kind: "message",
       id: "autogpt-greeting",
       role: "autogpt",
-      text: RAISE_PROMPTS.greeting,
+      text: getMessage(locale, "team1.prompts.greeting"),
     },
     { kind: "startButton", id: "start-button" },
   ];
 
   const questions: Record<BeatKey, string> = {
-    category: RAISE_PROMPTS.categoryQuestion,
-    jobTitle: RAISE_PROMPTS.jobTitleQuestion,
-    name: RAISE_PROMPTS.nameQuestion,
-    avatar: RAISE_PROMPTS.avatarQuestion(draft.name),
-    about: RAISE_PROMPTS.aboutQuestion(draft.name),
-    voice: RAISE_PROMPTS.voiceQuestion(draft.name),
-    budget: RAISE_PROMPTS.budgetQuestion(draft.name),
-    marketplace: RAISE_PROMPTS.marketplaceQuestion(draft.name),
-    skills: RAISE_PROMPTS.skillsQuestion(draft.name),
+    category: getMessage(locale, "team1.prompts.categoryQuestion"),
+    jobTitle: getMessage(locale, "team1.prompts.jobTitleQuestion"),
+    name: getMessage(locale, "team1.prompts.nameQuestion"),
+    avatar: getMessage(locale, "team1.prompts.avatarQuestion", {
+      name: expertName,
+    }),
+    about: getMessage(locale, "team1.prompts.aboutQuestion", {
+      name: expertName,
+    }),
+    voice: getMessage(locale, "team1.prompts.voiceQuestion", {
+      name: expertName,
+    }),
+    budget: getMessage(locale, "team1.prompts.budgetQuestion", {
+      name: expertName,
+    }),
+    marketplace: getMessage(locale, "team1.prompts.marketplaceQuestion", {
+      name: expertName,
+    }),
+    skills: getMessage(locale, "team1.prompts.skillsQuestion", {
+      name: expertName,
+    }),
   };
 
   BEAT_KEYS.forEach((beat) => {

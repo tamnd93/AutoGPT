@@ -100,4 +100,32 @@ export const team1Vi: Partial<Record<keyof typeof team1En, string>> = {
 
   "team1.voice.custom": "Mẫu viết của riêng tôi",
   "team1.voice.someVoice": "Một giọng điệu",
+  "team1.voice.skipped": "Tôi sẽ chọn giọng điệu sau",
+  "team1.voice.conciseLabel": "Ngắn gọn và trực tiếp",
+  "team1.voice.conciseText":
+    "Đây là những gì tôi tìm thấy và bước tiếp theo nên làm. Không vòng vo — chỉ tập trung vào quyết định và lý do cốt lõi.",
+  "team1.voice.warmLabel": "Ấm áp và chi tiết",
+  "team1.voice.warmText":
+    "Tôi đã tìm hiểu kỹ vấn đề này giúp bạn và muốn cùng bạn điểm qua những điểm nổi bật, vì sao chúng quan trọng và hướng đi tiếp theo.",
+
+  "team1.prompts.defaultExpertName": "chuyên gia của bạn",
+  "team1.prompts.greeting":
+    "Xin chào, tôi là Otto. Tôi sẽ giúp bạn tạo chuyên gia AI của riêng mình.",
+  "team1.prompts.categoryQuestion":
+    "Trước tiên — chuyên gia của bạn nên làm việc trong lĩnh vực nào? Lĩnh vực sẽ quyết định màu sắc của họ.",
+  "team1.prompts.jobTitleQuestion": "Và chức danh của họ là gì?",
+  "team1.prompts.nameQuestion":
+    "Lựa chọn hay đấy. Bạn muốn đặt tên cho họ là gì?",
+  "team1.prompts.avatarQuestion":
+    "Đây là ảnh đại diện cho {name}. Hãy dùng ảnh này, tạo ảnh khác hoặc tải ảnh lên.",
+  "team1.prompts.aboutQuestion":
+    "Còn điều gì tôi nên biết về {name} không? Cách họ làm việc, điều bạn quan tâm — hoặc bỏ qua.",
+  "team1.prompts.voiceQuestion":
+    "Giọng điệu của {name} khi viết nên như thế nào? Hãy chọn phong cách phù hợp nhất.",
+  "team1.prompts.budgetQuestion":
+    "Ngân sách hằng tuần cho {name} là bao nhiêu? Mặc định là $5 mỗi tuần — hãy chọn một mức hoặc bỏ qua.",
+  "team1.prompts.marketplaceQuestion":
+    "Bạn có muốn {name} chạy các workflow không? Hãy tìm trên marketplace và thư viện của bạn để thêm — hoặc bỏ qua.",
+  "team1.prompts.skillsQuestion":
+    "Bạn có muốn trang bị thêm kỹ năng cho {name} không? Hãy thêm từ marketplace hoặc thư viện của bạn — hoặc bỏ qua.",
 };

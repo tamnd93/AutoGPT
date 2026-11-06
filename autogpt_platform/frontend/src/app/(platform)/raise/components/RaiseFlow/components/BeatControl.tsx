@@ -1,8 +1,9 @@
 "use client";
 
 import { VoicePicker } from "@/components/organisms/VoicePicker/VoicePicker";
+import { useLocale } from "@/lib/i18n";
 import type { BeatKey } from "../../../flowItems";
-import { VOICE_SAMPLES } from "../../../helpers";
+import { getVoiceSamples } from "../../../helpers";
 import type { useRaisePage } from "../../../useRaisePage";
 import { AboutStep } from "../../AboutStep/AboutStep";
 import { AvatarStep } from "../../AvatarStep/AvatarStep";
@@ -28,6 +29,7 @@ interface Props {
 }
 
 export function BeatControl({ beat, flow }: Props) {
+  const locale = useLocale();
   switch (beat) {
     case "category":
       return (
@@ -82,7 +84,7 @@ export function BeatControl({ beat, flow }: Props) {
       return (
         <VoicePicker
           name={flow.name}
-          samples={VOICE_SAMPLES}
+          samples={getVoiceSamples(locale)}
           hideHeader
           labelClassName={textClassFor(flow.color)}
           cardColors={{

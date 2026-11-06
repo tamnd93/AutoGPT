@@ -17,14 +17,14 @@ import { SectionEmptyState } from "../../components/SectionEmptyState";
 import { useState } from "react";
 import {
   filterExpertSchedules,
-  SCHEDULE_FILTERS,
+  getScheduleFilters,
   ScheduleFilter,
   ACTION_BUTTON_CLASS,
 } from "../../helpers";
 import { CreateScheduleDialog } from "./CreateScheduleDialog";
 import { ToolbarSearch } from "../../components/ToolbarSearch";
 import { PillFilterMenu } from "../../components/PillFilterMenu";
-import { useT } from "@/lib/i18n";
+import { useLocale, useT } from "@/lib/i18n";
 
 interface Props {
   title: string;
@@ -46,6 +46,7 @@ export function ExpertSchedulesSection({
   lastRunLabel,
 }: Props) {
   const t = useT();
+  const locale = useLocale();
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<ScheduleFilter>("all");
   const [isCreateOpen, setIsCreateOpen] = useState(false);
@@ -88,7 +89,7 @@ export function ExpertSchedulesSection({
             label={t("team7.schedules.filter")}
             value={filter}
             defaultValue="all"
-            options={SCHEDULE_FILTERS}
+            options={getScheduleFilters(locale)}
             onChange={setFilter}
           />
         </div>

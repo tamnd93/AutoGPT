@@ -29,9 +29,9 @@ export const Team7En = {
   "team7.settings.keptTag": "Kept",
   "team7.settings.workflowOne": "{count} workflow stays in your library",
   "team7.settings.workflowMany": "{count} workflows stay in your library",
-  "team7.settings.workflowsDefault":
-    "Installed workflows stay in your library",
-  "team7.settings.fileOne": "{count} file from its chats stays in your workspace",
+  "team7.settings.workflowsDefault": "Installed workflows stay in your library",
+  "team7.settings.fileOne":
+    "{count} file from its chats stays in your workspace",
   "team7.settings.fileMany":
     "{count} files from its chats stay in your workspace",
   "team7.settings.fileManyPlus":
@@ -123,4 +123,13 @@ export const Team7En = {
   "team7.learning.resumedTitle": "Learning resumed for {name}",
   "team7.learning.pausedBody":
     "Existing skills stay in use; no new automatic changes.",
+
+  "team7.workflows.filterAll": "All workflows",
+  "team7.schedules.filterAll": "All schedules",
+  "team7.schedules.filterToday": "Next 24 hours",
+  "team7.schedules.filterWeek": "Next 7 days",
+  "team7.schedules.filterLater": "Later",
+  "team7.schedules.lastRunSucceeded": "Last run succeeded {when}",
+  "team7.schedules.lastRunFailed": "Last run failed {when}",
+  "team7.schedules.lastRun": "Last run {when}",
 } as const;

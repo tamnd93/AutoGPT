@@ -4,9 +4,11 @@ import {
   assembledKit,
   EMPTY_DRAFT,
   getExpertLimitCode,
+  getVoiceSamples,
   kitBudgetLabel,
   kitToolsLabel,
   loadDraft,
+  localizeVoiceLabel,
   raisedIdentity,
   type RaiseDraft,
   resolveVoicePreferences,
@@ -14,6 +16,7 @@ import {
   VOICE_SKIPPED_LABEL,
   voiceSummaryLabel,
 } from "./helpers";
+import { buildFlowItems } from "./flowItems";
 import { colorForCategory } from "./components/CategoryStep/helpers";
 
 const samples: VoiceSample[] = [
@@ -113,6 +116,57 @@ describe("raise helpers", () => {
   test("keeps a skipped budget distinct from an unanswered one", () => {
     expect(assembledKit({ ...EMPTY_DRAFT, budget: { credits: null } })).toEqual(
       { weeklyBudget: null, attachments: [] },
+    );
+  });
+
+  test("localizes voice samples, skipped voice label, and flow items in Vietnamese", () => {
+    const viSamples = getVoiceSamples("vi");
+    expect(viSamples[0]?.label).toBe("Ngắn gọn và trực tiếp");
+    expect(viSamples[1]?.label).toBe("Ấm áp và chi tiết");
+    expect(localizeVoiceLabel(VOICE_SKIPPED_LABEL, "vi")).toBe(
+      "Tôi sẽ chọn giọng điệu sau",
+    );
+    expect(localizeVoiceLabel("Concise and direct", "vi")).toBe(
+      "Ngắn gọn và trực tiếp",
+    );
+
+    const items = buildFlowItems(
+      { ...EMPTY_DRAFT, name: "Nova" },
+      {
+        prompts: {
+          category: true,
+          jobTitle: true,
+          name: true,
+          avatar: true,
+          about: false,
+          voice: false,
+          budget: false,
+          marketplace: false,
+          skills: false,
+        },
+        steps: {
+          category: false,
+          jobTitle: false,
+          name: false,
+          avatar: false,
+          about: false,
+          voice: false,
+          budget: false,
+          marketplace: false,
+          skills: false,
+        },
+      },
+      "vi",
+    );
+    expect(items[0]).toMatchObject({
+      kind: "message",
+      text: "Xin chào, tôi là Otto. Tôi sẽ giúp bạn tạo chuyên gia AI của riêng mình.",
+    });
+    expect(items).toContainEqual(
+      expect.objectContaining({
+        id: "autogpt-avatar-question",
+        text: "Đây là ảnh đại diện cho Nova. Hãy dùng ảnh này, tạo ảnh khác hoặc tải ảnh lên.",
+      }),
     );
   });
 });

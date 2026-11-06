@@ -9,6 +9,9 @@ import {
   getAssignToastTitle,
   getExpertCover,
   getExpertRosterStatus,
+  getLastRunLabel,
+  getScheduleFilters,
+  getWorkflowFilters,
   groupExpertsByPods,
 } from "./helpers";
 
@@ -97,6 +100,39 @@ describe("getAssignToastTitle", () => {
 
   test("reports a detach regardless of the destination name", () => {
     expect(getAssignToastTitle({ podId: null })).toBe("Removed from pod");
+  });
+
+  test("localizes pod assignment toasts, last-run labels, and filters in Vietnamese", () => {
+    expect(
+      getAssignToastTitle(
+        { podId: "pod-growth", destinationName: "Growth" },
+        "vi",
+      ),
+    ).toBe("Đã chuyển sang Growth");
+    expect(getAssignToastTitle({ podId: "pod-growth" }, "vi")).toBe(
+      "Đã chuyển chuyên gia",
+    );
+    expect(getAssignToastTitle({ podId: null }, "vi")).toBe("Đã gỡ khỏi pod");
+
+    const completed = makeExpert("completed");
+    completed.last_run_at = new Date(Date.now() - 60_000);
+    completed.last_run_status = "COMPLETED";
+    expect(getLastRunLabel(completed, "vi")).toContain(
+      "Lần chạy trước thành công",
+    );
+
+    expect(getWorkflowFilters("vi").map((f) => f.label)).toEqual([
+      "Tất cả workflow",
+      "Theo lịch",
+      "Thủ công",
+      "Cần thiết lập",
+    ]);
+    expect(getScheduleFilters("vi").map((f) => f.label)).toEqual([
+      "Tất cả lịch chạy",
+      "24 giờ tới",
+      "7 ngày tới",
+      "Sau đó",
+    ]);
   });
 });
 

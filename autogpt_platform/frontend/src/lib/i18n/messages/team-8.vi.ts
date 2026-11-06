@@ -154,4 +154,7 @@ export const team8Vi: Partial<Record<keyof typeof team8En, string>> = {
   "team8.pods.intro":
     "Nhóm các chuyên gia vào pod để công việc liên quan ở cạnh nhau.",
   "team8.pods.newPod": "Pod mới",
+  "team8.pods.removedToast": "Đã gỡ khỏi pod",
+  "team8.pods.movedToToast": "Đã chuyển sang {name}",
+  "team8.pods.movedToast": "Đã chuyển chuyên gia",
 };

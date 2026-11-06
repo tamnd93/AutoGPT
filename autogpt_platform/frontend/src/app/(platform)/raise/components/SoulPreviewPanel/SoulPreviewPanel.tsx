@@ -6,7 +6,12 @@ import { DEFAULT_GLASS_PARAMS } from "@/components/molecules/GlassOrb/GlassSurfa
 import { useLocale, useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
-import { kitBudgetLabel, kitToolsLabel, type RaiseKit } from "../../helpers";
+import {
+  kitBudgetLabel,
+  kitToolsLabel,
+  localizeVoiceLabel,
+  type RaiseKit,
+} from "../../helpers";
 import { roleFor } from "../CategoryStep/helpers";
 import { SoulDetailCard } from "./SoulDetailCard";
 
@@ -46,7 +51,10 @@ export function SoulPreviewPanel({
   const roleLabel = jobTitle || roleFor(category);
   const details = [
     { label: t("team1.soulPreview.about"), value: about },
-    { label: t("team1.soulPreview.voice"), value: voiceLabel },
+    {
+      label: t("team1.soulPreview.voice"),
+      value: localizeVoiceLabel(voiceLabel, locale),
+    },
     { label: t("team1.budget.aria"), value: kitBudgetLabel(kit, locale) },
     { label: t("team1.soulPreview.tools"), value: kitToolsLabel(kit) },
   ].filter((detail): detail is SoulDetail => Boolean(detail.value));

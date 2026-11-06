@@ -15,7 +15,7 @@ import { Icon } from "@/components/atoms/Icon/Icon";
 import { useState } from "react";
 import {
   filterExpertWorkflows,
-  WORKFLOW_FILTERS,
+  getWorkflowFilters,
   WorkflowFilter,
 } from "../../helpers";
 import { ExpertWorkflowCard } from "./ExpertWorkflowCard";
@@ -26,7 +26,7 @@ import { ViewToggle } from "./ViewToggle";
 import { SectionEmptyState } from "../../components/SectionEmptyState";
 import { ToolbarSearch } from "../../components/ToolbarSearch";
 import { PillFilterMenu } from "../../components/PillFilterMenu";
-import { useT } from "@/lib/i18n";
+import { useLocale, useT } from "@/lib/i18n";
 
 const VIEW_OPTIONS = [
   { value: "list", labelKey: "team7.workflows.listView", icon: ListViewIcon },
@@ -53,6 +53,7 @@ export function ExpertWorkflowsSection({
   onAskWorkflow,
 }: Props) {
   const t = useT();
+  const locale = useLocale();
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<WorkflowFilter>("all");
   const { view, setView } = useExpertWorkflowsView();
@@ -89,7 +90,7 @@ export function ExpertWorkflowsSection({
             label={t("team7.workflows.filter")}
             value={filter}
             defaultValue="all"
-            options={WORKFLOW_FILTERS}
+            options={getWorkflowFilters(locale)}
             onChange={setFilter}
           />
           <ViewToggle
@@ -129,8 +130,7 @@ export function ExpertWorkflowsSection({
           ]}
           title={t("team7.workflows.noneTitle")}
           description={
-            emptyMessage ??
-            t("team7.workflows.emptyDesc", { name: expertName })
+            emptyMessage ?? t("team7.workflows.emptyDesc", { name: expertName })
           }
         >
           {onInstallWorkflow ? (

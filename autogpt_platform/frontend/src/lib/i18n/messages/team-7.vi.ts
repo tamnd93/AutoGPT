@@ -32,7 +32,8 @@ export const Team7Vi: Partial<Record<keyof typeof Team7En, string>> = {
   "team7.settings.workflowOne": "{count} workflow ở lại trong thư viện",
   "team7.settings.workflowMany": "{count} workflow ở lại trong thư viện",
   "team7.settings.workflowsDefault": "Workflow đã cài vẫn ở trong thư viện",
-  "team7.settings.fileOne": "{count} tệp từ các chat ở lại trong không gian làm việc",
+  "team7.settings.fileOne":
+    "{count} tệp từ các chat ở lại trong không gian làm việc",
   "team7.settings.fileMany":
     "{count} tệp từ các chat ở lại trong không gian làm việc",
   "team7.settings.fileManyPlus":
@@ -112,8 +113,7 @@ export const Team7Vi: Partial<Record<keyof typeof Team7En, string>> = {
   "team7.workflows.title": "Workflow của {name}",
   "team7.workflows.install": "Cài workflow",
   "team7.workflows.noMatch": "Không có workflow nào khớp.",
-  "team7.workflows.emptyDesc":
-    "Cài một workflow để {name} có việc để chạy.",
+  "team7.workflows.emptyDesc": "Cài một workflow để {name} có việc để chạy.",
   "team7.workflows.cardMenu.removeFromExpert": "Xoá khỏi chuyên gia",
   "team7.workflows.cardMenu.removeTitle": "Xoá {name}?",
   "team7.workflows.cardMenu.removeBody":
@@ -125,4 +125,13 @@ export const Team7Vi: Partial<Record<keyof typeof Team7En, string>> = {
   "team7.learning.resumedTitle": "Đã tiếp tục học cho {name}",
   "team7.learning.pausedBody":
     "Các kỹ năng hiện có vẫn được dùng; không có thay đổi tự động mới.",
+
+  "team7.workflows.filterAll": "Tất cả workflow",
+  "team7.schedules.filterAll": "Tất cả lịch chạy",
+  "team7.schedules.filterToday": "24 giờ tới",
+  "team7.schedules.filterWeek": "7 ngày tới",
+  "team7.schedules.filterLater": "Sau đó",
+  "team7.schedules.lastRunSucceeded": "Lần chạy trước thành công {when}",
+  "team7.schedules.lastRunFailed": "Lần chạy trước thất bại {when}",
+  "team7.schedules.lastRun": "Lần chạy trước {when}",
 };

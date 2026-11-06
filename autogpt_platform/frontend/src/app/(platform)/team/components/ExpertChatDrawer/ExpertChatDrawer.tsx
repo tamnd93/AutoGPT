@@ -14,6 +14,7 @@ import {
   IdentityAvatar,
   PanelIdentity,
 } from "../ExpertSidePanel/IdentityAvatar";
+import { AUTOPILOT_ROLE } from "../../helpers";
 import type { ChatTarget } from "./helpers";
 import { useExpertChatDrawer } from "./useExpertChatDrawer";
 
@@ -162,7 +163,10 @@ function ChatPanelBody({ target, identity, chat }: BodyProps) {
                 {t("team8.drawer.whatCanIDo")}
               </Text>
               <Text variant="small" tone="muted">
-                {target.name} · {getExpertRoleLabel(target.role)}
+                {target.name} ·{" "}
+                {target.role === AUTOPILOT_ROLE
+                  ? t("chatRuntime2.threadHeader.defaultRole")
+                  : getExpertRoleLabel(target.role)}
               </Text>
             </div>
           </div>

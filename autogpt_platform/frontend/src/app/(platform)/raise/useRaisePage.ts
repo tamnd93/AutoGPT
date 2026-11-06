@@ -1,5 +1,6 @@
 import type { ExpertAvatarRequestCategory } from "@/app/api/__generated__/models/expertAvatarRequestCategory";
 import type { VoicePickResult } from "@/components/organisms/VoicePicker/helpers";
+import { useLocale } from "@/lib/i18n";
 import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 import {
@@ -14,6 +15,7 @@ import {
   clearDraft,
   draftWithPrefilledRole,
   EMPTY_DRAFT,
+  getVoiceSamples,
   loadDraft,
   resolveVoicePreferences,
   saveDraft,
@@ -30,6 +32,7 @@ import { useRaiseSubmission } from "./useRaiseSubmission";
 import { useSkillsAvailability } from "./useSkillsAvailability";
 
 export function useRaisePage() {
+  const locale = useLocale();
   const searchParams = useSearchParams();
   // Seeded in the initialiser rather than an effect: an effect would render
   // the area question first and then snatch it away.
@@ -101,7 +104,7 @@ export function useRaisePage() {
     }
     update({
       voicePreferences: preferences,
-      voiceLabel: voiceSummaryLabel(result, VOICE_SAMPLES),
+      voiceLabel: voiceSummaryLabel(result, getVoiceSamples(locale), locale),
       step: "budget",
     });
   }
@@ -175,7 +178,7 @@ export function useRaisePage() {
     avatarUrl: draft.avatarUrl,
     about: draft.about,
     voiceLabel: draft.voiceLabel,
-    items: buildFlowItems(draft, progress),
+    items: buildFlowItems(draft, progress, locale),
     name: draft.name,
     budget: draft.budget,
     marketplace: draft.marketplace,

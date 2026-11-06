@@ -278,6 +278,39 @@ export function voiceSummaryLabel(
   return sample?.label ?? getMessage(locale, "team1.voice.someVoice");
 }
 
+export function getVoiceSamples(
+  locale: Locale = DEFAULT_LOCALE,
+): VoiceSample[] {
+  if (locale === DEFAULT_LOCALE) return VOICE_SAMPLES;
+  return [
+    {
+      label: getMessage(locale, "team1.voice.conciseLabel"),
+      text: getMessage(locale, "team1.voice.conciseText"),
+    },
+    {
+      label: getMessage(locale, "team1.voice.warmLabel"),
+      text: getMessage(locale, "team1.voice.warmText"),
+    },
+  ];
+}
+
+export function localizeVoiceLabel(
+  voiceLabel: string | null,
+  locale: Locale = DEFAULT_LOCALE,
+): string | null {
+  if (!voiceLabel) return null;
+  if (voiceLabel === VOICE_SKIPPED_LABEL) {
+    return getMessage(locale, "team1.voice.skipped");
+  }
+  if (voiceLabel === VOICE_SAMPLES[0]?.label) {
+    return getMessage(locale, "team1.voice.conciseLabel");
+  }
+  if (voiceLabel === VOICE_SAMPLES[1]?.label) {
+    return getMessage(locale, "team1.voice.warmLabel");
+  }
+  return voiceLabel;
+}
+
 export function resolveVoicePreferences(
   result: VoicePickResult,
   samples: VoiceSample[],

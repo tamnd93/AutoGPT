@@ -11,6 +11,7 @@ import {
 } from "@/app/api/__generated__/endpoints/api-keys/api-keys.msw";
 import { APIKeyPermission } from "@/app/api/__generated__/models/aPIKeyPermission";
 import { APIKeyStatus } from "@/app/api/__generated__/models/aPIKeyStatus";
+import { LocaleProvider } from "@/lib/i18n";
 import { server } from "@/mocks/mock-server";
 import ApiKeysPage from "../page";
 import { beforeEach, describe, expect, test } from "vitest";
@@ -188,5 +189,20 @@ describe("ApiKeysPage", () => {
     await waitFor(() => {
       expect(screen.queryByText("AutoGPT Platform API Key Created")).toBeNull();
     });
+  });
+
+  test("renders the API keys header and description in Vietnamese", async () => {
+    render(
+      <LocaleProvider locale="vi">
+        <ApiKeysPage />
+      </LocaleProvider>,
+    );
+
+    expect(await screen.findByText("Khoá API AutoGPT Platform")).toBeDefined();
+    expect(
+      screen.getByText(
+        "Quản lý khoá API AutoGPT Platform để truy cập bằng chương trình",
+      ),
+    ).toBeDefined();
   });
 });

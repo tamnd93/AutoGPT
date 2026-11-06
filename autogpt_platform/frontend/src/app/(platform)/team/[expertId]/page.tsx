@@ -12,7 +12,7 @@ import {
   TabsLineList,
   TabsLineTrigger,
 } from "@/components/molecules/TabsLine/TabsLine";
-import { useT } from "@/lib/i18n";
+import { useLocale, useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import {
   AiBrain01Icon,
@@ -56,19 +56,36 @@ const MAIN_CLASS =
   "container min-h-screen max-w-[1180px] space-y-5 px-4 pb-16 pt-6 sm:px-8 md:px-12";
 
 const TABS = [
-  { value: "basics", labelKey: "team7.tabs.overview", icon: DashboardSquare01Icon },
+  {
+    value: "basics",
+    labelKey: "team7.tabs.overview",
+    icon: DashboardSquare01Icon,
+  },
   { value: "soul", labelKey: "team7.tabs.soul", icon: AiBrain01Icon },
-  { value: "schedules", labelKey: "team7.tabs.schedules", icon: Calendar03Icon },
-  { value: "workflows", labelKey: "team7.tabs.workflows", icon: WorkflowSquare01Icon },
+  {
+    value: "schedules",
+    labelKey: "team7.tabs.schedules",
+    icon: Calendar03Icon,
+  },
+  {
+    value: "workflows",
+    labelKey: "team7.tabs.workflows",
+    icon: WorkflowSquare01Icon,
+  },
   { value: "files", labelKey: "team7.tabs.files", icon: Folder01Icon },
   { value: "computer", labelKey: "team7.tabs.computer", icon: ComputerIcon },
-  { value: "integrations", labelKey: "team7.tabs.integrations", icon: PlugSocketIcon },
+  {
+    value: "integrations",
+    labelKey: "team7.tabs.integrations",
+    icon: PlugSocketIcon,
+  },
   { value: "skills", labelKey: "team7.tabs.skills", icon: SparklesIcon },
   { value: "settings", labelKey: "team7.tabs.settings", icon: Settings01Icon },
 ] as const;
 
 export default function ExpertDetailPage() {
   const t = useT();
+  const locale = useLocale();
   const { expertId } = useParams<{ expertId: string }>();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -209,7 +226,7 @@ export default function ExpertDetailPage() {
               expertId={expert.id}
               workflows={expert.workflows}
               schedules={schedules}
-              lastRunLabel={getLastRunLabel(expert)}
+              lastRunLabel={getLastRunLabel(expert, locale)}
             />
           </TabsLineContent>
 

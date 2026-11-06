@@ -14,7 +14,10 @@ import { ExpertWorkflowRef } from "@/app/api/__generated__/models/expertWorkflow
 import { GraphExecutionJobInfo } from "@/app/api/__generated__/models/graphExecutionJobInfo";
 import { CopilotSkillInfo } from "@/app/api/__generated__/models/copilotSkillInfo";
 import { LibraryAgent } from "@/app/api/__generated__/models/libraryAgent";
+import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/locale";
+import { getMessage } from "@/lib/i18n/translate";
 import { formatDistanceToNow } from "date-fns";
+import { vi as viDateLocale } from "date-fns/locale/vi";
 
 /** Section headings sit outside the cards, so they need the cards' own content
  *  inset (1px border-box padding + p-4, matching AutopilotCard's p-5) to line
@@ -116,12 +119,14 @@ interface AssignToastArgs {
 
 /** `destinationName` is absent when the target pod is missing from the locally
  *  cached pod list, which the caller repairs by refetching pods. */
-export function getAssignToastTitle({
-  podId,
-  destinationName,
-}: AssignToastArgs) {
-  if (podId === null) return "Removed from pod";
-  return destinationName ? `Moved to ${destinationName}` : "Expert moved";
+export function getAssignToastTitle(
+  { podId, destinationName }: AssignToastArgs,
+  locale: Locale = DEFAULT_LOCALE,
+) {
+  if (podId === null) return getMessage(locale, "team8.pods.removedToast");
+  return destinationName
+    ? getMessage(locale, "team8.pods.movedToToast", { name: destinationName })
+    : getMessage(locale, "team8.pods.movedToast");
 }
 
 /** Split hired experts into their named pods (creation order, all pods kept
@@ -149,15 +154,20 @@ export function groupExpertsByPods(
   };
 }
 
-export function getLastRunLabel(expert: Expert) {
+export function getLastRunLabel(
+  expert: Expert,
+  locale: Locale = DEFAULT_LOCALE,
+) {
   if (!expert.last_run_at) return null;
   const when = formatDistanceToNow(new Date(expert.last_run_at), {
     addSuffix: true,
+    ...(locale === "vi" ? { locale: viDateLocale } : {}),
   });
   if (expert.last_run_status === "COMPLETED")
-    return `Last run succeeded ${when}`;
-  if (expert.last_run_status === "FAILED") return `Last run failed ${when}`;
-  return `Last run ${when}`;
+    return getMessage(locale, "team7.schedules.lastRunSucceeded", { when });
+  if (expert.last_run_status === "FAILED")
+    return getMessage(locale, "team7.schedules.lastRunFailed", { when });
+  return getMessage(locale, "team7.schedules.lastRun", { when });
 }
 
 export function getWeeklySpend(expert: Expert) {
@@ -344,6 +354,32 @@ export const WORKFLOW_FILTERS = [
 
 export type WorkflowFilter = (typeof WORKFLOW_FILTERS)[number]["value"];
 
+export function getWorkflowFilters(locale: Locale = DEFAULT_LOCALE) {
+  if (locale === DEFAULT_LOCALE) return WORKFLOW_FILTERS;
+  return [
+    {
+      value: "all" as const,
+      label: getMessage(locale, "team7.workflows.filterAll"),
+      icon: WorkflowSquare01Icon,
+    },
+    {
+      value: "scheduled" as const,
+      label: getMessage(locale, "team7.workflows.status.scheduled"),
+      icon: Calendar03Icon,
+    },
+    {
+      value: "manual" as const,
+      label: getMessage(locale, "team7.workflows.status.manual"),
+      icon: PlayIcon,
+    },
+    {
+      value: "needs-setup" as const,
+      label: getMessage(locale, "team7.workflows.status.needsSetup"),
+      icon: Alert01Icon,
+    },
+  ];
+}
+
 export function filterExpertWorkflows(
   workflows: ExpertWorkflowRef[],
   query: string,
@@ -372,6 +408,32 @@ export const SCHEDULE_FILTERS = [
 ] as const;
 
 export type ScheduleFilter = (typeof SCHEDULE_FILTERS)[number]["value"];
+
+export function getScheduleFilters(locale: Locale = DEFAULT_LOCALE) {
+  if (locale === DEFAULT_LOCALE) return SCHEDULE_FILTERS;
+  return [
+    {
+      value: "all" as const,
+      label: getMessage(locale, "team7.schedules.filterAll"),
+      icon: Calendar03Icon,
+    },
+    {
+      value: "today" as const,
+      label: getMessage(locale, "team7.schedules.filterToday"),
+      icon: Clock01Icon,
+    },
+    {
+      value: "week" as const,
+      label: getMessage(locale, "team7.schedules.filterWeek"),
+      icon: Calendar04Icon,
+    },
+    {
+      value: "later" as const,
+      label: getMessage(locale, "team7.schedules.filterLater"),
+      icon: Time04Icon,
+    },
+  ];
+}
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 
