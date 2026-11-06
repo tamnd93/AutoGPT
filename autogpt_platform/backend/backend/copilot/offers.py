@@ -85,13 +85,38 @@ class AIConnectionOffersResponse(BaseModel):
     providers: list[AIProviderDefinition] | None = None
 
 
-async def get_connection_offers(user_id: str) -> list[AIConnectionOffer]:
+TIER_LABELS_VI: dict[CopilotLLMModel, str] = {
+    "standard": "Cân bằng",
+    "advanced": "Nâng cao",
+}
+
+ADVANCED_TIER_LOCK_REASON = "A Max plan or higher is required for Advanced."
+ADVANCED_TIER_LOCK_REASON_VI = "Cần gói Max trở lên để sử dụng mức Nâng cao."
+CODEX_MINIMUM_PLAN_ERROR_VI = "Cần gói Max trở lên để sử dụng ChatGPT."
+
+
+def _normalize_locale(locale: str | None) -> str:
+    if locale and locale.strip().lower().startswith("vi"):
+        return "vi"
+    return "en"
+
+
+def _tier_labels_for_locale(locale: str = "en") -> dict[CopilotLLMModel, str]:
+    if _normalize_locale(locale) == "vi":
+        return TIER_LABELS_VI
+    return TIER_LABELS
+
+
+async def get_connection_offers(
+    user_id: str, locale: str = "en"
+) -> list[AIConnectionOffer]:
     """Describe every connection, naming the models where they are knowable.
 
     The engine is resolved once for the user rather than per offer: it is a
     property of the deployment and the user, not of which connection they
     pick.
     """
+    norm_locale = _normalize_locale(locale)
     config = ChatConfig()
     mode = await resolve_engine_mode(user_id, config)
     models = await platform_tier_models(mode, user_id, config)
@@ -99,10 +124,19 @@ async def get_connection_offers(user_id: str) -> list[AIConnectionOffer]:
     opencode_models = opencode_tier_models(config)
     advanced_allowed = await advanced_tier_allowed(user_id)
     offers = [
-        _offer(transport, models, codex_models, opencode_models, advanced_allowed)
+        _offer(
+            transport,
+            models,
+            codex_models,
+            opencode_models,
+            advanced_allowed,
+            locale=norm_locale,
+        )
         for transport in await get_chat_transports(user_id)
     ]
-    locked = await _locked_codex_offer(user_id, offers, codex_models)
+    locked = await _locked_codex_offer(
+        user_id, offers, codex_models, locale=norm_locale
+    )
     return offers + ([locked] if locked else [])
 
 
@@ -110,6 +144,7 @@ async def _locked_codex_offer(
     user_id: str,
     offers: list[AIConnectionOffer],
     codex_models: dict[CopilotLLMModel, str | None],
+    locale: str = "en",
 ) -> AIConnectionOffer | None:
     """The ChatGPT connection a plan does not include, shown rather than hidden.
 
@@ -145,6 +180,9 @@ async def _locked_codex_offer(
     if not await is_feature_enabled(Flag.CHAT_CONNECTION_UPSELL, user_id):
         return None
 
+    is_vi = _normalize_locale(locale) == "vi"
+    labels = _tier_labels_for_locale(locale)
+
     return AIConnectionOffer(
         offer_id="codex:locked",
         auth_provider="codex",
@@ -152,10 +190,15 @@ async def _locked_codex_offer(
         display_name="ChatGPT",
         auth_method="chatgpt_oauth",
         credential_id=None,
-        backed_by_label="Your ChatGPT plan",
+        backed_by_label="Gói ChatGPT của bạn" if is_vi else "Your ChatGPT plan",
         description=(
-            "Run chats on a ChatGPT plan you already pay for, spending no "
-            "AutoGPT credits."
+            "Chạy cuộc trò chuyện trên gói ChatGPT bạn đã trả phí mà không tốn "
+            "tín dụng AutoGPT."
+            if is_vi
+            else (
+                "Run chats on a ChatGPT plan you already pay for, spending no "
+                "AutoGPT credits."
+            )
         ),
         state="locked",
         selectable=False,
@@ -171,10 +214,10 @@ async def _locked_codex_offer(
                 selectable=False,
                 display_model=codex_models.get(tier),
             )
-            for tier, label in TIER_LABELS.items()
+            for tier, label in labels.items()
         ],
         limitations=[],
-        lock_reason=CODEX_MINIMUM_PLAN_ERROR,
+        lock_reason=CODEX_MINIMUM_PLAN_ERROR_VI if is_vi else CODEX_MINIMUM_PLAN_ERROR,
         unlock_href="/settings/billing",
     )
 
@@ -186,9 +229,6 @@ def offer_id_for(transport: ChatTransportResponse) -> str:
     ChatGPT accounts, so neither half identifies an offer on its own.
     """
     return f"{transport.auth_provider}:{transport.credential_id or 'deployment'}"
-
-
-ADVANCED_TIER_LOCK_REASON = "A Max plan or higher is required for Advanced."
 
 
 class EntitlementUnavailable(Exception):
@@ -240,6 +280,7 @@ def _offer(
     codex_models: dict[CopilotLLMModel, str | None],
     opencode_models: dict[CopilotLLMModel, str | None],
     advanced_allowed: bool,
+    locale: str = "en",
 ) -> AIConnectionOffer:
     return AIConnectionOffer(
         offer_id=offer_id_for(transport),
@@ -248,8 +289,8 @@ def _offer(
         display_name=transport.label,
         auth_method=_auth_method(transport.auth_provider),
         credential_id=transport.credential_id,
-        backed_by_label=_backed_by_label(transport),
-        description=_description(transport),
+        backed_by_label=_backed_by_label(transport, locale=locale),
+        description=_description(transport, locale=locale),
         state="ready" if transport.available else "unavailable",
         selectable=transport.available,
         is_default=transport.default,
@@ -259,8 +300,9 @@ def _offer(
             codex_models,
             opencode_models,
             advanced_allowed,
+            locale=locale,
         ),
-        limitations=_limitations(transport),
+        limitations=_limitations(transport, locale=locale),
     )
 
 
@@ -270,6 +312,7 @@ def _tiers_for(
     codex_models: dict[CopilotLLMModel, str | None],
     opencode_models: dict[CopilotLLMModel, str | None],
     advanced_allowed: bool,
+    locale: str = "en",
 ) -> list[ConnectionTier]:
     if transport.auth_provider == "microsoft_365_copilot":
         return []
@@ -279,6 +322,8 @@ def _tiers_for(
         models = platform_models
     else:
         models = codex_models
+    is_vi = _normalize_locale(locale) == "vi"
+    labels = _tier_labels_for_locale(locale)
     return [
         ConnectionTier(
             tier=tier,
@@ -290,10 +335,12 @@ def _tiers_for(
             lock_reason=(
                 None
                 if advanced_allowed or tier != "advanced"
-                else ADVANCED_TIER_LOCK_REASON
+                else (
+                    ADVANCED_TIER_LOCK_REASON_VI if is_vi else ADVANCED_TIER_LOCK_REASON
+                )
             ),
         )
-        for tier, label in TIER_LABELS.items()
+        for tier, label in labels.items()
     ]
 
 
@@ -323,55 +370,106 @@ def _is_hosted() -> bool:
     return settings.config.behave_as == BehaveAs.CLOUD
 
 
-def _backed_by_label(transport: ChatTransportResponse) -> str:
+def _backed_by_label(transport: ChatTransportResponse, locale: str = "en") -> str:
+    is_vi = _normalize_locale(locale) == "vi"
     if transport.auth_provider == "codex":
-        return "Your ChatGPT plan"
+        return "Gói ChatGPT của bạn" if is_vi else "Your ChatGPT plan"
     if transport.auth_provider == "microsoft_365_copilot":
-        return "Your Microsoft 365 Copilot plan"
+        return (
+            "Gói Microsoft 365 Copilot của bạn"
+            if is_vi
+            else "Your Microsoft 365 Copilot plan"
+        )
     if transport.auth_provider == "opencode":
-        return "Your OpenCode plan"
-    return "Your AutoGPT plan" if _is_hosted() else "This server's chat provider"
+        return "Gói OpenCode của bạn" if is_vi else "Your OpenCode plan"
+    if _is_hosted():
+        return "Gói AutoGPT của bạn" if is_vi else "Your AutoGPT plan"
+    return (
+        "Nhà cung cấp trò chuyện của máy chủ này"
+        if is_vi
+        else "This server's chat provider"
+    )
 
 
-def _description(transport: ChatTransportResponse) -> str:
+def _description(transport: ChatTransportResponse, locale: str = "en") -> str:
     """What backs a run, in the user's terms.
 
     The credits contrast only means something where credits exist, so the
     self-hosted line says what it actually has instead of denying something
     that was never there.
     """
+    is_vi = _normalize_locale(locale) == "vi"
     if transport.auth_provider == "codex":
         return (
-            "New chats are backed by your ChatGPT plan, and spend no AutoGPT credits."
+            "Các cuộc trò chuyện mới sử dụng gói ChatGPT của bạn và không tốn "
+            "tín dụng AutoGPT."
+            if is_vi
+            else (
+                "New chats are backed by your ChatGPT plan, and spend no AutoGPT credits."
+            )
         )
     if transport.auth_provider == "microsoft_365_copilot":
         return (
-            "New chats are backed by your work or school Microsoft 365 "
-            "Copilot plan, and spend no AutoGPT credits."
+            "Các cuộc trò chuyện mới sử dụng gói Microsoft 365 Copilot công việc "
+            "hoặc trường học của bạn và không tốn tín dụng AutoGPT."
+            if is_vi
+            else (
+                "New chats are backed by your work or school Microsoft 365 "
+                "Copilot plan, and spend no AutoGPT credits."
+            )
         )
     if transport.auth_provider == "opencode":
         return (
-            "New chats are backed by your OpenCode subscription, and spend no "
-            "AutoGPT credits."
+            "Các cuộc trò chuyện mới sử dụng gói đăng ký OpenCode của bạn và "
+            "không tốn tín dụng AutoGPT."
+            if is_vi
+            else (
+                "New chats are backed by your OpenCode subscription, and spend no "
+                "AutoGPT credits."
+            )
         )
     if _is_hosted():
-        return "New chats are backed by your AutoGPT plan, and spend AutoGPT credits."
-    return "New chats are backed by the chat provider configured on this server."
+        return (
+            "Các cuộc trò chuyện mới sử dụng gói AutoGPT của bạn và tiêu dùng "
+            "tín dụng AutoGPT."
+            if is_vi
+            else "New chats are backed by your AutoGPT plan, and spend AutoGPT credits."
+        )
+    return (
+        "Các cuộc trò chuyện mới sử dụng nhà cung cấp trò chuyện được cấu hình "
+        "trên máy chủ này."
+        if is_vi
+        else "New chats are backed by the chat provider configured on this server."
+    )
 
 
-def _limitations(transport: ChatTransportResponse) -> list[str]:
+def _limitations(transport: ChatTransportResponse, locale: str = "en") -> list[str]:
+    is_vi = _normalize_locale(locale) == "vi"
     limitations: list[str] = []
     if transport.auth_provider in {"codex", "microsoft_365_copilot", "opencode"}:
         # Stated because it is a real edge a user can hit, not a policy note:
         # the builder panel rejects a Codex or OpenCode route outright.
-        limitations.append("The workflow builder's chat panel always runs on AutoGPT.")
+        limitations.append(
+            "Bảng trò chuyện trong trình dựng quy trình luôn chạy trên AutoGPT."
+            if is_vi
+            else "The workflow builder's chat panel always runs on AutoGPT."
+        )
     if transport.auth_provider == "microsoft_365_copilot":
         limitations.extend(
             [
+                "Microsoft 365 Copilot chỉ trả về văn bản và không chạy công cụ AutoGPT.",
+                "Không hỗ trợ tệp cục bộ; hãy dùng liên kết OneDrive hoặc SharePoint.",
+            ]
+            if is_vi
+            else [
                 "Microsoft 365 Copilot returns text and does not run AutoGPT tools.",
                 "Local files are unsupported; use OneDrive or SharePoint links.",
             ]
         )
     if transport.auth_provider == "platform" and not is_deployment_chat_available():
-        limitations.append("No chat provider is configured on this server yet.")
+        limitations.append(
+            "Máy chủ này chưa được cấu hình nhà cung cấp trò chuyện nào."
+            if is_vi
+            else "No chat provider is configured on this server yet."
+        )
     return limitations

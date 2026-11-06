@@ -943,4 +943,41 @@ describe("AIConnectionsSection in Vietnamese", () => {
     expect(screen.queryByRole("button", { name: "Quản lý" })).toBeNull();
     expect(codexAccountCalled).not.toHaveBeenCalled();
   });
+
+  it("localizes server-generated AIConnectionOffer description, tier summary, and lock_reason in Vietnamese", async () => {
+    mockTransports([
+      platform(true),
+      {
+        ...chatgpt(false),
+        state: "locked",
+        selectable: false,
+        description:
+          "Run chats on a ChatGPT plan you already pay for, spending no AutoGPT credits.",
+        lock_reason: "A Max plan or higher is required to use ChatGPT.",
+      } as AIConnectionOffer,
+    ]);
+
+    render(
+      <LocaleProvider locale="vi">
+        <AIConnectionsSection />
+      </LocaleProvider>,
+    );
+
+    expect(
+      await screen.findByText(
+        "Các cuộc trò chuyện mới sử dụng nhà cung cấp trò chuyện được cấu hình trên máy chủ này.",
+      ),
+    ).toBeDefined();
+    expect(
+      screen.getByText("Cân bằng: Sonnet 5 · Nâng cao: Opus 5"),
+    ).toBeDefined();
+    expect(
+      screen.getByText(
+        "Chạy cuộc trò chuyện trên gói ChatGPT bạn đã trả phí mà không tốn tín dụng AutoGPT.",
+      ),
+    ).toBeDefined();
+    expect(
+      screen.getByText("Cần gói Max trở lên để sử dụng ChatGPT."),
+    ).toBeDefined();
+  });
 });

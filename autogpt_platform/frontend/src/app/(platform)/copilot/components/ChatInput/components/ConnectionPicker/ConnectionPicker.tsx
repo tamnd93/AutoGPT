@@ -70,7 +70,7 @@ export function ConnectionPicker({
     isLoading,
     isError,
   } = picker;
-  const advancedLock = tierLock(active, "advanced");
+  const advancedLock = tierLock(active, "advanced", locale);
   const showMaxUpgrade =
     active?.auth_method === "deployment" && Boolean(advancedLock);
 

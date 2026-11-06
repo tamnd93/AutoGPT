@@ -28,4 +28,43 @@ export const AiConnections1Vi: Partial<
   "aiConnections1.opencode.connected": "Đã kết nối OpenCode",
   "aiConnections1.opencode.saveFailed": "Không lưu được khoá OpenCode",
   "aiConnections1.opencode.unexpectedError": "Lỗi không xác định",
+
+  "aiConnections1.offer.backedBy.chatgpt": "Gói ChatGPT của bạn",
+  "aiConnections1.offer.backedBy.microsoft":
+    "Gói Microsoft 365 Copilot của bạn",
+  "aiConnections1.offer.backedBy.microsoftShort":
+    "Gói Microsoft Copilot của bạn",
+  "aiConnections1.offer.backedBy.opencode": "Gói OpenCode của bạn",
+  "aiConnections1.offer.backedBy.autogpt": "Gói AutoGPT của bạn",
+  "aiConnections1.offer.backedBy.server":
+    "Nhà cung cấp trò chuyện của máy chủ này",
+
+  "aiConnections1.offer.description.chatgptLocked":
+    "Chạy cuộc trò chuyện trên gói ChatGPT bạn đã trả phí mà không tốn tín dụng AutoGPT.",
+  "aiConnections1.offer.description.chatgpt":
+    "Các cuộc trò chuyện mới sử dụng gói ChatGPT của bạn và không tốn tín dụng AutoGPT.",
+  "aiConnections1.offer.description.microsoft":
+    "Các cuộc trò chuyện mới sử dụng gói Microsoft 365 Copilot công việc hoặc trường học của bạn và không tốn tín dụng AutoGPT.",
+  "aiConnections1.offer.description.opencode":
+    "Các cuộc trò chuyện mới sử dụng gói đăng ký OpenCode của bạn và không tốn tín dụng AutoGPT.",
+  "aiConnections1.offer.description.autogpt":
+    "Các cuộc trò chuyện mới sử dụng gói AutoGPT của bạn và tiêu dùng tín dụng AutoGPT.",
+  "aiConnections1.offer.description.server":
+    "Các cuộc trò chuyện mới sử dụng nhà cung cấp trò chuyện được cấu hình trên máy chủ này.",
+
+  "aiConnections1.offer.lockReason.chatgptMinPlan":
+    "Cần gói Max trở lên để sử dụng ChatGPT.",
+  "aiConnections1.offer.lockReason.advancedMinPlan":
+    "Cần gói Max trở lên để sử dụng mức Nâng cao.",
+  "aiConnections1.offer.lockReason.connectChatgpt":
+    "Kết nối ChatGPT để sử dụng gói đăng ký này",
+
+  "aiConnections1.offer.limitation.builderRunsOnAutogpt":
+    "Bảng trò chuyện trong trình dựng quy trình luôn chạy trên AutoGPT.",
+  "aiConnections1.offer.limitation.microsoftNoTools":
+    "Microsoft 365 Copilot chỉ trả về văn bản và không chạy công cụ AutoGPT.",
+  "aiConnections1.offer.limitation.microsoftNoLocalFiles":
+    "Không hỗ trợ tệp cục bộ; hãy dùng liên kết OneDrive hoặc SharePoint.",
+  "aiConnections1.offer.limitation.noServerProvider":
+    "Máy chủ này chưa được cấu hình nhà cung cấp trò chuyện nào.",
 };

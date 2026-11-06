@@ -24,4 +24,40 @@ export const AiConnections1En = {
   "aiConnections1.opencode.connected": "OpenCode connected",
   "aiConnections1.opencode.saveFailed": "Couldn't save the OpenCode key",
   "aiConnections1.opencode.unexpectedError": "Unexpected error",
+
+  "aiConnections1.offer.backedBy.chatgpt": "Your ChatGPT plan",
+  "aiConnections1.offer.backedBy.microsoft": "Your Microsoft 365 Copilot plan",
+  "aiConnections1.offer.backedBy.microsoftShort": "Your Microsoft Copilot plan",
+  "aiConnections1.offer.backedBy.opencode": "Your OpenCode plan",
+  "aiConnections1.offer.backedBy.autogpt": "Your AutoGPT plan",
+  "aiConnections1.offer.backedBy.server": "This server's chat provider",
+
+  "aiConnections1.offer.description.chatgptLocked":
+    "Run chats on a ChatGPT plan you already pay for, spending no AutoGPT credits.",
+  "aiConnections1.offer.description.chatgpt":
+    "New chats are backed by your ChatGPT plan, and spend no AutoGPT credits.",
+  "aiConnections1.offer.description.microsoft":
+    "New chats are backed by your work or school Microsoft 365 Copilot plan, and spend no AutoGPT credits.",
+  "aiConnections1.offer.description.opencode":
+    "New chats are backed by your OpenCode subscription, and spend no AutoGPT credits.",
+  "aiConnections1.offer.description.autogpt":
+    "New chats are backed by your AutoGPT plan, and spend AutoGPT credits.",
+  "aiConnections1.offer.description.server":
+    "New chats are backed by the chat provider configured on this server.",
+
+  "aiConnections1.offer.lockReason.chatgptMinPlan":
+    "A Max plan or higher is required to use ChatGPT.",
+  "aiConnections1.offer.lockReason.advancedMinPlan":
+    "A Max plan or higher is required for Advanced.",
+  "aiConnections1.offer.lockReason.connectChatgpt":
+    "Connect ChatGPT to use this subscription",
+
+  "aiConnections1.offer.limitation.builderRunsOnAutogpt":
+    "The workflow builder's chat panel always runs on AutoGPT.",
+  "aiConnections1.offer.limitation.microsoftNoTools":
+    "Microsoft 365 Copilot returns text and does not run AutoGPT tools.",
+  "aiConnections1.offer.limitation.microsoftNoLocalFiles":
+    "Local files are unsupported; use OneDrive or SharePoint links.",
+  "aiConnections1.offer.limitation.noServerProvider":
+    "No chat provider is configured on this server yet.",
 } as const;

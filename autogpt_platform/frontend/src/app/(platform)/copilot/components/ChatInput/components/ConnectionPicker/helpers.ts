@@ -1,4 +1,8 @@
 import type { AIConnectionOffer } from "@/app/api/__generated__/models/aIConnectionOffer";
+import {
+  localizeOfferText,
+  localizeTierLabel,
+} from "@/components/contextual/IntegrationsPanel/components/AIConnectionsSection/helpers";
 import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/locale";
 import { getMessage } from "@/lib/i18n/translate";
 import type { CopilotLlmAuthSelection } from "../../../../store";
@@ -76,14 +80,15 @@ export function tierName(
   tier: string,
   locale: Locale = DEFAULT_LOCALE,
 ): string {
-  return (
-    tierOf(offer, tier)?.label ??
-    getMessage(
-      locale,
-      tier === "advanced"
-        ? "chatInput1.picker.tierAdvanced"
-        : "chatInput1.picker.tierBalanced",
-    )
+  const rawLabel = tierOf(offer, tier)?.label;
+  if (rawLabel) {
+    return localizeTierLabel(rawLabel, locale);
+  }
+  return getMessage(
+    locale,
+    tier === "advanced"
+      ? "chatInput1.picker.tierAdvanced"
+      : "chatInput1.picker.tierBalanced",
   );
 }
 
@@ -114,8 +119,14 @@ export function tierLabel(
  * reads as two different plans. A row the user cannot act on has to justify
  * the space it takes.
  */
-export function offerSubtitle(offer: AIConnectionOffer): string {
-  return offer.lock_reason ? offer.description : offer.backed_by_label;
+export function offerSubtitle(
+  offer: AIConnectionOffer,
+  locale: Locale = DEFAULT_LOCALE,
+): string {
+  return localizeOfferText(
+    offer.lock_reason ? offer.description : offer.backed_by_label,
+    locale,
+  );
 }
 
 /**
@@ -128,10 +139,16 @@ export function offerSubtitle(offer: AIConnectionOffer): string {
  * Empty when the server named no models, so the row simply omits the line
  * rather than rendering "Balanced: · Advanced:".
  */
-export function tierSummary(offer: AIConnectionOffer): string {
+export function tierSummary(
+  offer: AIConnectionOffer,
+  locale: Locale = DEFAULT_LOCALE,
+): string {
   const named = offer.tiers
     .filter((tier) => tier.display_model)
-    .map((tier) => `${tier.label}: ${tier.display_model}`);
+    .map(
+      (tier) =>
+        `${localizeTierLabel(tier.label, locale)}: ${tier.display_model}`,
+    );
   return named.join(" · ");
 }
 
@@ -154,10 +171,14 @@ export function isLinkedAccount(offer: AIConnectionOffer): boolean {
 export function tierLock(
   offer: AIConnectionOffer | undefined,
   tier: string,
+  locale: Locale = DEFAULT_LOCALE,
 ): { reason: string; href: string | null } | undefined {
   const match = tierOf(offer, tier);
   if (!match?.lock_reason) return undefined;
-  return { reason: match.lock_reason, href: "/settings/billing" };
+  return {
+    reason: localizeOfferText(match.lock_reason, locale),
+    href: "/settings/billing",
+  };
 }
 
 /**

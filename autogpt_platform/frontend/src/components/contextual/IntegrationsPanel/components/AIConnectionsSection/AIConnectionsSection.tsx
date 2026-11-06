@@ -11,13 +11,13 @@ import { Button } from "@/components/atoms/Button/Button";
 import { Icon } from "@/components/atoms/Icon/Icon";
 import { Skeleton } from "@/components/atoms/Skeleton/Skeleton";
 import { Text } from "@/components/atoms/Text/Text";
-import { useT } from "@/lib/i18n";
+import { useLocale, useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
 import { IntegrationLogo } from "@/components/molecules/IntegrationLogo/IntegrationLogo";
 import { ManageConnectionDialog } from "./ManageConnectionDialog";
 import { ProviderCatalogueCard } from "./ProviderCatalogueCard";
-import { isSelectable, tierSummary } from "./helpers";
+import { isSelectable, localizeOfferText, tierSummary } from "./helpers";
 import { useAIConnectionsSection } from "./useAIConnectionsSection";
 
 export function AIConnectionsSection() {
@@ -146,6 +146,8 @@ function ConnectionRow({
   onManage,
 }: RowProps) {
   const t = useT();
+  const locale = useLocale();
+  const summary = tierSummary(connection, locale);
   const body = (
     <>
       {selectable && (
@@ -219,16 +221,16 @@ function ConnectionRow({
           )}
         </span>
         <Text variant="small" as="span" className="text-foreground-body">
-          {connection.description}
+          {localizeOfferText(connection.description, locale)}
         </Text>
-        {tierSummary(connection) && (
+        {summary && (
           <Text
             // TODO(tokens): no exact role for text-[#7A7A80]
             variant="small"
             as="span"
             className="text-[#7A7A80]"
           >
-            {tierSummary(connection)}
+            {summary}
           </Text>
         )}
         {connection.lock_reason && (
@@ -238,7 +240,7 @@ function ConnectionRow({
             as="span"
             className="text-[#7A7A80]"
           >
-            {connection.lock_reason}
+            {localizeOfferText(connection.lock_reason, locale)}
           </Text>
         )}
       </span>

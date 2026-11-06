@@ -199,6 +199,38 @@ describe("ConnectionPicker in Vietnamese", () => {
       }),
     ).toBeDefined();
     expect(screen.getByText("Đã kết nối")).toBeDefined();
+    expect(screen.getByText("Gói AutoGPT của bạn")).toBeDefined();
+    expect(screen.getByText("Gói ChatGPT của bạn")).toBeDefined();
+    const tierGroup = screen.getByRole("radiogroup", { name: "Mức model" });
+    expect(
+      within(tierGroup).getByRole("radio", { name: /Cân bằng/ }),
+    ).toBeDefined();
+    expect(
+      within(tierGroup).getByRole("radio", { name: /Nâng cao/ }),
+    ).toBeDefined();
+  });
+
+  it("localizes locked connection description, lock reason, tier summary, and limitations in Vietnamese", async () => {
+    mockOffers([offer(), locked(), chatgpt()]);
+
+    render(
+      <LocaleProvider locale="vi">
+        <ConnectionPicker />
+      </LocaleProvider>,
+    );
+    const trigger = await screen.findByRole("button", {
+      name: /Chạy trên .* — đổi/,
+    });
+    await userEvent.click(trigger);
+
+    expect(
+      await screen.findByText(
+        "Chạy cuộc trò chuyện trên gói ChatGPT bạn đã trả phí mà không tốn tín dụng AutoGPT.",
+      ),
+    ).toBeDefined();
+    expect(
+      screen.getByText("Cần gói Max trở lên để sử dụng ChatGPT."),
+    ).toBeDefined();
   });
 });
 

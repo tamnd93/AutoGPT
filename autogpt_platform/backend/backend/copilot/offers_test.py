@@ -653,3 +653,99 @@ def test_ai_connection_offers_response_serializes_with_providers() -> None:
     assert dump["providers"][0]["status"] == "available"
     assert dump["providers"][3]["id"] == "xai"
     assert dump["providers"][3]["status"] == "coming-soon"
+
+
+@pytest.mark.asyncio
+async def test_get_connection_offers_localizes_dynamic_strings_for_vietnamese(
+    mocker: pytest_mock.MockerFixture,
+    advanced_allowed,
+) -> None:
+    advanced_allowed.return_value = False
+    _mock_transports(
+        mocker,
+        [
+            _transport(default=True),
+            _transport("codex", "cred-1", "ChatGPT"),
+            _transport(
+                "microsoft_365_copilot",
+                "cred-msft",
+                "Microsoft 365 Copilot",
+            ),
+            _transport("opencode", "cred-open", "OpenCode"),
+        ],
+    )
+
+    platform, chatgpt, msft, opencode = await get_connection_offers(
+        USER_ID, locale="vi"
+    )
+
+    assert platform.backed_by_label == "Gói AutoGPT của bạn"
+    assert (
+        platform.description
+        == "Các cuộc trò chuyện mới sử dụng gói AutoGPT của bạn và tiêu dùng tín dụng AutoGPT."
+    )
+    assert [t.label for t in platform.tiers] == ["Cân bằng", "Nâng cao"]
+    assert (
+        platform.tiers[1].lock_reason == "Cần gói Max trở lên để sử dụng mức Nâng cao."
+    )
+
+    assert chatgpt.backed_by_label == "Gói ChatGPT của bạn"
+    assert (
+        chatgpt.description
+        == "Các cuộc trò chuyện mới sử dụng gói ChatGPT của bạn và không tốn tín dụng AutoGPT."
+    )
+    assert chatgpt.limitations == [
+        "Bảng trò chuyện trong trình dựng quy trình luôn chạy trên AutoGPT."
+    ]
+
+    assert msft.backed_by_label == "Gói Microsoft 365 Copilot của bạn"
+    assert (
+        msft.description
+        == "Các cuộc trò chuyện mới sử dụng gói Microsoft 365 Copilot công việc hoặc trường học của bạn và không tốn tín dụng AutoGPT."
+    )
+    assert msft.limitations == [
+        "Bảng trò chuyện trong trình dựng quy trình luôn chạy trên AutoGPT.",
+        "Microsoft 365 Copilot chỉ trả về văn bản và không chạy công cụ AutoGPT.",
+        "Không hỗ trợ tệp cục bộ; hãy dùng liên kết OneDrive hoặc SharePoint.",
+    ]
+
+    assert opencode.backed_by_label == "Gói OpenCode của bạn"
+    assert (
+        opencode.description
+        == "Các cuộc trò chuyện mới sử dụng gói đăng ký OpenCode của bạn và không tốn tín dụng AutoGPT."
+    )
+
+
+@pytest.mark.asyncio
+async def test_get_connection_offers_localizes_locked_and_self_host_for_vietnamese(
+    mocker: pytest_mock.MockerFixture,
+) -> None:
+    _mock_transports(mocker, [_transport("platform", None)])
+    _upsell(mocker)
+
+    locked = _locked(await get_connection_offers(USER_ID, locale="vi-VN"))[0]
+    assert locked.backed_by_label == "Gói ChatGPT của bạn"
+    assert (
+        locked.description
+        == "Chạy cuộc trò chuyện trên gói ChatGPT bạn đã trả phí mà không tốn tín dụng AutoGPT."
+    )
+    assert locked.lock_reason == "Cần gói Max trở lên để sử dụng ChatGPT."
+    assert [t.label for t in locked.tiers] == ["Cân bằng", "Nâng cao"]
+
+    mocker.patch.object(offers.settings.config, "behave_as", BehaveAs.LOCAL)
+    chat_config = MagicMock()
+    chat_config.test_mode = False
+    chat_config.use_claude_code_subscription = False
+    chat_config.main_client_credentials = (None, "https://api.anthropic.com/v1/")
+    mocker.patch.object(transports, "config", chat_config)
+    _mock_transports(mocker, [_transport(label="Self-hosted chat", available=False)])
+
+    (self_hosted,) = await get_connection_offers(USER_ID, locale="vi")
+    assert self_hosted.backed_by_label == "Nhà cung cấp trò chuyện của máy chủ này"
+    assert (
+        self_hosted.description
+        == "Các cuộc trò chuyện mới sử dụng nhà cung cấp trò chuyện được cấu hình trên máy chủ này."
+    )
+    assert self_hosted.limitations == [
+        "Máy chủ này chưa được cấu hình nhà cung cấp trò chuyện nào."
+    ]

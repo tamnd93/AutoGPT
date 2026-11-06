@@ -2,6 +2,7 @@
 
 import type { AIConnectionOffer } from "@/app/api/__generated__/models/aIConnectionOffer";
 import { Icon } from "@/components/atoms/Icon/Icon";
+import { localizeOfferText } from "@/components/contextual/IntegrationsPanel/components/AIConnectionsSection/helpers";
 import { IntegrationLogo } from "@/components/molecules/IntegrationLogo/IntegrationLogo";
 import { useLocale, useT } from "@/lib/i18n";
 import { isComposingEvent } from "@/lib/keyboard";
@@ -47,7 +48,7 @@ export function ConnectionPickerPanel({ picker, rows }: Props) {
     isConnecting,
     canConnectChatGPT,
   } = picker;
-  const advancedLock = tierLock(active, "advanced");
+  const advancedLock = tierLock(active, "advanced", locale);
   const showMaxUpgrade =
     active?.auth_method === "deployment" && Boolean(advancedLock);
   const connectionOptions = rows.map((offer) => ({
@@ -85,43 +86,51 @@ export function ConnectionPickerPanel({ picker, rows }: Props) {
                 ?.focus();
             }}
           >
-            {rows.map((offer) => (
-              <ChoiceRow
-                key={offer.offer_id}
-                offerId={offer.offer_id}
-                tabIndex={rovingTabIndex(
-                  connectionOptions,
-                  { value: offer.offer_id },
-                  active?.offer_id ?? "",
-                )}
-                leading={<OfferMark offer={offer} />}
-                title={offer.display_name}
-                subtitle={offerSubtitle(offer)}
-                badge={
-                  isLinkedAccount(offer)
-                    ? t("chatInput1.picker.connected")
-                    : undefined
-                }
-                // A selectable row's models are named by the tier toggle
-                // right below it, so repeating them here only crowds the
-                // choice. A locked row has no toggle, so it keeps them.
-                notes={
-                  offer.lock_reason
-                    ? [tierSummary(offer), ...offer.limitations].filter(Boolean)
-                    : offer.limitations
-                }
-                isSelected={offer.offer_id === active?.offer_id}
-                onSelect={() => chooseConnection(offer)}
-                lock={
-                  offer.lock_reason
-                    ? {
-                        reason: offer.lock_reason,
-                        href: offer.unlock_href ?? null,
-                      }
-                    : undefined
-                }
-              />
-            ))}
+            {rows.map((offer) => {
+              const localizedLimitations = offer.limitations.map((item) =>
+                localizeOfferText(item, locale),
+              );
+              return (
+                <ChoiceRow
+                  key={offer.offer_id}
+                  offerId={offer.offer_id}
+                  tabIndex={rovingTabIndex(
+                    connectionOptions,
+                    { value: offer.offer_id },
+                    active?.offer_id ?? "",
+                  )}
+                  leading={<OfferMark offer={offer} />}
+                  title={offer.display_name}
+                  subtitle={offerSubtitle(offer, locale)}
+                  badge={
+                    isLinkedAccount(offer)
+                      ? t("chatInput1.picker.connected")
+                      : undefined
+                  }
+                  // A selectable row's models are named by the tier toggle
+                  // right below it, so repeating them here only crowds the
+                  // choice. A locked row has no toggle, so it keeps them.
+                  notes={
+                    offer.lock_reason
+                      ? [
+                          tierSummary(offer, locale),
+                          ...localizedLimitations,
+                        ].filter(Boolean)
+                      : localizedLimitations
+                  }
+                  isSelected={offer.offer_id === active?.offer_id}
+                  onSelect={() => chooseConnection(offer)}
+                  lock={
+                    offer.lock_reason
+                      ? {
+                          reason: localizeOfferText(offer.lock_reason, locale),
+                          href: offer.unlock_href ?? null,
+                        }
+                      : undefined
+                  }
+                />
+              );
+            })}
           </div>
         </>
       )}
@@ -155,7 +164,7 @@ export function ConnectionPickerPanel({ picker, rows }: Props) {
                 label: tierLabel(active, candidate, locale),
                 name: tierName(active, candidate, locale),
                 model: tierModel(active, candidate),
-                lock: tierLock(active, candidate),
+                lock: tierLock(active, candidate, locale),
               }))}
             />
           </div>
